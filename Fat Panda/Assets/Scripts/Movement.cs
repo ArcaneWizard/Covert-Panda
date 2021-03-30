@@ -8,11 +8,12 @@ public class Movement : MonoBehaviour
     private int movementDirY;
 
     private float pandaSpeed = 4.5f;
-    private Vector2 movement;
+
+    private float objectLaunchForce = 500;
+    private Vector2 objectSpinSpeed = new Vector2(200, 250);
 
     private Rigidbody2D rig;
-
-    private GameObject objectHeld;
+    public static GameObject objectHeld;
 
     private VariableJoystick movementJoystick;
     public VariableJoystick aimingJoystick;
@@ -45,6 +46,8 @@ public class Movement : MonoBehaviour
         rig.velocity = pandaSpeed * new Vector2(movementDirX, movementDirY);
 
         PrepareToThrowAnObject();
+
+        gameObject.layer = (objectHeld) ? LayerMask.NameToLayer("Panda Lifting") : LayerMask.NameToLayer("Panda");
     }
 
     private void PrepareToThrowAnObject()
@@ -67,7 +70,7 @@ public class Movement : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         //Panda holds an object it picks up
-        if (collision.gameObject.layer == 8)
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Object") && !objectHeld)
         {
             //object becomes child of Panda gameObject and teleports to Panda
             objectHeld = collision.gameObject;
@@ -86,7 +89,8 @@ public class Movement : MonoBehaviour
         //launch object and apply curve effect through gravity
         objectHeld.AddComponent<Rigidbody2D>();
         objectHeld.transform.GetComponent<Rigidbody2D>().gravityScale = Mathf.Sign(dir.y);
-        objectHeld.transform.GetComponent<Rigidbody2D>().AddForce(dir * 400);
+        objectHeld.transform.GetComponent<Rigidbody2D>().AddForce(dir * objectLaunchForce);
+        objectHeld.transform.GetComponent<Rigidbody2D>().angularVelocity = Random.Range(objectSpinSpeed.x, objectSpinSpeed.y) * (Random.Range(0,2) * 2 - 1);
 
         //Object must stop eventually, as if it landed on the ground
         StartCoroutine(objectLandsOnFloorEventually(objectHeld, gameObject.transform.position.y, Mathf.Sign(dir.y)));
@@ -97,9 +101,8 @@ public class Movement : MonoBehaviour
 
     private IEnumerator objectLandsOnFloorEventually(GameObject thrownObject, float groundLevel, float curveDirection)
     {
-        Debug.Log(groundLevel + ", " + curveDirection);
         //object is in the air for max 22*0.05 = 1.1 seconds
-        for (int i = 1; i <= 22; i++)
+        for (int i = 1; i <= 26; i++)
         {
             yield return new WaitForSeconds(0.05f);
 
@@ -113,6 +116,6 @@ public class Movement : MonoBehaviour
         Destroy(thrownObject.transform.GetComponent<Rigidbody2D>());
 
         //Make the object repickable for testing purposes
-        thrownObject.layer = 8;
+        //thrownObject.layer = 8;
     }
 }
