@@ -6,6 +6,7 @@ public class Sideview_Controller : MonoBehaviour
 {
     private Rigidbody2D rig;
     private SpriteRenderer sR;
+    private Animator animator;
 
     public float speed = 2.0f;
     public float jumpForce = 200;
@@ -14,6 +15,7 @@ public class Sideview_Controller : MonoBehaviour
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
+        animator = transform.GetChild(0).transform.GetComponent<Animator>();
         sR = transform.GetChild(0).transform.GetComponent<SpriteRenderer>();
     }
 
@@ -36,13 +38,24 @@ public class Sideview_Controller : MonoBehaviour
 
         //orient the player to face the same direction they're moving in
         playerOrientation();
+
+        //set idle or move animations
+        playerAnimation();
     }
 
     private void playerOrientation()
     {
-        if (rig.velocity.x > 0)
+        if (rig.velocity.x > 0) 
             sR.flipX = true;
         else if (rig.velocity.x < 0)
             sR.flipX = false;
+    }
+
+    private void playerAnimation()
+    {
+        if (Mathf.Abs(rig.velocity.x) > 0)
+            animator.SetInteger("State", 1);
+        else
+            animator.SetInteger("State", 0);
     }
 }
