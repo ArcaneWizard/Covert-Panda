@@ -8,8 +8,15 @@ public class Sideview_Controller : MonoBehaviour
     private SpriteRenderer sR;
     private Animator animator;
 
+    private GameObject objectHeld;
+    private Camera camera;
+
     public float speed = 2.0f;
     public float jumpForce = 200;
+
+    public float throwForce = 500;
+    public Vector2 objectSpinSpeed = new Vector2(-200, 200);
+
     private int movementDirX;
 
     void Awake()
@@ -17,6 +24,9 @@ public class Sideview_Controller : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         sR = transform.GetChild(0).transform.GetComponent<SpriteRenderer>();
+        camera = transform.GetChild(1).transform.GetComponent<Camera>();
+
+        objectHeld = null;
     }
 
     void Update()
@@ -35,6 +45,10 @@ public class Sideview_Controller : MonoBehaviour
             rig.AddForce(new Vector2(0, jumpForce));
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
+
+        //Right click to throw
+        if (Input.GetMouseButtonDown(0) && objectHeld)
+            throwObject();
 
         //orient the player to face the same direction they're moving in
         playerOrientation();
@@ -57,5 +71,37 @@ public class Sideview_Controller : MonoBehaviour
             animator.SetInteger("State", 1);
         else
             animator.SetInteger("State", 0);
+    }
+
+    private void throwObject()
+    {
+        //calculate direction to throw object
+        Vector2 throwDir = (Input.mousePosition - camera.WorldToScreenPoint(transform.position)).normalized;
+
+        //detach object from Player
+        objectHeld.transform.parent = null;
+        objectHeld.layer = LayerMask.NameToLayer("Thrown Object");
+
+        //launch object and apply curve effect through gravity
+        objectHeld.AddComponent<Rigidbody2D>();
+        objectHeld.transform.GetComponent<Rigidbody2D>().gravityScale = 1;
+
+        objectHeld.transform.GetComponent<Rigidbody2D>().AddForce(throwForce * throwDir);
+        objectHeld.transform.GetComponent<Rigidbody2D>().angularVelocity = Random.Range(objectSpinSpeed.x, objectSpinSpeed.y);
+
+        //Panda no longer is holding an object
+        objectHeld = null;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //Player collides with object it can pick up
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Object") && !objectHeld)
+        {
+            //object becomes child of Player gameObject and teleports to Player
+            objectHeld = collision.gameObject;
+            objectHeld.transform.parent = transform;
+            objectHeld.transform.position = transform.GetChild(0).transform.position;
+        }
     }
 }
