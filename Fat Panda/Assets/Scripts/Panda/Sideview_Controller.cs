@@ -82,14 +82,13 @@ public class Sideview_Controller : MonoBehaviour
         objectHeld.transform.parent = null;
         objectHeld.layer = LayerMask.NameToLayer("Thrown Object");
 
-        //launch object and apply curve effect through gravity
+        //launch object and apply gravity
         objectHeld.AddComponent<Rigidbody2D>();
         objectHeld.transform.GetComponent<Rigidbody2D>().gravityScale = 1;
-
         objectHeld.transform.GetComponent<Rigidbody2D>().AddForce(throwForce * throwDir);
         objectHeld.transform.GetComponent<Rigidbody2D>().angularVelocity = Random.Range(objectSpinSpeed.x, objectSpinSpeed.y);
 
-        //Panda no longer is holding an object
+        //Player no longer is holding that object
         objectHeld = null;
     }
 

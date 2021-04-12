@@ -2,43 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pathfinding : MonoBehaviour
+public static class Pathfinding 
 {
-    private Rigidbody2D rig;
-    private Animator animator;
-    private SpriteRenderer sR;
+    public static float distance = 2;
+    public static Vector2 nodeHead;
 
-    void Awake()
+    public static void drawPotentialPaths(Vector2 rootPosition, int numberOfRays, Vector2 endPosition)
     {
-        rig = transform.GetComponent<Rigidbody2D>();
-        animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        sR = transform.GetChild(0).transform.GetComponent<SpriteRenderer>();
+        while (numberOfRays > 0)
+        {
+            numberOfRays--;
 
-        Debug.DrawLine(transform.position, new Vector2(transform.position.x - 10, transform.position.y), Color.red, 10f, false);
-    }
+            if (endPosition.x > -4 + rootPosition.x)
+            {
+                Debug.DrawRay(rootPosition, Vector2.right * distance, Color.red, 3f, true);
+                drawPotentialPaths(rootPosition + Vector2.right * distance, numberOfRays, endPosition);
+            }
 
-    void Update()
-    {
-        //orient the player to face the same direction they're moving in
-        playerOrientation();
+            if (endPosition.x < rootPosition.x + 4)
+            {
+                Debug.DrawRay(rootPosition, Vector2.left * distance, Color.red, 3f, true);
+                drawPotentialPaths(rootPosition + Vector2.left * distance, numberOfRays, endPosition);
+            }
 
-        //set idle or move animations
-        playerAnimation();
-    }
+            if (endPosition.y > -4 + rootPosition.y)
+            {
+                Debug.DrawRay(rootPosition, Vector2.up * distance, Color.red, 3f, true);
+                drawPotentialPaths(rootPosition + Vector2.up * distance, numberOfRays, endPosition);
+            }
 
-    private void playerAnimation()
-    {
-        if (Mathf.Abs(rig.velocity.x) > 0)
-            animator.SetInteger("State", 1);
-        else
-            animator.SetInteger("State", 0);
-    }
-
-    private void playerOrientation()
-    {
-        if (rig.velocity.x > 0)
-            sR.flipX = true;
-        else if (rig.velocity.x < 0)
-            sR.flipX = false;
+            if (endPosition.y < rootPosition.y + 4)
+            {
+                Debug.DrawRay(rootPosition, Vector2.down * distance, Color.red, 3f, true);
+                drawPotentialPaths(rootPosition + Vector2.down * distance, numberOfRays, endPosition);
+            }
+        }
     }
 }
