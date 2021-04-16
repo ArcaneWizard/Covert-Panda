@@ -24,9 +24,10 @@ public class FixedBotBehaviour
     }
 
     //bot jumps
-    public void jump(Rigidbody2D rig, float jumpForce)
+    public void jump(Rigidbody2D rig, float jumpForce, bool boost)
     {
-        rig.AddForce(new Vector2(rig.velocity.x * 10, jumpForce));
+        float xForce = (boost) ? rig.velocity.x * 10 : 0;
+        rig.AddForce(new Vector2(xForce, jumpForce));
     }
 
     //check if there is a floor gap or wall or ceiling gap nearby  

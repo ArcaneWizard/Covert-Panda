@@ -35,17 +35,9 @@ public class EnvironmentDetection
 
         //L for left wall check
         sendRaycast(Vector2.left, 9, new EnvKey('L', 0, 0), Color.blue, new Vector2(eX, eY));
-        sendRaycast(Vector2.left, 9, new EnvKey('L', 0, 1), Color.blue, new Vector2(eX, eY + 2.5f));
-        sendRaycast(Vector2.left, 9, new EnvKey('L', 0, -1), Color.blue, new Vector2(eX, eY - 2.5f));
-        sendRaycast(Vector2.left, 9, new EnvKey('L', 0, 2), Color.blue, new Vector2(eX, eY + 5f));
-        sendRaycast(Vector2.left, 9, new EnvKey('L', 0, -2), Color.blue, new Vector2(eX, eY - 5f));
 
         //R for right wall check
         sendRaycast(Vector2.right, 9, new EnvKey('R', 0, 0), Color.green, new Vector2(eX, eY));
-        sendRaycast(Vector2.right, 9, new EnvKey('R', 0, 1), Color.green, new Vector2(eX, eY + 2.5f));
-        sendRaycast(Vector2.right, 9, new EnvKey('R', 0, -1), Color.green, new Vector2(eX, eY - 2.5f));
-        sendRaycast(Vector2.right, 9, new EnvKey('R', 0, 2), Color.green, new Vector2(eX, eY + 5f));
-        sendRaycast(Vector2.right, 9, new EnvKey('R', 0, -2), Color.green, new Vector2(eX, eY - 5f));
 
         //C for ceiling check
         sendRaycast(Vector2.up, 6, new EnvKey('C', 0, 0), Color.cyan, new Vector2(eX, eY));

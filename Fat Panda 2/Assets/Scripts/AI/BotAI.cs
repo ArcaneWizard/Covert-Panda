@@ -19,7 +19,7 @@ public class BotAI : MonoBehaviour
     private Dictionary<EnvKey, EnvInfo> info;
 
     private float botSpeed = 4f;
-    private float jumpForce = 420;
+    private float jumpForce = 570;
 
     private EnvKey action;
     private List<EnvKey> possibleLeftActions = new List<EnvKey>();
@@ -40,6 +40,7 @@ public class BotAI : MonoBehaviour
     private float jumpCoordinate;
     private EnvKey ceilingCheckAboveJump;
     private bool dontJump;
+    private Dictionary<EnvKey, string> jumpPlatforms = new Dictionary<EnvKey, string>();
 
     void Awake()
     {
@@ -62,7 +63,6 @@ public class BotAI : MonoBehaviour
     //scan environment, store this info in a dictionary, and decide on a plan of action
     private void figureOutWhatToDo()
     {
-        Debug.Log("called bt");
         environmentInputs.scanEnvironment(transform);
         info = environmentInputs.requestEnvironmentInfo();
 
@@ -80,6 +80,7 @@ public class BotAI : MonoBehaviour
         //resest possibleActions list
         possibleLeftActions.Clear();
         possibleRightActions.Clear();
+        jumpPlatforms.Clear();
 
         //get x position of closest left and right wall
         float rightWallLocation = info[new EnvKey('R', 0, 0)].getHitPoint().x;
@@ -88,12 +89,12 @@ public class BotAI : MonoBehaviour
         //bot takes into account it's last location/action 
         lastAction = action.Equals(null) ? 'A' : action.direction;
 
-        //the bot checks for flat surfaces at the same level or below it
+        //the bot checks for openings in the floor and ceiling
         for (int offset = -5; offset <= 5; offset++)
         {
             EnvKey floorCheck = new EnvKey('G', offset, 0);
 
-            //make sure this flat surface is not behind a wall (as the bot can't just walk straight to it then)
+            //make sure this opening in the floor is not behind a wall (as the bot can't just walk straight to it then)
             if ((offset < 0 && info[floorCheck].getHitPoint().x > leftWallLocation) ||
                 (offset > 0 && info[floorCheck].getHitPoint().x < rightWallLocation))
             {
@@ -108,38 +109,98 @@ public class BotAI : MonoBehaviour
                 }
             }
 
-            //if there were no right gaps found but there is a hallway to the right, still consider going there
-            if (possibleRightActions.Count == 0 && rightWallLocation > transform.position.x + 1f && offset == 5)
+            //if there is a hallway to the right, still consider going there
+            if (possibleRightActions.Count <= 1 && rightWallLocation > transform.position.x + 1f && offset == 5)
             {
-                Debug.Log("right wall considered");
                 //bot should usually consider it could go right (if it wasn't already going left or if it can't go LEFT next turn)
-                if (lastAction != 'L' || leftWallLocation >= transform.position.x - 1f)
+                if (lastAction != 'L' || leftWallLocation >= transform.position.x - 1f) 
                     possibleRightActions.Add(new EnvKey('R', 0, 0));
 
                 //if the bot was previously heading left, it should rarely consider going right
                 else if (lastAction == 'L')
                 {
                     int r = Random.Range(0, 10);
-                    if (r >= 8)
+                    if (r >= 9) 
                         possibleRightActions.Add(new EnvKey('R', 0, 0));
                 }
             }
 
+            //get the y coordinate of the ceiling above the player
+            EnvKey ceilingCheck = new EnvKey('C', offset, 0);
+            float ceiling = info[ceilingCheck].getHitPoint().y;
 
-            //if there were no left gaps found but there is a hallway to the left, still consider going there
-            if (possibleLeftActions.Count == 0 && leftWallLocation < transform.position.x - 1f && offset == 1)
+            //get the expected height a ceiling should be (greater than this = gap in ceiling)
+            float expected = 4f + transform.position.y;
+
+            //if there is a hallway to the left, still consider going there
+            if (possibleLeftActions.Count <= 1 && leftWallLocation < transform.position.x - 1f && offset == 1)
             {
-                Debug.Log("left wall considered");
                 //bot should usually consider going left  (if it wasn't already going right or if it can't go right next turn)
-                if (lastAction != 'R' || rightWallLocation <= transform.position.x + 1f)
+                if (lastAction != 'R' || rightWallLocation <= transform.position.x + 1f) 
                     possibleLeftActions.Add(new EnvKey('L', 0, 0));
 
                 //if the bot was previously heading right, it should rarely consider going left
                 else if (lastAction == 'R')
                 {
                     int r = Random.Range(0, 10);
-                    if (r >= 8)
+                    if (r >= 9) 
                         possibleLeftActions.Add(new EnvKey('L', 0, 0));
+                }
+            }
+
+            //if there is a gap in the ceiling
+            if (ceiling > expected) {
+
+                float leftCeiling = transform.position.y, rightCeiling = transform.position.y, rightUpperWallDistance, leftUpperWallDistance;
+
+                //if the bot theoretically jumped through the gap, calculate how far back a wall is on the platform they're landing on
+                Vector2 rayCastOrigin = new Vector2(transform.position.x + offset * 1.5f, transform.position.y + 4f);
+
+                RaycastHit2D leftHit = Physics2D.Raycast(rayCastOrigin, Vector2.left, 9f, map);
+                RaycastHit2D rightHit = Physics2D.Raycast(rayCastOrigin, Vector2.right, 9f, map);
+
+                float leftWall = (leftHit.collider != null) ? leftHit.point.x : rayCastOrigin.x - 9;
+                float rightWall = (rightHit.collider != null) ? rightHit.point.x : rayCastOrigin.x + 9;
+
+                rightUpperWallDistance = rightWall - rayCastOrigin.x;
+                leftUpperWallDistance = rayCastOrigin.x - leftWall;
+
+                //find the ceiling height to the left and right of the gap
+                if (offset != -5)
+                    leftCeiling = info[new EnvKey('C', offset - 1, 0)].getHitPoint().y;
+                if (offset != 5)
+                    rightCeiling = info[new EnvKey('C', offset + 1, 0)].getHitPoint().y;
+
+                //if bot can jump to some platform (up and to the right), add it as a possible action
+                if (offset != 5 && rightCeiling < expected && rightUpperWallDistance > 2f) {
+                    if (offset > 0)
+                        possibleRightActions.Add(ceilingCheck);
+                    else if (offset < 0)
+                        possibleLeftActions.Add(ceilingCheck);
+                    else if (offset == 0) {
+                        if (info[ceilingCheck].getHitPoint().x > transform.position.x) 
+                            possibleRightActions.Add(ceilingCheck);
+                        else
+                            possibleLeftActions.Add(ceilingCheck); 
+                    }
+
+                    jumpPlatforms.Add(ceilingCheck, "right");
+                }
+
+                //if the bot can jump to some platform (up and to the left), add it a possible action
+                else if (offset != -5 && leftCeiling < expected && leftUpperWallDistance > 2f) {
+                    if (offset > 0)
+                        possibleRightActions.Add(ceilingCheck);
+                    else if (offset < 0)
+                        possibleLeftActions.Add(ceilingCheck);
+                    else if (offset == 0) {
+                        if (info[ceilingCheck].getHitPoint().x >= transform.position.x) 
+                            possibleRightActions.Add(ceilingCheck);
+                        else
+                            possibleLeftActions.Add(ceilingCheck); 
+                    }
+
+                    jumpPlatforms.Add(ceilingCheck, "left");
                 }
             }
         }
@@ -164,10 +225,13 @@ public class BotAI : MonoBehaviour
             check = 201;
             dir = -1;
         }
+        else if (action.direction == 'C') {
+            dir = Mathf.Sign(action.x);
+            check = 301;
+        }
 
         rig.velocity = new Vector2(botSpeed * dir, rig.velocity.y);
         actionsTakenToExecutePath();
-
         Debug.LogFormat("{0}: {1}, {2}", action.direction, action.x, action.y);
     }
 
@@ -254,7 +318,7 @@ public class BotAI : MonoBehaviour
         if (check == 2 && action.direction == 'G' && ((action.x > 0 && transform.position.x > jumpCoordinate - 2) || (action.x < 0 && transform.position.x < jumpCoordinate + 2)))
         {
             if (!dontJump)
-                fixedBotBehaviour.jump(rig, jumpForce);
+                fixedBotBehaviour.jump(rig, jumpForce, true);
             check = 3;
         }
 
@@ -263,6 +327,54 @@ public class BotAI : MonoBehaviour
             figureOutWhatToDo();
         else if (action.direction == 'R' && transform.position.x > endSpot.x)
             figureOutWhatToDo();
+
+        //bot is ready to jump to a higher platform (it is near a ceiling gap)
+        if (check == 301 && action.direction == 'C') 
+        {
+
+            if (jumpPlatforms[action] == "left" && rig.velocity.x > 0 && (transform.position.x-info[action].getHitPoint().x) > Random.Range(0.05f, 0.15f)) {
+                jumpCoordinate = transform.position.y;
+                fixedBotBehaviour.jump(rig, jumpForce, false);
+                rig.AddForce(new Vector2(Random.Range(20, 25), 0));
+                check = 302;
+            }
+            else if (jumpPlatforms[action] == "left" && rig.velocity.x <= 0 && (transform.position.x - info[action].getHitPoint().x) < Random.Range(1.8f, 2.2f)) {
+                rig.velocity = new Vector2(rig.velocity.x / 1.5f, rig.velocity.y);
+                jumpCoordinate = transform.position.y;
+                fixedBotBehaviour.jump(rig, jumpForce, false);
+                check = 303;
+            }
+            else if (jumpPlatforms[action] == "right" && rig.velocity.x < 0 && (info[action].getHitPoint().x - transform.position.x) > Random.Range(0.5f, 0.6f)) {
+                jumpCoordinate = transform.position.y;
+                fixedBotBehaviour.jump(rig, jumpForce, false);
+                rig.AddForce(new Vector2(Random.Range(-20, -25), 0));
+                check = 304;
+            }
+            else if (jumpPlatforms[action] == "right" && rig.velocity.x >= 0 && (info[action].getHitPoint().x - transform.position.x) < Random.Range(1.8f, 2.2f)) {
+                if ((info[action].getHitPoint().x - transform.position.x) < 0) 
+                    rig.velocity = new Vector2(-rig.velocity.x, rig.velocity.y);
+                
+                else if ((info[action].getHitPoint().x - transform.position.x) > 1.5f) {
+                    rig.velocity = new Vector2(Mathf.Abs(rig.velocity.x) / 1.5f, rig.velocity.y);
+                    jumpCoordinate = transform.position.y;
+                    fixedBotBehaviour.jump(rig, jumpForce, false);
+                    check = 305;
+                }
+            }
+        }
+
+        if (check >= 302 && transform.position.y > jumpCoordinate + 2.2f) {
+            if (jumpPlatforms[action] == "left" && check == 302) {
+                rig.velocity = new Vector2(0, rig.velocity.y);
+                rig.AddForce(new Vector2(Random.Range(-170, -150), 0));
+                check = 303;
+            } 
+            if (jumpPlatforms[action] == "right" && check == 304) {
+                rig.velocity = new Vector2(0, rig.velocity.y);
+                rig.AddForce(new Vector2(Random.Range(150, 170), 0));
+                check = 305;
+            }
+        }
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -309,7 +421,7 @@ public class BotAI : MonoBehaviour
     private void botFallingSettings()
     {
         //bot is falling -> kill horizontal velocity
-        if ((check == 1 || check == 3) && Mathf.Abs(endSpot.x - transform.position.x) < 0.25f)
+        if ((check == 1 || check == 3) && Mathf.Abs(endSpot.x - transform.position.x) < 0.25f && rig.velocity.y < 0)
         {
             check = 4 ;
 
