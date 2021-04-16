@@ -65,6 +65,7 @@ public class BotAI : MonoBehaviour
     {
         environmentInputs.scanEnvironment(transform);
         info = environmentInputs.requestEnvironmentInfo();
+        transform.G
 
         actionTimer = maxtimebetweenActions;
         figureOutWhereToHeadTo(); 
