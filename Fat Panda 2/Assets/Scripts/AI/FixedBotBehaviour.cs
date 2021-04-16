@@ -29,33 +29,52 @@ public class FixedBotBehaviour
         rig.AddForce(new Vector2(rig.velocity.x * 10, jumpForce));
     }
 
-    //check if there still ground/a surface to walk on nearby + check if there a nearby wall 
-    public Vector2 wallChecks(Transform leftFoot, Transform rightFoot, LayerMask map, Transform bot)
+    //check if there is a floor gap or wall or ceiling gap nearby  
+    public WallChecker wallChecks(Transform leftFoot, Transform rightFoot, Transform leftHead, Transform rightHead, LayerMask map, Transform bot)
     {
-        Vector2 info = new Vector2(0, 0);
+        WallChecker info = new WallChecker(false, null, null);
 
         RaycastHit2D leftWall = Physics2D.Raycast(bot.position, Vector2.left, 0.4f, map);
         RaycastHit2D rightWall = Physics2D.Raycast(bot.position, Vector2.right, 0.4f, map);
 
-        RaycastHit2D leftGround = Physics2D.Raycast(leftFoot.position, Vector2.down, 2f, map);
-        RaycastHit2D rightGround = Physics2D.Raycast(rightFoot.position, Vector2.down, 2f, map);
+        RaycastHit2D leftCeiling = Physics2D.Raycast(leftHead.position, Vector2.up, 3f, map);
+        RaycastHit2D rightCeiling = Physics2D.Raycast(rightHead.position, Vector2.up, 3f, map);
+
+        RaycastHit2D leftGround = Physics2D.Raycast(leftFoot.position, Vector2.down, 3f, map);
+        RaycastHit2D rightGround = Physics2D.Raycast(rightFoot.position, Vector2.down, 3f, map);
 
         //if the bot is super close to a wall, it needs to figure out what to do
-        if ((leftWall.collider != null || rightWall.collider != null)
-            && (leftGround.collider != null && rightGround.collider != null))
+        if ((leftWall.collider || rightWall.collider)
+            && (leftGround.collider && rightGround.collider))
         {
-            info.x = 1;
+            info.wallNearby = true;
         }
 
-
-        //check whether the bot has ground to its left and right
-        if (leftGround.collider != null && rightGround.collider == null)
-            info.y = -1;
-        else if (leftGround.collider == null && rightGround.collider != null)
-            info.y = 1;
+        //check whether the bot has a ground opening to its left and right
+        if (leftGround.collider && !rightGround.collider)
+            info.floorOpening = "right";
+        else if (!leftGround.collider && rightGround.collider)
+            info.floorOpening = "left";
+        else if (!leftGround.collider && !rightGround.collider)
+            info.floorOpening = "both";
         else
-            info.y = 0;
+            info.floorOpening = "none";
+
+        //check whether the bot has ceiling to its left and right
+        if (leftCeiling.collider && !rightCeiling.collider)
+            info.ceilingOpening = "right";
+        else if (!leftCeiling.collider && rightCeiling.collider)
+            info.ceilingOpening = "left";
+        else if (!leftCeiling.collider && rightCeiling.collider)
+            info.ceilingOpening = "both";
+        else
+            info.ceilingOpening = "none";
+
+        Debug.LogFormat("Wall nearby: {0}, Floor: {1}, Ceiling: {2}", info.wallNearby, info.floorOpening, info.ceilingOpening);
 
         return info;
     }
+
+
+
 }

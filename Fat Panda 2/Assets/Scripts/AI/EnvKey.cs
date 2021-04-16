@@ -15,3 +15,17 @@ public struct EnvKey
         this.direction = direction;
     }
 }
+
+public struct WallChecker
+{
+    public bool wallNearby;
+    public string floorOpening;
+    public string ceilingOpening;
+
+    public WallChecker(bool wallNearby, string floorOpening, string ceilingOpening)
+    {
+        this.wallNearby = wallNearby;
+        this.floorOpening = floorOpening;
+        this.ceilingOpening = ceilingOpening;
+    }
+}
