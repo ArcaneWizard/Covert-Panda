@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnvironmentDetection 
+public class EnvironmentDetection
 {
     private LayerMask map = (1 << 11);
 
     private Dictionary<EnvKey, EnvInfo> info = new Dictionary<EnvKey, EnvInfo>();
 
     //cast multiple raycasts to gather info about the environment
-    public void scanEnvironment(Transform entity) {
+    public void scanEnvironment(Transform entity)
+    {
 
         info.Clear();
 
@@ -19,7 +20,7 @@ public class EnvironmentDetection
 
         //A|B represents: type of check | position check starts
         //R = right, L = left, then U = Upper, D = Lower
- 
+
         //G for ground check
         sendRaycast(Vector2.down, 6, new EnvKey('G', 0, 0), Color.magenta, new Vector2(eX, eY));
         sendRaycast(Vector2.down, 6, new EnvKey('G', 1, 0), Color.magenta, new Vector2(eX + 1.5f, eY));
@@ -72,6 +73,6 @@ public class EnvironmentDetection
         Debug.DrawLine(entityPos, hitPos, color, 2f);
 
         //return info
-        info.Add(nameOfCheck, new EnvInfo(hitPos, hit.collider != null));
+        info.Add(nameOfCheck, new EnvInfo(hitPos, hit.collider));
     }
 }

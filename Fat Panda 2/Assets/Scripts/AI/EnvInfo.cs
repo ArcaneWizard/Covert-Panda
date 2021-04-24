@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct EnvInfo 
+public struct EnvInfo
 {
     Vector2 hitPoint;
-    bool hit;
+    Collider2D collision;
 
-    public EnvInfo(Vector2 hitPoint, bool hit)
+    public EnvInfo(Vector2 hitPoint, Collider2D collision)
     {
         this.hitPoint = hitPoint;
-        this.hit = hit;
+        this.collision = collision;
     }
 
     public Vector2 getHitPoint()
@@ -18,8 +18,11 @@ public struct EnvInfo
         return this.hitPoint;
     }
 
-    public bool getHit()
+    public GameObject getCollision()
     {
-        return this.hit;
+        if (this.collision == null)
+            return null;
+        else
+            return this.collision.gameObject;
     }
 }

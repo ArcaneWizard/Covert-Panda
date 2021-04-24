@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FixedBotBehaviour 
+public class FixedBotBehaviour
 {
 
     //set bot's idle or move animation
@@ -24,10 +24,10 @@ public class FixedBotBehaviour
     }
 
     //bot jumps
-    public void jump(Rigidbody2D rig, float jumpForce, bool boost)
+    public void jump(Rigidbody2D rig, float jumpForce, bool reducedJump)
     {
-        float xForce = (boost) ? rig.velocity.x * 10 : 0;
-        rig.AddForce(new Vector2(xForce, jumpForce));
+        float multiplier = (reducedJump) ? 0.8f : 1;
+        rig.AddForce(new Vector2(0, jumpForce * multiplier));
     }
 
     //check if there is a floor gap or wall or ceiling gap nearby  
