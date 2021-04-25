@@ -85,7 +85,6 @@ public class Sideview_Controller : MonoBehaviour
         //detach object from Player
         objectHeld.transform.parent = null;
         objectHeld.layer = LayerMask.NameToLayer("Thrown Object");
-        objectHeld.transform.GetComponent<Collider2D>().isTrigger = false;
 
         //launch object and apply gravity
         objectHeld.AddComponent<Rigidbody2D>();
