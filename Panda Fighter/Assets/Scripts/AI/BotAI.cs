@@ -224,17 +224,22 @@ public class BotAI : MonoBehaviour
                 GameObject groundObject = info[new EnvKey('G', 0, 0)].gameObject();
 
                 //get the tilt of the walls directly to the left and right of the bot right now
-                GameObject rightWall = info[new EnvKey('R', 0, 0)].gameObject();
-                float rightWallTilt = rightWall ? rightWall.transform.eulerAngles.z : 0f;
+                EnvInfo rightWall = info[new EnvKey('R', 0, 0)];
+                float rightWallTilt = rightWall.gameObject() ? rightWall.gameObject().transform.eulerAngles.z : 0f;
 
-                GameObject leftWall = info[new EnvKey('L', 0, 0)].gameObject();
-                float leftWallTilt = leftWall ? leftWall.transform.eulerAngles.z : 0f;
+                EnvInfo leftWall = info[new EnvKey('L', 0, 0)];
+                float leftWallTilt = leftWall.gameObject() ? leftWall.gameObject().transform.eulerAngles.z : 0f;
 
                 //if bot spots an opening in the ceiling to its left or right and there is ceiling directly to the right of the opening,
                 //then add this jump as a possible action as long as there is no nearby ramp to the right
 
+                if (offset == 1)
+                {
+                    Debug.LogFormat("{0}, {1}, {2}, {3}, {4}, {5}", rightCeilingHeight < expectedHeight, rightUpperWallDistance > 2f, rightCeilingObject != groundObject, !rightWall.gameObject(), Mathf.Abs(rightCeiling.location().x - rightWall.location().x) > 1.51f, !wallIsActuallyARamp(rightWallTilt));
+                }
+
                 if (offset != 5 && rightCeilingHeight < expectedHeight && rightUpperWallDistance > 2f && rightCeilingObject != groundObject &&
-                (!rightWall || Mathf.Abs(rightCeiling.location().x - rightWall.transform.position.x) > 1.51f || !wallIsActuallyARamp(rightWallTilt)))
+                (!rightWall.gameObject() || Mathf.Abs(rightCeiling.location().x - rightWall.location().x) > 1.51f || !wallIsActuallyARamp(rightWallTilt)))
                 {
                     if (offset > 0)
                     {
@@ -256,7 +261,7 @@ public class BotAI : MonoBehaviour
 
                 //if bot spots an opening in the ceiling to its left or right, but there is ceiling directly to the left of the opening in the ceiling, then add this jump as a possible action
                 else if (offset != -5 && leftCeilingHeight < expectedHeight && leftUpperWallDistance > 2f && leftCeilingObject != groundObject &&
-                (!leftWall || Mathf.Abs(leftCeiling.location().x - leftWall.transform.position.x) > 1.51f || !wallIsActuallyARamp(leftWallTilt)))
+                (!leftWall.gameObject() || Mathf.Abs(leftCeiling.location().x - leftWall.location().x) > 1.51f || !wallIsActuallyARamp(leftWallTilt)))
                 {
                     if (offset > 0)
                         possibleRightActions.Add(ceilingCheck);
@@ -279,6 +284,8 @@ public class BotAI : MonoBehaviour
         //bot chooses where to head to
         action = pickPossibleAction();
         endSpot = info[action].location();
+
+        action.printColored();
 
         //bot heads to the place it chose
         if (action.direction == 'G')
@@ -431,16 +438,11 @@ public class BotAI : MonoBehaviour
             //bot is moving right and plans to go right after jumping to the upper level
             else if (jumpPlatforms[action] == "right" && rig.velocity.x >= 0 && (info[action].location().x - transform.position.x) < Random.Range(1.8f, 2.2f))
             {
-                if (info[action].location().x - transform.position.x < 0)
-                    rig.velocity = new Vector2(-rig.velocity.x, rig.velocity.y);
+                rig.velocity = new Vector2(Mathf.Abs(rig.velocity.x) / 1.5f, rig.velocity.y);
+                jumpCoordinate = transform.position.y;
+                fixedBotBehaviour.jump(rig, jumpForce * multiplier, false);
+                check = 305;
 
-                else if ((info[action].location().x - transform.position.x) > 1.5f)
-                {
-                    rig.velocity = new Vector2(Mathf.Abs(rig.velocity.x) / 1.5f, rig.velocity.y);
-                    jumpCoordinate = transform.position.y;
-                    fixedBotBehaviour.jump(rig, jumpForce * multiplier, false);
-                    check = 305;
-                }
             }
         }
 
@@ -511,10 +513,10 @@ public class BotAI : MonoBehaviour
         if (ground.gameObject() && transform.position.y - ground.location().y < 1.6f && groundIsRamp(groundTilt))
         {
             chooseDirection += 40 * lastMovement;
-            Debug.Log("on ramp");
+            //Debug.Log("on ramp");
         }
-        else
-            Debug.Log("off ramp " + ground + ", " + (transform.position.y - ground.location().y) + ", " + groundIsRamp(groundTilt));
+        // else
+        //     Debug.Log("off ramp " + ground + ", " + (transform.position.y - ground.location().y) + ", " + groundIsRamp(groundTilt));
 
         //sometimes the bot MUST go left or MUST go right
         if (possibleLeftActions.Count == 0)
@@ -575,7 +577,7 @@ public class BotAI : MonoBehaviour
         if (Mathf.Abs(rig.velocity.x) <= 0.6f && Mathf.Abs(rig.velocity.y) <= 0.2f && stillTimer < 0f)
         {
             stillTimer = Random.Range(0.1f, 0.3f);
-            Debug.Log("timer reset");
+            //Debug.Log("timer reset");
         }
 
         if (stillTimer > 0f)
@@ -585,7 +587,7 @@ public class BotAI : MonoBehaviour
         {
             check = 0;
             figureOutWhatToDo();
-            Debug.Log("new decision made by timer");
+            //Debug.Log("new decision made by timer");
         }
     }
 
@@ -639,9 +641,12 @@ public class BotAI : MonoBehaviour
             if (Mathf.Abs(platformAngle) < Constants.maxPlatformTilt && Mathf.Abs(rig.velocity.x) > 1f)
             {
                 //make sure bot moves at a constant x velocity even on slanted ground
-                if (rig.velocity.x > botSpeed + 0.15f && rig.velocity.x < botSpeed - 0.15f)
+                if (rig.velocity.x > 0 && (rig.velocity.x > botSpeed + 0.15f || rig.velocity.x < botSpeed - 0.15f))
+                {
                     rig.velocity = new Vector2(botSpeed, rig.velocity.y);
-                else if (rig.velocity.x < -botSpeed - 0.15f && rig.velocity.x > -botSpeed + 0.15f)
+                    print("correct speed");
+                }
+                else if (rig.velocity.x < 0 && (rig.velocity.x < -botSpeed - 0.15f || rig.velocity.x > -botSpeed + 0.15f))
                     rig.velocity = new Vector2(-botSpeed, rig.velocity.y);
             }
         }
