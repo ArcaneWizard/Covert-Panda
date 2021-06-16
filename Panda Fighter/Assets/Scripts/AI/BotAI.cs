@@ -47,6 +47,9 @@ public class BotAI : MonoBehaviour
     private Dictionary<EnvKey, string> jumpPlatforms = new Dictionary<EnvKey, string>();
     private float jumpToHeight = 0;
 
+    private bool testSpecificAction;
+    private EnvKey testKey;
+
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
@@ -58,6 +61,9 @@ public class BotAI : MonoBehaviour
         rightHead = transform.GetChild(4);
 
         botSpeed = Random.Range(4.3f, 5f);
+
+        //testSpecificAction = true;
+        //testKey = new EnvKey('G', 5, 0);
     }
 
     void Start()
@@ -106,14 +112,14 @@ public class BotAI : MonoBehaviour
             if (info[floorCheck].location().x > leftWallLocation)
             {
                 //consider going to the first drop down opening on it's left 
-                if (info[floorCheck].location().y <= transform.position.y - 2.1f && !holeSpottedB4)
+                if (info[floorCheck].location().y <= transform.position.y - 3.2f && !holeSpottedB4)
                 {
                     holeSpottedB4 = true;
                     possibleLeftActions.Add(floorCheck);
                 }
 
                 //consider going to the first seperate platform it can jump to on it's left 
-                if (offset != -1 && info[floorCheck].location().y > transform.position.y - 2.1f && info[prevFloorCheck].location().y <= transform.position.y - 2.1f && holeSpottedB4)
+                if (offset != -1 && info[floorCheck].location().y > transform.position.y - 3.2f && info[prevFloorCheck].location().y <= transform.position.y - 3.2f && holeSpottedB4)
                     possibleLeftActions.Add(floorCheck);
             }
         }
@@ -130,15 +136,16 @@ public class BotAI : MonoBehaviour
             //make sure this opening in the floor is not behind a wall (as the bot can't just walk straight to it then)
             if (info[floorCheck].location().x < rightWallLocation)
             {
+
                 //consider going to the first drop down opening on it's right 
-                if (info[floorCheck].location().y <= transform.position.y - 2.1f && !holeSpottedB4)
+                if (info[floorCheck].location().y <= transform.position.y - 3.2f && !holeSpottedB4)
                 {
                     holeSpottedB4 = true;
                     possibleRightActions.Add(floorCheck);
                 }
 
                 //consider going to the first seperate platform it can jump to on it's right 
-                if (offset != 1 && info[floorCheck].location().y > transform.position.y - 2.1f && info[prevFloorCheck].location().y <= transform.position.y - 2.1f && holeSpottedB4)
+                else if (offset != 1 && info[floorCheck].location().y > transform.position.y - 3.2f && info[prevFloorCheck].location().y <= transform.position.y - 3.2f && holeSpottedB4)
                     possibleRightActions.Add(floorCheck);
             }
         }
@@ -390,7 +397,7 @@ public class BotAI : MonoBehaviour
         if (check == 2 && action.direction == 'G' && ((action.x > 0 && transform.position.x > jumpCoordinate - 1.2f) || (action.x < 0 && transform.position.x < jumpCoordinate + 2)))
         {
             if (!dontJump)
-                fixedBotBehaviour.jump(rig, jumpForce, true);
+                fixedBotBehaviour.jump(rig, jumpForce * 0.6f, true);
             check = 3;
         }
 
@@ -523,6 +530,10 @@ public class BotAI : MonoBehaviour
             chooseDirection = 50;
         else if (possibleRightActions.Count == 0)
             chooseDirection = 0;
+
+        //for debugging purposes
+        if (testSpecificAction)
+            return testKey;
 
         Debug.Log(chooseDirection + ", " + lastMovement);
         //pick a left or right destination
