@@ -13,12 +13,12 @@ public struct EnvInfo
         this.collision = collision;
     }
 
-    public Vector2 getHitPoint()
+    public Vector2 location()
     {
         return this.hitPoint;
     }
 
-    public GameObject getCollision()
+    public GameObject gameObject()
     {
         if (this.collision == null)
             return null;

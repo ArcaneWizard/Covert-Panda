@@ -55,11 +55,6 @@ public class WeaponSystem : MonoBehaviour
         ammo["Grenade"].text = "10";
     }
 
-    void Update()
-    {
-        Debug.Log(weaponSelected);
-    }
-
     //allow player to select a different weapon 
     public void SelectWeapon()
     {
