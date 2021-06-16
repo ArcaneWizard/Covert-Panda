@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class BotAttacks : MonoBehaviour
 {
-    public GameObject[] bullets;
-    public Transform gun;
+
+    private List<GameObject> bullets = new List<GameObject>();
     public Transform bulletSpawnPoint;
+    public Transform bulletsHolder;
 
     private Transform bullet;
     private int cycle = 0;
@@ -14,6 +15,14 @@ public class BotAttacks : MonoBehaviour
 
     private float cooldownTimer = 0;
     private float cooldownTime = 0.1f;
+
+    void Awake()
+    {
+        foreach (Transform bullet in bulletsHolder)
+        {
+            bullets.Add(bullet.gameObject);
+        }
+    }
 
     void Update()
     {
@@ -34,7 +43,7 @@ public class BotAttacks : MonoBehaviour
             bullet.GetComponent<Rigidbody2D>().velocity = dir.normalized * bulletSpeed;
 
             //cycle to a different bullet in the array next time
-            cycle = ++cycle % bullets.Length;
+            cycle = ++cycle % bullets.Count;
             cooldownTimer = cooldownTime;
         }
     }

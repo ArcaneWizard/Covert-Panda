@@ -30,6 +30,13 @@ public class FixedBotBehaviour
         rig.AddForce(new Vector2(0, jumpForce * multiplier));
     }
 
+    //ground check
+    public bool groundCheck(Transform bot, LayerMask map)
+    {
+        RaycastHit2D ground = Physics2D.Raycast(bot.position, Vector2.down, 2.2f, map);
+        return (ground.collider) ? true : false;
+    }
+
     //check if there is a floor gap or wall or ceiling gap nearby  
     public WallChecker wallChecks(Transform leftFoot, Transform rightFoot, Transform leftHead, Transform rightHead, LayerMask map, Transform bot)
     {

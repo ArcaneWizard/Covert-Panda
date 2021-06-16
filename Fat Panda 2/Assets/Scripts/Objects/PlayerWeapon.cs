@@ -9,5 +9,11 @@ public class PlayerWeapon : MonoBehaviour
     void Awake()
     {
         weapon = gameObject.tag;
+        transform.GetComponent<Rigidbody2D>().isKinematic = true;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log(collision);
     }
 }

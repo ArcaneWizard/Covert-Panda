@@ -192,7 +192,7 @@ public class BotAI : MonoBehaviour
                 float leftCeiling = transform.position.y, rightCeiling = transform.position.y, rightUpperWallDistance, leftUpperWallDistance;
                 GameObject leftCeilingObject = null, rightCeilingObject = null, groundObject = info[new EnvKey('G', 0, 0)].getCollision();
 
-                //if the bot theoretically jumped through the gap, calculate how far back a wall is on the platform they're landing on
+                //if the bot theoretically jumped through the ceiling gap, calculate how far back the left and right walls are on the new platform they're landing on
                 Vector2 rayCastOrigin = new Vector2(transform.position.x + offset * 1.5f, transform.position.y + 4f);
 
                 RaycastHit2D leftHit = Physics2D.Raycast(rayCastOrigin, Vector2.left, 9f, Constants.map);
@@ -204,7 +204,7 @@ public class BotAI : MonoBehaviour
                 rightUpperWallDistance = rightWall - rayCastOrigin.x;
                 leftUpperWallDistance = rayCastOrigin.x - leftWall;
 
-                //find the ceiling height to the left and right of the gap
+                //find the ceiling's y position to the left and right of the gap in the ceiling
                 if (offset != -5)
                 {
                     leftCeiling = info[new EnvKey('C', offset - 1, 0)].getHitPoint().y;
@@ -218,7 +218,7 @@ public class BotAI : MonoBehaviour
 
                 //check for the object below the bottom
 
-                //if bot can jump to some platform (up and to the right), add it as a possible action
+                //if bot spots an opening in the ceiling to its left or right, but there is ceiling directly to the right of the opening in the ceiling, then add this jump as a possible action
                 if (offset != 5 && rightCeiling < expected && rightUpperWallDistance > 2f && rightCeilingObject != groundObject)
                 {
 
@@ -229,7 +229,10 @@ public class BotAI : MonoBehaviour
                     else if (offset == 0)
                     {
                         if (info[ceilingCheck].getHitPoint().x > transform.position.x)
+                        {
                             possibleRightActions.Add(ceilingCheck);
+                            print("R");
+                        }
                         else
                             possibleLeftActions.Add(ceilingCheck);
                     }
@@ -238,7 +241,7 @@ public class BotAI : MonoBehaviour
                     jumpToHeight = transform.position.y + 4f;
                 }
 
-                //if the bot can jump to some platform (up and to the left), add it a possible action
+                //if bot spots an opening in the ceiling to its left or right, but there is ceiling directly to the left of the opening in the ceiling, then add this jump as a possible action
                 else if (offset != -5 && leftCeiling < expected && leftUpperWallDistance > 2f && leftCeilingObject != groundObject)
                 {
                     if (offset > 0)
@@ -248,9 +251,15 @@ public class BotAI : MonoBehaviour
                     else if (offset == 0)
                     {
                         if (info[ceilingCheck].getHitPoint().x >= transform.position.x)
+                        {
                             possibleRightActions.Add(ceilingCheck);
+                            print("L" + ceilingCheck.x + ceilingCheck.y);
+                        }
                         else
+                        {
                             possibleLeftActions.Add(ceilingCheck);
+                            print("L2" + ceilingCheck.x + ceilingCheck.y);
+                        }
                     }
 
                     jumpPlatforms.Add(ceilingCheck, "left");
@@ -287,7 +296,6 @@ public class BotAI : MonoBehaviour
 
         rig.velocity = new Vector2(botSpeed * dir, rig.velocity.y);
         actionsTakenToExecutePath();
-        Debug.LogFormat("<color=cyan>{0}: {1}, {2}</color>", action.direction, action.x, action.y);
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -458,6 +466,8 @@ public class BotAI : MonoBehaviour
         if (isGroundedTimer <= 0)
         {
 
+            print("grounded: " + fixedBotBehaviour.groundCheck(transform, Constants.map));
+
             //the bot is Grounded (x velocity has remained constant for last 0.12 seconds and y velocity is near 0)
             if (Mathf.Abs(lastYVelocity - rig.velocity.y) < 0.011f && rig.velocity.y < 0.2f)
             {
@@ -494,8 +504,6 @@ public class BotAI : MonoBehaviour
             chooseDirection = 50;
         else if (possibleRightActions.Count == 0)
             chooseDirection = 0;
-
-        Debug.Log(chooseDirection + " right:" + (lastMovement == 1));
 
         //pick a left or right destination
         if (chooseDirection < 50 && possibleLeftActions.Count > 0)
@@ -563,7 +571,7 @@ public class BotAI : MonoBehaviour
         }
     }
 
-    //bot constantly checks for ground and nearby walls every 0.2 seconds
+    /*//bot constantly checks for ground and nearby walls every 0.2 seconds
     private IEnumerator constantWallChecks()
     {
         WallChecker check;
@@ -575,7 +583,7 @@ public class BotAI : MonoBehaviour
         //wait 0.2 seconds and repeat method
         yield return new WaitForSeconds(0.2f);
         StartCoroutine(constantWallChecks());
-    }
+    }*/
 
     //bot scans for the player to shoot at the player
     private IEnumerator lookForPlayer()
@@ -598,7 +606,7 @@ public class BotAI : MonoBehaviour
         {
             //determine if it's actual ground (could be slanted little, but shouldn't be vertical like a wall)
             float platformAngle = col.transform.eulerAngles.z;
-            if (platformAngle > -30f && platformAngle < 30f && Mathf.Abs(rig.velocity.x) > 1f)
+            if (platformAngle > -46f && platformAngle < 46f && Mathf.Abs(rig.velocity.x) > 1f)
             {
                 //make sure bot moves at a constant x velocity even on slanted ground
                 if (rig.velocity.x > botSpeed + 0.15f && rig.velocity.x < botSpeed - 0.15f)
