@@ -63,8 +63,8 @@ public class BotAI : MonoBehaviour
 
         botSpeed = Random.Range(4.3f, 5f);
 
-        testSpecificAction = true;
-        testKey = new EnvKey('G', -4, 0);
+        //testSpecificAction = true;
+        //testKey = new EnvKey('G', -4, 0);
     }
 
     void Start()
