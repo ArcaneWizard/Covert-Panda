@@ -50,9 +50,8 @@ public class WeaponSystem : MonoBehaviour
         }
 
         //start with grenade equipped
-        weaponSelected = "Grenade";
-        weapons["Grenade"].sprite = equipped["Grenade"];
-        ammo["Grenade"].text = "10";
+        weaponSelected = "Pistol";
+        EquipNewWeapon("Pistol");
     }
 
     //allow player to select a different weapon 
@@ -73,7 +72,7 @@ public class WeaponSystem : MonoBehaviour
     {
         //update weapon sprite + ammo
         weapons[weapon].sprite = equipped[weapon];
-        ammo[weapon].text = "10";
+        ammo[weapon].text = "40";
     }
 
     //player uses up ammo of a certain weapon
