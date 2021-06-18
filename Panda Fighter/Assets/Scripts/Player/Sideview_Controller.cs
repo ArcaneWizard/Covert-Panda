@@ -5,9 +5,9 @@ using UnityEngine;
 public class Sideview_Controller : MonoBehaviour
 {
     private Rigidbody2D rig;
-    private SpriteRenderer playerSprite;
+    private Transform player;
+    public Transform shootingArm;
     public Transform bulletSpawnPoint;
-    private Animator animator;
 
     private WeaponSystem weaponSystem;
     private GameObject weapon;
@@ -31,13 +31,11 @@ public class Sideview_Controller : MonoBehaviour
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
-        playerSprite = transform.GetChild(0).transform.GetComponent<SpriteRenderer>();
+        player = transform.GetChild(0).transform;
         camera = transform.GetChild(1).transform.GetComponent<Camera>();
 
         leftFoot = transform.GetChild(2);
         rightFoot = transform.GetChild(3);
-
-        //animator = transform.GetChild(0).transform.GetComponent<Animator>();
     }
 
     void Start()
@@ -88,14 +86,14 @@ public class Sideview_Controller : MonoBehaviour
             }
         }
 
-        playerOrientation();
+        playerLimbsOrientation();
         //playerAnimation();
     }
 
     private Vector2 configureObjectForThrowing(Transform ammoSpawn)
     {
         //calculate direction to throw object
-        Vector2 throwDir = (Input.mousePosition - camera.WorldToScreenPoint(ammoSpawn.position)).normalized;
+        Vector2 throwDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
 
         weapon.transform.position = transform.position;
         weapon.layer = LayerMask.NameToLayer("Thrown Object");
@@ -162,20 +160,28 @@ public class Sideview_Controller : MonoBehaviour
             rig.AddForce(Constants.levitationBoost);
     }
 
-    private void playerOrientation()
+    private void playerLimbsOrientation()
     {
-        if (Input.mousePosition.x >= Screen.width / 2)
-            playerSprite.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        //player faces left or right depending on mouse cursor
+        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.position).x)
+            player.localRotation = Quaternion.Euler(0, 0, 0);
         else
-            playerSprite.transform.localRotation = Quaternion.Euler(0, 180, 0);
-    }
+            player.localRotation = Quaternion.Euler(0, 180, 0);
 
-    private void playerAnimation()
-    {
-        if (Mathf.Abs(rig.velocity.x) > 0)
-            animator.SetInteger("State", 1);
+        //player's shooting arm (w/ gun) rotates towards the mouse cursor
+        Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+        Vector2 offset = Quaternion.Euler(0, 0, -40f) * shootDirection;
+        Vector2 aimDirection = shootDirection + offset;
+
+        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.position).x)
+        {
+            shootingArm.transform.right = aimDirection;
+        }
         else
-            animator.SetInteger("State", 0);
+        {
+            shootingArm.transform.right = aimDirection;
+            shootingArm.localEulerAngles = new Vector3(shootingArm.localEulerAngles.x, 0, 140 - shootingArm.localEulerAngles.z);
+        }
     }
 
     private bool isGrounded()
