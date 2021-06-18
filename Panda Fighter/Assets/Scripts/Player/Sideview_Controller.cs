@@ -6,6 +6,7 @@ public class Sideview_Controller : MonoBehaviour
 {
     private Rigidbody2D rig;
     private Transform player;
+    private Animator animator;
     public Transform shootingArm;
     public Transform bulletSpawnPoint;
     public Transform gun;
@@ -26,6 +27,7 @@ public class Sideview_Controller : MonoBehaviour
 
     private Transform leftFoot;
     private Transform rightFoot;
+    private bool grounded;
 
     private int movementDirX;
 
@@ -34,6 +36,7 @@ public class Sideview_Controller : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
         player = transform.GetChild(0).transform;
         camera = transform.GetChild(1).transform.GetComponent<Camera>();
+        animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
         leftFoot = transform.GetChild(2);
         rightFoot = transform.GetChild(3);
@@ -46,7 +49,7 @@ public class Sideview_Controller : MonoBehaviour
 
     void Update()
     {
-        //convert A and D keys to left or right movement
+        //use A and D keys for left or right movement
         movementDirX = 0;
         if (Input.GetKey(KeyCode.D))
             movementDirX++;
@@ -55,8 +58,15 @@ public class Sideview_Controller : MonoBehaviour
 
         rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
 
-        //convert W and S keys to jumping up or thrusting downwards
-        if (Input.GetKeyDown(KeyCode.W) && isGrounded())
+        //store as variable so it can be reused multiple times without redoing the method's raycast calculations
+        grounded = isGrounded();
+
+        //use jump animation/movement if player isn't grounded
+        if (!grounded && animator.GetInteger("Phase") != 2)
+            animator.SetInteger("Phase", 2);
+
+        //use W and S keys for jumping up or thrusting downwards
+        if (Input.GetKeyDown(KeyCode.W) && grounded)
             rig.AddForce(new Vector2(0, jumpForce));
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
@@ -88,7 +98,7 @@ public class Sideview_Controller : MonoBehaviour
         }
 
         playerLimbsOrientation();
-        //playerAnimation();
+        playerAnimation();
     }
 
     private Vector2 configureObjectForThrowing(Transform ammoSpawn)
@@ -193,7 +203,6 @@ public class Sideview_Controller : MonoBehaviour
             float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
 
             Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-            Debug.Log(gunLocation);
             gun.transform.localPosition = gunLocation;
         }
 
@@ -206,7 +215,6 @@ public class Sideview_Controller : MonoBehaviour
             float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
 
             Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-            Debug.Log(gunLocation);
             gun.transform.localPosition = gunLocation;
         }
 
@@ -221,6 +229,34 @@ public class Sideview_Controller : MonoBehaviour
             shootingArm.transform.right = aimDirection;
             shootingArm.localEulerAngles = new Vector3(shootingArm.localEulerAngles.x, 0, 140 - shootingArm.localEulerAngles.z);
         }*/
+    }
+
+    private void playerAnimation()
+    {
+        //if the player isn't mid-air
+        if (animator.GetInteger("Phase") != 2)
+        {
+            //play walking animation if A or D is pressed down
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+                animator.SetInteger("Phase", 1);
+            else
+                animator.SetInteger("Phase", 0);
+
+            bool facingRight = Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x;
+
+            //if you're looking in the opposite direction you're walking, play walking animation backwards
+            if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == "walking soldier")
+            {
+                if ((movementDirX == 1 && facingRight) || movementDirX == -1 && !facingRight)
+                    animator.SetFloat("walking speed", 1);
+                else
+                    animator.SetFloat("walking speed", -1);
+            }
+        }
+
+        //if you are grounded, exit out of jump animation
+        if (animator.GetInteger("Phase") == 2 && grounded)
+            animator.SetInteger("Phase", 0);
     }
 
     private bool isGrounded()
