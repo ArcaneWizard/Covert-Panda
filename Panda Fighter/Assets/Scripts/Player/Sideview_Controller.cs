@@ -8,6 +8,7 @@ public class Sideview_Controller : MonoBehaviour
     private Transform player;
     public Transform shootingArm;
     public Transform bulletSpawnPoint;
+    public Transform gun;
 
     private WeaponSystem weaponSystem;
     private GameObject weapon;
@@ -108,7 +109,7 @@ public class Sideview_Controller : MonoBehaviour
     private void throwGrenade()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = configureObjectForThrowing(transform);
+        Vector2 throwDir = configureObjectForThrowing(bulletSpawnPoint);
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //apply a large force to throw the grenade
@@ -135,7 +136,7 @@ public class Sideview_Controller : MonoBehaviour
     private void throwBoomerang()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = configureObjectForThrowing(transform);
+        Vector2 throwDir = configureObjectForThrowing(bulletSpawnPoint);
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //set the boomerang's velocity really high
@@ -163,7 +164,7 @@ public class Sideview_Controller : MonoBehaviour
     private void playerLimbsOrientation()
     {
         //player faces left or right depending on mouse cursor
-        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.position).x)
+        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
             player.localRotation = Quaternion.Euler(0, 0, 0);
         else
             player.localRotation = Quaternion.Euler(0, 180, 0);
@@ -173,6 +174,44 @@ public class Sideview_Controller : MonoBehaviour
         Vector2 offset = Quaternion.Euler(0, 0, -40f) * shootDirection;
         Vector2 aimDirection = shootDirection + offset;
 
+        Vector2 pointingRight = new Vector2(0.817f, 2.077f);
+        Vector2 pointingUp = new Vector2(-0.276f, 3.389f);
+        Vector2 pointingDown = new Vector2(-0.548f, 0.964f);
+        Vector2 shoulderPos = new Vector2(-0.434f, 2.128f);
+
+        float up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+        float right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+        float down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+
+        shootDirection = new Vector2(Mathf.Abs(shootDirection.x), shootDirection.y);
+        if (shootDirection.y >= 0)
+        {
+            float slope = (up - right) / 90f;
+            float weaponRotation = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * slope + right;
+
+            float dirSlope = (1.252f - 1.271f) / 90f;
+            float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
+
+            Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+            Debug.Log(gunLocation);
+            gun.transform.localPosition = gunLocation;
+        }
+
+        if (shootDirection.y < 0)
+        {
+            float slope = (down - right) / -90f;
+            float weaponRotation = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * slope + right;
+
+            float dirSlope = (1.17f - 1.271f) / -90f;
+            float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
+
+            Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+            Debug.Log(gunLocation);
+            gun.transform.localPosition = gunLocation;
+        }
+
+        /*
+
         if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.position).x)
         {
             shootingArm.transform.right = aimDirection;
@@ -181,7 +220,7 @@ public class Sideview_Controller : MonoBehaviour
         {
             shootingArm.transform.right = aimDirection;
             shootingArm.localEulerAngles = new Vector3(shootingArm.localEulerAngles.x, 0, 140 - shootingArm.localEulerAngles.z);
-        }
+        }*/
     }
 
     private bool isGrounded()
