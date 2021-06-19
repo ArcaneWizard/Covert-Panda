@@ -13,6 +13,7 @@ public class Sideview_Controller : MonoBehaviour
 
     private WeaponSystem weaponSystem;
     private GameObject weapon;
+    private float timeLeftBtwnShots;
 
     private Camera camera;
 
@@ -71,10 +72,11 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
 
-        //Right click to throw
+
+        //Weapons where you right click to use/shoot the weapon once
         if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
         {
-            if (weaponSystem.getAmmo() > 0)
+            if (weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
             {
                 weapon = weaponSystem.getWeapon();
                 weaponSystem.usedOneAmmo();
@@ -87,21 +89,42 @@ public class Sideview_Controller : MonoBehaviour
                     case "Boomerang":
                         throwBoomerang();
                         break;
-                    case "Pistol":
-                        shootPlasmaBullet();
-                        break;
                     default:
-                        Debug.LogError("You haven't specified how to throw this particular object");
+                        Debug.LogError("You haven't specified how to shoot this particular object");
                         break;
                 }
             }
         }
 
+        //Weapons where you hold the right mouse button down to continously shoot
+        if (Input.GetMouseButton(0) && weaponSystem.weaponSelected != null)
+        {
+            if (weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
+            {
+                weapon = weaponSystem.getWeapon();
+                weaponSystem.usedOneAmmo();
+                timeLeftBtwnShots = 0.33f;
+
+                switch (weaponSystem.weaponSelected)
+                {
+                    case "Pistol":
+                        shootPlasmaBullet();
+                        break;
+                    default:
+                        Debug.LogError("You haven't specified how to shoot this particular object");
+                        break;
+                }
+            }
+        }
+
+        if (timeLeftBtwnShots > 0)
+            timeLeftBtwnShots -= Time.deltaTime;
+
         playerLimbsOrientation();
         playerAnimation();
     }
 
-    private Vector2 configureObjectForThrowing(Transform ammoSpawn)
+    private Vector2 throwOrShootSomething(Transform ammoSpawn)
     {
         //calculate direction to throw object
         Vector2 throwDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
@@ -119,7 +142,7 @@ public class Sideview_Controller : MonoBehaviour
     private void throwGrenade()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = configureObjectForThrowing(bulletSpawnPoint);
+        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //apply a large force to throw the grenade
@@ -127,12 +150,13 @@ public class Sideview_Controller : MonoBehaviour
         objectRig.velocity = new Vector2(0, 0);
         objectRig.AddForce(unadjustedForce * objectRig.mass);
         Debug.LogFormat("{0}, {1}", unadjustedForce, objectRig.mass);
+
     }
 
     private void shootPlasmaBullet()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = configureObjectForThrowing(bulletSpawnPoint);
+        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //spawn and orient the bullet correctly
@@ -146,7 +170,7 @@ public class Sideview_Controller : MonoBehaviour
     private void throwBoomerang()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = configureObjectForThrowing(bulletSpawnPoint);
+        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //set the boomerang's velocity really high
