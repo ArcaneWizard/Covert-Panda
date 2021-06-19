@@ -20,7 +20,7 @@ public class WeaponSystem : MonoBehaviour
 
     [HideInInspector]
     public string weaponSelected;
-    private int ammoCycle = 0;
+    private int bulletNumber = 0;
 
     void Awake()
     {
@@ -50,9 +50,8 @@ public class WeaponSystem : MonoBehaviour
         }
 
         //start with grenade equipped
-        weaponSelected = "Grenade";
-        weapons["Grenade"].sprite = equipped["Grenade"];
-        ammo["Grenade"].text = "10";
+        weaponSelected = "Pistol";
+        EquipNewWeapon("Pistol");
     }
 
     //allow player to select a different weapon 
@@ -66,6 +65,9 @@ public class WeaponSystem : MonoBehaviour
             weaponSelected = weapon;
         else
             return;
+
+        //update which bullet in the bullet list to use
+        bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
     }
 
     //player collects a weapon by physically touching it
@@ -73,7 +75,7 @@ public class WeaponSystem : MonoBehaviour
     {
         //update weapon sprite + ammo
         weapons[weapon].sprite = equipped[weapon];
-        ammo[weapon].text = "10";
+        ammo[weapon].text = "40";
     }
 
     //player uses up ammo of a certain weapon
@@ -84,7 +86,10 @@ public class WeaponSystem : MonoBehaviour
         weaponAmmo--;
         ammo[weaponSelected].text = weaponAmmo.ToString();
 
-        //if weaopn is out of ammo, update its sprite
+        //use diff gameobject bullet next time
+        bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
+
+        //if weapon is out of ammo, update its sprite
         if (weaponAmmo <= 0)
             weapons[weaponSelected].sprite = notEquipped[weaponSelected];
     }
@@ -92,8 +97,7 @@ public class WeaponSystem : MonoBehaviour
     //get the weapon bullet from the list in the dictionary + return different bullet next time
     public GameObject getWeapon()
     {
-        Transform theWeapon = physicalWeapons[weaponSelected][ammoCycle];
-        ammoCycle = ++ammoCycle % physicalWeapons[weaponSelected].Count;
+        Transform theWeapon = physicalWeapons[weaponSelected][bulletNumber];
         return theWeapon.gameObject;
     }
 

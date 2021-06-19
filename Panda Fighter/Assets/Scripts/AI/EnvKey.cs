@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
-public struct EnvKey  
+public struct EnvKey
 {
     public int x;
     public int y;
@@ -14,6 +15,17 @@ public struct EnvKey
         this.y = y;
         this.direction = direction;
     }
+
+    public void print()
+    {
+        Debug.LogFormat("{0}: {1}, {2}", this.direction, this.x, this.y);
+    }
+
+    public void printColored()
+    {
+        Debug.LogFormat("<color=cyan>{0}: {1}, {2}</color>", this.direction, this.x, this.y);
+    }
+
 }
 
 public struct WallChecker

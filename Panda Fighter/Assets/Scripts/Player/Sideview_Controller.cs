@@ -5,35 +5,41 @@ using UnityEngine;
 public class Sideview_Controller : MonoBehaviour
 {
     private Rigidbody2D rig;
-    private SpriteRenderer sR;
+    private Transform player;
     private Animator animator;
+    public Transform shootingArm;
+    public Transform bulletSpawnPoint;
+    public Transform gun;
+    public BoxCollider2D footCollider;
 
     private WeaponSystem weaponSystem;
     private GameObject weapon;
+    private float timeLeftBtwnShots;
 
     private Camera camera;
 
-    private float speed = 4.0f;
-    private float jumpForce = 570;
+    public float speed = 4.0f;
+    public float jumpForce = 570;
 
-    private float grenadeThrowForce = 650;
-    private float boomerangSpeed = 31;
-    private Vector2 objectSpinSpeed = new Vector2(-200, 200);
+    public float grenadeThrowForce = 650;
+    public float grenadeYForce = -20;
+    public float boomerangSpeed = 31;
+    public float plasmaBulletSpeed = 30;
+    public float plasmaFireRate = 0.16f;
+    public Vector2 objectSpinSpeed = new Vector2(-200, 200);
 
-    private Transform leftFoot;
-    private Transform rightFoot;
+    public Transform leftFoot;
+    public Transform rightFoot;
+    private bool grounded;
 
     private int movementDirX;
 
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
-        animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        sR = transform.GetChild(0).transform.GetComponent<SpriteRenderer>();
+        player = transform.GetChild(0).transform;
         camera = transform.GetChild(1).transform.GetComponent<Camera>();
-
-        leftFoot = transform.GetChild(2);
-        rightFoot = transform.GetChild(3);
+        animator = transform.GetChild(0).transform.GetComponent<Animator>();
     }
 
     void Start()
@@ -43,7 +49,7 @@ public class Sideview_Controller : MonoBehaviour
 
     void Update()
     {
-        //convert A and D keys to left or right movement
+        //use A and D keys for left or right movement
         movementDirX = 0;
         if (Input.GetKey(KeyCode.D))
             movementDirX++;
@@ -52,16 +58,24 @@ public class Sideview_Controller : MonoBehaviour
 
         rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
 
-        //convert W and S keys to jumping up or thrusting downwards
-        if (Input.GetKeyDown(KeyCode.W) && isGrounded())
+        //store as variable so it can be reused multiple times without redoing the method's raycast calculations
+        grounded = isGrounded();
+
+        //use jump animation/movement if player isn't grounded
+        if (!grounded && animator.GetInteger("Phase") != 2)
+            setAnimation("jumping");
+
+        //use W and S keys for jumping up or thrusting downwards
+        if (Input.GetKeyDown(KeyCode.W) && grounded)
             rig.AddForce(new Vector2(0, jumpForce));
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
 
-        //Right click to throw
+
+        //Weapons where you right click to use/shoot the weapon once
         if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
         {
-            if (weaponSystem.getAmmo() > 0)
+            if (weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
             {
                 weapon = weaponSystem.getWeapon();
                 weaponSystem.usedOneAmmo();
@@ -75,31 +89,58 @@ public class Sideview_Controller : MonoBehaviour
                         throwBoomerang();
                         break;
                     default:
-                        Debug.LogError("You haven't specified how to throw this particular object");
+                        Debug.LogError("You haven't specified how to shoot this particular object");
                         break;
                 }
             }
         }
 
-        //orient the player to face the same direction they're moving in
-        playerOrientation();
+        //Weapons where you hold the right mouse button down to continously shoot
+        if (Input.GetMouseButton(0) && weaponSystem.weaponSelected != null)
+        {
+            if (weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
+            {
+                weapon = weaponSystem.getWeapon();
+                weaponSystem.usedOneAmmo();
+                timeLeftBtwnShots = plasmaFireRate;
 
-        //set idle or move animations
+                switch (weaponSystem.weaponSelected)
+                {
+                    case "Pistol":
+                        shootPlasmaBullet();
+                        break;
+                    default:
+                        Debug.LogError("You haven't specified how to shoot this particular object");
+                        break;
+                }
+            }
+        }
+
+        if (timeLeftBtwnShots > 0)
+            timeLeftBtwnShots -= Time.deltaTime;
+
+        playerLimbsOrientation();
         playerAnimation();
+
+        //disable main foot's collider when jumping
+        footCollider.enabled = animator.GetInteger("Phase") != 2;
+
+        //tuck right foot in when jumping
+        rightFoot.transform.localPosition = animator.GetInteger("Phase") != 2 ?
+        new Vector3(0.719f, rightFoot.transform.localPosition.y, 0) : new Vector3(0.404f, rightFoot.transform.localPosition.y, 0);
     }
 
-    private Vector2 configureObjectForThrowing()
+    private Vector2 throwOrShootSomething(Transform ammoSpawn)
     {
         //calculate direction to throw object
-        Vector2 throwDir = (Input.mousePosition - camera.WorldToScreenPoint(transform.position)).normalized;
+        Vector2 throwDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
 
         weapon.transform.position = transform.position;
-        weapon.SetActive(true);
         weapon.layer = LayerMask.NameToLayer("Thrown Object");
-        weapon.transform.GetComponent<Collider2D>().isTrigger = false;
+        weapon.SetActive(true);
 
-        //enable object's rigidbody
-        weapon.transform.GetComponent<Rigidbody2D>().isKinematic = false;
+        weapon.transform.GetComponent<Collider2D>().isTrigger = false;
+        weapon.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
 
         return throwDir;
     }
@@ -107,19 +148,35 @@ public class Sideview_Controller : MonoBehaviour
     private void throwGrenade()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = configureObjectForThrowing();
+        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //apply a large force to throw the grenade
-        Vector2 unadjustedForce = grenadeThrowForce * throwDir + new Vector2(0, 20);
+        Vector2 unadjustedForce = grenadeThrowForce * throwDir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
+        objectRig.velocity = new Vector2(0, 0);
         objectRig.AddForce(unadjustedForce * objectRig.mass);
-        objectRig.angularVelocity = Random.Range(objectSpinSpeed.x, objectSpinSpeed.y);
+        Debug.LogFormat("{0}, {1}", unadjustedForce, objectRig.mass);
+
+    }
+
+    private void shootPlasmaBullet()
+    {
+        //get throw direction from mouse input
+        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
+        Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
+
+        //spawn and orient the bullet correctly
+        weapon.transform.position = bulletSpawnPoint.position;
+        weapon.transform.right = throwDir;
+
+        //shoot the bullet 
+        objectRig.velocity = throwDir * plasmaBulletSpeed;
     }
 
     private void throwBoomerang()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = configureObjectForThrowing();
+        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //set the boomerang's velocity really high
@@ -144,20 +201,126 @@ public class Sideview_Controller : MonoBehaviour
             rig.AddForce(Constants.levitationBoost);
     }
 
-    private void playerOrientation()
+    private void playerLimbsOrientation()
     {
-        if (rig.velocity.x > 0)
-            sR.flipX = true;
-        else if (rig.velocity.x < 0)
-            sR.flipX = false;
+        //player faces left or right depending on mouse cursor
+        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
+            player.localRotation = Quaternion.Euler(0, 0, 0);
+        else
+            player.localRotation = Quaternion.Euler(0, 180, 0);
+
+        //player's shooting arm (w/ gun) rotates towards the mouse cursor
+        Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+        Vector2 offset = Quaternion.Euler(0, 0, -40f) * shootDirection;
+        Vector2 aimDirection = shootDirection + offset;
+
+        Vector2 pointingRight = new Vector2(0.817f, 2.077f);
+        Vector2 pointingUp = new Vector2(-0.276f, 3.389f);
+        Vector2 pointingDown = new Vector2(-0.548f, 0.964f);
+        Vector2 shoulderPos = new Vector2(-0.434f, 2.128f);
+
+        float up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+        float right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+        float down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+
+        shootDirection = new Vector2(Mathf.Abs(shootDirection.x), shootDirection.y);
+        if (shootDirection.y >= 0)
+        {
+            float slope = (up - right) / 90f;
+            float weaponRotation = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * slope + right;
+
+            float dirSlope = (1.252f - 1.271f) / 90f;
+            float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
+
+            Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+            gun.transform.localPosition = gunLocation;
+        }
+
+        if (shootDirection.y < 0)
+        {
+            float slope = (down - right) / -90f;
+            float weaponRotation = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * slope + right;
+
+            float dirSlope = (1.17f - 1.271f) / -90f;
+            float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
+
+            Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+            gun.transform.localPosition = gunLocation;
+        }
+
+        /*
+
+        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.position).x)
+        {
+            shootingArm.transform.right = aimDirection;
+        }
+        else
+        {
+            shootingArm.transform.right = aimDirection;
+            shootingArm.localEulerAngles = new Vector3(shootingArm.localEulerAngles.x, 0, 140 - shootingArm.localEulerAngles.z);
+        }*/
     }
 
     private void playerAnimation()
     {
-        if (Mathf.Abs(rig.velocity.x) > 0)
-            animator.SetInteger("State", 1);
+        //if the player isn't mid-air
+        if (animator.GetInteger("Phase") != 2)
+        {
+            //play walking animation if A or D is pressed down
+            if (movementDirX != 0)
+                setAnimation("walking");
+            else
+                setAnimation("idle");
+
+            bool facingRight = Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x;
+
+            //if you're looking in the opposite direction you're walking, play walking animation backwards
+            if (animator.GetInteger("Phase") == 1)
+            {
+                if ((movementDirX == 1 && facingRight) || movementDirX == -1 && !facingRight)
+                    animator.SetFloat("walking speed", 1);
+                else if (movementDirX != 0)
+                    animator.SetFloat("walking speed", -1);
+            }
+        }
+
+        //if you are grounded, exit out of jump animation
+        if (animator.GetInteger("Phase") == 2 && grounded)
+            setAnimation("idle");
+    }
+
+    private void setAnimation(string mode)
+    {
+        Debug.Log(mode);
+
+        int newMode = 0;
+
+        if (mode == "idle")
+            newMode = 0;
+        else if (mode == "walking")
+            newMode = 1;
+        else if (mode == "jumping")
+            newMode = 2;
         else
-            animator.SetInteger("State", 0);
+            Debug.LogError("mode not defined");
+
+        //animation progress (always positive regardless of whether animation is played backwards)
+        float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
+
+        //if currently walking
+        if (animator.GetInteger("Phase") == 1)
+        {
+            //go idle
+            if (newMode == 0 && ((t >= 0.20f && t <= 0.558f) || (t >= 0.733f && t <= 0.975f)))
+                animator.SetInteger("Phase", 0);
+
+            //go jump
+            if (newMode == 2 && ((t >= 0.20f && t <= 0.558f) || (t >= 0.733f && t <= 0.975f)))
+                animator.SetInteger("Phase", 2);
+        }
+
+        else
+            animator.SetInteger("Phase", newMode);
     }
 
     private bool isGrounded()
