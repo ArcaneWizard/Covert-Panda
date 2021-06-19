@@ -10,6 +10,7 @@ public class Sideview_Controller : MonoBehaviour
     public Transform shootingArm;
     public Transform bulletSpawnPoint;
     public Transform gun;
+    public BoxCollider2D footCollider;
 
     private WeaponSystem weaponSystem;
     private GameObject weapon;
@@ -24,10 +25,11 @@ public class Sideview_Controller : MonoBehaviour
     public float grenadeYForce = -20;
     public float boomerangSpeed = 31;
     public float plasmaBulletSpeed = 30;
+    public float plasmaFireRate = 0.16f;
     public Vector2 objectSpinSpeed = new Vector2(-200, 200);
 
-    private Transform leftFoot;
-    private Transform rightFoot;
+    public Transform leftFoot;
+    public Transform rightFoot;
     private bool grounded;
 
     private int movementDirX;
@@ -38,9 +40,6 @@ public class Sideview_Controller : MonoBehaviour
         player = transform.GetChild(0).transform;
         camera = transform.GetChild(1).transform.GetComponent<Camera>();
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
-
-        leftFoot = transform.GetChild(2);
-        rightFoot = transform.GetChild(3);
     }
 
     void Start()
@@ -64,7 +63,7 @@ public class Sideview_Controller : MonoBehaviour
 
         //use jump animation/movement if player isn't grounded
         if (!grounded && animator.GetInteger("Phase") != 2)
-            animator.SetInteger("Phase", 2);
+            setAnimation("jumping");
 
         //use W and S keys for jumping up or thrusting downwards
         if (Input.GetKeyDown(KeyCode.W) && grounded)
@@ -103,7 +102,7 @@ public class Sideview_Controller : MonoBehaviour
             {
                 weapon = weaponSystem.getWeapon();
                 weaponSystem.usedOneAmmo();
-                timeLeftBtwnShots = 0.33f;
+                timeLeftBtwnShots = plasmaFireRate;
 
                 switch (weaponSystem.weaponSelected)
                 {
@@ -122,6 +121,13 @@ public class Sideview_Controller : MonoBehaviour
 
         playerLimbsOrientation();
         playerAnimation();
+
+        //disable main foot's collider when jumping
+        footCollider.enabled = animator.GetInteger("Phase") != 2;
+
+        //tuck right foot in when jumping
+        rightFoot.transform.localPosition = animator.GetInteger("Phase") != 2 ?
+        new Vector3(0.719f, rightFoot.transform.localPosition.y, 0) : new Vector3(0.404f, rightFoot.transform.localPosition.y, 0);
     }
 
     private Vector2 throwOrShootSomething(Transform ammoSpawn)
@@ -261,26 +267,60 @@ public class Sideview_Controller : MonoBehaviour
         if (animator.GetInteger("Phase") != 2)
         {
             //play walking animation if A or D is pressed down
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-                animator.SetInteger("Phase", 1);
+            if (movementDirX != 0)
+                setAnimation("walking");
             else
-                animator.SetInteger("Phase", 0);
+                setAnimation("idle");
 
             bool facingRight = Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x;
 
             //if you're looking in the opposite direction you're walking, play walking animation backwards
-            if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == "walking soldier")
+            if (animator.GetInteger("Phase") == 1)
             {
                 if ((movementDirX == 1 && facingRight) || movementDirX == -1 && !facingRight)
                     animator.SetFloat("walking speed", 1);
-                else
+                else if (movementDirX != 0)
                     animator.SetFloat("walking speed", -1);
             }
         }
 
         //if you are grounded, exit out of jump animation
         if (animator.GetInteger("Phase") == 2 && grounded)
-            animator.SetInteger("Phase", 0);
+            setAnimation("idle");
+    }
+
+    private void setAnimation(string mode)
+    {
+        Debug.Log(mode);
+
+        int newMode = 0;
+
+        if (mode == "idle")
+            newMode = 0;
+        else if (mode == "walking")
+            newMode = 1;
+        else if (mode == "jumping")
+            newMode = 2;
+        else
+            Debug.LogError("mode not defined");
+
+        //animation progress (always positive regardless of whether animation is played backwards)
+        float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
+
+        //if currently walking
+        if (animator.GetInteger("Phase") == 1)
+        {
+            //go idle
+            if (newMode == 0 && ((t >= 0.20f && t <= 0.558f) || (t >= 0.733f && t <= 0.975f)))
+                animator.SetInteger("Phase", 0);
+
+            //go jump
+            if (newMode == 2 && ((t >= 0.20f && t <= 0.558f) || (t >= 0.733f && t <= 0.975f)))
+                animator.SetInteger("Phase", 2);
+        }
+
+        else
+            animator.SetInteger("Phase", newMode);
     }
 
     private bool isGrounded()
