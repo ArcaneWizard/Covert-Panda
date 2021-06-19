@@ -51,6 +51,8 @@ public class BotAI : MonoBehaviour
     private bool testSpecificAction;
     private EnvKey testKey;
 
+    private int numberOfRays = 7;
+
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
@@ -63,8 +65,8 @@ public class BotAI : MonoBehaviour
 
         botSpeed = Random.Range(4.3f, 5f);
 
-        //testSpecificAction = true;
-        //testKey = new EnvKey('G', -4, 0);
+        testSpecificAction = true;
+        testKey = new EnvKey('C', 0, 0);
     }
 
     void Start()
@@ -104,7 +106,7 @@ public class BotAI : MonoBehaviour
         lastMovement = action.Equals(null) ? 1 : (int)Mathf.Sign(action.x);
 
         //the bot looks to its left for 1) openings in the floor it can drop down in 2) seperate platforms it can jump to 
-        for (int offset = -1; offset >= -5; offset--)
+        for (int offset = -1; offset >= -numberOfRays; offset--)
         {
             EnvKey floorCheck = new EnvKey('G', offset, 0);
             EnvKey prevFloorCheck = new EnvKey('G', offset + 1, 0);
@@ -121,7 +123,10 @@ public class BotAI : MonoBehaviour
 
                 //consider going to the first seperate platform it can jump to on it's left 
                 if (offset != -1 && info[floorCheck].location().y > transform.position.y - 6.5f && info[prevFloorCheck].location().y <= info[floorCheck].location().y - 0.1f && holeSpottedB4)
+                {
                     possibleLeftActions.Add(floorCheck);
+                    possibleLeftActions.Add(floorCheck);
+                }
             }
         }
 
@@ -129,7 +134,7 @@ public class BotAI : MonoBehaviour
         holeSpottedB4 = false;
 
         //the bot looks to its right for 1) openings in the floor it can drop down in 2) seperate platforms it can jump to 
-        for (int offset = 1; offset <= 5; offset++)
+        for (int offset = 1; offset <= numberOfRays; offset++)
         {
             EnvKey floorCheck = new EnvKey('G', offset, 0);
             EnvKey prevFloorCheck = new EnvKey('G', offset - 1, 0);
@@ -147,12 +152,15 @@ public class BotAI : MonoBehaviour
 
                 //consider going to the first seperate platform it can jump to on it's right 
                 else if (offset != 1 && info[floorCheck].location().y > transform.position.y - 6.5f && info[prevFloorCheck].location().y <= info[floorCheck].location().y - 0.1f && holeSpottedB4)
+                {
                     possibleRightActions.Add(floorCheck);
+                    possibleRightActions.Add(floorCheck);
+                }
             }
         }
 
         //if there is a hallway to the right, consider going there
-        if (possibleRightActions.Count <= 1 && rightWallLocation > transform.position.x + 2f)
+        if (possibleRightActions.Count <= 0 && rightWallLocation > transform.position.x + 2f)
         {
             //bot should usually consider going right (if it wasn't already going left or if it can't go LEFT next turn)
             if (lastAction != 'L' || leftWallLocation >= transform.position.x - 2.5f)
@@ -168,7 +176,7 @@ public class BotAI : MonoBehaviour
         }
 
         //if there is a hallway to the left, still consider going there
-        if (possibleLeftActions.Count <= 1 && leftWallLocation < transform.position.x - 2f)
+        if (possibleLeftActions.Count <= 0 && leftWallLocation < transform.position.x - 2f)
         {
             //bot should usually consider going left  (if it wasn't already going right or if it can't go right next turn)
             if (lastAction != 'R' || rightWallLocation <= transform.position.x + 2.5f)
@@ -184,7 +192,7 @@ public class BotAI : MonoBehaviour
         }
 
         //the bot checks for openings in the ceiling
-        for (int offset = -5; offset <= 5; offset++)
+        for (int offset = -numberOfRays; offset <= numberOfRays; offset++)
         {
             //get the y coordinate of the ceiling above the player
             EnvKey ceilingCheck = new EnvKey('C', offset, 0);
@@ -216,13 +224,13 @@ public class BotAI : MonoBehaviour
                 GameObject leftCeilingObject = null, rightCeilingObject = null;
 
                 //can't do left ceiling checks for the left most ceiling and vice versa on the right side
-                if (offset != -5)
+                if (offset != -numberOfRays)
                 {
                     leftCeiling = info[new EnvKey('C', offset - 1, 0)];
                     leftCeilingHeight = leftCeiling.location().y;
                     leftCeilingObject = leftCeiling.gameObject();
                 }
-                if (offset != 5)
+                if (offset != numberOfRays)
                 {
                     rightCeiling = info[new EnvKey('C', offset + 1, 0)];
                     rightCeilingHeight = rightCeiling.location().y;
@@ -241,21 +249,31 @@ public class BotAI : MonoBehaviour
                 //if bot spots an opening in the ceiling to its left or right and there is ceiling directly to the right of the opening,
                 //then add this jump as a possible action as long as there is no nearby ramp to the right
 
-                if (offset != 5 && rightCeilingHeight < expectedHeight && rightUpperWallDistance > 2f && rightCeilingObject != groundObject &&
+                if (offset != numberOfRays && rightCeilingHeight < expectedHeight && rightUpperWallDistance > 2f && rightCeilingObject != groundObject &&
                 (!rightWall.gameObject() || Mathf.Abs(rightCeiling.location().x - rightWall.location().x) > 1.51f || !wallIsActuallyARamp(rightWallTilt)))
                 {
                     if (offset > 0)
                     {
                         possibleRightActions.Add(ceilingCheck);
+                        possibleRightActions.Add(ceilingCheck);
                     }
                     else if (offset < 0)
+                    {
                         possibleLeftActions.Add(ceilingCheck);
+                        possibleLeftActions.Add(ceilingCheck);
+                    }
                     else if (offset == 0)
                     {
                         if (ceiling.location().x >= transform.position.x)
+                        {
                             possibleRightActions.Add(ceilingCheck);
+                            possibleRightActions.Add(ceilingCheck);
+                        }
                         else
+                        {
                             possibleLeftActions.Add(ceilingCheck);
+                            possibleLeftActions.Add(ceilingCheck);
+                        }
                     }
 
                     jumpPlatforms.Add(ceilingCheck, "right");
@@ -263,19 +281,31 @@ public class BotAI : MonoBehaviour
                 }
 
                 //if bot spots an opening in the ceiling to its left or right, but there is ceiling directly to the left of the opening in the ceiling, then add this jump as a possible action
-                else if (offset != -5 && leftCeilingHeight < expectedHeight && leftUpperWallDistance > 2f && leftCeilingObject != groundObject &&
+                if (offset != -numberOfRays && leftCeilingHeight < expectedHeight && leftUpperWallDistance > 2f && leftCeilingObject != groundObject &&
                 (!leftWall.gameObject() || Mathf.Abs(leftCeiling.location().x - leftWall.location().x) > 1.51f || !wallIsActuallyARamp(leftWallTilt)))
                 {
                     if (offset > 0)
+                    {
                         possibleRightActions.Add(ceilingCheck);
+                        possibleRightActions.Add(ceilingCheck);
+                    }
                     else if (offset < 0)
+                    {
                         possibleLeftActions.Add(ceilingCheck);
+                        possibleLeftActions.Add(ceilingCheck);
+                    }
                     else if (offset == 0)
                     {
                         if (ceiling.location().x <= transform.position.x)
+                        {
                             possibleLeftActions.Add(ceilingCheck);
+                            possibleLeftActions.Add(ceilingCheck);
+                        }
                         else
+                        {
                             possibleRightActions.Add(ceilingCheck);
+                            possibleRightActions.Add(ceilingCheck);
+                        }
                     }
 
                     jumpPlatforms.Add(ceilingCheck, "left");
@@ -406,7 +436,8 @@ public class BotAI : MonoBehaviour
         //bot is ready to jump to a higher platform (it is near a ceiling gap)
         if (check == 301 && action.direction == 'C')
         {
-            float multiplier = (jumpToHeight - transform.position.y) / 4f * 1.05f + 0.05f;
+            //float multiplier = (jumpToHeight - transform.position.y) / 4f * 1.05f + 0.05f;
+            float multiplier = Random.Range(1.15f, 1.20f);
 
             //if bot is moving, lessen the jump height a tad bit
             multiplier *= (Mathf.Abs(rig.velocity.x) > 2) ? 0.95f : 1;

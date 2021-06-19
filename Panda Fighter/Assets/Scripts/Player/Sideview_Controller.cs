@@ -8,6 +8,8 @@ public class Sideview_Controller : MonoBehaviour
     private Transform player;
     private Animator animator;
     public Transform shootingArm;
+    public Transform head;
+
     public Transform bulletSpawnPoint;
     public Transform gun;
     public BoxCollider2D footCollider;
@@ -33,6 +35,8 @@ public class Sideview_Controller : MonoBehaviour
     private bool grounded;
 
     private int movementDirX;
+
+    private float timer;
 
     void Awake()
     {
@@ -67,10 +71,12 @@ public class Sideview_Controller : MonoBehaviour
 
         //use W and S keys for jumping up or thrusting downwards
         if (Input.GetKeyDown(KeyCode.W) && grounded)
+        {
             rig.AddForce(new Vector2(0, jumpForce));
+            animator.SetBool("jumped", true);
+        }
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
-
 
         //Weapons where you right click to use/shoot the weapon once
         if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
@@ -130,53 +136,48 @@ public class Sideview_Controller : MonoBehaviour
         new Vector3(0.719f, rightFoot.transform.localPosition.y, 0) : new Vector3(0.404f, rightFoot.transform.localPosition.y, 0);
     }
 
-    private Vector2 throwOrShootSomething(Transform ammoSpawn)
+    private Vector2 aimDirection()
     {
         //calculate direction to throw object
-        Vector2 throwDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+        Vector2 dir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
 
-        weapon.transform.position = transform.position;
+        weapon.transform.position = bulletSpawnPoint.position;
         weapon.layer = LayerMask.NameToLayer("Thrown Object");
         weapon.SetActive(true);
 
         weapon.transform.GetComponent<Collider2D>().isTrigger = false;
         weapon.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
 
-        return throwDir;
+        return dir;
     }
 
     private void throwGrenade()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
+        Vector2 dir = aimDirection();
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //apply a large force to throw the grenade
-        Vector2 unadjustedForce = grenadeThrowForce * throwDir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
+        Vector2 unadjustedForce = grenadeThrowForce * dir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
         objectRig.velocity = new Vector2(0, 0);
         objectRig.AddForce(unadjustedForce * objectRig.mass);
-        Debug.LogFormat("{0}, {1}", unadjustedForce, objectRig.mass);
-
     }
 
     private void shootPlasmaBullet()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
+        Vector2 dir = aimDirection();
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //spawn and orient the bullet correctly
-        weapon.transform.position = bulletSpawnPoint.position;
-        weapon.transform.right = throwDir;
-
-        //shoot the bullet 
-        objectRig.velocity = throwDir * plasmaBulletSpeed;
+        weapon.transform.right = dir;
+        objectRig.velocity = dir * plasmaBulletSpeed;
     }
 
     private void throwBoomerang()
     {
         //get throw direction from mouse input
-        Vector2 throwDir = throwOrShootSomething(bulletSpawnPoint);
+        Vector2 throwDir = aimDirection();
         Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
 
         //set the boomerang's velocity really high
@@ -224,29 +225,38 @@ public class Sideview_Controller : MonoBehaviour
         float down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
 
         shootDirection = new Vector2(Mathf.Abs(shootDirection.x), shootDirection.y);
+        float shootAngle = Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI;
+
         if (shootDirection.y >= 0)
         {
             float slope = (up - right) / 90f;
-            float weaponRotation = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * slope + right;
+            float weaponRotation = shootAngle * slope + right;
 
             float dirSlope = (1.252f - 1.271f) / 90f;
-            float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
+            float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
 
             Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
             gun.transform.localPosition = gunLocation;
+
+            float headSlope = (122f - 92.4f) / 90f;
+            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
         }
 
         if (shootDirection.y < 0)
         {
             float slope = (down - right) / -90f;
-            float weaponRotation = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * slope + right;
+            float weaponRotation = shootAngle * slope + right;
 
             float dirSlope = (1.17f - 1.271f) / -90f;
-            float weaponDirMagnitude = (Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI) * dirSlope + 1.271f;
+            float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
 
             Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
             gun.transform.localPosition = gunLocation;
+
+            float headSlope = (67f - 92.4f) / -90f;
+            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
         }
+
 
         /*
 
@@ -286,13 +296,22 @@ public class Sideview_Controller : MonoBehaviour
 
         //if you are grounded, exit out of jump animation
         if (animator.GetInteger("Phase") == 2 && grounded)
+        {
+            animator.SetBool("jumped", false);
             setAnimation("idle");
+        }
+    }
+
+
+    private bool isGrounded()
+    {
+        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.17f, Constants.map);
+        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.17f, Constants.map);
+        return (rightFootGrounded || leftFootGrounded) ? true : false;
     }
 
     private void setAnimation(string mode)
     {
-        Debug.Log(mode);
-
         int newMode = 0;
 
         if (mode == "idle")
@@ -311,11 +330,11 @@ public class Sideview_Controller : MonoBehaviour
         if (animator.GetInteger("Phase") == 1)
         {
             //go idle
-            if (newMode == 0 && ((t >= 0.20f && t <= 0.558f) || (t >= 0.733f && t <= 0.975f)))
-                animator.SetInteger("Phase", 0);
+            if (newMode == 0 && ((t >= 0.31f && t <= 0.41f) || (t >= 0.8633f && t <= 0.975f)))
+                StartCoroutine(walkingToIdle());
 
             //go jump
-            if (newMode == 2 && ((t >= 0.20f && t <= 0.558f) || (t >= 0.733f && t <= 0.975f)))
+            if (newMode == 2 && ((t >= 0.31f && t <= 0.41f) || (t >= 0.773f && t <= 0.975f)))
                 animator.SetInteger("Phase", 2);
         }
 
@@ -323,10 +342,15 @@ public class Sideview_Controller : MonoBehaviour
             animator.SetInteger("Phase", newMode);
     }
 
-    private bool isGrounded()
+    //add slight delay before switching from walking to idle animation 
+    //allows for an even cleaner switch from walking to non-idle animations 
+    private IEnumerator walkingToIdle()
     {
-        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.1f, Constants.map);
-        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.1f, Constants.map);
-        return (rightFootGrounded || leftFootGrounded) ? true : false;
+        yield return new WaitForSeconds(0.045f);
+
+        if (movementDirX != 0)
+            yield return null;
+        else
+            animator.SetInteger("Phase", 0);
     }
 }

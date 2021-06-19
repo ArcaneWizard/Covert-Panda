@@ -75,7 +75,7 @@ public class WeaponSystem : MonoBehaviour
     {
         //update weapon sprite + ammo
         weapons[weapon].sprite = equipped[weapon];
-        ammo[weapon].text = "40";
+        ammo[weapon].text = "1000";
     }
 
     //player uses up ammo of a certain weapon

@@ -26,9 +26,10 @@ public class EnemyHP : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.tag == "Boomerang" || col.gameObject.tag == "Grenade")
+        string tag = col.transform.parent.tag;
+        if (tag == "Boomerang" || tag == "Pistol" || tag == "Boomerang")
         {
-            hp -= 20;
+            hp -= 10;
             col.gameObject.SetActive(false);
         }
     }
