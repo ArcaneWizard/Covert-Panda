@@ -12022,9 +12022,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootingArm: {fileID: 2169155028896620680}
   head: {fileID: 8706086167453720026}
+  legs: {fileID: 0}
   bulletSpawnPoint: {fileID: 219606337}
   gun: {fileID: 1439760036}
   footCollider: {fileID: 800584948}
+  camera: {fileID: 0}
   speed: 8
   jumpForce: 570
   grenadeThrowForce: 800
@@ -13661,7 +13663,7 @@ PrefabInstance:
     - target: {fileID: 1309246175283118294, guid: 8c1e385819bee45cf94e1385fbee86a8,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1309246175283118295, guid: 8c1e385819bee45cf94e1385fbee86a8,
         type: 3}

@@ -18,7 +18,7 @@ public class BotAI : MonoBehaviour
     private Dictionary<EnvKey, EnvInfo> info;
 
     private float botSpeed = 4f;
-    private float jumpForce = 570;
+    private float jumpForce = 600;
 
     private EnvKey action;
     private List<EnvKey> possibleLeftActions = new List<EnvKey>();
@@ -65,8 +65,8 @@ public class BotAI : MonoBehaviour
 
         botSpeed = Random.Range(4.3f, 5f);
 
-        testSpecificAction = true;
-        testKey = new EnvKey('C', 0, 0);
+        //testSpecificAction = true;
+        //testKey = new EnvKey('C', 0, 0);
     }
 
     void Start()

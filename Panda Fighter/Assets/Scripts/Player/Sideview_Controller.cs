@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Sideview_Controller : MonoBehaviour
@@ -9,6 +11,7 @@ public class Sideview_Controller : MonoBehaviour
     private Animator animator;
     public Transform shootingArm;
     public Transform head;
+    public Transform legs;
 
     public Transform bulletSpawnPoint;
     public Transform gun;
@@ -18,7 +21,8 @@ public class Sideview_Controller : MonoBehaviour
     private GameObject weapon;
     private float timeLeftBtwnShots;
 
-    private Camera camera;
+    public Camera camera;
+    private Vector3 cameraOffset;
 
     public float speed = 4.0f;
     public float jumpForce = 570;
@@ -33,6 +37,9 @@ public class Sideview_Controller : MonoBehaviour
     public Transform leftFoot;
     public Transform rightFoot;
     private bool grounded;
+    private bool touchingMap;
+    private float groundAngle;
+    private Vector2 groundDir;
 
     private int movementDirX;
 
@@ -42,8 +49,9 @@ public class Sideview_Controller : MonoBehaviour
     {
         rig = transform.GetComponent<Rigidbody2D>();
         player = transform.GetChild(0).transform;
-        camera = transform.GetChild(1).transform.GetComponent<Camera>();
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
+
+        cameraOffset = camera.transform.position - transform.position;
     }
 
     void Start()
@@ -53,6 +61,9 @@ public class Sideview_Controller : MonoBehaviour
 
     void Update()
     {
+        //store as variable so it can be reused multiple times without redoing the method's raycast calculations
+        grounded = isGrounded();
+
         //use A and D keys for left or right movement
         movementDirX = 0;
         if (Input.GetKey(KeyCode.D))
@@ -60,14 +71,32 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
             movementDirX--;
 
-        rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+        Debug.Log(groundDir);
+        //player velocity is aligned parallel to the slanted ground whenever the player is on a surface
+        if (touchingMap && !animator.GetBool("jumped") && grounded)
+            rig.velocity = groundDir * speed * movementDirX;
+        else
+            rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
 
-        //store as variable so it can be reused multiple times without redoing the method's raycast calculations
-        grounded = isGrounded();
+        //player's body tilts slightly to align with the slanted platform
+        float zAngle = transform.eulerAngles.z;
+        if (zAngle > 180)
+            zAngle = zAngle - 360;
 
-        //use jump animation/movement if player isn't grounded
-        if (!grounded && animator.GetInteger("Phase") != 2)
-            setAnimation("jumping");
+        if (grounded)
+        {
+            float newGroundAngle = ((groundAngle - 360) / 1.4f);
+
+            if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f && groundAngle <= 180)
+                transform.eulerAngles = new Vector3(0, 0, zAngle + (groundAngle / 1.4f - zAngle) * 20 * Time.deltaTime);
+            else if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
+                transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20f * Time.deltaTime);
+        }
+        else if (!grounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f)
+            transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
+
+        //camera follows player around
+        camera.transform.position = transform.position + cameraOffset;
 
         //use W and S keys for jumping up or thrusting downwards
         if (Input.GetKeyDown(KeyCode.W) && grounded)
@@ -129,11 +158,12 @@ public class Sideview_Controller : MonoBehaviour
         playerAnimation();
 
         //disable main foot's collider when jumping
-        footCollider.enabled = animator.GetInteger("Phase") != 2;
+        footCollider.enabled = false;
 
         //tuck right foot in when jumping
         rightFoot.transform.localPosition = animator.GetInteger("Phase") != 2 ?
         new Vector3(0.719f, rightFoot.transform.localPosition.y, 0) : new Vector3(0.404f, rightFoot.transform.localPosition.y, 0);
+
     }
 
     private Vector2 aimDirection()
@@ -202,8 +232,28 @@ public class Sideview_Controller : MonoBehaviour
             rig.AddForce(Constants.levitationBoost);
     }
 
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.layer == 11)
+            touchingMap = true;
+    }
+
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        if (col.gameObject.layer == 11)
+            touchingMap = true;
+    }
+
+    private void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.gameObject.layer == 11)
+            touchingMap = false;
+    }
+
     private void playerLimbsOrientation()
     {
+
+
         //player faces left or right depending on mouse cursor
         if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
             player.localRotation = Quaternion.Euler(0, 0, 0);
@@ -256,19 +306,15 @@ public class Sideview_Controller : MonoBehaviour
             float headSlope = (67f - 92.4f) / -90f;
             head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
         }
+    }
 
-
-        /*
-
-        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.position).x)
-        {
-            shootingArm.transform.right = aimDirection;
-        }
+    private void slantedMovement()
+    {
+        //kill gravity when not moving
+        if (grounded && movementDirX == 0)
+            rig.gravityScale = 0;
         else
-        {
-            shootingArm.transform.right = aimDirection;
-            shootingArm.localEulerAngles = new Vector3(shootingArm.localEulerAngles.x, 0, 140 - shootingArm.localEulerAngles.z);
-        }*/
+            rig.gravityScale = 1;
     }
 
     private void playerAnimation()
@@ -276,6 +322,10 @@ public class Sideview_Controller : MonoBehaviour
         //if the player isn't mid-air
         if (animator.GetInteger("Phase") != 2)
         {
+            //trigger jump animation when the player isn't grounded
+            if (!grounded)
+                setAnimation("jumping");
+
             //play walking animation if A or D is pressed down
             if (movementDirX != 0)
                 setAnimation("walking");
@@ -302,11 +352,28 @@ public class Sideview_Controller : MonoBehaviour
         }
     }
 
-
     private bool isGrounded()
     {
-        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.17f, Constants.map);
-        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.17f, Constants.map);
+        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.22f, Constants.map);
+        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.22f, Constants.map);
+
+        GameObject collider = null;
+        if (leftFootGrounded.collider != null)
+            collider = leftFootGrounded.collider.gameObject;
+        else if (rightFootGrounded.collider != null)
+            collider = rightFootGrounded.collider.gameObject;
+
+        if (collider)
+        {
+            groundAngle = collider.transform.eulerAngles.z;
+            float tangent = Mathf.Tan(groundAngle * Mathf.PI / 180);
+            Vector2 dir = new Vector2(1, tangent).normalized;
+            groundDir = dir;
+        }
+
+        Debug.Log(collider ? collider.name : null);
+        Debug.Log(collider ? groundAngle : 0.1f);
+
         return (rightFootGrounded || leftFootGrounded) ? true : false;
     }
 
@@ -340,6 +407,7 @@ public class Sideview_Controller : MonoBehaviour
 
         else
             animator.SetInteger("Phase", newMode);
+
     }
 
     //add slight delay before switching from walking to idle animation 
@@ -352,5 +420,12 @@ public class Sideview_Controller : MonoBehaviour
             yield return null;
         else
             animator.SetInteger("Phase", 0);
+    }
+
+    private IEnumerator killGravity()
+    {
+        rig.gravityScale = 9.9f;
+        yield return new WaitForSeconds(0.03f);
+        rig.gravityScale = 0;
     }
 }
