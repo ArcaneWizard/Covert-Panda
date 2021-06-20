@@ -12,6 +12,7 @@ public class Sideview_Controller : MonoBehaviour
     public Transform shootingArm;
     public Transform head;
     public Transform legs;
+    public BoxCollider2D mainCollider;
 
     public Transform gun;
     public BoxCollider2D footCollider;
@@ -24,8 +25,12 @@ public class Sideview_Controller : MonoBehaviour
 
     public Transform leftFoot;
     public Transform rightFoot;
+
+    [SerializeField]
     private bool grounded;
+    [SerializeField]
     private bool touchingMap;
+    [SerializeField]
     private float groundAngle;
     private Vector2 groundDir;
 
@@ -187,7 +192,6 @@ public class Sideview_Controller : MonoBehaviour
 
         GameObject collider = null;
 
-
         if (leftFootGrounded.collider != null && rightFootGrounded.collider == null)
             collider = leftFootGrounded.collider.gameObject;
         else if (rightFootGrounded.collider != null && leftFootGrounded.collider == null)
@@ -222,6 +226,11 @@ public class Sideview_Controller : MonoBehaviour
 
             groundDir = dir;
         }
+        else
+        {
+            groundAngle = 0;
+            groundDir = new Vector2(1, 0);
+        }
 
         return (rightFootGrounded || leftFootGrounded) ? true : false;
     }
@@ -229,19 +238,20 @@ public class Sideview_Controller : MonoBehaviour
     //foot collider becomes smaller when jumping
     private void handlefootCollider()
     {
-        //disable main foot's collider when jumping
-        footCollider.enabled = animator.GetInteger("Phase") != 2;
+        //disable main foot's collider when not walking
+        footCollider.enabled = animator.GetInteger("Phase") == 1;
 
-        //tuck in footCollider when idle
-        if (animator.GetInteger("Phase") == 0)
-            footCollider.transform.localPosition = new Vector2(-0.185f, footCollider.transform.localPosition.y);
-        else
-            footCollider.transform.localPosition = new Vector2(0f, footCollider.transform.localPosition.y);
-
-        //tuck the right foot ground raycaster in when jumping
+        //tuck the feet ground raycasters in when jumping
         rightFoot.transform.localPosition = footCollider.enabled
         ? new Vector3(0.99f, rightFoot.transform.localPosition.y, 0)
-        : new Vector3(0.532f, rightFoot.transform.localPosition.y, 0);
+        : new Vector3(0.332f, rightFoot.transform.localPosition.y, 0);
+
+        leftFoot.transform.localPosition = footCollider.enabled
+        ? new Vector3(-0.357f, leftFoot.transform.localPosition.y, 0)
+        : new Vector3(-0.157f, leftFoot.transform.localPosition.y, 0);
+
+        //thin collider when jumping
+        mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.68f : 1f, mainCollider.size.y);
     }
 
     //set new animation state for the player
