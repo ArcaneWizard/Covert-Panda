@@ -69,9 +69,17 @@ public class Sideview_Controller : MonoBehaviour
 
         //player velocity is aligned parallel to the slanted ground whenever the player is on a surface
         if (touchingMap && !animator.GetBool("jumped") && grounded)
+
+        {
+            Debug.Log("working");
+            Debug.Log(groundDir * speed * movementDirX);
             rig.velocity = groundDir * speed * movementDirX;
+        }
         else
+        {
             rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+            Debug.Log("aworking");
+        }
 
         //player's body tilts slightly to align with the slanted platform
         float zAngle = transform.eulerAngles.z;
@@ -194,7 +202,7 @@ public class Sideview_Controller : MonoBehaviour
             collider = rightFootGrounded.collider.gameObject;
         else if (rightFootGrounded.collider != null && leftFootGrounded.collider != null)
         {
-            RaycastHit2D centerOfMassGrounded = Physics2D.Raycast(transform.position, Vector2.down, 3.22f, Constants.map);
+            RaycastHit2D centerOfMassGrounded = Physics2D.Raycast(transform.position, Vector2.down, 4.22f, Constants.map);
 
             if (centerOfMassGrounded.collider != null)
             {
@@ -221,9 +229,10 @@ public class Sideview_Controller : MonoBehaviour
             Vector2 dir = new Vector2(1, tangent).normalized;
 
             groundDir = dir;
+            Debug.Log(groundDir.x);
         }
 
-        return (rightFootGrounded || leftFootGrounded) ? true : false;
+        return (collider) ? true : false;
     }
 
     //foot collider becomes smaller when jumping
@@ -290,19 +299,19 @@ public class Sideview_Controller : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.layer == 11)
+        if (col.gameObject.layer == 15)
             touchingMap = true;
     }
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.gameObject.layer == 11)
+        if (col.gameObject.layer == 15)
             touchingMap = true;
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.gameObject.layer == 11)
-            touchingMap = false;
+        // if (col.gameObject.layer == 15)
+        //    touchingMap = false;
     }
 }
