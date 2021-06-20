@@ -13,26 +13,14 @@ public class Sideview_Controller : MonoBehaviour
     public Transform head;
     public Transform legs;
 
-    public Transform bulletSpawnPoint;
     public Transform gun;
     public BoxCollider2D footCollider;
-
-    private WeaponSystem weaponSystem;
-    private GameObject weapon;
-    private float timeLeftBtwnShots;
 
     public Camera camera;
     private Vector3 cameraOffset;
 
-    public float speed = 4.0f;
-    public float jumpForce = 570;
-
-    public float grenadeThrowForce = 650;
-    public float grenadeYForce = -20;
-    public float boomerangSpeed = 31;
-    public float plasmaBulletSpeed = 30;
-    public float plasmaFireRate = 0.16f;
-    public Vector2 objectSpinSpeed = new Vector2(-200, 200);
+    private float speed = 8.0f;
+    private float jumpForce = 600;
 
     public Transform leftFoot;
     public Transform rightFoot;
@@ -54,15 +42,14 @@ public class Sideview_Controller : MonoBehaviour
         cameraOffset = camera.transform.position - transform.position;
     }
 
-    void Start()
-    {
-        weaponSystem = transform.GetComponent<WeaponSystem>();
-    }
-
     void Update()
     {
-        //store as variable so it can be reused multiple times without redoing the method's raycast calculations
+        camera.transform.position = transform.position + cameraOffset;
         grounded = isGrounded();
+
+        playerLimbsOrientation();
+        playerAnimationController();
+        handlefootCollider();
 
         //use A and D keys for left or right movement
         movementDirX = 0;
@@ -71,7 +58,15 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
             movementDirX--;
 
-        Debug.Log(groundDir);
+        //use W and S keys for jumping up or thrusting downwards
+        if (Input.GetKeyDown(KeyCode.W) && grounded)
+        {
+            rig.AddForce(new Vector2(0, jumpForce));
+            animator.SetBool("jumped", true);
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+            rig.AddForce(new Vector2(0, -jumpForce));
+
         //player velocity is aligned parallel to the slanted ground whenever the player is on a surface
         if (touchingMap && !animator.GetBool("jumped") && grounded)
             rig.velocity = groundDir * speed * movementDirX;
@@ -94,188 +89,31 @@ public class Sideview_Controller : MonoBehaviour
         }
         else if (!grounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f)
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
-
-        //camera follows player around
-        camera.transform.position = transform.position + cameraOffset;
-
-        //use W and S keys for jumping up or thrusting downwards
-        if (Input.GetKeyDown(KeyCode.W) && grounded)
-        {
-            rig.AddForce(new Vector2(0, jumpForce));
-            animator.SetBool("jumped", true);
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-            rig.AddForce(new Vector2(0, -jumpForce));
-
-        //Weapons where you right click to use/shoot the weapon once
-        if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
-        {
-            if (weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
-            {
-                weapon = weaponSystem.getWeapon();
-                weaponSystem.usedOneAmmo();
-
-                switch (weaponSystem.weaponSelected)
-                {
-                    case "Grenade":
-                        throwGrenade();
-                        break;
-                    case "Boomerang":
-                        throwBoomerang();
-                        break;
-                    default:
-                        Debug.LogError("You haven't specified how to shoot this particular object");
-                        break;
-                }
-            }
-        }
-
-        //Weapons where you hold the right mouse button down to continously shoot
-        if (Input.GetMouseButton(0) && weaponSystem.weaponSelected != null)
-        {
-            if (weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
-            {
-                weapon = weaponSystem.getWeapon();
-                weaponSystem.usedOneAmmo();
-                timeLeftBtwnShots = plasmaFireRate;
-
-                switch (weaponSystem.weaponSelected)
-                {
-                    case "Pistol":
-                        shootPlasmaBullet();
-                        break;
-                    default:
-                        Debug.LogError("You haven't specified how to shoot this particular object");
-                        break;
-                }
-            }
-        }
-
-        if (timeLeftBtwnShots > 0)
-            timeLeftBtwnShots -= Time.deltaTime;
-
-        playerLimbsOrientation();
-        playerAnimation();
-
-        //disable main foot's collider when jumping
-        footCollider.enabled = false;
-
-        //tuck right foot in when jumping
-        rightFoot.transform.localPosition = animator.GetInteger("Phase") != 2 ?
-        new Vector3(0.719f, rightFoot.transform.localPosition.y, 0) : new Vector3(0.404f, rightFoot.transform.localPosition.y, 0);
-
     }
 
-    private Vector2 aimDirection()
-    {
-        //calculate direction to throw object
-        Vector2 dir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
-
-        weapon.transform.position = bulletSpawnPoint.position;
-        weapon.layer = LayerMask.NameToLayer("Thrown Object");
-        weapon.SetActive(true);
-
-        weapon.transform.GetComponent<Collider2D>().isTrigger = false;
-        weapon.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-
-        return dir;
-    }
-
-    private void throwGrenade()
-    {
-        //get throw direction from mouse input
-        Vector2 dir = aimDirection();
-        Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
-
-        //apply a large force to throw the grenade
-        Vector2 unadjustedForce = grenadeThrowForce * dir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
-        objectRig.velocity = new Vector2(0, 0);
-        objectRig.AddForce(unadjustedForce * objectRig.mass);
-    }
-
-    private void shootPlasmaBullet()
-    {
-        //get throw direction from mouse input
-        Vector2 dir = aimDirection();
-        Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
-
-        //spawn and orient the bullet correctly
-        weapon.transform.right = dir;
-        objectRig.velocity = dir * plasmaBulletSpeed;
-    }
-
-    private void throwBoomerang()
-    {
-        //get throw direction from mouse input
-        Vector2 throwDir = aimDirection();
-        Rigidbody2D objectRig = weapon.transform.GetComponent<Rigidbody2D>();
-
-        //set the boomerang's velocity really high
-        objectRig.velocity = throwDir * boomerangSpeed;
-        objectRig.angularVelocity = Random.Range(objectSpinSpeed.x, objectSpinSpeed.y);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        //Player collides with weapon, so equip it
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Object"))
-        {
-            weaponSystem.EquipNewWeapon(collision.gameObject.tag);
-            collision.gameObject.SetActive(false);
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        //Player is on a levitation boost platform and clicks W -> give them a boost 
-        if (collision.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && isGrounded())
-            rig.AddForce(Constants.levitationBoost);
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.layer == 11)
-            touchingMap = true;
-    }
-
-    private void OnCollisionStay2D(Collision2D col)
-    {
-        if (col.gameObject.layer == 11)
-            touchingMap = true;
-    }
-
-    private void OnCollisionExit2D(Collision2D col)
-    {
-        if (col.gameObject.layer == 11)
-            touchingMap = false;
-    }
-
+    //handles player orientation (left/right), gun rotation, gun position, head rotation
     private void playerLimbsOrientation()
     {
-
-
         //player faces left or right depending on mouse cursor
         if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
             player.localRotation = Quaternion.Euler(0, 0, 0);
         else
             player.localRotation = Quaternion.Euler(0, 180, 0);
 
-        //player's shooting arm (w/ gun) rotates towards the mouse cursor
+        //calculate the angle btwn mouse cursor and player's shooting arm
         Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
-        Vector2 offset = Quaternion.Euler(0, 0, -40f) * shootDirection;
-        Vector2 aimDirection = shootDirection + offset;
+        float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
 
+        //ideal local gun coordinates when looking to the side, up or down 
         Vector2 pointingRight = new Vector2(0.817f, 2.077f);
         Vector2 pointingUp = new Vector2(-0.276f, 3.389f);
         Vector2 pointingDown = new Vector2(-0.548f, 0.964f);
         Vector2 shoulderPos = new Vector2(-0.434f, 2.128f);
 
+        //ideal angle from shoulder to the above gun coordinate
         float up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
         float right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
         float down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
-
-        shootDirection = new Vector2(Mathf.Abs(shootDirection.x), shootDirection.y);
-        float shootAngle = Mathf.Atan2(shootDirection.y, shootDirection.x) * 180 / Mathf.PI;
 
         if (shootDirection.y >= 0)
         {
@@ -308,33 +146,22 @@ public class Sideview_Controller : MonoBehaviour
         }
     }
 
-    private void slantedMovement()
+    //states when to transition btwn diff player animation states 
+    private void playerAnimationController()
     {
-        //kill gravity when not moving
-        if (grounded && movementDirX == 0)
-            rig.gravityScale = 0;
-        else
-            rig.gravityScale = 1;
-    }
-
-    private void playerAnimation()
-    {
-        //if the player isn't mid-air
+        //if the player isn't currently midair (ie. isn't in the jump animation state) 
         if (animator.GetInteger("Phase") != 2)
         {
-            //trigger jump animation when the player isn't grounded
             if (!grounded)
                 setAnimation("jumping");
-
-            //play walking animation if A or D is pressed down
-            if (movementDirX != 0)
+            else if (movementDirX != 0)
                 setAnimation("walking");
             else
                 setAnimation("idle");
 
             bool facingRight = Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x;
 
-            //if you're looking in the opposite direction you're walking, play walking animation backwards
+            //if you're looking in the opposite direction as you're running, set walking speed to -1 (which auto triggers backwards walking animation)
             if (animator.GetInteger("Phase") == 1)
             {
                 if ((movementDirX == 1 && facingRight) || movementDirX == -1 && !facingRight)
@@ -352,31 +179,72 @@ public class Sideview_Controller : MonoBehaviour
         }
     }
 
-    private bool isGrounded()
+    //check if the player is on the ground + update the groundAngle
+    public bool isGrounded()
     {
-        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.22f, Constants.map);
-        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.22f, Constants.map);
+        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.3f, Constants.map);
+        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.3f, Constants.map);
 
         GameObject collider = null;
-        if (leftFootGrounded.collider != null)
+
+
+        if (leftFootGrounded.collider != null && rightFootGrounded.collider == null)
             collider = leftFootGrounded.collider.gameObject;
-        else if (rightFootGrounded.collider != null)
+        else if (rightFootGrounded.collider != null && leftFootGrounded.collider == null)
             collider = rightFootGrounded.collider.gameObject;
+        else if (rightFootGrounded.collider != null && leftFootGrounded.collider != null)
+        {
+            RaycastHit2D centerOfMassGrounded = Physics2D.Raycast(transform.position, Vector2.down, 3.22f, Constants.map);
+
+            if (centerOfMassGrounded.collider != null)
+            {
+                Debug.Log("center of mass taken");
+                collider = centerOfMassGrounded.collider.gameObject;
+            }
+        }
+
+        /*if (leftFootGrounded.collider != null)
+        {
+            collider = leftFootGrounded.collider.gameObject;
+
+            //if the ground below the right foot is steeper than the ground below the left foot
+            if (rightFootGrounded.collider != null && Mathf.Abs(180 - rightFootGrounded.collider.transform.eulerAngles.z) >= Mathf.Abs(180 - leftFootGrounded.collider.transform.eulerAngles.z))
+                collider = rightFootGrounded.collider.gameObject;
+        }
+        else if (rightFootGrounded.collider != null)
+            collider = rightFootGrounded.collider.gameObject;*/
 
         if (collider)
         {
             groundAngle = collider.transform.eulerAngles.z;
             float tangent = Mathf.Tan(groundAngle * Mathf.PI / 180);
             Vector2 dir = new Vector2(1, tangent).normalized;
+
             groundDir = dir;
         }
-
-        Debug.Log(collider ? collider.name : null);
-        Debug.Log(collider ? groundAngle : 0.1f);
 
         return (rightFootGrounded || leftFootGrounded) ? true : false;
     }
 
+    //foot collider becomes smaller when jumping
+    private void handlefootCollider()
+    {
+        //disable main foot's collider when jumping
+        footCollider.enabled = animator.GetInteger("Phase") != 2;
+
+        //tuck in footCollider when idle
+        if (animator.GetInteger("Phase") == 0)
+            footCollider.transform.localPosition = new Vector2(-0.185f, footCollider.transform.localPosition.y);
+        else
+            footCollider.transform.localPosition = new Vector2(0f, footCollider.transform.localPosition.y);
+
+        //tuck the right foot ground raycaster in when jumping
+        rightFoot.transform.localPosition = footCollider.enabled
+        ? new Vector3(0.99f, rightFoot.transform.localPosition.y, 0)
+        : new Vector3(0.532f, rightFoot.transform.localPosition.y, 0);
+    }
+
+    //set new animation state for the player
     private void setAnimation(string mode)
     {
         int newMode = 0;
@@ -390,13 +258,13 @@ public class Sideview_Controller : MonoBehaviour
         else
             Debug.LogError("mode not defined");
 
-        //animation progress (always positive regardless of whether animation is played backwards)
+        //get animation progress (as a positive number btwn 0-1 regardless of whether the animation is played forwards or backwards)
         float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
 
-        //if currently walking
+        //if walking
         if (animator.GetInteger("Phase") == 1)
         {
-            //go idle
+            //go idle 
             if (newMode == 0 && ((t >= 0.31f && t <= 0.41f) || (t >= 0.8633f && t <= 0.975f)))
                 StartCoroutine(walkingToIdle());
 
@@ -407,11 +275,9 @@ public class Sideview_Controller : MonoBehaviour
 
         else
             animator.SetInteger("Phase", newMode);
-
     }
 
-    //add slight delay before switching from walking to idle animation 
-    //allows for an even cleaner switch from walking to non-idle animations 
+    //Submethod that adds tiny delay before switching from walking to idle animation (cleaner transition from walking to other non-idle animations)
     private IEnumerator walkingToIdle()
     {
         yield return new WaitForSeconds(0.045f);
@@ -422,10 +288,21 @@ public class Sideview_Controller : MonoBehaviour
             animator.SetInteger("Phase", 0);
     }
 
-    private IEnumerator killGravity()
+    private void OnCollisionEnter2D(Collision2D col)
     {
-        rig.gravityScale = 9.9f;
-        yield return new WaitForSeconds(0.03f);
-        rig.gravityScale = 0;
+        if (col.gameObject.layer == 11)
+            touchingMap = true;
+    }
+
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        if (col.gameObject.layer == 11)
+            touchingMap = true;
+    }
+
+    private void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.gameObject.layer == 11)
+            touchingMap = false;
     }
 }
