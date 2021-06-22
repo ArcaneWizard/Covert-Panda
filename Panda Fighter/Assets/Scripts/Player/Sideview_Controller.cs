@@ -74,32 +74,36 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
 
+        setPlayerVelocity();
+        tilt();
+    }
+
+    private void setPlayerVelocity()
+    {
         //when player is on the ground, player velocity is parallel to the slanted ground 
         if (!animator.GetBool("jumped") && grounded && touchingMap)
         {
-            Debug.LogFormat("{0}, {1}, {2}", movementDirX, player.localEulerAngles.y, nextToWall);
             //no player velocity when running into a wall
             if (movementDirX == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
-            {
                 rig.velocity = new Vector2(0, 0);
-            }
+
             //no player velocity when running into a wall 
             else if (movementDirX == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
-            {
                 rig.velocity = new Vector2(0, 0);
-            }
+
             //otherwise player velocity is parallel to the slanted ground
             else
-            {
                 rig.velocity = groundDir * speed * movementDirX;
-            }
         }
 
         //when player is not on the ground, player velocity is just left/right with gravity applied
         else
             rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+    }
 
-        //player's body should tilt slightly on the slanted platform
+    //player's body should tilt slightly on the slanted platform
+    private void tilt()
+    {
         float zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)
@@ -214,24 +218,6 @@ public class Sideview_Controller : MonoBehaviour
     //check if the player is on the ground + update the groundAngle
     public bool isGrounded()
     {
-        /*RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.3f, Constants.map);
-        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.3f, Constants.map);
-
-        GameObject collider = null;
-
-        if (leftFootGrounded.collider != null && rightFootGrounded.collider == null)
-            collider = leftFootGrounded.collider.gameObject;
-        else if (rightFootGrounded.collider != null && leftFootGrounded.collider == null)
-            collider = rightFootGrounded.collider.gameObject;
-        else if (rightFootGrounded.collider != null && leftFootGrounded.collider != null)
-        {
-            RaycastHit2D centerOfMassGrounded = Physics2D.Raycast(transform.position, Vector2.down, 3.22f, Constants.map);
-
-            if (centerOfMassGrounded.collider != null)
-                collider = centerOfMassGrounded.collider.gameObject;
-        }*/
-
-
         GameObject collider = null;
 
         if (leftFootGround != null && rightFootGround == null)

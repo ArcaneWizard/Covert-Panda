@@ -33,7 +33,7 @@ public class BotAnimationController : MonoBehaviour
     {
         alienLimbsOrientation();
         alienAnimationController();
-        //StartCoroutine(handleColliders());
+        StartCoroutine(handleColliders());
     }
 
     //handles alien orientation (left/right), gun rotation, gun position, head rotation
@@ -89,15 +89,15 @@ public class BotAnimationController : MonoBehaviour
 
         //tuck the feet ground raycasters in when jumping
         rightFoot.transform.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(0.99f, rightFoot.transform.localPosition.y, 0)
-        : new Vector3(0.332f, rightFoot.transform.localPosition.y, 0);
+        ? new Vector3(0.597f, rightFoot.transform.localPosition.y, 0)
+        : new Vector3(-0.002f, rightFoot.transform.localPosition.y, 0);
 
         leftFoot.transform.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(-0.357f, leftFoot.transform.localPosition.y, 0)
-        : new Vector3(-0.157f, leftFoot.transform.localPosition.y, 0);
+        ? new Vector3(-0.787f, leftFoot.transform.localPosition.y, 0)
+        : new Vector3(-0.626f, leftFoot.transform.localPosition.y, 0);
 
         //thin collider when jumping
-        mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.68f : 1f, mainCollider.size.y);
+        mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.7f : 1.035f, mainCollider.size.y);
     }
 
 
