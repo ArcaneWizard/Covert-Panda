@@ -8,16 +8,15 @@ public class BotAI : MonoBehaviour
     private Rigidbody2D rig;
     private Animator animator;
     private SpriteRenderer sR;
-    private Transform leftFoot;
-    private Transform rightFoot;
-    private Transform leftHead;
-    private Transform rightHead;
+    public Transform leftFoot;
+    public Transform rightFoot;
 
     private EnvironmentDetection environmentInputs = new EnvironmentDetection();
     private FixedBotBehaviour fixedBotBehaviour = new FixedBotBehaviour();
     private Dictionary<EnvKey, EnvInfo> info;
 
     private float botSpeed = 4f;
+    private float botSpeedX_Multiplier = 1f;
     private float jumpForce = 600;
 
     private EnvKey action;
@@ -43,7 +42,10 @@ public class BotAI : MonoBehaviour
     private float jumpCoordinate;
     private EnvKey ceilingCheckAboveJump;
     private bool dontJump;
+
+    [SerializeField]
     private bool recalculateAfterJump;
+
     private bool holeSpottedB4;
     private Dictionary<EnvKey, string> jumpPlatforms = new Dictionary<EnvKey, string>();
     private float jumpToHeight = 0;
@@ -53,15 +55,20 @@ public class BotAI : MonoBehaviour
 
     private int numberOfRays = 7;
 
+    [SerializeField]
+    private bool grounded;
+    [SerializeField]
+    private bool touchingMap;
+    [SerializeField]
+    private float groundAngle;
+    private Vector2 groundDir;
+    public string nextToWall;
+
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         sR = transform.GetChild(0).transform.GetComponent<SpriteRenderer>();
-        leftFoot = transform.GetChild(1);
-        rightFoot = transform.GetChild(2);
-        leftHead = transform.GetChild(3);
-        rightHead = transform.GetChild(4);
 
         botSpeed = Random.Range(4.3f, 5f);
 
@@ -74,6 +81,7 @@ public class BotAI : MonoBehaviour
         figureOutWhatToDo();
         StartCoroutine(lookForPlayer());
     }
+
 
     //scan environment, store this info in a dictionary, and decide on a plan of action
     private void figureOutWhatToDo()
@@ -342,7 +350,6 @@ public class BotAI : MonoBehaviour
             check = 301;
         }
 
-        rig.velocity = new Vector2(botSpeed * dir, rig.velocity.y);
         actionsTakenToExecutePath();
     }
 
@@ -418,6 +425,35 @@ public class BotAI : MonoBehaviour
 
         botFallingSettings();
         botStillSettings();
+        grounded = isGrounded();
+
+
+        //when bot is on the ground, bot velocity is parallel to the slanted ground 
+        if (grounded && touchingMap)
+        {
+            //no bot velocity when running into a wall
+            if (dir == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
+            {
+                Debug.Log("1");
+                rig.velocity = new Vector2(0, 0);
+            }
+            //no bot velocity when running into a wall 
+            else if (dir == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
+            {
+                Debug.Log("2");
+                rig.velocity = new Vector2(0, 0);
+            }
+            //otherwise bot velocity is parallel to the slanted ground
+            else
+            {
+                Debug.Log("3");
+                rig.velocity = groundDir * botSpeed * dir;
+            }
+        }
+
+        //when player is not on the ground, player velocity is just left/right with gravity applied
+        else
+            rig.velocity = new Vector2(botSpeed * dir, rig.velocity.y);
 
         //bot is about to approach a gap that it needs to jump over to continue its plan of action
         if (check == 2 && action.direction == 'G' && ((action.x > 0 && transform.position.x > jumpCoordinate - 1.2f) || (action.x < 0 && transform.position.x < jumpCoordinate + 1.2)))
@@ -456,7 +492,7 @@ public class BotAI : MonoBehaviour
             //bot is moving left and plans to go left after jumping to the upper level
             else if (jumpPlatforms[action] == "left" && rig.velocity.x <= 0 && (transform.position.x - info[action].location().x) < Random.Range(1.8f, 2.2f) && (info[new EnvKey('L', 0, 0)].location().x < transform.position.x - 1.3f))
             {
-                rig.velocity = new Vector2(rig.velocity.x / 1.5f, rig.velocity.y);
+                botSpeedX_Multiplier = 1f / 1.5f;
                 jumpCoordinate = transform.position.y;
                 fixedBotBehaviour.jump(rig, jumpForce * multiplier, false);
                 print(info[action].location().x);
@@ -467,7 +503,7 @@ public class BotAI : MonoBehaviour
             else if (jumpPlatforms[action] == "left" && rig.velocity.x <= 0 && (transform.position.x - info[action].location().x) < Random.Range(1.8f, 2.2f) && (info[new EnvKey('L', 0, 0)].location().x >= transform.position.x - 1.3f))
             {
                 jumpCoordinate = transform.position.y;
-                rig.velocity = new Vector2(botSpeed, rig.velocity.y);
+                botSpeedX_Multiplier = 1f;
                 fixedBotBehaviour.jump(rig, jumpForce * multiplier, false);
                 rig.AddForce(new Vector2(Random.Range(20, 25), 0));
                 print(jumpCoordinate);
@@ -487,7 +523,7 @@ public class BotAI : MonoBehaviour
             //bot is moving right and plans to go right after jumping to the upper level
             else if (jumpPlatforms[action] == "right" && rig.velocity.x >= 0 && (info[action].location().x - transform.position.x) < Random.Range(1.8f, 2.2f) && (info[new EnvKey('R', 0, 0)].location().x > transform.position.x + 1.3f))
             {
-                rig.velocity = new Vector2(Mathf.Abs(rig.velocity.x) / 1.5f, rig.velocity.y);
+                botSpeedX_Multiplier = 1f / 1.5f * Mathf.Abs(rig.velocity.x);
                 jumpCoordinate = transform.position.y;
                 fixedBotBehaviour.jump(rig, jumpForce * multiplier, false);
                 print(info[action].location().x);
@@ -498,10 +534,9 @@ public class BotAI : MonoBehaviour
             else if (jumpPlatforms[action] == "right" && rig.velocity.x >= 0 && (info[action].location().x - transform.position.x) < Random.Range(1.8f, 2.2f) && (info[new EnvKey('R', 0, 0)].location().x <= transform.position.x + 1.3f))
             {
                 jumpCoordinate = transform.position.y;
-                rig.velocity = new Vector2(-botSpeed, rig.velocity.y);
+                botSpeedX_Multiplier = -1;
                 fixedBotBehaviour.jump(rig, jumpForce * multiplier, false);
                 rig.AddForce(new Vector2(Random.Range(-25, -20), 0));
-                print(info[action].location().x);
                 check = 304;
             }
         }
@@ -512,7 +547,7 @@ public class BotAI : MonoBehaviour
             //bot jumped to the right, but now mid-way needs to start turning left
             if (jumpPlatforms[action] == "left" && check == 302)
             {
-                rig.velocity = new Vector2(0, rig.velocity.y);
+                botSpeedX_Multiplier = 0;
                 rig.AddForce(new Vector2(Random.Range(-170, -150), 0));
                 check = 303;
             }
@@ -520,7 +555,7 @@ public class BotAI : MonoBehaviour
             //bot jumped to the left, but now mid-way needs to start turning right
             if (jumpPlatforms[action] == "right" && check == 304)
             {
-                rig.velocity = new Vector2(0, rig.velocity.y);
+                botSpeedX_Multiplier = 0;
                 rig.AddForce(new Vector2(Random.Range(150, 170), 0));
                 check = 305;
             }
@@ -588,7 +623,6 @@ public class BotAI : MonoBehaviour
         if (testSpecificAction)
             return testKey;
 
-        Debug.Log(chooseDirection + ", " + lastMovement);
         //pick a left or right destination
         if (chooseDirection < 50 && possibleLeftActions.Count > 0)
         {
@@ -621,10 +655,11 @@ public class BotAI : MonoBehaviour
         //bot is falling -> kill horizontal velocity
         if ((check == 1 || check == 3) && Mathf.Abs(endSpot.x - transform.position.x) < 0.25f && rig.velocity.y < 0)
         {
+            recalculateAfterJump = true;
             check = 4;
 
             if (Mathf.Abs(endSpot.y - transform.position.y) > 2)
-                rig.velocity = new Vector2(rig.velocity.x * Random.Range(0.05f, 0.4f), rig.velocity.y);
+                botSpeedX_Multiplier = Random.Range(0.05f, 0.4f);
         }
 
         //bot is falling and just about to land -> make new decision
@@ -706,6 +741,7 @@ public class BotAI : MonoBehaviour
     {
         if (recalculateAfterJump)
         {
+            Debug.LogWarning("yo");
             recalculateAfterJump = false;
             figureOutWhatToDo();
         }
@@ -720,16 +756,52 @@ public class BotAI : MonoBehaviour
             float platformAngle = col.transform.eulerAngles.z;
             if (Mathf.Abs(platformAngle) < Constants.maxPlatformTilt && Mathf.Abs(rig.velocity.x) > 1f)
             {
-                print("correct speed");
-                //make sure bot moves at a constant x velocity even on slanted ground
-                if (rig.velocity.x > 0 && (rig.velocity.x > botSpeed + 0.15f || rig.velocity.x < botSpeed - 0.15f))
-                {
-                    rig.velocity = new Vector2(botSpeed, rig.velocity.y);
-                }
-                else if (rig.velocity.x < 0 && (rig.velocity.x < -botSpeed - 0.15f || rig.velocity.x > -botSpeed + 0.15f))
-                    rig.velocity = new Vector2(-botSpeed, rig.velocity.y);
+                /* //make sure bot moves at a constant x velocity even on slanted ground
+                 if (rig.velocity.x > 0 && (rig.velocity.x > botSpeed + 0.15f || rig.velocity.x < botSpeed - 0.15f))
+                 {
+                     rig.velocity = new Vector2(botSpeed, rig.velocity.y);
+                 }
+                 else if (rig.velocity.x < 0 && (rig.velocity.x < -botSpeed - 0.15f || rig.velocity.x > -botSpeed + 0.15f))
+                     rig.velocity = new Vector2(-botSpeed, rig.velocity.y);*/
             }
         }
+    }
+
+    //check if the player is on the ground + update the groundAngle
+    public bool isGrounded()
+    {
+        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.3f, Constants.map);
+        RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.3f, Constants.map);
+
+        GameObject collider = null;
+
+        if (leftFootGrounded.collider != null && rightFootGrounded.collider == null)
+            collider = leftFootGrounded.collider.gameObject;
+        else if (rightFootGrounded.collider != null && leftFootGrounded.collider == null)
+            collider = rightFootGrounded.collider.gameObject;
+        else if (rightFootGrounded.collider != null && leftFootGrounded.collider != null)
+        {
+            RaycastHit2D centerOfMassGrounded = Physics2D.Raycast(transform.position, Vector2.down, 3.22f, Constants.map);
+
+            if (centerOfMassGrounded.collider != null)
+                collider = centerOfMassGrounded.collider.gameObject;
+        }
+
+        if (collider)
+        {
+            groundAngle = collider.transform.eulerAngles.z;
+            float tangent = Mathf.Tan(groundAngle * Mathf.PI / 180);
+            Vector2 dir = new Vector2(1, tangent).normalized;
+
+            groundDir = dir;
+        }
+        else
+        {
+            groundAngle = 0;
+            groundDir = new Vector2(1, 0);
+        }
+
+        return (rightFootGrounded || leftFootGrounded) ? true : false;
     }
 }
 

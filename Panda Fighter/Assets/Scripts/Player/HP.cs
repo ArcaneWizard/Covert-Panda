@@ -28,6 +28,6 @@ public class HP : MonoBehaviour
     private void deathAnimation()
     {
         //death animation 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
     }
 }

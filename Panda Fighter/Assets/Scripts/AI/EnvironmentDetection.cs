@@ -18,11 +18,11 @@ public class EnvironmentDetection
 
         //G for ground check, 
         for (int i = -7; i <= 7; i++)
-            sendRaycast(Vector2.down, 6, new EnvKey('G', i, 0), Color.magenta, new Vector2(eX + 1.5f * i, eY));
+            sendRaycast(Vector2.down, 9, new EnvKey('G', i, 0), Color.magenta, new Vector2(eX + 1.5f * i, eY));
 
         //C for ceiling check
         for (int j = -7; j <= 7; j++)
-            sendRaycast(Vector2.up, 6, new EnvKey('C', j, 0), Color.cyan, new Vector2(eX + 1.5f * j, eY));
+            sendRaycast(Vector2.up, 9, new EnvKey('C', j, 0), Color.cyan, new Vector2(eX + 1.5f * j, eY));
 
         //L for left wall check, R for right wall check
         sendRaycast(Vector2.left, 9, new EnvKey('L', 0, 0), Color.blue, new Vector2(eX, eY));
