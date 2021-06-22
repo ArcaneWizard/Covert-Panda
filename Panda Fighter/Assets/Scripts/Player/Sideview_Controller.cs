@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -9,15 +10,12 @@ public class Sideview_Controller : MonoBehaviour
     private Rigidbody2D rig;
     private Transform player;
     private Animator animator;
+
     public Transform shootingArm;
     public Transform head;
-    public Transform legs;
     public BoxCollider2D mainCollider;
-
     public Transform gun;
     public BoxCollider2D footCollider;
-    //public BoxCollider2D forwardCollider;
-    //public BoxCollider2D backwardCollider;
     public string nextToWall;
 
     public Camera camera;
@@ -28,6 +26,9 @@ public class Sideview_Controller : MonoBehaviour
 
     public Transform leftFoot;
     public Transform rightFoot;
+    public GameObject leftFootGround;
+    public GameObject rightFootGround;
+    public GameObject generalGround;
 
     [SerializeField]
     private bool grounded;
@@ -38,8 +39,6 @@ public class Sideview_Controller : MonoBehaviour
     private Vector2 groundDir;
 
     private int movementDirX;
-
-    private float timer;
 
     void Awake()
     {
@@ -82,19 +81,16 @@ public class Sideview_Controller : MonoBehaviour
             //no player velocity when running into a wall
             if (movementDirX == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
             {
-                Debug.Log("1");
                 rig.velocity = new Vector2(0, 0);
             }
             //no player velocity when running into a wall 
             else if (movementDirX == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
             {
-                Debug.Log("2");
                 rig.velocity = new Vector2(0, 0);
             }
             //otherwise player velocity is parallel to the slanted ground
             else
             {
-                Debug.Log("3");
                 rig.velocity = groundDir * speed * movementDirX;
             }
         }
@@ -134,6 +130,11 @@ public class Sideview_Controller : MonoBehaviour
         //calculate the angle btwn mouse cursor and player's shooting arm
         Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
         float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
+
+        //apply offset to the shoot Angle when the player is tilted on a ramp:
+        float zAngle = ((180 - Mathf.Abs(180 - transform.eulerAngles.z))); // <- maps angles above 180 to their negative value instead (ex. 330 becomes -30)
+        zAngle *= (player.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
+        shootAngle -= zAngle;
 
         //ideal local gun coordinates when looking to the side, up or down 
         Vector2 pointingRight = new Vector2(0.817f, 2.077f);
@@ -213,7 +214,7 @@ public class Sideview_Controller : MonoBehaviour
     //check if the player is on the ground + update the groundAngle
     public bool isGrounded()
     {
-        RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.3f, Constants.map);
+        /*RaycastHit2D leftFootGrounded = Physics2D.Raycast(leftFoot.position, Vector2.down, 0.3f, Constants.map);
         RaycastHit2D rightFootGrounded = Physics2D.Raycast(rightFoot.position, Vector2.down, 0.3f, Constants.map);
 
         GameObject collider = null;
@@ -227,22 +228,18 @@ public class Sideview_Controller : MonoBehaviour
             RaycastHit2D centerOfMassGrounded = Physics2D.Raycast(transform.position, Vector2.down, 3.22f, Constants.map);
 
             if (centerOfMassGrounded.collider != null)
-            {
-                Debug.Log("center of mass taken");
                 collider = centerOfMassGrounded.collider.gameObject;
-            }
-        }
+        }*/
 
-        /*if (leftFootGrounded.collider != null)
-        {
-            collider = leftFootGrounded.collider.gameObject;
 
-            //if the ground below the right foot is steeper than the ground below the left foot
-            if (rightFootGrounded.collider != null && Mathf.Abs(180 - rightFootGrounded.collider.transform.eulerAngles.z) >= Mathf.Abs(180 - leftFootGrounded.collider.transform.eulerAngles.z))
-                collider = rightFootGrounded.collider.gameObject;
-        }
-        else if (rightFootGrounded.collider != null)
-            collider = rightFootGrounded.collider.gameObject;*/
+        GameObject collider = null;
+
+        if (leftFootGround != null && rightFootGround == null)
+            collider = leftFootGround;
+        else if (rightFootGround != null && leftFootGround == null)
+            collider = rightFootGround;
+        else if (rightFootGround != null && leftFootGround != null)
+            collider = generalGround;
 
         if (collider)
         {
@@ -258,7 +255,7 @@ public class Sideview_Controller : MonoBehaviour
             groundDir = new Vector2(1, 0);
         }
 
-        return (rightFootGrounded || leftFootGrounded) ? true : false;
+        return (rightFootGround || leftFootGround) ? true : false;
     }
 
     //foot collider becomes smaller when jumping
@@ -342,11 +339,5 @@ public class Sideview_Controller : MonoBehaviour
     {
         if (col.gameObject.layer == 11)
             touchingMap = false;
-    }
-
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.layer == 11)
-            Debug.Log("object on side");
     }
 }

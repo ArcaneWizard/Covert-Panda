@@ -14,16 +14,19 @@ public class SideCollider : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        sideview_Controller.nextToWall = gameObject.name;
+        if (other.gameObject.layer == 11)
+            sideview_Controller.nextToWall = gameObject.name;
     }
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        sideview_Controller.nextToWall = gameObject.name;
+        if (other.gameObject.layer == 11)
+            sideview_Controller.nextToWall = gameObject.name;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        sideview_Controller.nextToWall = "";
+        if (other.gameObject.layer == 11)
+            sideview_Controller.nextToWall = "";
     }
 }
