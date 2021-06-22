@@ -16,6 +16,9 @@ public class Sideview_Controller : MonoBehaviour
 
     public Transform gun;
     public BoxCollider2D footCollider;
+    //public BoxCollider2D forwardCollider;
+    //public BoxCollider2D backwardCollider;
+    public string nextToWall;
 
     public Camera camera;
     private Vector3 cameraOffset;
@@ -54,7 +57,7 @@ public class Sideview_Controller : MonoBehaviour
 
         playerLimbsOrientation();
         playerAnimationController();
-        handlefootCollider();
+        StartCoroutine(handleColliders());
 
         //use A and D keys for left or right movement
         movementDirX = 0;
@@ -72,14 +75,37 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
 
-        //player velocity is aligned parallel to the slanted ground whenever the player is on a surface
-        if (touchingMap && !animator.GetBool("jumped") && grounded)
-            rig.velocity = groundDir * speed * movementDirX;
+        //when player is on the ground, player velocity is parallel to the slanted ground 
+        if (!animator.GetBool("jumped") && grounded && touchingMap)
+        {
+            Debug.LogFormat("{0}, {1}, {2}", movementDirX, player.localEulerAngles.y, nextToWall);
+            //no player velocity when running into a wall
+            if (movementDirX == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
+            {
+                Debug.Log("1");
+                rig.velocity = new Vector2(0, 0);
+            }
+            //no player velocity when running into a wall 
+            else if (movementDirX == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
+            {
+                Debug.Log("2");
+                rig.velocity = new Vector2(0, 0);
+            }
+            //otherwise player velocity is parallel to the slanted ground
+            else
+            {
+                Debug.Log("3");
+                rig.velocity = groundDir * speed * movementDirX;
+            }
+        }
+
+        //when player is not on the ground, player velocity is just left/right with gravity applied
         else
             rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
 
-        //player's body tilts slightly to align with the slanted platform
+        //player's body should tilt slightly on the slanted platform
         float zAngle = transform.eulerAngles.z;
+
         if (zAngle > 180)
             zAngle = zAngle - 360;
 
@@ -236,17 +262,19 @@ public class Sideview_Controller : MonoBehaviour
     }
 
     //foot collider becomes smaller when jumping
-    private void handlefootCollider()
+    private IEnumerator handleColliders()
     {
+        yield return new WaitForSeconds(0.03f);
+
         //disable main foot's collider when not walking
-        footCollider.enabled = animator.GetInteger("Phase") == 1;
+        footCollider.gameObject.SetActive(animator.GetInteger("Phase") == 1);
 
         //tuck the feet ground raycasters in when jumping
-        rightFoot.transform.localPosition = footCollider.enabled
+        rightFoot.transform.localPosition = animator.GetInteger("Phase") != 2
         ? new Vector3(0.99f, rightFoot.transform.localPosition.y, 0)
         : new Vector3(0.332f, rightFoot.transform.localPosition.y, 0);
 
-        leftFoot.transform.localPosition = footCollider.enabled
+        leftFoot.transform.localPosition = animator.GetInteger("Phase") != 2
         ? new Vector3(-0.357f, leftFoot.transform.localPosition.y, 0)
         : new Vector3(-0.157f, leftFoot.transform.localPosition.y, 0);
 
@@ -314,5 +342,11 @@ public class Sideview_Controller : MonoBehaviour
     {
         if (col.gameObject.layer == 11)
             touchingMap = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.layer == 11)
+            Debug.Log("object on side");
     }
 }
