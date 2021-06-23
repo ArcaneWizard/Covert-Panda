@@ -13,6 +13,7 @@ public class NewBotAI : MonoBehaviour
 
     public Transform leftFoot;
     public Transform rightFoot;
+    public Transform centerFoot;
     public GameObject leftFootGround;
     public GameObject rightFootGround;
     public GameObject generalGround;
@@ -20,6 +21,17 @@ public class NewBotAI : MonoBehaviour
 
     private GameObject groundSurface;
     public Transform GroundDetection;
+    public List<bool> rightGround = new List<bool>(new bool[10]);
+    public List<bool> leftGround = new List<bool>(new bool[10]);
+    public Transform leftGroundColliders;
+    public Transform rightGroundColliders;
+
+    private Vector2 leftWall;
+    private Vector2 rightWall;
+    [SerializeField]
+    private Vector2 leftHole;
+    [SerializeField]
+    private Vector2 rightHole;
 
     public bool grounded;
     [SerializeField]
@@ -30,6 +42,7 @@ public class NewBotAI : MonoBehaviour
 
     public int movementDirX;
     private float zAngle;
+    private float symmetricGroundAngle;
 
     private float time = 0;
     private float frames = 0;
@@ -48,10 +61,10 @@ public class NewBotAI : MonoBehaviour
 
     void Start()
     {
-        InvokeRepeating("jump", 1f, 3f);
-        InvokeRepeating("jump2", 1.4f, 3f);
-        InvokeRepeating("printPathColliders", 1f, 0.2f);
-        Invoke("setSpeed", 1.3f);
+        //InvokeRepeating("jump", 1f, 3f);
+        //InvokeRepeating("jump2", 1.4f, 3f);
+
+        InvokeRepeating("findWalls", 0.2f, 0.16f);
     }
 
     // Update is called once per frame
@@ -63,7 +76,58 @@ public class NewBotAI : MonoBehaviour
         tilt();
         debugFrameRate();
 
-        GroundDetection.transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, zAngle * 1.4f);
+        GroundDetection.transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, symmetricGroundAngle);
+    }
+
+    private void determineClosestHole()
+    {
+        leftHole = Vector2.zero;
+        rightHole = Vector2.zero;
+
+        for (int i = 0; i < leftGround.Count; i++)
+        {
+            if (leftGroundColliders.transform.GetChild(i).position.x < leftWall.x)
+                break;
+
+            else if (leftGround[i] == false)
+            {
+                leftHole = leftGroundColliders.transform.GetChild(i).position;
+                break;
+            }
+        }
+
+        for (int i = 0; i < rightGround.Count; i++)
+        {
+            if (rightGroundColliders.transform.GetChild(i).position.x > rightWall.x)
+                break;
+
+            if (rightGround[i] == false)
+            {
+                rightHole = rightGroundColliders.transform.GetChild(i).position;
+                break;
+            }
+        }
+
+        if (leftHole != Vector2.zero)
+            Debug.DrawRay(leftHole, Vector2.down * 4f, Color.gray, 2f);
+        if (rightHole != Vector2.zero)
+            Debug.DrawRay(rightHole, Vector2.down * 4f, Color.gray, 2f);
+    }
+
+    private void findWalls()
+    {
+        if (grounded)
+        {
+            RaycastHit2D leftWallHit = Physics2D.Raycast(centerFoot.position, -groundDir, 20f, Constants.map);
+            leftWall = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) - groundDir * 20;
+            Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), leftWall, Color.blue, 2f);
+
+            RaycastHit2D rightWallHit = Physics2D.Raycast(centerFoot.position, groundDir, 20f, Constants.map);
+            rightWall = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) + groundDir * 20;
+            Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), rightWall, Color.red, 2f);
+
+            determineClosestHole();
+        }
     }
 
     private void jump()
@@ -157,9 +221,13 @@ public class NewBotAI : MonoBehaviour
     private void tilt()
     {
         zAngle = transform.eulerAngles.z;
+        symmetricGroundAngle = groundAngle;
 
         if (zAngle > 180)
-            zAngle = zAngle - 360;
+            zAngle -= 360;
+
+        if (symmetricGroundAngle > 180)
+            symmetricGroundAngle -= 360;
 
         if (grounded)
         {
