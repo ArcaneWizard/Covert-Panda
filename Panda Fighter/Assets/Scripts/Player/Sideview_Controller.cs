@@ -47,10 +47,12 @@ public class Sideview_Controller : MonoBehaviour
     private float zAngle;
 
     //ideal local gun coordinates when looking to the side, up or down 
-    private Vector2 pointingRight = new Vector2(0.817f, 2.077f);
-    private Vector2 pointingUp = new Vector2(-0.276f, 3.389f);
-    private Vector2 pointingDown = new Vector2(-0.548f, 0.964f);
-    private Vector2 shoulderPos = new Vector2(-0.434f, 2.128f);
+    private Vector2 pointingRight = new Vector2(0.642f, 0.491f);
+    private Vector2 pointingUp = new Vector2(-0.24f, 1.68f);
+    private Vector2 pointingDown = new Vector2(-0.407f, -0.675f);
+    private Vector2 shoulderPos = new Vector2(-0.608f, 0.662f);
+
+    private float upVector, downVector, rightVector;
 
     private float up, right, down;
 
@@ -66,6 +68,11 @@ public class Sideview_Controller : MonoBehaviour
         up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
         right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
         down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+
+        //ideal vector magnitudes from shoulder to specific gun coordinates
+        upVector = (pointingUp - shoulderPos).magnitude;
+        rightVector = (pointingRight - shoulderPos).magnitude;
+        downVector = (pointingDown - shoulderPos).magnitude;
     }
 
     void Update()
@@ -73,7 +80,6 @@ public class Sideview_Controller : MonoBehaviour
         camera.transform.position = transform.position + cameraOffset;
         grounded = isGrounded();
 
-        playerLimbsOrientation();
         playerAnimationController();
         StartCoroutine(handleColliders());
 
@@ -112,6 +118,11 @@ public class Sideview_Controller : MonoBehaviour
 
         setPlayerVelocity();
         tilt();
+    }
+
+    private void LateUpdate()
+    {
+        playerLimbsOrientation();
     }
 
     private void setPlayerVelocity()
@@ -197,7 +208,7 @@ public class Sideview_Controller : MonoBehaviour
                 float slope = (up - right) / 90f;
                 float weaponRotation = shootAngle * slope + right;
 
-                float dirSlope = (1.252f - 1.271f) / 90f;
+                float dirSlope = (upVector - rightVector) / 90f;
                 float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
 
                 Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
@@ -212,7 +223,7 @@ public class Sideview_Controller : MonoBehaviour
                 float slope = (down - right) / -90f;
                 float weaponRotation = shootAngle * slope + right;
 
-                float dirSlope = (1.17f - 1.271f) / -90f;
+                float dirSlope = (downVector - rightVector) / -90f;
                 float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
 
                 Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
