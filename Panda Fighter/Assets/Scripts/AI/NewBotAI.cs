@@ -18,6 +18,9 @@ public class NewBotAI : MonoBehaviour
     public GameObject generalGround;
     public string nextToWall;
 
+    private GameObject groundSurface;
+    public Transform GroundDetection;
+
     public bool grounded;
     [SerializeField]
     private bool touchingMap;
@@ -26,6 +29,7 @@ public class NewBotAI : MonoBehaviour
     private Vector2 groundDir;
 
     public int movementDirX;
+    private float zAngle;
 
     private float time = 0;
     private float frames = 0;
@@ -45,6 +49,7 @@ public class NewBotAI : MonoBehaviour
     void Start()
     {
         InvokeRepeating("jump", 1f, 3f);
+        InvokeRepeating("jump2", 1.4f, 3f);
         InvokeRepeating("printPathColliders", 1f, 0.2f);
         Invoke("setSpeed", 1.3f);
     }
@@ -57,20 +62,25 @@ public class NewBotAI : MonoBehaviour
         setAlienVelocity();
         tilt();
         debugFrameRate();
-    }
 
-    private void setSpeed()
-    {
-        movementDirX = -1;
-        speed = 4.8f;
+        GroundDetection.transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, zAngle * 1.4f);
     }
 
     private void jump()
     {
-        speed = 6.4f;
+        speed = 3.6f;
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.AddForce(new Vector2(0, jumpForce));
         animator.SetBool("jumped", true);
+    }
+
+    private void jump2()
+    {
+        movementDirX = -1;
+        speed = 4.8f;
+        /* rig.gravityScale = 1.4f;
+         rig.velocity = new Vector2(rig.velocity.x, 0);
+         rig.AddForce(new Vector2(0, jumpForce * 1.3f));*/
     }
 
     private void printPathColliders()
@@ -94,19 +104,18 @@ public class NewBotAI : MonoBehaviour
     //check if the bot is on the ground + update the groundAngle
     public bool isGrounded()
     {
-
-        GameObject collider = null;
-
         if (leftFootGround != null && rightFootGround == null)
-            collider = leftFootGround;
+            groundSurface = leftFootGround;
         else if (rightFootGround != null && leftFootGround == null)
-            collider = rightFootGround;
+            groundSurface = rightFootGround;
         else if (rightFootGround != null && leftFootGround != null)
-            collider = generalGround;
+            groundSurface = generalGround;
+        else
+            groundSurface = null;
 
-        if (collider)
+        if (groundSurface)
         {
-            groundAngle = collider.transform.eulerAngles.z;
+            groundAngle = groundSurface.transform.eulerAngles.z;
             float tangent = Mathf.Tan(groundAngle * Mathf.PI / 180);
             Vector2 dir = new Vector2(1, tangent).normalized;
 
@@ -147,7 +156,7 @@ public class NewBotAI : MonoBehaviour
     //alien's body should tilt slightly on the slanted platform
     private void tilt()
     {
-        float zAngle = transform.eulerAngles.z;
+        zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)
             zAngle = zAngle - 360;
