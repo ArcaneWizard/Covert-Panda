@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BotSideCollider : MonoBehaviour
 {
-    public BotAI BotAI;
+    public NewBotAI AI;
 
     void Awake()
     {
@@ -14,16 +14,19 @@ public class BotSideCollider : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        BotAI.nextToWall = gameObject.name;
+        if (other.gameObject.layer == 11)
+            AI.nextToWall = gameObject.name;
     }
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        BotAI.nextToWall = gameObject.name;
+        if (other.gameObject.layer == 11)
+            AI.nextToWall = gameObject.name;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        BotAI.nextToWall = "";
+        if (other.gameObject.layer == 11)
+            AI.nextToWall = "";
     }
 }

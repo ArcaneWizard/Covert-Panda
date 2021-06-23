@@ -8,7 +8,7 @@ public class NewBotAI : MonoBehaviour
     private Transform alien;
     private Animator animator;
 
-    private float speed = 8.0f;
+    private float speed = 1.6f;
     private float jumpForce = 600;
 
     public Transform leftFoot;
@@ -16,7 +16,7 @@ public class NewBotAI : MonoBehaviour
     public GameObject leftFootGround;
     public GameObject rightFootGround;
     public GameObject generalGround;
-    private string nextToWall;
+    public string nextToWall;
 
     public bool grounded;
     [SerializeField]
@@ -27,6 +27,11 @@ public class NewBotAI : MonoBehaviour
 
     public int movementDirX;
 
+    private float time = 0;
+    private float frames = 0;
+
+    public GameObject pathCollider;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -35,7 +40,12 @@ public class NewBotAI : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
         movementDirX = 1;
-        rig.velocity = new Vector2(1, 0);
+    }
+
+    void Start()
+    {
+        InvokeRepeating("jump", 1f, 3f);
+        InvokeRepeating("printPathColliders", 1f, 0.2f);
     }
 
     // Update is called once per frame
@@ -45,6 +55,32 @@ public class NewBotAI : MonoBehaviour
 
         setAlienVelocity();
         tilt();
+        debugFrameRate();
+    }
+
+    private void jump()
+    {
+        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.AddForce(new Vector2(0, jumpForce));
+        animator.SetBool("jumped", true);
+    }
+
+    private void printPathColliders()
+    {
+        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
+    }
+
+    private void debugFrameRate()
+    {
+        frames++;
+        time += Time.deltaTime;
+
+        if (time >= 3f)
+        {
+            Debug.Log(frames / time);
+            time = 0;
+            frames = 0;
+        }
     }
 
     //check if the bot is on the ground + update the groundAngle

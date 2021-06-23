@@ -21,7 +21,7 @@ public class Sideview_Controller : MonoBehaviour
     public Camera camera;
     private Vector3 cameraOffset;
 
-    private float speed = 8.0f;
+    private float speed = 0.64f;
     private float jumpForce = 600;
 
     public Transform leftFoot;
@@ -39,6 +39,15 @@ public class Sideview_Controller : MonoBehaviour
     private Vector2 groundDir;
 
     private int movementDirX;
+    private float zAngle;
+
+    //ideal local gun coordinates when looking to the side, up or down 
+    private Vector2 pointingRight = new Vector2(0.817f, 2.077f);
+    private Vector2 pointingUp = new Vector2(-0.276f, 3.389f);
+    private Vector2 pointingDown = new Vector2(-0.548f, 0.964f);
+    private Vector2 shoulderPos = new Vector2(-0.434f, 2.128f);
+
+    private float up, right, down;
 
     void Awake()
     {
@@ -47,6 +56,11 @@ public class Sideview_Controller : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
         cameraOffset = camera.transform.position - transform.position;
+
+        //ideal angle from shoulder to specific gun coordinates
+        up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+        right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+        down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
     }
 
     void Update()
@@ -68,6 +82,7 @@ public class Sideview_Controller : MonoBehaviour
         //use W and S keys for jumping up or thrusting downwards
         if (Input.GetKeyDown(KeyCode.W) && grounded)
         {
+            rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce));
             animator.SetBool("jumped", true);
         }
@@ -83,28 +98,40 @@ public class Sideview_Controller : MonoBehaviour
         //when player is on the ground, player velocity is parallel to the slanted ground 
         if (!animator.GetBool("jumped") && grounded && touchingMap)
         {
-            //no player velocity when running into a wall
+            //no x velocity when running into a wall to avoid bounce/fall glitch
             if (movementDirX == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
                 rig.velocity = new Vector2(0, 0);
 
-            //no player velocity when running into a wall 
+            //no x velocity when running into a wall to avoid bounce/fall glitch
             else if (movementDirX == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
                 rig.velocity = new Vector2(0, 0);
 
-            //otherwise player velocity is parallel to the slanted ground
+            //player velocity is parallel to the slanted ground
             else
                 rig.velocity = groundDir * speed * movementDirX;
         }
 
         //when player is not on the ground, player velocity is just left/right with gravity applied
         else
-            rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+        {
+            //no x velocity when running into a wall mid-air to avoid clipping glitch
+            if (movementDirX == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
+                rig.velocity = new Vector2(0, rig.velocity.y);
+
+            //no x velocity when running into a wall mid-air to avoid clipping glitch
+            else if (movementDirX == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
+                rig.velocity = new Vector2(0, rig.velocity.y);
+
+            //player velocity is just left or right (with gravity pulling the player down)
+            else
+                rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+        }
     }
 
     //player's body should tilt slightly on the slanted platform
     private void tilt()
     {
-        float zAngle = transform.eulerAngles.z;
+        zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)
             zAngle = zAngle - 360;
@@ -140,16 +167,6 @@ public class Sideview_Controller : MonoBehaviour
         zAngle *= (player.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
         shootAngle -= zAngle;
 
-        //ideal local gun coordinates when looking to the side, up or down 
-        Vector2 pointingRight = new Vector2(0.817f, 2.077f);
-        Vector2 pointingUp = new Vector2(-0.276f, 3.389f);
-        Vector2 pointingDown = new Vector2(-0.548f, 0.964f);
-        Vector2 shoulderPos = new Vector2(-0.434f, 2.128f);
-
-        //ideal angle from shoulder to the above gun coordinate
-        float up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
-        float right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
-        float down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
 
         if (shootDirection.y >= 0)
         {
@@ -185,7 +202,7 @@ public class Sideview_Controller : MonoBehaviour
     //states when to transition btwn diff player animation states 
     private void playerAnimationController()
     {
-        //if the player isn't currently midair (ie. isn't in the jump animation state) 
+        //if the player isn't currently in the jump state 
         if (animator.GetInteger("Phase") != 2)
         {
             if (!grounded)
