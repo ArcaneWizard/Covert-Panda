@@ -20,7 +20,6 @@ public class NewBotAI : MonoBehaviour
     public string nextToWall;
 
     private GameObject groundSurface;
-    public Transform GroundDetection;
     public List<bool> rightGround = new List<bool>(new bool[10]);
     public List<bool> leftGround = new List<bool>(new bool[10]);
     public Transform leftGroundColliders;
@@ -28,10 +27,12 @@ public class NewBotAI : MonoBehaviour
 
     private Vector2 leftWall;
     private Vector2 rightWall;
-    [SerializeField]
     private Vector2 leftHole;
-    [SerializeField]
     private Vector2 rightHole;
+    private Vector3 groundDetectionOffset;
+    private Vector3 pathCollidersOffset;
+    public Transform groundDetection;
+    public Transform pathColliders;
 
     public bool grounded;
     [SerializeField]
@@ -57,6 +58,9 @@ public class NewBotAI : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
         movementDirX = 1;
+
+        groundDetectionOffset = groundDetection.position - transform.position;
+        pathCollidersOffset = pathColliders.position - transform.position;
     }
 
     void Start()
@@ -64,6 +68,7 @@ public class NewBotAI : MonoBehaviour
         //InvokeRepeating("jump", 1f, 3f);
         //InvokeRepeating("jump2", 1.4f, 3f);
 
+        setConfiguration();
         InvokeRepeating("findWalls", 0.2f, 0.16f);
     }
 
@@ -75,8 +80,16 @@ public class NewBotAI : MonoBehaviour
         setAlienVelocity();
         tilt();
         debugFrameRate();
+        setConfiguration();
+    }
 
-        GroundDetection.transform.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, symmetricGroundAngle);
+    private void setConfiguration()
+    {
+        groundDetection.position = transform.position + groundDetectionOffset;
+        pathColliders.position = transform.position + pathCollidersOffset;
+
+        groundDetection.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, symmetricGroundAngle);
+        pathColliders.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0);
     }
 
     private void determineClosestHole()

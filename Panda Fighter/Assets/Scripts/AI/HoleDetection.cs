@@ -9,7 +9,8 @@ public class HoleDetection : MonoBehaviour
 
     void Awake()
     {
-        AI = transform.parent.parent.parent.transform.GetComponent<NewBotAI>();
+        AI = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<NewBotAI>();
+        Debug.Log(AI.gameObject.name);
 
         if (transform.parent.name != "Right Detection" && transform.parent.name != "Left Detection")
             Debug.LogError("Don't change ground detector's name as it's used to identify it in this script");
