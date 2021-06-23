@@ -21,8 +21,13 @@ public class Sideview_Controller : MonoBehaviour
     public Camera camera;
     private Vector3 cameraOffset;
 
-    private float speed = 0.64f;
+    private float speed = 8.0f;
     private float jumpForce = 600;
+
+    private bool spinCounter = true;
+    private bool disableLimbs = false;
+    private int spinDirection = 0;
+    private int spinRate = 420;
 
     public Transform leftFoot;
     public Transform rightFoot;
@@ -79,13 +84,29 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
             movementDirX--;
 
-        //use W and S keys for jumping up or thrusting downwards
+        //use W and S keys for jumping up or thrusting downwards + allow double jump
+        if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") == true && !animator.GetBool("double jump"))
+        {
+            rig.velocity = new Vector2(rig.velocity.x, 0);
+            rig.AddForce(new Vector2(0, jumpForce * 1.3f));
+
+            spinCounter = false;
+            spinDirection = -(int)Mathf.Sign(movementDirX);
+            spinRate = 420;
+            rig.gravityScale = 1.4f;
+            disableLimbs = true;
+            StartCoroutine(countDoubleSpin());
+            animator.SetBool("double jump", true);
+        }
+
         if (Input.GetKeyDown(KeyCode.W) && grounded)
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce));
             animator.SetBool("jumped", true);
+            animator.SetBool("double jump", false);
         }
+
         if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
 
@@ -145,57 +166,61 @@ public class Sideview_Controller : MonoBehaviour
             else if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
                 transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20f * Time.deltaTime);
         }
-        else if (!grounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f)
+        else if (!grounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
     }
 
     //handles player orientation (left/right), gun rotation, gun position, head rotation
     private void playerLimbsOrientation()
     {
-        //player faces left or right depending on mouse cursor
-        if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
-            player.localRotation = Quaternion.Euler(0, 0, 0);
-        else
-            player.localRotation = Quaternion.Euler(0, 180, 0);
-
-        //calculate the angle btwn mouse cursor and player's shooting arm
-        Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
-        float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
-
-        //apply offset to the shoot Angle when the player is tilted on a ramp:
-        float zAngle = ((180 - Mathf.Abs(180 - transform.eulerAngles.z))); // <- maps angles above 180 to their negative value instead (ex. 330 becomes -30)
-        zAngle *= (player.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
-        shootAngle -= zAngle;
-
-
-        if (shootDirection.y >= 0)
+        //if player isn't spinning in mid-air with a double jump
+        if (!disableLimbs)
         {
-            float slope = (up - right) / 90f;
-            float weaponRotation = shootAngle * slope + right;
+            //player faces left or right depending on mouse cursor
+            if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
+                player.localRotation = Quaternion.Euler(0, 0, 0);
+            else
+                player.localRotation = Quaternion.Euler(0, 180, 0);
 
-            float dirSlope = (1.252f - 1.271f) / 90f;
-            float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
+            //calculate the angle btwn mouse cursor and player's shooting arm
+            Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+            float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
 
-            Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-            gun.transform.localPosition = gunLocation;
+            //apply offset to the shoot Angle when the player is tilted on a ramp:
+            float zAngle = ((180 - Mathf.Abs(180 - transform.eulerAngles.z))); // <- maps angles above 180 to their negative value instead (ex. 330 becomes -30)
+            zAngle *= (player.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
+            shootAngle -= zAngle;
 
-            float headSlope = (122f - 92.4f) / 90f;
-            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
-        }
 
-        if (shootDirection.y < 0)
-        {
-            float slope = (down - right) / -90f;
-            float weaponRotation = shootAngle * slope + right;
+            if (shootDirection.y >= 0)
+            {
+                float slope = (up - right) / 90f;
+                float weaponRotation = shootAngle * slope + right;
 
-            float dirSlope = (1.17f - 1.271f) / -90f;
-            float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
+                float dirSlope = (1.252f - 1.271f) / 90f;
+                float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
 
-            Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-            gun.transform.localPosition = gunLocation;
+                Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+                gun.transform.localPosition = gunLocation;
 
-            float headSlope = (67f - 92.4f) / -90f;
-            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
+                float headSlope = (122f - 92.4f) / 90f;
+                head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
+            }
+
+            if (shootDirection.y < 0)
+            {
+                float slope = (down - right) / -90f;
+                float weaponRotation = shootAngle * slope + right;
+
+                float dirSlope = (1.17f - 1.271f) / -90f;
+                float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
+
+                Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+                gun.transform.localPosition = gunLocation;
+
+                float headSlope = (67f - 92.4f) / -90f;
+                head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
+            }
         }
     }
 
@@ -228,6 +253,8 @@ public class Sideview_Controller : MonoBehaviour
         if (animator.GetInteger("Phase") == 2 && grounded)
         {
             animator.SetBool("jumped", false);
+            animator.SetBool("double jump", false);
+            rig.gravityScale = 1;
             setAnimation("idle");
         }
     }
@@ -280,6 +307,9 @@ public class Sideview_Controller : MonoBehaviour
 
         //thin collider when jumping
         mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.68f : 1f, mainCollider.size.y);
+
+        //shorten collider when double jumping
+        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !spinCounter ? 2f : 3.14f);
     }
 
     //set new animation state for the player
@@ -307,7 +337,7 @@ public class Sideview_Controller : MonoBehaviour
                 StartCoroutine(walkingToIdle());
 
             //go jump
-            if (newMode == 2 && ((t >= 0.31f && t <= 0.41f) || (t >= 0.773f && t <= 0.975f)))
+            if (newMode == 2)
                 animator.SetInteger("Phase", 2);
         }
 
@@ -342,5 +372,30 @@ public class Sideview_Controller : MonoBehaviour
     {
         if (col.gameObject.layer == 11)
             touchingMap = false;
+    }
+
+    private void FixedUpdate()
+    {
+        if (animator.GetBool("double jump"))
+        {
+            if (!spinCounter || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
+                transform.eulerAngles = new Vector3(0, 0, (transform.eulerAngles.z + Time.deltaTime * spinRate * spinDirection));
+
+        }
+    }
+
+    private IEnumerator countDoubleSpin()
+    {
+        leftFoot.gameObject.SetActive(false);
+        rightFoot.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(0.6f);
+        spinCounter = true;
+        spinRate = 200;
+
+        yield return new WaitForSeconds(0.1f);
+        disableLimbs = false;
+        leftFoot.gameObject.SetActive(true);
+        rightFoot.gameObject.SetActive(true);
     }
 }

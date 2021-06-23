@@ -8,7 +8,7 @@ public class NewBotAI : MonoBehaviour
     private Transform alien;
     private Animator animator;
 
-    private float speed = 1.6f;
+    private float speed = 6.4f;
     private float jumpForce = 600;
 
     public Transform leftFoot;
@@ -46,6 +46,7 @@ public class NewBotAI : MonoBehaviour
     {
         InvokeRepeating("jump", 1f, 3f);
         InvokeRepeating("printPathColliders", 1f, 0.2f);
+        Invoke("setSpeed", 1.3f);
     }
 
     // Update is called once per frame
@@ -58,8 +59,15 @@ public class NewBotAI : MonoBehaviour
         debugFrameRate();
     }
 
+    private void setSpeed()
+    {
+        movementDirX = -1;
+        speed = 4.8f;
+    }
+
     private void jump()
     {
+        speed = 6.4f;
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.AddForce(new Vector2(0, jumpForce));
         animator.SetBool("jumped", true);
