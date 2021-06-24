@@ -41,11 +41,13 @@ public class NewBotAI : MonoBehaviour
     private float groundAngle;
     private Vector2 groundDir;
 
-    public int movementDirX;
+    public int movementDirX = 1;
     private float zAngle;
     private float symmetricGroundAngle;
 
     public GameObject pathCollider;
+    public Jump rightJump;
+    public Jump leftJump;
 
     // Start is called before the first frame update
     void Awake()
@@ -62,11 +64,28 @@ public class NewBotAI : MonoBehaviour
 
     void Start()
     {
-        //InvokeRepeating("jump", 1f, 3f);
-        //InvokeRepeating("jump2", 1.4f, 3f);
+        //Invoke("jump", 1f);
+        //Invoke("jump2", 1.3f);
 
         setConfiguration();
-        // InvokeRepeating("findWalls", 0.2f, 0.16f);
+        InvokeRepeating("findWalls", 0.2f, 0.25f);
+    }
+
+    private void jump()
+    {
+        speed = 2.4f;
+        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.AddForce(new Vector2(0, jumpForce));
+        animator.SetBool("jumped", true);
+    }
+
+    private void jump2()
+    {
+        movementDirX = 1;
+        speed = 3.6f;
+        rig.gravityScale = 1.4f;
+        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.AddForce(new Vector2(0, jumpForce * 1.3f));
     }
 
     // Update is called once per frame
@@ -74,9 +93,17 @@ public class NewBotAI : MonoBehaviour
     {
         grounded = isGrounded();
 
-        //setAlienVelocity();
-        //tilt();
-        //setConfiguration();
+        setAlienVelocity();
+        tilt();
+        setConfiguration();
+
+        if (pathColliders.transform.GetComponent<Rigidbody2D>().IsSleeping())
+            Debug.LogError("Pathcollider rigidbody is sleeping");
+    }
+
+    private void printPathColliders()
+    {
+        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
     }
 
     private void setConfiguration()
@@ -137,28 +164,6 @@ public class NewBotAI : MonoBehaviour
 
             determineClosestHole();
         }
-    }
-
-    private void jump()
-    {
-        speed = 3.6f;
-        rig.velocity = new Vector2(rig.velocity.x, 0);
-        rig.AddForce(new Vector2(0, jumpForce));
-        animator.SetBool("jumped", true);
-    }
-
-    private void jump2()
-    {
-        movementDirX = -1;
-        speed = 4.8f;
-        /* rig.gravityScale = 1.4f;
-         rig.velocity = new Vector2(rig.velocity.x, 0);
-         rig.AddForce(new Vector2(0, jumpForce * 1.3f));*/
-    }
-
-    private void printPathColliders()
-    {
-        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
     }
 
     //check if the bot is on the ground + update the groundAngle

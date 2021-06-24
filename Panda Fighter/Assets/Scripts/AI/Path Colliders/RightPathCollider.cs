@@ -68,9 +68,8 @@ public class RightPathCollider : MonoBehaviour
             else if (transform.parent.name == "DJ, 0.6 sec, 0 speed, 3.6 speed")
                 jumpPath.rightDoubleJump4[transform.GetSiblingIndex()] = setting;
             else
-                Debug.LogError("jump path hasn't been defined yet");
+                Debug.LogError(gameObject.name + " jump path hasn't been defined yet");
         }
-
         else
             Debug.LogError("jump path hasn't been defined yet");
     }

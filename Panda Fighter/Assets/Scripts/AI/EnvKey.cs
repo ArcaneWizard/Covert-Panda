@@ -28,6 +28,42 @@ public struct EnvKey
 
 }
 
+public struct Jump
+{
+    private string type;
+    private float jumpSpeed;
+    private float delay;
+    private float midAirSpeed;
+
+    public Jump(string type, float jumpSpeed, float delay, float midAirSpeed)
+    {
+        this.type = type;
+        this.jumpSpeed = jumpSpeed;
+        this.delay = delay;
+        this.midAirSpeed = midAirSpeed;
+    }
+
+    public string getType()
+    {
+        return type;
+    }
+
+    public float getJumpSpeed()
+    {
+        return jumpSpeed;
+    }
+
+    public float getDelay()
+    {
+        return delay;
+    }
+
+    public float getMidAirSpeed()
+    {
+        return midAirSpeed;
+    }
+}
+
 public struct WallChecker
 {
     public bool wallNearby;
