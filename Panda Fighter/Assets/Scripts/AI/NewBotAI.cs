@@ -8,7 +8,7 @@ public class NewBotAI : MonoBehaviour
     private Transform alien;
     private Animator animator;
 
-    private float speed = 6.4f;
+    private float speed = 8f;
     private float jumpForce = 600;
 
     public Transform leftFoot;
@@ -45,9 +45,6 @@ public class NewBotAI : MonoBehaviour
     private float zAngle;
     private float symmetricGroundAngle;
 
-    private float time = 0;
-    private float frames = 0;
-
     public GameObject pathCollider;
 
     // Start is called before the first frame update
@@ -69,7 +66,7 @@ public class NewBotAI : MonoBehaviour
         //InvokeRepeating("jump2", 1.4f, 3f);
 
         setConfiguration();
-        InvokeRepeating("findWalls", 0.2f, 0.16f);
+        // InvokeRepeating("findWalls", 0.2f, 0.16f);
     }
 
     // Update is called once per frame
@@ -77,10 +74,9 @@ public class NewBotAI : MonoBehaviour
     {
         grounded = isGrounded();
 
-        setAlienVelocity();
-        tilt();
-        debugFrameRate();
-        setConfiguration();
+        //setAlienVelocity();
+        //tilt();
+        //setConfiguration();
     }
 
     private void setConfiguration()
@@ -163,19 +159,6 @@ public class NewBotAI : MonoBehaviour
     private void printPathColliders()
     {
         Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
-    }
-
-    private void debugFrameRate()
-    {
-        frames++;
-        time += Time.deltaTime;
-
-        if (time >= 3f)
-        {
-            Debug.Log(frames / time);
-            time = 0;
-            frames = 0;
-        }
     }
 
     //check if the bot is on the ground + update the groundAngle

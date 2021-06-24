@@ -46,6 +46,9 @@ public class Sideview_Controller : MonoBehaviour
     private int movementDirX;
     private float zAngle;
 
+    private float time = 0;
+    private float frames = 0;
+
     //ideal local gun coordinates when looking to the side, up or down 
     private Vector2 pointingRight = new Vector2(0.642f, 0.491f);
     private Vector2 pointingUp = new Vector2(-0.24f, 1.68f);
@@ -53,7 +56,6 @@ public class Sideview_Controller : MonoBehaviour
     private Vector2 shoulderPos = new Vector2(-0.608f, 0.662f);
 
     private float upVector, downVector, rightVector;
-
     private float up, right, down;
 
     void Awake()
@@ -118,6 +120,8 @@ public class Sideview_Controller : MonoBehaviour
 
         setPlayerVelocity();
         tilt();
+
+        debugFrameRate();
     }
 
     private void LateUpdate()
@@ -408,5 +412,18 @@ public class Sideview_Controller : MonoBehaviour
         disableLimbs = false;
         leftFoot.gameObject.SetActive(true);
         rightFoot.gameObject.SetActive(true);
+    }
+
+    private void debugFrameRate()
+    {
+        frames++;
+        time += Time.deltaTime;
+
+        if (time >= 1.4f)
+        {
+            Debug.Log(frames / time);
+            time = 0;
+            frames = 0;
+        }
     }
 }
