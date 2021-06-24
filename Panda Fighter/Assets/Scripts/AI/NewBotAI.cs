@@ -8,7 +8,8 @@ public class NewBotAI : MonoBehaviour
     private Transform alien;
     private Animator animator;
 
-    private float speed = 8f;
+    [HideInInspector]
+    public float speed = 8f;
     private float jumpForce = 600;
 
     public Transform leftFoot;
@@ -25,8 +26,8 @@ public class NewBotAI : MonoBehaviour
     public Transform leftGroundColliders;
     public Transform rightGroundColliders;
 
-    private Vector2 leftWall;
-    private Vector2 rightWall;
+    public Vector2 leftWall;
+    public Vector2 rightWall;
     private Vector2 leftHole;
     private Vector2 rightHole;
     private Vector3 groundDetectionOffset;
@@ -68,7 +69,12 @@ public class NewBotAI : MonoBehaviour
         //Invoke("jump2", 1.3f);
 
         setConfiguration();
-        InvokeRepeating("findWalls", 0.2f, 0.25f);
+        StartCoroutine(findWalls());
+    }
+
+    private void printPathColliders()
+    {
+        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
     }
 
     private void jump()
@@ -98,12 +104,7 @@ public class NewBotAI : MonoBehaviour
         setConfiguration();
 
         if (pathColliders.transform.GetComponent<Rigidbody2D>().IsSleeping())
-            Debug.LogError("Pathcollider rigidbody is sleeping");
-    }
-
-    private void printPathColliders()
-    {
-        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
+            Debug.LogWarning("Pathcollider rigidbody is sleeping");
     }
 
     private void setConfiguration()
@@ -150,7 +151,7 @@ public class NewBotAI : MonoBehaviour
             Debug.DrawRay(rightHole, Vector2.down * 4f, Color.gray, 2f);
     }
 
-    private void findWalls()
+    private IEnumerator findWalls()
     {
         if (grounded)
         {
@@ -164,6 +165,9 @@ public class NewBotAI : MonoBehaviour
 
             determineClosestHole();
         }
+
+        yield return new WaitForSeconds(0.2f);
+        StartCoroutine(findWalls());
     }
 
     //check if the bot is on the ground + update the groundAngle
@@ -197,25 +201,40 @@ public class NewBotAI : MonoBehaviour
 
     private void setAlienVelocity()
     {
-        //when player is on the ground, player velocity is parallel to the slanted ground 
+        //when alien is on the ground, alien velocity is parallel to the slanted ground 
         if (!animator.GetBool("jumped") && grounded && touchingMap)
         {
-            //no player velocity when running into a wall
+            //no alien velocity when running into a wall
             if (movementDirX == 1 && ((alien.localEulerAngles.y == 0 && nextToWall == "Forward") || (alien.localEulerAngles.y == 180 && nextToWall == "Backward")))
                 rig.velocity = new Vector2(0, 0);
 
-            //no player velocity when running into a wall 
+            //no alien velocity when running into a wall 
             else if (movementDirX == -1 && ((alien.localEulerAngles.y == 0 && nextToWall == "Backward") || (alien.localEulerAngles.y == 180 && nextToWall == "Forward")))
                 rig.velocity = new Vector2(0, 0);
 
-            //otherwise player velocity is parallel to the slanted ground
+            //otherwise alien velocity is parallel to the slanted ground
             else
                 rig.velocity = groundDir * speed * movementDirX;
         }
 
-        //when player is not on the ground, player velocity is just left/right with gravity applied
+        //when alien is not on the ground, alien velocity is just left/right with gravity applied
         else
-            rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+        {
+            //no x velocity when falling and running into a wall mid-air to avoid clipping glitch
+            if (movementDirX == 1 && !animator.GetBool("jumped") && ((alien.localEulerAngles.y == 0 && nextToWall == "Forward") || (alien.localEulerAngles.y == 180 && nextToWall == "Backward")))
+                rig.velocity = new Vector2(0, rig.velocity.y);
+
+            //no x velocity when falling and running into a wall mid-air to avoid clipping glitch
+            else if (movementDirX == -1 && !animator.GetBool("jumped") && ((alien.localEulerAngles.y == 0 && nextToWall == "Backward") || (alien.localEulerAngles.y == 180 && nextToWall == "Forward")))
+                rig.velocity = new Vector2(0, rig.velocity.y);
+
+            else if (!animator.GetBool("jumped"))
+                speed = Random.Range(0.4f, 2f);
+
+            //alien velocity is just left or right (with gravity pulling the player down)
+            else
+                rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+        }
     }
 
     //alien's body should tilt slightly on the slanted platform

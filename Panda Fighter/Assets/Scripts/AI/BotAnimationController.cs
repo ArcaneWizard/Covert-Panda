@@ -76,6 +76,7 @@ public class BotAnimationController : MonoBehaviour
         {
             animator.SetBool("jumped", false);
             setAnimation("idle");
+            AI.speed = 8.0f;
         }
     }
 

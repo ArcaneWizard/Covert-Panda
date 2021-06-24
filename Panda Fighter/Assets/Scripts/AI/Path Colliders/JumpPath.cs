@@ -66,14 +66,31 @@ public class JumpPath : MonoBehaviour
     {
         //generateGroundChecks();
 
-        InvokeRepeating("getRightJumpTrajectory", 0f, 0.2f);
-        //InvokeRepeating("printJump", 0f, 0.2f);
+        StartCoroutine(getJumpTrajectory());
     }
 
-    private void printJump()
+    private IEnumerator getJumpTrajectory()
     {
-        Debug.LogFormat("{0}, {1}, {2}, {3}", AI.rightJump.getType(), AI.rightJump.getJumpSpeed(),
-        AI.rightJump.getDelay(), AI.rightJump.getMidAirSpeed());
+        yield return new WaitForSeconds(0.2f);
+
+        if (AI.movementDirX == 1 || AI.movementDirX == 0)
+        {
+            getRightJumpTrajectory();
+            AI.leftJump = new Jump("null", 0f, 0f, 0f);
+
+            Debug.LogFormat("{0}, {1}, {2}, {3}", AI.rightJump.getType(), AI.rightJump.getJumpSpeed(),
+            AI.rightJump.getDelay(), AI.rightJump.getMidAirSpeed());
+        }
+        else if (AI.movementDirX == -1)
+        {
+            getLeftJumpTrajectory();
+            AI.rightJump = new Jump("null", 0f, 0f, 0f);
+
+            Debug.LogFormat("{0}, {1}, {2}, {3}", AI.leftJump.getType(), AI.leftJump.getJumpSpeed(),
+            AI.leftJump.getDelay(), AI.leftJump.getMidAirSpeed());
+        }
+
+        StartCoroutine(getJumpTrajectory());
     }
 
     void Update()
@@ -191,6 +208,27 @@ public class JumpPath : MonoBehaviour
         return false;
     }
 
+    private bool getLeftJumpTrajectory()
+    {
+        //in a RANDOM order
+        int r = UnityEngine.Random.Range(0, 8);
+
+        //cycle through the 8 jumps and see if any are possible
+        for (int i = 1; i <= 8; i++)
+        {
+            if (determineIfLeftJumpIsPossible(r))
+            {
+                AI.leftJump = encodeLeftJump(r);
+                return true;
+            }
+
+            r = ++r % 8;
+        }
+
+        AI.leftJump = new Jump("null", 0f, 0f, 0f);
+        return false;
+    }
+
     private bool determineIfRightJumpIsPossible(int i)
     {
         //general pattern: 
@@ -222,6 +260,37 @@ public class JumpPath : MonoBehaviour
         return false;
     }
 
+    private bool determineIfLeftJumpIsPossible(int i)
+    {
+        //general pattern: 
+        //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
+        //2) then check if there is ground to land on in the downward descent (ground colliders are above their respective actual ones)
+
+        //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
+        if (i <= 3 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4] && !leftJumpList[i][5])
+        {
+            for (int collider = 6; collider < leftJumpList[i].Count; collider++)
+            {
+                if (leftJumpList[i][collider])
+                    return !leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle;
+            }
+        }
+
+        //double jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
+        if (i >= 4 && i <= 7 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4]
+        && !leftJumpList[i][5] && !leftJumpList[i][6] && !leftJumpList[i][7])
+        {
+            for (int collider = 8; collider < leftJumpList[i].Count; collider++)
+            {
+                if (leftJumpList[i][collider])
+                    return !leftJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle;
+            }
+        }
+
+        //an obstacle would be in the way during this jump path
+        return false;
+    }
+
     private Jump encodeRightJump(int jumpIndex)
     {
         if (jumpIndex == 0)
@@ -244,6 +313,31 @@ public class JumpPath : MonoBehaviour
         {
             Debug.LogWarning("jump has not been coded for");
             return new Jump("right jump", 8.0f, 0f, 0f);
+        }
+    }
+
+    private Jump encodeLeftJump(int jumpIndex)
+    {
+        if (jumpIndex == 0)
+            return new Jump("left jump", 8.0f, 0f, 0f);
+        else if (jumpIndex == 1)
+            return new Jump("left jump", 6.4f, 0f, 0f);
+        else if (jumpIndex == 2)
+            return new Jump("left jump", 4.8f, 0f, 0f);
+        else if (jumpIndex == 3)
+            return new Jump("left jump", 3.2f, 0f, 0f);
+        else if (jumpIndex == 4)
+            return new Jump("left double jump", 8.0f, 0.5f, 6.4f);
+        else if (jumpIndex == 5)
+            return new Jump("left double jump", 4.8f, 0.5f, 6.4f);
+        else if (jumpIndex == 6)
+            return new Jump("left double jump", 2.4f, 0.3f, 3.6f);
+        else if (jumpIndex == 7)
+            return new Jump("left double jump", 0f, 0.6f, 3.6f);
+        else
+        {
+            Debug.LogWarning("jump has not been coded for");
+            return new Jump("left jump", 8.0f, 0f, 0f);
         }
     }
 
