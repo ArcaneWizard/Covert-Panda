@@ -19,6 +19,7 @@ public class Sideview_Controller : MonoBehaviour
     public string nextToWall;
 
     public Camera camera;
+    public Transform alienToFollow;
     private Vector3 cameraOffset;
 
     private float speed = 8.0f;
@@ -64,7 +65,7 @@ public class Sideview_Controller : MonoBehaviour
         player = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
-        cameraOffset = camera.transform.position - transform.position;
+        cameraOffset = camera.transform.position - alienToFollow.position;
 
         //ideal angle from shoulder to specific gun coordinates
         up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
@@ -79,7 +80,7 @@ public class Sideview_Controller : MonoBehaviour
 
     void Update()
     {
-        camera.transform.position = transform.position + cameraOffset;
+        camera.transform.position = alienToFollow.position + cameraOffset;
         grounded = isGrounded();
 
         playerAnimationController();
@@ -120,8 +121,6 @@ public class Sideview_Controller : MonoBehaviour
 
         setPlayerVelocity();
         tilt();
-
-        debugFrameRate();
     }
 
     private void LateUpdate()

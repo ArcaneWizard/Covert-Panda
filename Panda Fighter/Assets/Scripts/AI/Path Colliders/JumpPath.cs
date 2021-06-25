@@ -36,12 +36,15 @@ public class JumpPath : MonoBehaviour
     public List<bool> leftDoubleJump4;
 
     private NewBotAI AI;
+    private DecisionMaking decision;
 
     private int groundDiff;
+    private List<GameObject> obstacles = new List<GameObject>();
 
     void Awake()
     {
         AI = transform.parent.transform.GetChild(0).transform.GetComponent<NewBotAI>();
+        decision = transform.parent.transform.GetChild(0).transform.GetComponent<DecisionMaking>();
 
         rightJumpList.Add(rightJump100);
         rightJumpList.Add(rightJump80);
@@ -71,25 +74,26 @@ public class JumpPath : MonoBehaviour
 
     private IEnumerator getJumpTrajectory()
     {
-        yield return new WaitForSeconds(0.2f);
+        AI.findWalls();
 
-        if (AI.movementDirX == 1 || AI.movementDirX == 0)
+        if (AI.grounded && AI.touchingMap && (AI.movementDirX == 1 || AI.movementDirX == 0))
         {
             getRightJumpTrajectory();
-            AI.leftJump = new Jump("null", 0f, 0f, 0f);
-
-            Debug.LogFormat("{0}, {1}, {2}, {3}", AI.rightJump.getType(), AI.rightJump.getJumpSpeed(),
-            AI.rightJump.getDelay(), AI.rightJump.getMidAirSpeed());
+            decision.leftJump = new Jump("null", 0f, 0f, 0f);
         }
-        else if (AI.movementDirX == -1)
+        else if (AI.grounded && AI.touchingMap && AI.movementDirX == -1)
         {
             getLeftJumpTrajectory();
-            AI.rightJump = new Jump("null", 0f, 0f, 0f);
-
-            Debug.LogFormat("{0}, {1}, {2}, {3}", AI.leftJump.getType(), AI.leftJump.getJumpSpeed(),
-            AI.leftJump.getDelay(), AI.leftJump.getMidAirSpeed());
+            decision.rightJump = new Jump("null", 0f, 0f, 0f);
         }
 
+        if (AI.grounded && AI.touchingMap)
+        {
+            Debug.Log(AI.leftHole);
+            decision.decideWhetherToJump();
+        }
+
+        yield return new WaitForSeconds(0.2f);
         StartCoroutine(getJumpTrajectory());
     }
 
@@ -197,14 +201,14 @@ public class JumpPath : MonoBehaviour
         {
             if (determineIfRightJumpIsPossible(r))
             {
-                AI.rightJump = encodeRightJump(r);
+                decision.rightJump = encodeRightJump(r);
                 return true;
             }
 
             r = ++r % 8;
         }
 
-        AI.rightJump = new Jump("null", 0f, 0f, 0f);
+        decision.rightJump = new Jump("null", 0f, 0f, 0f);
         return false;
     }
 
@@ -218,14 +222,14 @@ public class JumpPath : MonoBehaviour
         {
             if (determineIfLeftJumpIsPossible(r))
             {
-                AI.leftJump = encodeLeftJump(r);
+                decision.leftJump = encodeLeftJump(r);
                 return true;
             }
 
             r = ++r % 8;
         }
 
-        AI.leftJump = new Jump("null", 0f, 0f, 0f);
+        decision.leftJump = new Jump("null", 0f, 0f, 0f);
         return false;
     }
 
@@ -233,7 +237,10 @@ public class JumpPath : MonoBehaviour
     {
         //general pattern: 
         //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
-        //2) then check if there is ground to land on in the downward descent (ground colliders are above their respective actual ones)
+        //2) then check if there is ground to land on in the downward descent 
+        // For the descent collider (collider A) that detects an object (object A)
+        // confirm the special collider above Collider A is in air, as that means object A is a surface that can be landed on
+        // also check that object A isn't literally the same ground the alien is on
 
         //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
         if (i <= 3 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4] && !rightJumpList[i][5])
@@ -241,7 +248,11 @@ public class JumpPath : MonoBehaviour
             for (int collider = 6; collider < rightJumpList[i].Count; collider++)
             {
                 if (rightJumpList[i][collider])
+                {
+                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
                     return !rightJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle;
+                }
             }
         }
 
@@ -252,7 +263,11 @@ public class JumpPath : MonoBehaviour
             for (int collider = 8; collider < rightJumpList[i].Count; collider++)
             {
                 if (rightJumpList[i][collider])
+                {
+                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
                     return !rightJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle;
+                }
             }
         }
 
@@ -272,7 +287,11 @@ public class JumpPath : MonoBehaviour
             for (int collider = 6; collider < leftJumpList[i].Count; collider++)
             {
                 if (leftJumpList[i][collider])
+                {
+                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
                     return !leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle;
+                }
             }
         }
 
@@ -283,7 +302,11 @@ public class JumpPath : MonoBehaviour
             for (int collider = 8; collider < leftJumpList[i].Count; collider++)
             {
                 if (leftJumpList[i][collider])
+                {
+                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
                     return !leftJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle;
+                }
             }
         }
 

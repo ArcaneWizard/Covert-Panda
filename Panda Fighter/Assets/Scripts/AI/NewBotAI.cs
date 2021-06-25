@@ -8,7 +8,6 @@ public class NewBotAI : MonoBehaviour
     private Transform alien;
     private Animator animator;
 
-    [HideInInspector]
     public float speed = 8f;
     private float jumpForce = 600;
 
@@ -26,18 +25,19 @@ public class NewBotAI : MonoBehaviour
     public Transform leftGroundColliders;
     public Transform rightGroundColliders;
 
-    public Vector2 leftWall;
-    public Vector2 rightWall;
-    private Vector2 leftHole;
-    private Vector2 rightHole;
+    public Vector2 obstacleToTheLeft;
+    public Vector2 obstacleToTheRight;
+    public bool wallToTheLeft;
+    public bool wallToTheRight;
+    public Vector2 leftHole;
+    public Vector2 rightHole;
     private Vector3 groundDetectionOffset;
     private Vector3 pathCollidersOffset;
     public Transform groundDetection;
     public Transform pathColliders;
 
     public bool grounded;
-    [SerializeField]
-    private bool touchingMap;
+    public bool touchingMap;
     [SerializeField]
     private float groundAngle;
     private Vector2 groundDir;
@@ -47,8 +47,6 @@ public class NewBotAI : MonoBehaviour
     private float symmetricGroundAngle;
 
     public GameObject pathCollider;
-    public Jump rightJump;
-    public Jump leftJump;
 
     // Start is called before the first frame update
     void Awake()
@@ -61,6 +59,8 @@ public class NewBotAI : MonoBehaviour
 
         groundDetectionOffset = groundDetection.position - transform.position;
         pathCollidersOffset = pathColliders.position - transform.position;
+
+        findWalls();
     }
 
     void Start()
@@ -69,7 +69,6 @@ public class NewBotAI : MonoBehaviour
         //Invoke("jump2", 1.3f);
 
         setConfiguration();
-        StartCoroutine(findWalls());
     }
 
     private void printPathColliders()
@@ -77,18 +76,19 @@ public class NewBotAI : MonoBehaviour
         Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
     }
 
-    private void jump()
+    public void jump(float speed)
     {
-        speed = 2.4f;
+        this.speed = speed;
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.AddForce(new Vector2(0, jumpForce));
         animator.SetBool("jumped", true);
     }
 
-    private void jump2()
+    public void doublejump(float speed, int movementDirX)
     {
-        movementDirX = 1;
-        speed = 3.6f;
+        this.speed = speed;
+        this.movementDirX = movementDirX;
+
         rig.gravityScale = 1.4f;
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.AddForce(new Vector2(0, jumpForce * 1.3f));
@@ -109,8 +109,10 @@ public class NewBotAI : MonoBehaviour
 
     private void setConfiguration()
     {
-        groundDetection.position = transform.position + groundDetectionOffset;
-        pathColliders.position = transform.position + pathCollidersOffset;
+        Vector3 alienRotationOffset = new Vector3((alien.localEulerAngles.y == 0) ? 0f : 0.54f, 0, 0);
+
+        groundDetection.position = transform.position + groundDetectionOffset + alienRotationOffset;
+        pathColliders.position = transform.position + pathCollidersOffset + alienRotationOffset;
 
         groundDetection.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, symmetricGroundAngle);
         pathColliders.rotation = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0);
@@ -123,7 +125,7 @@ public class NewBotAI : MonoBehaviour
 
         for (int i = 0; i < leftGround.Count; i++)
         {
-            if (leftGroundColliders.transform.GetChild(i).position.x < leftWall.x)
+            if (leftGroundColliders.transform.GetChild(i).position.x < obstacleToTheLeft.x)
                 break;
 
             else if (leftGround[i] == false)
@@ -135,7 +137,7 @@ public class NewBotAI : MonoBehaviour
 
         for (int i = 0; i < rightGround.Count; i++)
         {
-            if (rightGroundColliders.transform.GetChild(i).position.x > rightWall.x)
+            if (rightGroundColliders.transform.GetChild(i).position.x > obstacleToTheRight.x)
                 break;
 
             if (rightGround[i] == false)
@@ -151,23 +153,20 @@ public class NewBotAI : MonoBehaviour
             Debug.DrawRay(rightHole, Vector2.down * 4f, Color.gray, 2f);
     }
 
-    private IEnumerator findWalls()
+    public void findWalls()
     {
+        RaycastHit2D leftWallHit = Physics2D.Raycast(centerFoot.position, -groundDir, 20f, Constants.map);
+        wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
+        obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) - groundDir * 20;
+        Debug.DrawLine(leftWallHit.point, leftWallHit.normal, Color.blue, 2f);
+
+        RaycastHit2D rightWallHit = Physics2D.Raycast(centerFoot.position, groundDir, 20f, Constants.map);
+        wallToTheRight = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
+        obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) + groundDir * 20;
+        Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), obstacleToTheRight, Color.red, 2f);
+
         if (grounded)
-        {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(centerFoot.position, -groundDir, 20f, Constants.map);
-            leftWall = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) - groundDir * 20;
-            Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), leftWall, Color.blue, 2f);
-
-            RaycastHit2D rightWallHit = Physics2D.Raycast(centerFoot.position, groundDir, 20f, Constants.map);
-            rightWall = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) + groundDir * 20;
-            Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), rightWall, Color.red, 2f);
-
             determineClosestHole();
-        }
-
-        yield return new WaitForSeconds(0.2f);
-        StartCoroutine(findWalls());
     }
 
     //check if the bot is on the ground + update the groundAngle
@@ -228,10 +227,12 @@ public class NewBotAI : MonoBehaviour
             else if (movementDirX == -1 && !animator.GetBool("jumped") && ((alien.localEulerAngles.y == 0 && nextToWall == "Backward") || (alien.localEulerAngles.y == 180 && nextToWall == "Forward")))
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
-            else if (!animator.GetBool("jumped"))
-                speed = Random.Range(0.4f, 2f);
+            //kill x velocity when falling next to a wall
+            else if (!animator.GetBool("jumped") && ((movementDirX == 1 && obstacleToTheRight.x - transform.position.x < 1.4f && obstacleToTheRight.x - transform.position.x > 0)
+            || (movementDirX == -1 && transform.position.x - obstacleToTheLeft.x < 1.4f && transform.position.x - obstacleToTheLeft.x > 0)))
+                rig.velocity = new Vector2(0.01f * movementDirX, rig.velocity.y);
 
-            //alien velocity is just left or right (with gravity pulling the player down)
+            //alien velocity just tells it to move left or right (with gravity pulling the player down)
             else
                 rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
         }

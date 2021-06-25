@@ -5,7 +5,8 @@ using UnityEngine;
 public class LeftPathCollider : MonoBehaviour
 {
     private JumpPath jumpPath;
-    private List<GameObject> obstacles = new List<GameObject>();
+    [HideInInspector]
+    public List<GameObject> obstacles = new List<GameObject>();
 
     void Awake()
     {

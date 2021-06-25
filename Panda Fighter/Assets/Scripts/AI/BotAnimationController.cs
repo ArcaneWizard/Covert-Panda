@@ -15,6 +15,9 @@ public class BotAnimationController : MonoBehaviour
     private Transform rightFoot;
 
     private NewBotAI AI;
+    private DecisionMaking decisionMaking;
+
+    private bool decideMovementAfterFallingDown;
 
     // Start is called before the first frame update
     void Awake()
@@ -24,6 +27,8 @@ public class BotAnimationController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
         AI = transform.GetComponent<NewBotAI>();
+        decisionMaking = transform.GetComponent<DecisionMaking>();
+
         leftFoot = AI.leftFoot;
         rightFoot = AI.rightFoot;
     }
@@ -40,9 +45,9 @@ public class BotAnimationController : MonoBehaviour
     private void alienLimbsOrientation()
     {
         //player faces left or right depending on mouse cursor
-        if (rig.velocity.x >= 0)
+        if (rig.velocity.x > 0)
             bot.localRotation = Quaternion.Euler(0, 0, 0);
-        else
+        else if (rig.velocity.x < 0)
             bot.localRotation = Quaternion.Euler(0, 180, 0);
     }
 
@@ -76,7 +81,15 @@ public class BotAnimationController : MonoBehaviour
         {
             animator.SetBool("jumped", false);
             setAnimation("idle");
+            decideMovementAfterFallingDown = true;
             AI.speed = 8.0f;
+        }
+
+        //after falling down and touching the map, decide on the new direction to head in
+        if (decideMovementAfterFallingDown && AI.touchingMap)
+        {
+            decideMovementAfterFallingDown = false;
+            StartCoroutine(decisionMaking.decideMovementAfterFallingDown());
         }
     }
 
