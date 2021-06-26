@@ -50,7 +50,7 @@ public class DecisionMaking : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(setNewTargetPosition());
+        StartCoroutine(setNewTargetPosition(0f));
     }
 
     void Update()
@@ -59,15 +59,16 @@ public class DecisionMaking : MonoBehaviour
             wanderMode();
     }
 
+    //AI wanders around the map
     private void wanderMode()
     {
         float targetDistance = Vector2.Distance(targetPos, transform.position);
 
         if (targetDistance < 4f)
-            StartCoroutine(setNewTargetPosition());
+            StartCoroutine(setNewTargetPosition(0.6f));
 
-        else if (timeElapsed > 8.0f)
-            StartCoroutine(setNewTargetPosition());
+        else if (timeElapsed > 10.0f && AI.grounded && AI.touchingMap)
+            StartCoroutine(setNewTargetPosition(0.6f));
 
         timeElapsed += Time.deltaTime;
 
@@ -77,6 +78,52 @@ public class DecisionMaking : MonoBehaviour
             jumpAgainTimer -= Time.deltaTime;
 
         changeDirectionWhenFacingWall();
+    }
+
+    //find a new target to wander to
+    public IEnumerator setNewTargetPosition(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (!testMode)
+        {
+            //calculate random nearby target position
+            target.position = new Vector2(transform.position.x, transform.position.y) + UnityEngine.Random.insideUnitCircle.normalized * UnityEngine.Random.Range(12f, 27f);
+            timeElapsed = 0;
+
+            yield return new WaitForSeconds(0.05f);
+
+            //regardless of target viability, bot is currently in its jump state so redo search after a short delay
+            if (animator.GetBool("jumped"))
+                StartCoroutine(setNewTargetPosition(0.3f));
+
+            //this target isn't viable -> redo search
+            else if (target.transform.GetComponent<PathCollider>().touchingObstacle && canSetNewTarget)
+                StartCoroutine(setNewTargetPosition(0f));
+
+            //this target is viable but a new target was already set very recently -> don't do anything
+            else if (!canSetNewTarget)
+                yield return null;
+
+            //this target is viable -> set it as the new target
+            else
+            {
+                Debug.Log("set new target");
+                targetPos = target.position;
+                AI.movementDirX = (int)Mathf.Sign(targetPos.x - transform.position.x);
+
+                canSetNewTarget = false;
+                yield return new WaitForSeconds(0.5f);
+                canSetNewTarget = true;
+            }
+        }
+
+        else
+        {
+            testMode = false;
+            targetPos = target.position;
+            AI.movementDirX = (int)Mathf.Sign(targetPos.x - transform.position.x);
+        }
     }
 
     //if the bot is going to run into a wall, change directions
@@ -95,6 +142,7 @@ public class DecisionMaking : MonoBehaviour
         }
     }
 
+    //if the bot can jump to another platform, decide whether it should 
     public void decideWhetherToJump()
     {
         if (AI.movementDirX == 1)
@@ -130,7 +178,9 @@ public class DecisionMaking : MonoBehaviour
 
                 for (int i = 0; i < availableJumps.Count; i++)
                 {
-                    if (availableJumps[i].getLandingPosition().y > transform.position.y + 2f)
+                    //make sure the platform it jumps to is actually higher than the bot and gets the bot closer to the target 
+                    if (availableJumps[i].getLandingPosition().y > transform.position.y + 2.5f &&
+                     Mathf.Abs(availableJumps[i].getLandingPosition().x - targetPos.x) < Mathf.Abs(transform.position.x - targetPos.x))
                     {
                         StartCoroutine(executeJump(availableJumps[i]));
                         break;
@@ -148,9 +198,11 @@ public class DecisionMaking : MonoBehaviour
                 {
                     thoughtProcess.text = "chose to jump";
 
+                    //make sure the platform it jumps to is actually higher than the bot and gets the bot closer to the target 
                     for (int i = 0; i < availableJumps.Count; i++)
                     {
-                        if (availableJumps[i].getLandingPosition().y > transform.position.y + 2f)
+                        if (availableJumps[i].getLandingPosition().y > transform.position.y + 2.5f &&
+                     Mathf.Abs(availableJumps[i].getLandingPosition().x - targetPos.x) < Mathf.Abs(transform.position.x - targetPos.x))
                         {
                             StartCoroutine(executeJump(availableJumps[i]));
                             break;
@@ -167,47 +219,6 @@ public class DecisionMaking : MonoBehaviour
                 }
             }
         }
-    }
-
-    //the alien executes a jump (with the specified configuration settings required for that jump)
-    public IEnumerator executeJump(Jump jump)
-    {
-        jumpChosen.text = jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
-        Debug.LogError("");
-
-        jumpAgainTimer = 0.3f;
-
-        speed = jump.getJumpSpeed();
-        jumpDelay = jump.getDelay();
-        newSpeed = jump.getMidAirSpeed();
-
-        if (jump.getType() == "right jump" || jump.getType() == "left jump")
-            AI.jump(speed);
-
-        else if (jump.getType() == "right double jump" || jump.getType() == "left double jump")
-        {
-            AI.jump(speed);
-            yield return new WaitForSeconds(jumpDelay);
-            AI.doublejump(newSpeed, AI.movementDirX);
-        }
-
-        else if (jump.getType() == "right mini u-turn" || jump.getType() == "left mini u-turn")
-        {
-            AI.jump(speed);
-            yield return new WaitForSeconds(jumpDelay);
-            AI.movementDirX *= -1;
-            speed += 0.4f;
-        }
-
-        else if (jump.getType() == "right u-turn" || jump.getType() == "left u-turn")
-        {
-            AI.jump(speed);
-            yield return new WaitForSeconds(jumpDelay);
-            AI.doublejump(newSpeed, -AI.movementDirX);
-        }
-
-        else
-            Debug.LogError(jump.getType() + " is not a known type of jump");
     }
 
     //alien either jumped onto or fell onto some platform, so now figure out whether to head left or right
@@ -243,55 +254,48 @@ public class DecisionMaking : MonoBehaviour
             Debug.LogError("walls are blocking alien in on both sides????");
     }
 
-    public IEnumerator setNewTargetPosition()
+
+    //the alien executes a jump (with the specified configuration settings required for that jump)
+    public IEnumerator executeJump(Jump jump)
     {
-        if (botState == "attack")
-            targetPos = player.position;
+        jumpChosen.text = jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+        Debug.LogError("");
 
-        else if (botState == "wander" && !testMode)
+        jumpAgainTimer = 0.3f;
+
+        speed = jump.getJumpSpeed();
+        jumpDelay = jump.getDelay();
+        newSpeed = jump.getMidAirSpeed();
+
+        if (jump.getType() == "right jump" || jump.getType() == "left jump")
         {
-            //calculate random nearby target position
-            target.position = new Vector2(transform.position.x, transform.position.y) + UnityEngine.Random.insideUnitCircle.normalized * UnityEngine.Random.Range(12f, 27f);
-            timeElapsed = 0;
-
-            yield return new WaitForSeconds(0.05f);
-
-            //regardless of target viability, bot is currently in its jump state so redo search after a short delay
-            if (animator.GetBool("jumped"))
-            {
-                yield return new WaitForSeconds(0.3f);
-                StartCoroutine(setNewTargetPosition());
-            }
-
-            //this target isn't viable -> redo search
-            else if (target.transform.GetComponent<PathCollider>().touchingObstacle && canSetNewTarget)
-                StartCoroutine(setNewTargetPosition());
-
-            //this target is viable but a new target was already set very recently -> don't do anything
-            else if (!canSetNewTarget)
-                yield return null;
-
-            //this target is viable -> set it as the new target
-            else
-            {
-                Debug.Log("set new target");
-                targetPos = target.position;
-                AI.movementDirX = (int)Mathf.Sign(targetPos.x - transform.position.x);
-
-                canSetNewTarget = false;
-                yield return new WaitForSeconds(0.5f);
-                canSetNewTarget = true;
-            }
+            AI.jumpForceMultiplier = UnityEngine.Random.Range(1.15f, 1.22f);
+            AI.jump(speed);
         }
 
-        else if (botState == "wander" && testMode)
+        else if (jump.getType() == "right double jump" || jump.getType() == "left double jump")
         {
-            testMode = false;
-            targetPos = target.position;
-            AI.movementDirX = (int)Mathf.Sign(targetPos.x - transform.position.x);
+            AI.jump(speed);
+            yield return new WaitForSeconds(jumpDelay);
+            AI.doublejump(newSpeed, AI.movementDirX);
         }
 
-        else if (botState == "idle")
-            targetPos = transform.position;
+        else if (jump.getType() == "right mini u-turn" || jump.getType() == "left mini u-turn")
+        {
+            AI.jump(speed);
+            yield return new WaitForSeconds(jumpDelay);
+            AI.movementDirX *= -1;
+            speed += 0.4f;
+        }
+
+        else if (jump.getType() == "right u-turn" || jump.getType() == "left u-turn")
+        {
+            AI.jump(speed);
+            yield return new WaitForSeconds(jumpDelay);
+            AI.doublejump(newSpeed, -AI.movementDirX);
+        }
+
+        else
+            Debug.LogError(jump.getType() + " is not a known type of jump");
     }
 }

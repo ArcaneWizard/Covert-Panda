@@ -349,13 +349,13 @@ public class JumpPath : MonoBehaviour
     private Jump encodeJump(string dir, int jumpIndex, Vector3 landing)
     {
         if (jumpIndex == 0)
-            return new Jump(dir + "jump", 8.0f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 8.0f, 0f, 0f, landing);
         else if (jumpIndex == 1)
-            return new Jump(dir + "jump", 6.4f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 6.4f, 0f, 0f, landing);
         else if (jumpIndex == 2)
-            return new Jump(dir + "jump", 5.6f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 5.6f, 0f, 0f, landing);
         else if (jumpIndex == 3)
-            return new Jump(dir + "jump", 4.8f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 4.8f, 0f, 0f, landing);
         else if (jumpIndex == 4)
             return new Jump(dir + "double jump", 8.0f, 0.5f, 6.4f + boost, landing);
         else if (jumpIndex == 5)

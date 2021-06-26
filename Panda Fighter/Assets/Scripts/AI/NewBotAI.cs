@@ -45,6 +45,7 @@ public class NewBotAI : MonoBehaviour
     public int movementDirX = 1;
     private float zAngle;
     private float symmetricGroundAngle;
+    public float jumpForceMultiplier = 1f;
 
     public GameObject pathCollider;
     private DecisionMaking decision;
@@ -76,8 +77,11 @@ public class NewBotAI : MonoBehaviour
     public void jump(float speed)
     {
         this.speed = speed;
+
         rig.velocity = new Vector2(rig.velocity.x, 0);
-        rig.AddForce(new Vector2(0, jumpForce));
+        rig.AddForce(new Vector2(0, jumpForce * jumpForceMultiplier));
+        jumpForceMultiplier = 1.0f;
+
         animator.SetBool("jumped", true);
     }
 
@@ -291,7 +295,7 @@ public class NewBotAI : MonoBehaviour
     private IEnumerator createNewJump()
     {
         yield return new WaitForSeconds(0.4f);
-        StartCoroutine(decision.executeJump(new Jump("right mini u-turn", 7.0f, 0.42f, 0f, Vector3.zero)));
+        StartCoroutine(decision.executeJump(new Jump("left jump", 6.0f, 0f, 0f, Vector3.zero)));
     }
 
     private void printPathColliders()
