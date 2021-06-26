@@ -39,6 +39,7 @@ public class JumpPath : MonoBehaviour
     private DecisionMaking decision;
 
     private int groundDiff;
+    private float boost = 0.4f; //jump speed boost
     private List<GameObject> obstacles = new List<GameObject>();
 
     void Awake()
@@ -75,25 +76,19 @@ public class JumpPath : MonoBehaviour
     private IEnumerator getJumpTrajectory()
     {
         AI.findWalls();
+        decision.rightJumps.Clear();
+        decision.leftJumps.Clear();
 
         if (AI.grounded && AI.touchingMap && (AI.movementDirX == 1 || AI.movementDirX == 0))
-        {
             getRightJumpTrajectory();
-            decision.leftJump = new Jump("null", 0f, 0f, 0f);
-        }
+
         else if (AI.grounded && AI.touchingMap && AI.movementDirX == -1)
-        {
             getLeftJumpTrajectory();
-            decision.rightJump = new Jump("null", 0f, 0f, 0f);
-        }
 
         if (AI.grounded && AI.touchingMap)
-        {
-            Debug.Log(AI.leftHole);
             decision.decideWhetherToJump();
-        }
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.4f);
         StartCoroutine(getJumpTrajectory());
     }
 
@@ -191,46 +186,34 @@ public class JumpPath : MonoBehaviour
         }
     }
 
-    private bool getRightJumpTrajectory()
+    private void getRightJumpTrajectory()
     {
-        //in a RANDOM order
-        int r = UnityEngine.Random.Range(0, 8);
+        //cycle through the 8 jumps in a random order and see if any are possible
+        int a = UnityEngine.Random.Range(0, 8);
+        int b = UnityEngine.Random.Range(0, 8);
 
-        //cycle through the 8 jumps and see if any are possible
         for (int i = 1; i <= 8; i++)
         {
-            if (determineIfRightJumpIsPossible(r))
-            {
-                decision.rightJump = encodeRightJump(r);
-                return true;
-            }
+            if (determineIfRightJumpIsPossible(a))
+                decision.rightJumps.Add(encodeRightJump(a));
 
-            r = ++r % 8;
+            a = (a + b) % 8;
         }
-
-        decision.rightJump = new Jump("null", 0f, 0f, 0f);
-        return false;
     }
 
-    private bool getLeftJumpTrajectory()
+    private void getLeftJumpTrajectory()
     {
-        //in a RANDOM order
-        int r = UnityEngine.Random.Range(0, 8);
+        //cycle through the 8 jumps in a randpm order and see if any are possible
+        int a = UnityEngine.Random.Range(0, 8);
+        int b = UnityEngine.Random.Range(0, 8);
 
-        //cycle through the 8 jumps and see if any are possible
         for (int i = 1; i <= 8; i++)
         {
-            if (determineIfLeftJumpIsPossible(r))
-            {
-                decision.leftJump = encodeLeftJump(r);
-                return true;
-            }
+            if (determineIfLeftJumpIsPossible(a))
+                decision.leftJumps.Add(encodeLeftJump(a));
 
-            r = ++r % 8;
+            a = (a + b) % 8;
         }
-
-        decision.leftJump = new Jump("null", 0f, 0f, 0f);
-        return false;
     }
 
     private bool determineIfRightJumpIsPossible(int i)
@@ -289,6 +272,12 @@ public class JumpPath : MonoBehaviour
                 if (leftJumpList[i][collider])
                 {
                     obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
+                    if (i == 3)
+                    {
+                        Debug.Log(collider);
+                        Debug.Log(GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround));
+                        Debug.Log(!leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle);
+                    }
                     if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
                     return !leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle;
                 }
@@ -317,50 +306,50 @@ public class JumpPath : MonoBehaviour
     private Jump encodeRightJump(int jumpIndex)
     {
         if (jumpIndex == 0)
-            return new Jump("right jump", 8.0f, 0f, 0f);
+            return new Jump("right jump", 8.0f + boost, 0f, 0f);
         else if (jumpIndex == 1)
-            return new Jump("right jump", 6.4f, 0f, 0f);
+            return new Jump("right jump", 6.4f + boost, 0f, 0f);
         else if (jumpIndex == 2)
-            return new Jump("right jump", 4.8f, 0f, 0f);
+            return new Jump("right jump", 4.8f + boost, 0f, 0f);
         else if (jumpIndex == 3)
-            return new Jump("right jump", 3.2f, 0f, 0f);
+            return new Jump("right jump", 3.2f + boost, 0f, 0f);
         else if (jumpIndex == 4)
-            return new Jump("right double jump", 8.0f, 0.5f, 6.4f);
+            return new Jump("right double jump", 8.0f, 0.5f, 6.4f + boost);
         else if (jumpIndex == 5)
-            return new Jump("right double jump", 4.8f, 0.5f, 6.4f);
+            return new Jump("right double jump", 4.8f, 0.5f, 6.4f + boost);
         else if (jumpIndex == 6)
-            return new Jump("right double jump", 2.4f, 0.3f, 3.6f);
+            return new Jump("right double jump", 2.4f, 0.3f, 3.6f + boost);
         else if (jumpIndex == 7)
-            return new Jump("right double jump", 0f, 0.6f, 3.6f);
+            return new Jump("right double jump", 0f, 0.6f, 3.6f + boost);
         else
         {
             Debug.LogWarning("jump has not been coded for");
-            return new Jump("right jump", 8.0f, 0f, 0f);
+            return new Jump("right jump", 8.0f + boost, 0f, 0f);
         }
     }
 
     private Jump encodeLeftJump(int jumpIndex)
     {
         if (jumpIndex == 0)
-            return new Jump("left jump", 8.0f, 0f, 0f);
+            return new Jump("left jump", 8.0f + boost, 0f, 0f);
         else if (jumpIndex == 1)
-            return new Jump("left jump", 6.4f, 0f, 0f);
+            return new Jump("left jump", 6.4f + boost, 0f, 0f);
         else if (jumpIndex == 2)
-            return new Jump("left jump", 4.8f, 0f, 0f);
+            return new Jump("left jump", 4.8f + boost, 0f, 0f);
         else if (jumpIndex == 3)
-            return new Jump("left jump", 3.2f, 0f, 0f);
+            return new Jump("left jump", 3.2f + boost, 0f, 0f);
         else if (jumpIndex == 4)
-            return new Jump("left double jump", 8.0f, 0.5f, 6.4f);
+            return new Jump("left double jump", 8.0f, 0.5f, 6.4f + boost);
         else if (jumpIndex == 5)
-            return new Jump("left double jump", 4.8f, 0.5f, 6.4f);
+            return new Jump("left double jump", 4.8f, 0.5f, 6.4f + boost);
         else if (jumpIndex == 6)
-            return new Jump("left double jump", 2.4f, 0.3f, 3.6f);
+            return new Jump("left double jump", 2.4f, 0.3f, 3.6f + boost);
         else if (jumpIndex == 7)
-            return new Jump("left double jump", 0f, 0.6f, 3.6f);
+            return new Jump("left double jump", 0f, 0.6f, 3.6f + boost);
         else
         {
             Debug.LogWarning("jump has not been coded for");
-            return new Jump("left jump", 8.0f, 0f, 0f);
+            return new Jump("left jump", 8.0f + boost, 0f, 0f);
         }
     }
 

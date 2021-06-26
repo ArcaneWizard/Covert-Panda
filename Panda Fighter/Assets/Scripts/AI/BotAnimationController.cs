@@ -111,7 +111,7 @@ public class BotAnimationController : MonoBehaviour
         : new Vector3(-0.626f, leftFoot.transform.localPosition.y, 0);
 
         //thin collider when jumping
-        mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.7f : 1.035f, mainCollider.size.y);
+        //mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.7f : 1.035f, mainCollider.size.y);
     }
 
 

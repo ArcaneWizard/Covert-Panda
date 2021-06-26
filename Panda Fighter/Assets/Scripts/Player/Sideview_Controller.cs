@@ -130,6 +130,10 @@ public class Sideview_Controller : MonoBehaviour
 
     private void setPlayerVelocity()
     {
+        //nullify the slight bounce on a slope glitch when changing slopes
+        if (!animator.GetBool("jumped") && rig.velocity.y > 0)
+            rig.velocity = new Vector2(0, 0);
+
         //when player is on the ground, player velocity is parallel to the slanted ground 
         if (!animator.GetBool("jumped") && grounded && touchingMap)
         {
@@ -283,7 +287,12 @@ public class Sideview_Controller : MonoBehaviour
         else if (rightFootGround != null && leftFootGround == null)
             collider = rightFootGround;
         else if (rightFootGround != null && leftFootGround != null)
-            collider = generalGround;
+        {
+            if ((movementDirX >= 0 && player.localEulerAngles.y == 0) || (movementDirX == -1 && player.localEulerAngles.y == 180))
+                collider = rightFootGround;
+            else
+                collider = leftFootGround;
+        }
 
         if (collider)
         {

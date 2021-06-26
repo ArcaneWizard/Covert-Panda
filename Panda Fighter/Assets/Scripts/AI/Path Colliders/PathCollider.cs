@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class PathCollider : MonoBehaviour
 {
-    [HideInInspector]
-    public bool touchingObstacle;
+    public bool touchingObstacle = false;
     private List<GameObject> obstacles = new List<GameObject>();
+
+    private void Awake()
+    {
+        touchingObstacle = false;
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

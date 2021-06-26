@@ -158,10 +158,10 @@ public class NewBotAI : MonoBehaviour
         RaycastHit2D leftWallHit = Physics2D.Raycast(centerFoot.position, -groundDir, 20f, Constants.map);
         wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
         obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) - groundDir * 20;
-        Debug.DrawLine(leftWallHit.point, leftWallHit.normal, Color.blue, 2f);
+        Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), obstacleToTheLeft, Color.blue, 2f);
 
         RaycastHit2D rightWallHit = Physics2D.Raycast(centerFoot.position, groundDir, 20f, Constants.map);
-        wallToTheRight = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
+        wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
         obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) + groundDir * 20;
         Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), obstacleToTheRight, Color.red, 2f);
 
@@ -177,7 +177,12 @@ public class NewBotAI : MonoBehaviour
         else if (rightFootGround != null && leftFootGround == null)
             groundSurface = rightFootGround;
         else if (rightFootGround != null && leftFootGround != null)
-            groundSurface = generalGround;
+        {
+            if ((movementDirX >= 0 && alien.localEulerAngles.y == 0) || (movementDirX == -1 && alien.localEulerAngles.y == 180))
+                groundSurface = rightFootGround;
+            else
+                groundSurface = leftFootGround;
+        }
         else
             groundSurface = null;
 
@@ -200,6 +205,10 @@ public class NewBotAI : MonoBehaviour
 
     private void setAlienVelocity()
     {
+        //nullify the slight bounce on a slope glitch when changing slopes
+        if (!animator.GetBool("jumped") && rig.velocity.y > 0)
+            rig.velocity = new Vector2(0, 0);
+
         //when alien is on the ground, alien velocity is parallel to the slanted ground 
         if (!animator.GetBool("jumped") && grounded && touchingMap)
         {
