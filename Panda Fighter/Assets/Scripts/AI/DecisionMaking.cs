@@ -215,7 +215,7 @@ public class DecisionMaking : MonoBehaviour
                 {
                     reconsiderJumpTimer = 1f;
 
-                    thoughtProcess.text = "chose not to jump"; ;
+                    thoughtProcess.text = "chose not to jump fr"; ;
                 }
             }
         }
@@ -230,17 +230,9 @@ public class DecisionMaking : MonoBehaviour
         //if target isn't clearly to the left or right, pick a random direction to head in
         if (Mathf.Abs(targetHorizontalDistance) < 2f)
             dir = UnityEngine.Random.Range(0, 2) * 2 - 1;
-
-        //if target is clearly to the left or right, head left or right 90% of the time 
         else
-        {
-            int r = UnityEngine.Random.Range(0, 10);
+            thoughtProcess.text = "heading towards target after falling down";
 
-            if (r == 4)
-                dir *= -1;
-        }
-
-        thoughtProcess.text = "decided where to head after falling down";
         yield return new WaitForSeconds(0.05f);
 
         //if there isn't a wall blocking the way (exception being if there's a drop down hole), head in the determined direction
@@ -259,7 +251,7 @@ public class DecisionMaking : MonoBehaviour
     public IEnumerator executeJump(Jump jump)
     {
         jumpChosen.text = jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
-        Debug.LogError("");
+        Debug.Break();
 
         jumpAgainTimer = 0.3f;
 

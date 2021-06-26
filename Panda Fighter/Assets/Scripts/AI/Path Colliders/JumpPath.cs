@@ -78,20 +78,18 @@ public class JumpPath : MonoBehaviour
         decision.rightJumps.Clear();
         decision.leftJumps.Clear();
 
-        if (AI.grounded && AI.touchingMap && (AI.movementDirX == 1 || AI.movementDirX == 0))
-            getRightJumpTrajectory();
-
-        else if (AI.grounded && AI.touchingMap && AI.movementDirX == -1)
-            getLeftJumpTrajectory();
-
         if (AI.grounded && AI.touchingMap)
         {
+            if ((AI.movementDirX == 1 || AI.movementDirX == 0))
+                getRightJumpTrajectory();
+            else if (AI.movementDirX == -1)
+                getLeftJumpTrajectory();
+
             decision.decideWhetherToJump();
             jumpDecision.text = "deciding whether to jump...";
         }
         else
             jumpDecision.text = "not on ground yet";
-
 
         //show jumps available for debugging purposes
         possibleJumps.text = "Jumps: ";

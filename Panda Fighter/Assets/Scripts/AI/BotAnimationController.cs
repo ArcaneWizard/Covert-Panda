@@ -13,11 +13,15 @@ public class BotAnimationController : MonoBehaviour
 
     private Transform leftFoot;
     private Transform rightFoot;
+    private bool decideMovementAfterFallingDown;
 
     private NewBotAI AI;
     private DecisionMaking decisionMaking;
 
-    private bool decideMovementAfterFallingDown;
+    public bool stopSpinning = true;
+    public bool disableSpinningLimbs = false;
+    public int spinDirection = 0;
+    public int spinRate = 420;
 
     // Start is called before the first frame update
     void Awake()
@@ -36,19 +40,51 @@ public class BotAnimationController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        alienLimbsOrientation();
         alienAnimationController();
         StartCoroutine(handleColliders());
+    }
+
+    void LateUpdate()
+    {
+        alienLimbsOrientation();
+    }
+
+    private void FixedUpdate()
+    {
+        if (animator.GetBool("double jump"))
+        {
+            if (!stopSpinning || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
+                transform.eulerAngles = new Vector3(0, 0, (transform.eulerAngles.z + Time.deltaTime * spinRate * spinDirection));
+        }
+    }
+
+    public IEnumerator timeDoubleSpin()
+    {
+        leftFoot.gameObject.SetActive(false);
+        rightFoot.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(0.6f);
+        stopSpinning = true;
+        spinRate = 200;
+
+        yield return new WaitForSeconds(0.1f);
+        disableSpinningLimbs = false;
+        leftFoot.gameObject.SetActive(true);
+        rightFoot.gameObject.SetActive(true);
     }
 
     //handles alien orientation (left/right), gun rotation, gun position, head rotation
     private void alienLimbsOrientation()
     {
-        //player faces left or right depending on mouse cursor
-        if (rig.velocity.x > 0)
-            bot.localRotation = Quaternion.Euler(0, 0, 0);
-        else if (rig.velocity.x < 0)
-            bot.localRotation = Quaternion.Euler(0, 180, 0);
+        //if alien isn't spinning in mid-air with a double jump
+        if (!disableSpinningLimbs)
+        {
+            //alien faces left or right depending on mouse cursor
+            if (rig.velocity.x > 0)
+                bot.localRotation = Quaternion.Euler(0, 0, 0);
+            else if (rig.velocity.x < 0)
+                bot.localRotation = Quaternion.Euler(0, 180, 0);
+        }
     }
 
     //states when to transition btwn diff alien animation states 
@@ -80,9 +116,13 @@ public class BotAnimationController : MonoBehaviour
         if (animator.GetInteger("Phase") == 2 && AI.grounded)
         {
             animator.SetBool("jumped", false);
+            animator.SetBool("double jump", false);
+
             setAnimation("idle");
             decideMovementAfterFallingDown = true;
+
             AI.speed = 8.0f;
+            rig.gravityScale = 1;
         }
 
         //after falling down and touching the map, decide on the new direction to head in

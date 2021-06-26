@@ -48,6 +48,7 @@ public class NewBotAI : MonoBehaviour
     public float jumpForceMultiplier = 1f;
 
     public GameObject pathCollider;
+    private BotAnimationController animationController;
     private DecisionMaking decision;
 
     // Start is called before the first frame update
@@ -56,6 +57,7 @@ public class NewBotAI : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
         alien = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
+        animationController = transform.GetComponent<BotAnimationController>();
         decision = transform.GetComponent<DecisionMaking>();
 
         movementDirX = 1;
@@ -93,6 +95,14 @@ public class NewBotAI : MonoBehaviour
         rig.gravityScale = 1.4f;
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.AddForce(new Vector2(0, jumpForce * 1.3f));
+
+        animationController.spinDirection = -movementDirX;
+        animationController.spinRate = 420;
+        animationController.stopSpinning = false;
+        animationController.disableSpinningLimbs = true;
+
+        StartCoroutine(animationController.timeDoubleSpin());
+        animator.SetBool("double jump", true);
     }
 
     // Update is called once per frame
@@ -166,7 +176,7 @@ public class NewBotAI : MonoBehaviour
         obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(centerFoot.position.x, centerFoot.position.y) + groundDir * 20;
         Debug.DrawLine(new Vector2(centerFoot.position.x, centerFoot.position.y), obstacleToTheRight, Color.red, 2f);
 
-        if (grounded)
+        if (grounded && groundDetection.gameObject.activeSelf)
             determineClosestHole();
     }
 
@@ -269,7 +279,7 @@ public class NewBotAI : MonoBehaviour
             else if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
                 transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20f * Time.deltaTime);
         }
-        else if (!grounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f)
+        else if (!grounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
 
     }

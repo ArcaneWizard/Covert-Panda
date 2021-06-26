@@ -25,7 +25,7 @@ public class Sideview_Controller : MonoBehaviour
     private float speed = 8.0f;
     private float jumpForce = 600;
 
-    private bool spinCounter = true;
+    private bool stopSpinning = true;
     private bool disableLimbs = false;
     private int spinDirection = 0;
     private int spinRate = 420;
@@ -98,13 +98,14 @@ public class Sideview_Controller : MonoBehaviour
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce * 1.3f));
-
-            spinCounter = false;
-            spinDirection = -(int)Mathf.Sign(movementDirX);
-            spinRate = 420;
             rig.gravityScale = 1.4f;
+
+            spinDirection = -movementDirX;
+            spinRate = 420;
+            stopSpinning = false;
             disableLimbs = true;
-            StartCoroutine(countDoubleSpin());
+
+            StartCoroutine(timeDoubleSpin());
             animator.SetBool("double jump", true);
         }
 
@@ -113,7 +114,6 @@ public class Sideview_Controller : MonoBehaviour
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce));
             animator.SetBool("jumped", true);
-            animator.SetBool("double jump", false);
         }
 
         if (Input.GetKeyDown(KeyCode.S))
@@ -332,7 +332,7 @@ public class Sideview_Controller : MonoBehaviour
         mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.68f : 1f, mainCollider.size.y);
 
         //shorten collider when double jumping
-        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !spinCounter ? 2f : 3.14f);
+        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 3.14f);
     }
 
     //set new animation state for the player
@@ -401,19 +401,19 @@ public class Sideview_Controller : MonoBehaviour
     {
         if (animator.GetBool("double jump"))
         {
-            if (!spinCounter || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
+            if (!stopSpinning || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
                 transform.eulerAngles = new Vector3(0, 0, (transform.eulerAngles.z + Time.deltaTime * spinRate * spinDirection));
 
         }
     }
 
-    private IEnumerator countDoubleSpin()
+    private IEnumerator timeDoubleSpin()
     {
         leftFoot.gameObject.SetActive(false);
         rightFoot.gameObject.SetActive(false);
 
         yield return new WaitForSeconds(0.6f);
-        spinCounter = true;
+        stopSpinning = true;
         spinRate = 200;
 
         yield return new WaitForSeconds(0.1f);
