@@ -65,7 +65,7 @@ public class Sideview_Controller : MonoBehaviour
         player = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
-        cameraOffset = camera.transform.position - alienToFollow.position;
+        cameraOffset = camera.transform.position - player.position;
 
         //ideal angle from shoulder to specific gun coordinates
         up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
@@ -80,7 +80,7 @@ public class Sideview_Controller : MonoBehaviour
 
     void Update()
     {
-        camera.transform.position = alienToFollow.position + cameraOffset;
+        camera.transform.position = player.position + cameraOffset;
         grounded = isGrounded();
 
         playerAnimationController();

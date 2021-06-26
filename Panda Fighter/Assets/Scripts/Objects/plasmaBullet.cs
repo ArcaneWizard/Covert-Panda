@@ -7,8 +7,15 @@ public class plasmaBullet : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.layer == 11)
+            gameObject.SetActive(false);
+
+        else if (transform.parent.parent.name == "Player weapon ammo" && col.gameObject.layer == 9)
+            gameObject.SetActive(false);
+
+        else if (transform.parent.parent.name == "Alien weapon ammo" && col.gameObject.layer == 12)
         {
-            transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+            HP.playerHP -= 5;
+            gameObject.SetActive(false);
         }
     }
 }

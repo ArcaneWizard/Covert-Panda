@@ -11,7 +11,7 @@ public class BotAnimationController : MonoBehaviour
     public BoxCollider2D mainCollider;
     public BoxCollider2D footCollider;
 
-    public Camera camera;
+    public Transform player;
     public Transform shootingArm;
     public Transform gun;
     public Transform head;
@@ -107,13 +107,14 @@ public class BotAnimationController : MonoBehaviour
         if (!disableSpinningLimbs)
         {
             //alien faces left or right depending on mouse cursor
-            if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
+            if (transform.position.x < player.position.x)
                 bot.localRotation = Quaternion.Euler(0, 0, 0);
             else
                 bot.localRotation = Quaternion.Euler(0, 180, 0);
 
             //calculate the angle btwn mouse cursor and player's shooting arm
-            Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+            Vector2 shootDirection = (player.position - shootingArm.position).normalized;
+            Debug.Log(shootDirection);
             float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
 
             //apply offset to the shoot Angle when the alien is tilted on a ramp:

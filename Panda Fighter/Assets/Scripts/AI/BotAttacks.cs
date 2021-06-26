@@ -4,57 +4,60 @@ using UnityEngine;
 
 public class BotAttacks : MonoBehaviour
 {
-
     private List<GameObject> bullets = new List<GameObject>();
     public Transform bulletSpawnPoint;
     public Transform bulletsHolder;
+    private BotAnimationController controller;
 
     private Transform bullet;
     private int cycle = 0;
-    private float bulletSpeed = 20;
+    private float plasmaBulletSpeed = 30;
 
     private float cooldownTimer = 0;
-    private float cooldownTime = 0.1f;
+    private float cooldownTime = 0.16f;
 
-    //ideal local gun coordinates when looking to the side, up or down 
-    private Vector2 pointingRight = new Vector2(0.642f, 0.491f);
-    private Vector2 pointingUp = new Vector2(-0.24f, 1.68f);
-    private Vector2 pointingDown = new Vector2(-0.407f, -0.675f);
-    private Vector2 shoulderPos = new Vector2(-0.608f, 0.662f);
-
-    private float upVector, downVector, rightVector;
-    private float up, right, down;
+    private RaycastHit2D playerHit;
+    private Vector2 playerDir;
 
     void Awake()
     {
+        controller = transform.GetComponent<BotAnimationController>();
 
-        /*foreach (Transform bullet in bulletsHolder)
-            bullets.Add(bullet.gameObject);*/
+        foreach (Transform bullet in bulletsHolder)
+            bullets.Add(bullet.gameObject);
     }
 
     void Update()
     {
-        /*//cooldown Timer ticks down
         if (cooldownTimer > 0f)
-            cooldownTimer -= Time.deltaTime;*/
+            cooldownTimer -= Time.deltaTime;
+
+        //shoot at player if they are in the bot's line of sight
+        playerDir = (controller.player.position - controller.shootingArm.position).normalized;
+        playerHit = Physics2D.Raycast(controller.shootingArm.position, playerDir, 20f, Constants.mapOrPlayer);
+
+        if (playerHit.collider != null && playerHit.collider.gameObject.layer == 12 && cooldownTimer <= 0)
+        {
+            cooldownTimer = cooldownTime;
+            shootPlasmaBullet(playerDir);
+        }
     }
 
-    /*public void shootBullet(Vector2 dir)
+    public void shootPlasmaBullet(Vector2 dir)
     {
-        //if the shooting cooldown is over
-        if (cooldownTimer <= 0f)
-        {
-            //shoot the bullet
-            bullet = bullets[cycle].transform;
-            bullet.transform.position = bulletSpawnPoint.position;
-            bullet.gameObject.SetActive(true);
-            bullet.GetComponent<Rigidbody2D>().velocity = dir.normalized * bulletSpeed;
+        //get a bullet to the barrel of the gun
+        bullet = bullets[cycle].transform;
+        bullet.transform.position = bulletSpawnPoint.position;
+        bullet.gameObject.SetActive(true);
 
-            //cycle to a different bullet in the array next time
-            cycle = ++cycle % bullets.Count;
-            cooldownTimer = cooldownTime;
-        }
-    }*/
+        //orient it + set the bullet's velocity
+        bullet.right = dir.normalized;
+        bullet.GetComponent<Rigidbody2D>().velocity = dir.normalized * plasmaBulletSpeed;
+
+        //cycle to a different bullet in the list next time
+        cycle = ++cycle % bullets.Count;
+        cooldownTimer = cooldownTime;
+    }
 }
 
 
