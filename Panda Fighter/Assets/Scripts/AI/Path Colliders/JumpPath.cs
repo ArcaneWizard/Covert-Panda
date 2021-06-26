@@ -18,7 +18,7 @@ public class JumpPath : MonoBehaviour
 
     private NewBotAI AI;
     public Text possibleJumps;
-    public Text usefulInfo;
+    public Text jumpDecision;
     private DecisionMaking decision;
 
     private int groundDiff;
@@ -87,10 +87,10 @@ public class JumpPath : MonoBehaviour
         if (AI.grounded && AI.touchingMap)
         {
             decision.decideWhetherToJump();
-            usefulInfo.text = "deciding whether to jump...";
+            jumpDecision.text = "deciding whether to jump...";
         }
         else
-            usefulInfo.text = "not on ground yet";
+            jumpDecision.text = "not on ground yet";
 
 
         //show jumps available for debugging purposes

@@ -25,9 +25,16 @@ public class DecisionMaking : MonoBehaviour
     private float jumpDelay;
     private float newSpeed;
 
-    private float reconsiderRightJumpTimer = 0f;
-    private float reconsiderLeftJumpTimer = 0f;
+    private float reconsiderJumpTimer = 0f;
     private float jumpAgainTimer = 0f;
+
+    private List<Jump> availableJumps = new List<Jump>();
+    private Vector2 hole;
+    private Vector2 obstaclePosition;
+    private bool wallInTheWay;
+
+    public Text thoughtProcess;
+    public Text jumpChosen;
 
     void Awake()
     {
@@ -64,10 +71,8 @@ public class DecisionMaking : MonoBehaviour
 
         timeElapsed += Time.deltaTime;
 
-        if (reconsiderRightJumpTimer >= 0)
-            reconsiderRightJumpTimer -= Time.deltaTime;
-        if (reconsiderLeftJumpTimer >= 0)
-            reconsiderLeftJumpTimer -= Time.deltaTime;
+        if (reconsiderJumpTimer >= 0)
+            reconsiderJumpTimer -= Time.deltaTime;
         if (jumpAgainTimer >= 0)
             jumpAgainTimer -= Time.deltaTime;
 
@@ -77,99 +82,88 @@ public class DecisionMaking : MonoBehaviour
     //if the bot is going to run into a wall, change directions
     private void changeDirectionWhenFacingWall()
     {
-        if (AI.movementDirX == 1 && AI.wallToTheRight && Mathf.Abs(transform.position.x - AI.obstacleToTheRight.x) <= 1.9f && AI.touchingMap && AI.grounded)
+        if (AI.movementDirX == 1 && AI.wallToTheRight && Mathf.Abs(transform.position.x - AI.obstacleToTheRight.x) <= 3f && AI.touchingMap && AI.grounded)
         {
-            Debug.Log("wall in the way so changing direction");
+            thoughtProcess.text = "wall in the way so changing direction";
             AI.movementDirX = -1;
         }
 
-        if (AI.movementDirX == -1 && AI.wallToTheLeft && Mathf.Abs(transform.position.x - AI.obstacleToTheLeft.x) <= 1.9f && AI.touchingMap && AI.grounded)
+        if (AI.movementDirX == -1 && AI.wallToTheLeft && Mathf.Abs(transform.position.x - AI.obstacleToTheLeft.x) <= 3f && AI.touchingMap && AI.grounded)
         {
-            Debug.Log("wall in the way so changing direction");
+            thoughtProcess.text = "wall in the way so changing direction";
             AI.movementDirX = 1;
         }
     }
 
     public void decideWhetherToJump()
     {
-        //if a right jump is possible
-        if (AI.movementDirX == 1 && rightJumps.Count > 0 && AI.grounded && jumpAgainTimer <= 0f)
+        if (AI.movementDirX == 1)
+        {
+            availableJumps = rightJumps;
+            wallInTheWay = AI.wallToTheRight;
+            hole = AI.rightHole;
+            obstaclePosition = AI.obstacleToTheRight;
+        }
+
+        else if (AI.movementDirX == -1)
+        {
+            availableJumps = leftJumps;
+            wallInTheWay = AI.wallToTheLeft;
+            hole = AI.leftHole;
+            obstaclePosition = AI.obstacleToTheLeft;
+        }
+
+        //if a jump is possible
+        if (Mathf.Abs(AI.movementDirX) == 1 && availableJumps.Count > 0 && AI.grounded && jumpAgainTimer <= 0f)
         {
             //the bot must jump if there is a wall in front and no hole in front to drop down in
-            if (AI.wallToTheRight && Mathf.Abs(transform.position.x - AI.obstacleToTheRight.x) < 5f && AI.rightHole == Vector2.zero)
+            if (wallInTheWay && Mathf.Abs(transform.position.x - obstaclePosition.x) < 7f && hole == Vector2.zero)
             {
-                Debug.Log("must right jump");
-                StartCoroutine(executeJump(rightJumps[0]));
+                thoughtProcess.text = "must jump";
+                StartCoroutine(executeJump(availableJumps[0]));
             }
 
             //the bot must jump if its target position is above it and there is either a hole or wall in front
-            else if (targetPos.y > transform.position.y && ((AI.wallToTheRight && Mathf.Abs(transform.position.x - AI.obstacleToTheRight.x) < 4f) || AI.rightHole != Vector2.zero))
+            else if (targetPos.y > transform.position.y && ((wallInTheWay && Mathf.Abs(transform.position.x - obstaclePosition.x) < 7f) || hole != Vector2.zero))
             {
-                Debug.Log("must right jump to get to target");
+                thoughtProcess.text = "must jump to get to target";
 
-                for (int i = 0; i < Math.Min(rightJumps.Count, 4); i++)
+                for (int i = 0; i < availableJumps.Count; i++)
                 {
-                    if (rightJumps[i].getLandingPosition().y > transform.position.y + 1f)
+                    if (availableJumps[i].getLandingPosition().y > transform.position.y + 2f)
                     {
-                        StartCoroutine(executeJump(rightJumps[i]));
+                        StartCoroutine(executeJump(availableJumps[i]));
                         break;
                     }
                 }
             }
 
             //the bot may choose to jump if the target position is above it but it could continue forward (no hole)
-            else if (targetPos.y > transform.position.y && AI.rightHole == Vector2.zero && reconsiderRightJumpTimer <= 0f)
+            else if (targetPos.y > transform.position.y && hole == Vector2.zero && reconsiderJumpTimer <= 0f)
             {
                 int r = UnityEngine.Random.Range(0, 100);
 
-                if (r > 20 || r <= 10)
+                //chose to jump
+                if (r > 20 || r <= 13)
                 {
-                    Debug.Log("chose to jump");
-                    StartCoroutine(executeJump(rightJumps[0]));
+                    thoughtProcess.text = "chose to jump";
+
+                    for (int i = 0; i < availableJumps.Count; i++)
+                    {
+                        if (availableJumps[i].getLandingPosition().y > transform.position.y + 2f)
+                        {
+                            StartCoroutine(executeJump(availableJumps[i]));
+                            break;
+                        }
+                    }
                 }
+
+                //chose not to jump
                 else
                 {
-                    reconsiderRightJumpTimer = 1f;
+                    reconsiderJumpTimer = 1f;
 
-                    Debug.LogFormat("{0}, {1}, {2}, {3}, {4}", "jump it skipped on: ", rightJumps[0].getType(), rightJumps[0].getJumpSpeed(),
-                    rightJumps[0].getDelay(), rightJumps[0].getMidAirSpeed());
-                }
-            }
-        }
-
-        //if a left jump is possible
-        if (AI.movementDirX == -1 && leftJumps.Count > 0 && AI.grounded && jumpAgainTimer <= 0f)
-        {
-            //the bot must jump if there is a wall in front and no hole in front to drop down in
-            if (AI.wallToTheLeft && Mathf.Abs(transform.position.x - AI.obstacleToTheLeft.x) < 5f && AI.leftHole == Vector2.zero)
-            {
-                Debug.Log("must left jump");
-                StartCoroutine(executeJump(leftJumps[0]));
-            }
-
-            //the bot must jump if its target position is above it and there is either a hole or wall in front
-            else if (targetPos.y > transform.position.y && ((Mathf.Abs(transform.position.x - AI.obstacleToTheLeft.x) < 4f && AI.wallToTheLeft) || AI.leftHole != Vector2.zero))
-            {
-                Debug.Log("must left jump to get to target");
-                StartCoroutine(executeJump(leftJumps[0]));
-            }
-
-            //the bot may choose to jump if the target position is above it but it could continue forward (no hole)
-            else if (targetPos.y > transform.position.y && AI.leftHole == Vector2.zero && reconsiderLeftJumpTimer <= 0f)
-            {
-                int r = UnityEngine.Random.Range(0, 100);
-
-                if (r > 20 || r <= 10)
-                {
-                    Debug.Log("chose to left jump");
-                    Debug.LogError("");
-                    StartCoroutine(executeJump(leftJumps[0]));
-                }
-                else
-                {
-                    reconsiderLeftJumpTimer = 1f;
-                    Debug.LogFormat("{0}, {1}, {2}, {3}, {4}", "jump it skipped on: ", leftJumps[0].getType(), leftJumps[0].getJumpSpeed(),
-                    leftJumps[0].getDelay(), leftJumps[0].getMidAirSpeed());
+                    thoughtProcess.text = "chose not to jump"; ;
                 }
             }
         }
@@ -178,8 +172,8 @@ public class DecisionMaking : MonoBehaviour
     //the alien executes a jump (with the specified configuration settings required for that jump)
     public IEnumerator executeJump(Jump jump)
     {
-        Debug.LogFormat("{0}, {1}, {2}, {3}, {4}", "jump executed: ", jump.getType(), jump.getJumpSpeed(),
-        jump.getDelay(), jump.getMidAirSpeed());
+        jumpChosen.text = jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+        Debug.LogError("");
 
         jumpAgainTimer = 0.3f;
 
@@ -202,6 +196,7 @@ public class DecisionMaking : MonoBehaviour
             AI.jump(speed);
             yield return new WaitForSeconds(jumpDelay);
             AI.movementDirX *= -1;
+            speed += 0.4f;
         }
 
         else if (jump.getType() == "right u-turn" || jump.getType() == "left u-turn")
@@ -234,7 +229,7 @@ public class DecisionMaking : MonoBehaviour
                 dir *= -1;
         }
 
-        Debug.Log("deciding movement after falling down");
+        thoughtProcess.text = "decided where to head after falling down";
         yield return new WaitForSeconds(0.05f);
 
         //if there isn't a wall blocking the way (exception being if there's a drop down hole), head in the determined direction
@@ -279,7 +274,7 @@ public class DecisionMaking : MonoBehaviour
             //this target is viable -> set it as the new target
             else
             {
-                Debug.Log("set new movement");
+                Debug.Log("set new target");
                 targetPos = target.position;
                 AI.movementDirX = (int)Mathf.Sign(targetPos.x - transform.position.x);
 
