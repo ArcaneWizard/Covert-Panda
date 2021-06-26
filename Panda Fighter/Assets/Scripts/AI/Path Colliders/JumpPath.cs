@@ -40,6 +40,9 @@ public class JumpPath : MonoBehaviour
 
     private int groundDiff;
     private float boost = 0.4f; //jump speed boost
+    private locationExists leftJumpTrajectory;
+    private locationExists rightJumpTrajectory;
+
     private List<GameObject> obstacles = new List<GameObject>();
 
     void Awake()
@@ -79,25 +82,25 @@ public class JumpPath : MonoBehaviour
         decision.rightJumps.Clear();
         decision.leftJumps.Clear();
 
-        if (AI.grounded && AI.touchingMap && (AI.movementDirX == 1 || AI.movementDirX == 0))
+        /*if (AI.grounded && AI.touchingMap && (AI.movementDirX == 1 || AI.movementDirX == 0))
             getRightJumpTrajectory();
 
         else if (AI.grounded && AI.touchingMap && AI.movementDirX == -1)
-            getLeftJumpTrajectory();
+            getLeftJumpTrajectory();*/
 
-        if (AI.grounded && AI.touchingMap)
-            decision.decideWhetherToJump();
+        /*if (AI.grounded && AI.touchingMap)
+            decision.decideWhetherToJump();*/
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.35f);
         StartCoroutine(getJumpTrajectory());
     }
 
     void Update()
     {
-        if (AI.movementDirX == 1 && leftJumpPathColliders[0].gameObject.activeSelf)
-            checkRightPathsAndNotLeftPaths(true);
-        else if (AI.movementDirX == -1 && rightJumpPathColliders[0].gameObject.activeSelf)
-            checkRightPathsAndNotLeftPaths(false);
+        /* if (AI.movementDirX == 1 && leftJumpPathColliders[0].gameObject.activeSelf)
+             checkRightPathsAndNotLeftPaths(true);
+         else if (AI.movementDirX == -1 && rightJumpPathColliders[0].gameObject.activeSelf)
+             checkRightPathsAndNotLeftPaths(false);*/
     }
 
     private void checkRightPathsAndNotLeftPaths(bool check)
@@ -110,6 +113,186 @@ public class JumpPath : MonoBehaviour
             path.gameObject.SetActive(check);
         foreach (Transform path in rightJumpPathGround)
             path.gameObject.SetActive(check);
+    }
+
+    private void getRightJumpTrajectory()
+    {
+        //cycle through the 8 jumps in a random order and see if any are possible
+        int a = UnityEngine.Random.Range(0, 8);
+        int b = (UnityEngine.Random.Range(0, 2) == 1) ? 5 : 7;
+
+        Debug.Log(decision.rightJumps.Count);
+        for (int i = 1; i <= 8; i++)
+        {
+            rightJumpTrajectory = tryRightJumpTrajectory(a);
+
+            if (rightJumpTrajectory.doesExist())
+                decision.rightJumps.Add(encodeRightJump(a, rightJumpTrajectory.endLocation()));
+
+            a = (a + b) % 8;
+        }
+
+        Debug.Log(decision.rightJumps.Count);
+    }
+
+    private void getLeftJumpTrajectory()
+    {
+        //cycle through the 8 jumps in a randpm order and see if any are possible
+        int a = UnityEngine.Random.Range(0, 8);
+        int b = UnityEngine.Random.Range(0, 8);
+
+        for (int i = 1; i <= 8; i++)
+        {
+            leftJumpTrajectory = tryLeftJumpTrajectory(a);
+
+            if (leftJumpTrajectory.doesExist())
+                decision.leftJumps.Add(encodeLeftJump(a, leftJumpTrajectory.endLocation()));
+
+            a = (a + b) % 8;
+        }
+    }
+
+    private locationExists tryRightJumpTrajectory(int i)
+    {
+        //general pattern: 
+        //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
+        //2) then check if there is ground to land on in the downward descent 
+        // For the descent collider (collider A) that detects an object (object A)
+        // confirm the special collider above Collider A is in air, as that means object A is a surface that can be landed on
+        // also check that object A isn't literally the same ground the alien is on
+
+        //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
+        if (i <= 3 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4] && !rightJumpList[i][5])
+        {
+            for (int collider = 6; collider < rightJumpList[i].Count; collider++)
+            {
+                if (rightJumpList[i][collider])
+                {
+                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+                    return new locationExists(
+                        !rightJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle,
+                        rightJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
+                }
+            }
+        }
+
+        //double jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
+        if (i >= 4 && i <= 7 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4]
+        && !rightJumpList[i][5] && !rightJumpList[i][6] && !rightJumpList[i][7])
+        {
+            for (int collider = 8; collider < rightJumpList[i].Count; collider++)
+            {
+                if (rightJumpList[i][collider])
+                {
+                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+                    return new locationExists(
+                        !rightJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle,
+                        rightJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
+                }
+            }
+        }
+
+        //an obstacle would be in the way during this jump path
+        return new locationExists(false, Vector3.zero);
+    }
+
+    private locationExists tryLeftJumpTrajectory(int i)
+    {
+        //general pattern: 
+        //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
+        //2) then check if there is ground to land on in the downward descent (ground colliders are above their respective actual ones)
+
+        //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
+        if (i <= 3 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4] && !leftJumpList[i][5])
+        {
+            for (int collider = 6; collider < leftJumpList[i].Count; collider++)
+            {
+                if (leftJumpList[i][collider])
+                {
+                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+                    return new locationExists(
+                         !leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle,
+                        leftJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
+                }
+            }
+        }
+
+        //double jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
+        if (i >= 4 && i <= 7 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4]
+        && !leftJumpList[i][5] && !leftJumpList[i][6] && !leftJumpList[i][7])
+        {
+            for (int collider = 8; collider < leftJumpList[i].Count; collider++)
+            {
+                if (leftJumpList[i][collider])
+                {
+                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+                    return new locationExists(
+                       !leftJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle,
+                      leftJumpPathColliders[i].transform.GetChild(collider).transform.position
+                  );
+                }
+            }
+        }
+
+        //an obstacle would be in the way during this jump path
+        return new locationExists(false, Vector3.zero);
+    }
+
+    private Jump encodeRightJump(int jumpIndex, Vector3 landing)
+    {
+        if (jumpIndex == 0)
+            return new Jump("right jump", 8.0f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 1)
+            return new Jump("right jump", 6.4f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 2)
+            return new Jump("right jump", 4.8f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 3)
+            return new Jump("right jump", 3.2f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 4)
+            return new Jump("right double jump", 8.0f, 0.5f, 6.4f + boost, landing);
+        else if (jumpIndex == 5)
+            return new Jump("right double jump", 4.8f, 0.5f, 6.4f + boost, landing);
+        else if (jumpIndex == 6)
+            return new Jump("right double jump", 2.4f, 0.3f, 3.6f + boost, landing);
+        else if (jumpIndex == 7)
+            return new Jump("right double jump", 0f, 0.6f, 3.6f + boost, landing);
+        else
+        {
+            Debug.LogWarning("jump has not been coded for");
+            return new Jump("right jump", 8.0f + boost, 0f, 0f, transform.position + new Vector3(0, 2, 0));
+        }
+    }
+
+    private Jump encodeLeftJump(int jumpIndex, Vector3 landing)
+    {
+        if (jumpIndex == 0)
+            return new Jump("left jump", 8.0f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 1)
+            return new Jump("left jump", 6.4f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 2)
+            return new Jump("left jump", 4.8f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 3)
+            return new Jump("left jump", 3.2f + boost, 0f, 0f, landing);
+        else if (jumpIndex == 4)
+            return new Jump("left double jump", 8.0f, 0.5f, 6.4f + boost, landing);
+        else if (jumpIndex == 5)
+            return new Jump("left double jump", 4.8f, 0.5f, 6.4f + boost, landing);
+        else if (jumpIndex == 6)
+            return new Jump("left double jump", 2.4f, 0.3f, 3.6f + boost, landing);
+        else if (jumpIndex == 7)
+            return new Jump("left double jump", 0f, 0.6f, 3.6f + boost, landing);
+        else
+        {
+            Debug.LogWarning("jump has not been coded for");
+            return new Jump("left jump", 8.0f + boost, 0f, 0f, transform.position + new Vector3(0, 2, 0));
+        }
     }
 
     private void generateGroundChecks()
@@ -183,173 +366,6 @@ public class JumpPath : MonoBehaviour
             {
                 transform.GetChild(i).transform.GetChild(j).name += " Ground";
             }
-        }
-    }
-
-    private void getRightJumpTrajectory()
-    {
-        //cycle through the 8 jumps in a random order and see if any are possible
-        int a = UnityEngine.Random.Range(0, 8);
-        int b = UnityEngine.Random.Range(0, 8);
-
-        for (int i = 1; i <= 8; i++)
-        {
-            if (determineIfRightJumpIsPossible(a))
-                decision.rightJumps.Add(encodeRightJump(a));
-
-            a = (a + b) % 8;
-        }
-    }
-
-    private void getLeftJumpTrajectory()
-    {
-        //cycle through the 8 jumps in a randpm order and see if any are possible
-        int a = UnityEngine.Random.Range(0, 8);
-        int b = UnityEngine.Random.Range(0, 8);
-
-        for (int i = 1; i <= 8; i++)
-        {
-            if (determineIfLeftJumpIsPossible(a))
-                decision.leftJumps.Add(encodeLeftJump(a));
-
-            a = (a + b) % 8;
-        }
-    }
-
-    private bool determineIfRightJumpIsPossible(int i)
-    {
-        //general pattern: 
-        //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
-        //2) then check if there is ground to land on in the downward descent 
-        // For the descent collider (collider A) that detects an object (object A)
-        // confirm the special collider above Collider A is in air, as that means object A is a surface that can be landed on
-        // also check that object A isn't literally the same ground the alien is on
-
-        //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i <= 3 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4] && !rightJumpList[i][5])
-        {
-            for (int collider = 6; collider < rightJumpList[i].Count; collider++)
-            {
-                if (rightJumpList[i][collider])
-                {
-                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
-                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
-                    return !rightJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle;
-                }
-            }
-        }
-
-        //double jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i >= 4 && i <= 7 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4]
-        && !rightJumpList[i][5] && !rightJumpList[i][6] && !rightJumpList[i][7])
-        {
-            for (int collider = 8; collider < rightJumpList[i].Count; collider++)
-            {
-                if (rightJumpList[i][collider])
-                {
-                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
-                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
-                    return !rightJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle;
-                }
-            }
-        }
-
-        //an obstacle would be in the way during this jump path
-        return false;
-    }
-
-    private bool determineIfLeftJumpIsPossible(int i)
-    {
-        //general pattern: 
-        //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
-        //2) then check if there is ground to land on in the downward descent (ground colliders are above their respective actual ones)
-
-        //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i <= 3 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4] && !leftJumpList[i][5])
-        {
-            for (int collider = 6; collider < leftJumpList[i].Count; collider++)
-            {
-                if (leftJumpList[i][collider])
-                {
-                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
-                    if (i == 3)
-                    {
-                        Debug.Log(collider);
-                        Debug.Log(GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround));
-                        Debug.Log(!leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle);
-                    }
-                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
-                    return !leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle;
-                }
-            }
-        }
-
-        //double jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i >= 4 && i <= 7 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4]
-        && !leftJumpList[i][5] && !leftJumpList[i][6] && !leftJumpList[i][7])
-        {
-            for (int collider = 8; collider < leftJumpList[i].Count; collider++)
-            {
-                if (leftJumpList[i][collider])
-                {
-                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
-                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return false;
-                    return !leftJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle;
-                }
-            }
-        }
-
-        //an obstacle would be in the way during this jump path
-        return false;
-    }
-
-    private Jump encodeRightJump(int jumpIndex)
-    {
-        if (jumpIndex == 0)
-            return new Jump("right jump", 8.0f + boost, 0f, 0f);
-        else if (jumpIndex == 1)
-            return new Jump("right jump", 6.4f + boost, 0f, 0f);
-        else if (jumpIndex == 2)
-            return new Jump("right jump", 4.8f + boost, 0f, 0f);
-        else if (jumpIndex == 3)
-            return new Jump("right jump", 3.2f + boost, 0f, 0f);
-        else if (jumpIndex == 4)
-            return new Jump("right double jump", 8.0f, 0.5f, 6.4f + boost);
-        else if (jumpIndex == 5)
-            return new Jump("right double jump", 4.8f, 0.5f, 6.4f + boost);
-        else if (jumpIndex == 6)
-            return new Jump("right double jump", 2.4f, 0.3f, 3.6f + boost);
-        else if (jumpIndex == 7)
-            return new Jump("right double jump", 0f, 0.6f, 3.6f + boost);
-        else
-        {
-            Debug.LogWarning("jump has not been coded for");
-            return new Jump("right jump", 8.0f + boost, 0f, 0f);
-        }
-    }
-
-    private Jump encodeLeftJump(int jumpIndex)
-    {
-        if (jumpIndex == 0)
-            return new Jump("left jump", 8.0f + boost, 0f, 0f);
-        else if (jumpIndex == 1)
-            return new Jump("left jump", 6.4f + boost, 0f, 0f);
-        else if (jumpIndex == 2)
-            return new Jump("left jump", 4.8f + boost, 0f, 0f);
-        else if (jumpIndex == 3)
-            return new Jump("left jump", 3.2f + boost, 0f, 0f);
-        else if (jumpIndex == 4)
-            return new Jump("left double jump", 8.0f, 0.5f, 6.4f + boost);
-        else if (jumpIndex == 5)
-            return new Jump("left double jump", 4.8f, 0.5f, 6.4f + boost);
-        else if (jumpIndex == 6)
-            return new Jump("left double jump", 2.4f, 0.3f, 3.6f + boost);
-        else if (jumpIndex == 7)
-            return new Jump("left double jump", 0f, 0.6f, 3.6f + boost);
-        else
-        {
-            Debug.LogWarning("jump has not been coded for");
-            return new Jump("left jump", 8.0f + boost, 0f, 0f);
         }
     }
 

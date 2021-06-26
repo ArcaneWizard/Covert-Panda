@@ -47,6 +47,7 @@ public class NewBotAI : MonoBehaviour
     private float symmetricGroundAngle;
 
     public GameObject pathCollider;
+    private DecisionMaking decision;
 
     // Start is called before the first frame update
     void Awake()
@@ -54,6 +55,7 @@ public class NewBotAI : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
         alien = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
+        decision = transform.GetComponent<DecisionMaking>();
 
         movementDirX = 1;
 
@@ -65,10 +67,16 @@ public class NewBotAI : MonoBehaviour
 
     void Start()
     {
-        //Invoke("jump", 1f);
-        //Invoke("jump2", 1.3f);
+        StartCoroutine(jumpBruh());
+        InvokeRepeating("printPathColliders", 0.4f, 0.2f);
 
         setConfiguration();
+    }
+
+    private IEnumerator jumpBruh()
+    {
+        yield return new WaitForSeconds(0.4f);
+        StartCoroutine(decision.executeJump(new Jump("right mini u-turn", 7.0f, 0.42f, 0f, Vector3.zero)));
     }
 
     private void printPathColliders()

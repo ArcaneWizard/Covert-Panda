@@ -107,7 +107,15 @@ public class DecisionMaking : MonoBehaviour
             else if (targetPos.y > transform.position.y && ((AI.wallToTheRight && Mathf.Abs(transform.position.x - AI.obstacleToTheRight.x) < 4f) || AI.rightHole != Vector2.zero))
             {
                 Debug.Log("must right jump to get to target");
-                StartCoroutine(executeJump(rightJumps[0]));
+
+                for (int i = 0; i < Math.Min(rightJumps.Count, 4); i++)
+                {
+                    if (rightJumps[i].getLandingPosition().y > transform.position.y + 1f)
+                    {
+                        StartCoroutine(executeJump(rightJumps[i]));
+                        break;
+                    }
+                }
             }
 
             //the bot may choose to jump if the target position is above it but it could continue forward (no hole)
@@ -130,10 +138,10 @@ public class DecisionMaking : MonoBehaviour
             }
 
             //show jumps available for debugging purposes
-            possibleJumps.text = "Jumps:";
+            possibleJumps.text = "Jumps: ";
             foreach (Jump jump in rightJumps)
             {
-                possibleJumps.text += "\n" + jump.GetType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+                possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
             }
         }
 
@@ -174,16 +182,16 @@ public class DecisionMaking : MonoBehaviour
             }
 
             //show jumps available for debugging purposes
-            possibleJumps.text = "";
+            possibleJumps.text = "Jumps: ";
             foreach (Jump jump in leftJumps)
             {
-                possibleJumps.text += "\n" + jump.GetType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+                possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
             }
         }
     }
 
     //the alien executes a jump (with the specified configuration settings required for that jump)
-    private IEnumerator executeJump(Jump jump)
+    public IEnumerator executeJump(Jump jump)
     {
         Debug.LogFormat("{0}, {1}, {2}, {3}, {4}", "jump executed: ", jump.getType(), jump.getJumpSpeed(),
         jump.getDelay(), jump.getMidAirSpeed());
@@ -203,6 +211,21 @@ public class DecisionMaking : MonoBehaviour
             yield return new WaitForSeconds(jumpDelay);
             AI.doublejump(newSpeed, AI.movementDirX);
         }
+
+        else if (jump.getType() == "right mini u-turn" || jump.getType() == "left mini u-turn")
+        {
+            AI.jump(speed);
+            yield return new WaitForSeconds(jumpDelay);
+            AI.movementDirX *= -1;
+        }
+
+        else if (jump.getType() == "right u-turn" || jump.getType() == "left u-turn")
+        {
+            AI.jump(speed);
+            yield return new WaitForSeconds(jumpDelay);
+            AI.doublejump(newSpeed, -AI.movementDirX);
+        }
+
 
         else
             Debug.LogError(jump.getType() + " is not a known type of jump");
