@@ -5,7 +5,7 @@ using UnityEngine;
 public class NewBotAI : MonoBehaviour
 {
     private Rigidbody2D rig;
-    private Transform alien;
+    public Transform alien;
     private Animator animator;
 
     public float speed = 8f;

@@ -11,6 +11,11 @@ public class BotAnimationController : MonoBehaviour
     public BoxCollider2D mainCollider;
     public BoxCollider2D footCollider;
 
+    public Camera camera;
+    public Transform shootingArm;
+    public Transform gun;
+    public Transform head;
+
     private Transform leftFoot;
     private Transform rightFoot;
     private bool decideMovementAfterFallingDown;
@@ -18,10 +23,23 @@ public class BotAnimationController : MonoBehaviour
     private NewBotAI AI;
     private DecisionMaking decisionMaking;
 
+    [HideInInspector]
     public bool stopSpinning = true;
+    [HideInInspector]
     public bool disableSpinningLimbs = false;
+    [HideInInspector]
     public int spinDirection = 0;
+    [HideInInspector]
     public int spinRate = 420;
+
+    //ideal local gun coordinates when looking to the side, up or down 
+    private Vector2 pointingRight = new Vector2(0.745f, 1.966f);
+    private Vector2 pointingUp = new Vector2(-0.171f, 3.320f);
+    private Vector2 pointingDown = new Vector2(-0.400f, 0.780f);
+    private Vector2 shoulderPos = new Vector2(-0.420f, 2.150f);
+
+    private float upVector, downVector, rightVector;
+    private float up, right, down;
 
     // Start is called before the first frame update
     void Awake()
@@ -35,6 +53,15 @@ public class BotAnimationController : MonoBehaviour
 
         leftFoot = AI.leftFoot;
         rightFoot = AI.rightFoot;
+
+        up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+        right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+        down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+
+        //ideal vector magnitudes from shoulder to specific gun coordinates
+        upVector = (pointingUp - shoulderPos).magnitude;
+        rightVector = (pointingRight - shoulderPos).magnitude;
+        downVector = (pointingDown - shoulderPos).magnitude;
     }
 
     // Update is called once per frame
@@ -80,10 +107,49 @@ public class BotAnimationController : MonoBehaviour
         if (!disableSpinningLimbs)
         {
             //alien faces left or right depending on mouse cursor
-            if (rig.velocity.x > 0)
+            if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
                 bot.localRotation = Quaternion.Euler(0, 0, 0);
-            else if (rig.velocity.x < 0)
+            else
                 bot.localRotation = Quaternion.Euler(0, 180, 0);
+
+            //calculate the angle btwn mouse cursor and player's shooting arm
+            Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+            float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
+
+            //apply offset to the shoot Angle when the alien is tilted on a ramp:
+            float zAngle = ((180 - Mathf.Abs(180 - transform.eulerAngles.z))); // <- maps angles above 180 to their negative value instead (ex. 330 becomes -30)
+            zAngle *= (AI.alien.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
+            shootAngle -= zAngle;
+
+            if (shootDirection.y >= 0)
+            {
+                float slope = (up - right) / 90f;
+                float weaponRotation = shootAngle * slope + right;
+
+                float dirSlope = (upVector - rightVector) / 90f;
+                float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
+
+                Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+                gun.transform.localPosition = gunLocation;
+
+                float headSlope = (122f - 92.4f) / 90f;
+                head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
+            }
+
+            if (shootDirection.y < 0)
+            {
+                float slope = (down - right) / -90f;
+                float weaponRotation = shootAngle * slope + right;
+
+                float dirSlope = (downVector - rightVector) / -90f;
+                float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
+
+                Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+                gun.transform.localPosition = gunLocation;
+
+                float headSlope = (67f - 92.4f) / -90f;
+                head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
+            }
         }
     }
 
@@ -115,11 +181,12 @@ public class BotAnimationController : MonoBehaviour
         //if alien is grounded, exit out of jump animation
         if (animator.GetInteger("Phase") == 2 && AI.grounded)
         {
+            if (!animator.GetBool("jumped"))
+                decideMovementAfterFallingDown = true;
+
             animator.SetBool("jumped", false);
             animator.SetBool("double jump", false);
-
             setAnimation("idle");
-            decideMovementAfterFallingDown = true;
 
             AI.speed = 8.0f;
             rig.gravityScale = 1;

@@ -718,8 +718,8 @@ public class BotAI : MonoBehaviour
         RaycastHit2D scan = Physics2D.Raycast(botAttack.bulletSpawnPoint.position, player.position - botAttack.bulletSpawnPoint.position, 10, Constants.mapOrPlayer);
 
         //if the raycast coming from the enemy gun hit the player instead of a platform
-        if (scan.collider != null && scan.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
-            botAttack.shootBullet(player.position - botAttack.bulletSpawnPoint.position);
+        //if (scan.collider != null && scan.collider.gameObject.layer == LayerMask.NameToLayer("Player"))
+        //  botAttack.shootBullet(player.position - botAttack.bulletSpawnPoint.position);
 
         yield return new WaitForSeconds(0.3f);
         StartCoroutine(lookForPlayer());
