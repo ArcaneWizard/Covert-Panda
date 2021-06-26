@@ -11,7 +11,6 @@ public class DecisionMaking : MonoBehaviour
 
     public List<Jump> rightJumps = new List<Jump>();
     public List<Jump> leftJumps = new List<Jump>();
-    public Text possibleJumps;
 
     public Transform player;
     private Animator animator;
@@ -121,9 +120,9 @@ public class DecisionMaking : MonoBehaviour
             //the bot may choose to jump if the target position is above it but it could continue forward (no hole)
             else if (targetPos.y > transform.position.y && AI.rightHole == Vector2.zero && reconsiderRightJumpTimer <= 0f)
             {
-                int r = UnityEngine.Random.Range(0, 10);
+                int r = UnityEngine.Random.Range(0, 100);
 
-                if (r >= 2)
+                if (r > 20 || r <= 10)
                 {
                     Debug.Log("chose to jump");
                     StartCoroutine(executeJump(rightJumps[0]));
@@ -135,13 +134,6 @@ public class DecisionMaking : MonoBehaviour
                     Debug.LogFormat("{0}, {1}, {2}, {3}, {4}", "jump it skipped on: ", rightJumps[0].getType(), rightJumps[0].getJumpSpeed(),
                     rightJumps[0].getDelay(), rightJumps[0].getMidAirSpeed());
                 }
-            }
-
-            //show jumps available for debugging purposes
-            possibleJumps.text = "Jumps: ";
-            foreach (Jump jump in rightJumps)
-            {
-                possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
             }
         }
 
@@ -165,9 +157,9 @@ public class DecisionMaking : MonoBehaviour
             //the bot may choose to jump if the target position is above it but it could continue forward (no hole)
             else if (targetPos.y > transform.position.y && AI.leftHole == Vector2.zero && reconsiderLeftJumpTimer <= 0f)
             {
-                int r = UnityEngine.Random.Range(0, 10);
+                int r = UnityEngine.Random.Range(0, 100);
 
-                if (r >= 2)
+                if (r > 20 || r <= 10)
                 {
                     Debug.Log("chose to left jump");
                     Debug.LogError("");
@@ -179,13 +171,6 @@ public class DecisionMaking : MonoBehaviour
                     Debug.LogFormat("{0}, {1}, {2}, {3}, {4}", "jump it skipped on: ", leftJumps[0].getType(), leftJumps[0].getJumpSpeed(),
                     leftJumps[0].getDelay(), leftJumps[0].getMidAirSpeed());
                 }
-            }
-
-            //show jumps available for debugging purposes
-            possibleJumps.text = "Jumps: ";
-            foreach (Jump jump in leftJumps)
-            {
-                possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
             }
         }
     }
@@ -225,7 +210,6 @@ public class DecisionMaking : MonoBehaviour
             yield return new WaitForSeconds(jumpDelay);
             AI.doublejump(newSpeed, -AI.movementDirX);
         }
-
 
         else
             Debug.LogError(jump.getType() + " is not a known type of jump");

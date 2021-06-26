@@ -3,45 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.UIElements;
 using UnityEditorInternal;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class JumpPath : MonoBehaviour
 {
-    private List<List<bool>> rightJumpList = new List<List<bool>>();
-    private List<List<bool>> leftJumpList = new List<List<bool>>();
-    public List<List<bool>> rightJumpGroundList = new List<List<bool>>();
-    public List<List<bool>> leftJumpGroundList = new List<List<bool>>();
+    public List<List<bool>> rightJumpList = new List<List<bool>>(new List<bool>[13]);
+    public List<List<bool>> leftJumpList = new List<List<bool>>(new List<bool>[13]);
 
     public List<Transform> rightJumpPathColliders = new List<Transform>();
     public List<Transform> leftJumpPathColliders = new List<Transform>();
     public List<Transform> rightJumpPathGround = new List<Transform>();
     public List<Transform> leftJumpPathGround = new List<Transform>();
 
-    public List<bool> rightJump100;
-    public List<bool> rightJump80;
-    public List<bool> rightJump60;
-    public List<bool> rightJump40;
-    public List<bool> rightDoubleJump1;
-    public List<bool> rightDoubleJump2;
-    public List<bool> rightDoubleJump3;
-    public List<bool> rightDoubleJump4;
-
-    public List<bool> leftJump100;
-    public List<bool> leftJump80;
-    public List<bool> leftJump60;
-    public List<bool> leftJump40;
-    public List<bool> leftDoubleJump1;
-    public List<bool> leftDoubleJump2;
-    public List<bool> leftDoubleJump3;
-    public List<bool> leftDoubleJump4;
-
     private NewBotAI AI;
+    public Text possibleJumps;
+    public Text usefulInfo;
     private DecisionMaking decision;
 
     private int groundDiff;
     private float boost = 0.4f; //jump speed boost
     private locationExists leftJumpTrajectory;
     private locationExists rightJumpTrajectory;
+
+    private int rightDescentCollider;
+    private int leftDescentCollider;
 
     private List<GameObject> obstacles = new List<GameObject>();
 
@@ -50,23 +36,33 @@ public class JumpPath : MonoBehaviour
         AI = transform.parent.transform.GetChild(0).transform.GetComponent<NewBotAI>();
         decision = transform.parent.transform.GetChild(0).transform.GetComponent<DecisionMaking>();
 
-        rightJumpList.Add(rightJump100);
-        rightJumpList.Add(rightJump80);
-        rightJumpList.Add(rightJump60);
-        rightJumpList.Add(rightJump40);
-        rightJumpList.Add(rightDoubleJump1);
-        rightJumpList.Add(rightDoubleJump2);
-        rightJumpList.Add(rightDoubleJump3);
-        rightJumpList.Add(rightDoubleJump4);
+        rightJumpList[0] = new List<bool>(new bool[14]);
+        rightJumpList[1] = new List<bool>(new bool[15]);
+        rightJumpList[2] = new List<bool>(new bool[12]);
+        rightJumpList[3] = new List<bool>(new bool[15]);
+        rightJumpList[4] = new List<bool>(new bool[12]);
+        rightJumpList[5] = new List<bool>(new bool[12]);
+        rightJumpList[6] = new List<bool>(new bool[11]);
+        rightJumpList[7] = new List<bool>(new bool[12]);
+        rightJumpList[8] = new List<bool>(new bool[13]);
+        rightJumpList[9] = new List<bool>(new bool[12]);
+        rightJumpList[10] = new List<bool>(new bool[12]);
+        rightJumpList[11] = new List<bool>(new bool[9]);
+        rightJumpList[12] = new List<bool>(new bool[9]);
 
-        leftJumpList.Add(leftJump100);
-        leftJumpList.Add(leftJump80);
-        leftJumpList.Add(leftJump60);
-        leftJumpList.Add(leftJump40);
-        leftJumpList.Add(leftDoubleJump1);
-        leftJumpList.Add(leftDoubleJump2);
-        leftJumpList.Add(leftDoubleJump3);
-        leftJumpList.Add(leftDoubleJump4);
+        leftJumpList[0] = new List<bool>(new bool[14]);
+        leftJumpList[1] = new List<bool>(new bool[15]);
+        leftJumpList[2] = new List<bool>(new bool[12]);
+        leftJumpList[3] = new List<bool>(new bool[15]);
+        leftJumpList[4] = new List<bool>(new bool[12]);
+        leftJumpList[5] = new List<bool>(new bool[12]);
+        leftJumpList[6] = new List<bool>(new bool[11]);
+        leftJumpList[7] = new List<bool>(new bool[12]);
+        leftJumpList[8] = new List<bool>(new bool[13]);
+        leftJumpList[9] = new List<bool>(new bool[12]);
+        leftJumpList[10] = new List<bool>(new bool[12]);
+        leftJumpList[11] = new List<bool>(new bool[9]);
+        leftJumpList[12] = new List<bool>(new bool[9]);
     }
 
     void Start()
@@ -82,14 +78,28 @@ public class JumpPath : MonoBehaviour
         decision.rightJumps.Clear();
         decision.leftJumps.Clear();
 
-        /*if (AI.grounded && AI.touchingMap && (AI.movementDirX == 1 || AI.movementDirX == 0))
+        if (AI.grounded && AI.touchingMap && (AI.movementDirX == 1 || AI.movementDirX == 0))
             getRightJumpTrajectory();
 
         else if (AI.grounded && AI.touchingMap && AI.movementDirX == -1)
-            getLeftJumpTrajectory();*/
+            getLeftJumpTrajectory();
 
-        /*if (AI.grounded && AI.touchingMap)
-            decision.decideWhetherToJump();*/
+        if (AI.grounded && AI.touchingMap)
+        {
+            decision.decideWhetherToJump();
+            usefulInfo.text = "deciding whether to jump...";
+        }
+        else
+            usefulInfo.text = "not on ground yet";
+
+
+        //show jumps available for debugging purposes
+        possibleJumps.text = "Jumps: ";
+        foreach (Jump jump in decision.rightJumps)
+            possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+        foreach (Jump jump in decision.leftJumps)
+            possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+
 
         yield return new WaitForSeconds(0.35f);
         StartCoroutine(getJumpTrajectory());
@@ -97,10 +107,10 @@ public class JumpPath : MonoBehaviour
 
     void Update()
     {
-        /* if (AI.movementDirX == 1 && leftJumpPathColliders[0].gameObject.activeSelf)
-             checkRightPathsAndNotLeftPaths(true);
-         else if (AI.movementDirX == -1 && rightJumpPathColliders[0].gameObject.activeSelf)
-             checkRightPathsAndNotLeftPaths(false);*/
+        if (AI.movementDirX == 1 && leftJumpPathColliders[0].gameObject.activeSelf)
+            checkRightPathsAndNotLeftPaths(true);
+        else if (AI.movementDirX == -1 && rightJumpPathColliders[0].gameObject.activeSelf)
+            checkRightPathsAndNotLeftPaths(false);
     }
 
     private void checkRightPathsAndNotLeftPaths(bool check)
@@ -118,78 +128,121 @@ public class JumpPath : MonoBehaviour
     private void getRightJumpTrajectory()
     {
         //cycle through the 8 jumps in a random order and see if any are possible
-        int a = UnityEngine.Random.Range(0, 8);
+        int a = UnityEngine.Random.Range(0, 12);
         int b = (UnityEngine.Random.Range(0, 2) == 1) ? 5 : 7;
 
         Debug.Log(decision.rightJumps.Count);
-        for (int i = 1; i <= 8; i++)
+        for (int i = 1; i <= 13; i++)
         {
             rightJumpTrajectory = tryRightJumpTrajectory(a);
 
             if (rightJumpTrajectory.doesExist())
-                decision.rightJumps.Add(encodeRightJump(a, rightJumpTrajectory.endLocation()));
+                decision.rightJumps.Add(encodeJump("right ", a, rightJumpTrajectory.endLocation()));
 
-            a = (a + b) % 8;
+            a = (a + b) % 13;
         }
-
-        Debug.Log(decision.rightJumps.Count);
     }
 
     private void getLeftJumpTrajectory()
     {
         //cycle through the 8 jumps in a randpm order and see if any are possible
-        int a = UnityEngine.Random.Range(0, 8);
-        int b = UnityEngine.Random.Range(0, 8);
+        int a = UnityEngine.Random.Range(0, 12);
+        int b = (UnityEngine.Random.Range(0, 2) == 1) ? 5 : 7;
 
-        for (int i = 1; i <= 8; i++)
+        for (int i = 1; i <= 13; i++)
         {
             leftJumpTrajectory = tryLeftJumpTrajectory(a);
 
             if (leftJumpTrajectory.doesExist())
-                decision.leftJumps.Add(encodeLeftJump(a, leftJumpTrajectory.endLocation()));
+                decision.leftJumps.Add(encodeJump("left ", a, leftJumpTrajectory.endLocation()));
 
-            a = (a + b) % 8;
+            a = (a + b) % 13;
         }
     }
 
     private locationExists tryRightJumpTrajectory(int i)
     {
-        //general pattern: 
-        //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
-        //2) then check if there is ground to land on in the downward descent 
-        // For the descent collider (collider A) that detects an object (object A)
-        // confirm the special collider above Collider A is in air, as that means object A is a surface that can be landed on
-        // also check that object A isn't literally the same ground the alien is on
-
-        //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i <= 3 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4] && !rightJumpList[i][5])
+        //normal jump where none of the initial colliders in the jump will collide with an obstacle during upward ascent
+        if (i <= 3 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4] && !rightJumpList[i][5] && !rightJumpList[i][6])
         {
-            for (int collider = 6; collider < rightJumpList[i].Count; collider++)
+            for (int collider = 7; collider < rightJumpList[i].Count; collider++)
             {
+                //if a downward descent collider is colliding with the map (bool equal to true)
                 if (rightJumpList[i][collider])
                 {
+                    //check this a different platform from the one the player is already standing on
                     obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
                     if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
                     return new locationExists(
-                        !rightJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle,
+                        !rightJumpPathGround[i].transform.GetChild(collider - 7).transform.GetComponent<PathCollider>().touchingObstacle,
                         rightJumpPathColliders[i].transform.GetChild(collider).transform.position
                     );
                 }
             }
         }
 
-        //double jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i >= 4 && i <= 7 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4]
-        && !rightJumpList[i][5] && !rightJumpList[i][6] && !rightJumpList[i][7])
+        //double jump where none of the initial boxes in the jump will collide with an obstacle during upward ascent
+        if (i >= 4 && i <= 8 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4]
+        && !rightJumpList[i][5] && !rightJumpList[i][6] && !rightJumpList[i][7] && !rightJumpList[i][8])
         {
-            for (int collider = 8; collider < rightJumpList[i].Count; collider++)
+            for (int collider = 9; collider < rightJumpList[i].Count; collider++)
             {
+                //if a downward descent collider is colliding with the map (bool equal to true)
                 if (rightJumpList[i][collider])
                 {
+                    //check this a different platform from the one the player is already standing on
                     obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
                     if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
                     return new locationExists(
-                        !rightJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle,
+                        !rightJumpPathGround[i].transform.GetChild(collider - 9).transform.GetComponent<PathCollider>().touchingObstacle,
+                        rightJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
+                }
+            }
+        }
+
+        //double jump w/ u-turn where none of the initial boxes in the jump will collide with an obstacle during upward ascent
+        if (i >= 9 && i <= 10 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4]
+        && !rightJumpList[i][5] && !rightJumpList[i][6] && !rightJumpList[i][7] && !rightJumpList[i][8])
+        {
+            for (int collider = 9; collider < rightJumpList[i].Count; collider++)
+            {
+                //if a downward descent collider is colliding with the map (bool equal to true)
+                if (rightJumpList[i][collider])
+                {
+                    //check this a different platform from the one the player is already standing on
+                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
+                    return new locationExists(
+                        !rightJumpPathGround[i].transform.GetChild(collider - 9).transform.GetComponent<PathCollider>().touchingObstacle,
+                        rightJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
+                }
+            }
+        }
+
+        //normal u-turn jump where none of the initial boxes in the jump will collide with an obstacle during upward ascent
+        if (i >= 11 && i <= 12 && !rightJumpList[i][1] && !rightJumpList[i][2] && !rightJumpList[i][3] && !rightJumpList[i][4]
+        && !rightJumpList[i][5])
+        {
+            for (int collider = 6; collider < rightJumpList[i].Count; collider++)
+            {
+                //if a downward descent collider is colliding with the map (bool equal to true)
+                if (rightJumpList[i][collider])
+                {
+                    //check this a different platform from the one the player is already standing on
+                    obstacles = rightJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<RightPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
+                    return new locationExists(
+                        !rightJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle,
                         rightJumpPathColliders[i].transform.GetChild(collider).transform.position
                     );
                 }
@@ -202,41 +255,89 @@ public class JumpPath : MonoBehaviour
 
     private locationExists tryLeftJumpTrajectory(int i)
     {
-        //general pattern: 
-        //1) check none of the initial boxes in the jump collide with an obstacle during upward ascent
-        //2) then check if there is ground to land on in the downward descent (ground colliders are above their respective actual ones)
-
-        //normal jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i <= 3 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4] && !leftJumpList[i][5])
+        //normal jump where none of the initial colliders in the jump will collide with an obstacle during upward ascent
+        if (i <= 3 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4] && !leftJumpList[i][5] && !leftJumpList[i][6])
         {
-            for (int collider = 6; collider < leftJumpList[i].Count; collider++)
+            for (int collider = 7; collider < leftJumpList[i].Count; collider++)
             {
+                //if a downward descent collider is colliding with the map (bool equal to true)
                 if (leftJumpList[i][collider])
                 {
+                    //check this a different platform from the one the player is already standing on
                     obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
                     if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
                     return new locationExists(
-                         !leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle,
+                        !leftJumpPathGround[i].transform.GetChild(collider - 7).transform.GetComponent<PathCollider>().touchingObstacle,
                         leftJumpPathColliders[i].transform.GetChild(collider).transform.position
                     );
                 }
             }
         }
 
-        //double jump where none of the initial boxes in the jump collide with an obstacle during upward ascent
-        if (i >= 4 && i <= 7 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4]
-        && !leftJumpList[i][5] && !leftJumpList[i][6] && !leftJumpList[i][7])
+        //double jump where none of the initial boxes in the jump will collide with an obstacle during upward ascent
+        if (i >= 4 && i <= 8 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4]
+        && !leftJumpList[i][5] && !leftJumpList[i][6] && !leftJumpList[i][7] && !leftJumpList[i][8])
         {
-            for (int collider = 8; collider < leftJumpList[i].Count; collider++)
+            for (int collider = 9; collider < leftJumpList[i].Count; collider++)
             {
+                //if a downward descent collider is colliding with the map (bool equal to true)
                 if (leftJumpList[i][collider])
                 {
+                    //check this a different platform from the one the player is already standing on
                     obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
                     if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
                     return new locationExists(
-                       !leftJumpPathGround[i].transform.GetChild(collider - 8).transform.GetComponent<PathCollider>().touchingObstacle,
-                      leftJumpPathColliders[i].transform.GetChild(collider).transform.position
-                  );
+                        !leftJumpPathGround[i].transform.GetChild(collider - 9).transform.GetComponent<PathCollider>().touchingObstacle,
+                        leftJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
+                }
+            }
+        }
+
+        //double jump w/ u-turn where none of the initial boxes in the jump will collide with an obstacle during upward ascent
+        if (i >= 9 && i <= 10 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4]
+        && !leftJumpList[i][5] && !leftJumpList[i][6] && !leftJumpList[i][7] && !leftJumpList[i][8])
+        {
+            for (int collider = 9; collider < leftJumpList[i].Count; collider++)
+            {
+                //if a downward descent collider is colliding with the map (bool equal to true)
+                if (leftJumpList[i][collider])
+                {
+                    //check this a different platform from the one the player is already standing on
+                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
+                    return new locationExists(
+                        !leftJumpPathGround[i].transform.GetChild(collider - 9).transform.GetComponent<PathCollider>().touchingObstacle,
+                        leftJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
+                }
+            }
+        }
+
+        //normal u-turn jump where none of the initial boxes in the jump will collide with an obstacle during upward ascent
+        if (i >= 11 && i <= 12 && !leftJumpList[i][1] && !leftJumpList[i][2] && !leftJumpList[i][3] && !leftJumpList[i][4]
+        && !leftJumpList[i][5])
+        {
+            for (int collider = 6; collider < leftJumpList[i].Count; collider++)
+            {
+                //if a downward descent collider is colliding with the map (bool equal to true)
+                if (leftJumpList[i][collider])
+                {
+                    //check this a different platform from the one the player is already standing on
+                    obstacles = leftJumpPathColliders[i].transform.GetChild(collider).transform.GetComponent<LeftPathCollider>().obstacles;
+                    if (GameObject.ReferenceEquals(obstacles[obstacles.Count - 1].gameObject, AI.generalGround)) return new locationExists(false, Vector3.zero);
+
+                    //return whether there is empty space above this platform (will be if it's a landable surface), and the location of the platform
+                    return new locationExists(
+                        !leftJumpPathGround[i].transform.GetChild(collider - 6).transform.GetComponent<PathCollider>().touchingObstacle,
+                        leftJumpPathColliders[i].transform.GetChild(collider).transform.position
+                    );
                 }
             }
         }
@@ -245,61 +346,141 @@ public class JumpPath : MonoBehaviour
         return new locationExists(false, Vector3.zero);
     }
 
-    private Jump encodeRightJump(int jumpIndex, Vector3 landing)
+    private Jump encodeJump(string dir, int jumpIndex, Vector3 landing)
     {
         if (jumpIndex == 0)
-            return new Jump("right jump", 8.0f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 8.0f + boost, 0f, 0f, landing);
         else if (jumpIndex == 1)
-            return new Jump("right jump", 6.4f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 6.4f + boost, 0f, 0f, landing);
         else if (jumpIndex == 2)
-            return new Jump("right jump", 4.8f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 5.6f + boost, 0f, 0f, landing);
         else if (jumpIndex == 3)
-            return new Jump("right jump", 3.2f + boost, 0f, 0f, landing);
+            return new Jump(dir + "jump", 4.8f + boost, 0f, 0f, landing);
         else if (jumpIndex == 4)
-            return new Jump("right double jump", 8.0f, 0.5f, 6.4f + boost, landing);
+            return new Jump(dir + "double jump", 8.0f, 0.5f, 6.4f + boost, landing);
         else if (jumpIndex == 5)
-            return new Jump("right double jump", 4.8f, 0.5f, 6.4f + boost, landing);
+            return new Jump(dir + "double jump", 4.8f, 0.5f, 6.4f + boost, landing);
         else if (jumpIndex == 6)
-            return new Jump("right double jump", 2.4f, 0.3f, 3.6f + boost, landing);
+            return new Jump(dir + "double jump", 7.0f, 0.3f, 5.5f + boost, landing);
         else if (jumpIndex == 7)
-            return new Jump("right double jump", 0f, 0.6f, 3.6f + boost, landing);
+            return new Jump(dir + "double jump", 2.0f, 0.6f, 3.6f + boost, landing);
+        else if (jumpIndex == 8)
+            return new Jump(dir + "double jump", 6.4f, 0.6f, 6.4f + boost, landing);
+        else if (jumpIndex == 9)
+            return new Jump(dir + "u-turn", 8.0f, 0.6f, 6.4f + boost, landing);
+        else if (jumpIndex == 10)
+            return new Jump(dir + "u-turn", 8.0f, 0.7f, 8.0f + boost, landing);
+        else if (jumpIndex == 11)
+            return new Jump(dir + "mini u-turn", 8.0f, 0.35f, 8.0f, landing);
+        else if (jumpIndex == 12)
+            return new Jump(dir + "mini u-turn", 7.0f, 0.42f, 7.0f, landing);
         else
         {
             Debug.LogWarning("jump has not been coded for");
-            return new Jump("right jump", 8.0f + boost, 0f, 0f, transform.position + new Vector3(0, 2, 0));
-        }
-    }
-
-    private Jump encodeLeftJump(int jumpIndex, Vector3 landing)
-    {
-        if (jumpIndex == 0)
-            return new Jump("left jump", 8.0f + boost, 0f, 0f, landing);
-        else if (jumpIndex == 1)
-            return new Jump("left jump", 6.4f + boost, 0f, 0f, landing);
-        else if (jumpIndex == 2)
-            return new Jump("left jump", 4.8f + boost, 0f, 0f, landing);
-        else if (jumpIndex == 3)
-            return new Jump("left jump", 3.2f + boost, 0f, 0f, landing);
-        else if (jumpIndex == 4)
-            return new Jump("left double jump", 8.0f, 0.5f, 6.4f + boost, landing);
-        else if (jumpIndex == 5)
-            return new Jump("left double jump", 4.8f, 0.5f, 6.4f + boost, landing);
-        else if (jumpIndex == 6)
-            return new Jump("left double jump", 2.4f, 0.3f, 3.6f + boost, landing);
-        else if (jumpIndex == 7)
-            return new Jump("left double jump", 0f, 0.6f, 3.6f + boost, landing);
-        else
-        {
-            Debug.LogWarning("jump has not been coded for");
-            return new Jump("left jump", 8.0f + boost, 0f, 0f, transform.position + new Vector3(0, 2, 0));
+            return new Jump(dir + "jump", 8.0f + boost, 0f, 0f, transform.position + new Vector3(0, 2, 0));
         }
     }
 
     private void generateGroundChecks()
     {
+        //for normal jumps
         for (int i = 0; i <= 1; i++)
         {
+            //for diff paths
             for (int j = 0; j <= 3; j++)
+            {
+                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
+                //for all colliders
+                for (int k = 0; k < childCount - 1; k++)
+                {
+                    Vector3 pos = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position;
+
+                    transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position =
+                    new Vector3(transform.GetChild(i).transform.GetChild(j).transform.GetChild(k + 1).position.x, pos.y, pos.z);
+
+                    Transform col = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k);
+
+                    if (col.transform.GetComponent<RightPathCollider>())
+                        Destroy(col.transform.GetComponent<RightPathCollider>());
+                    if (col.transform.GetComponent<LeftPathCollider>())
+                        Destroy(col.transform.GetComponent<LeftPathCollider>());
+
+                    col.gameObject.AddComponent<PathCollider>();
+                }
+
+                Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(childCount - 1).gameObject);
+
+                for (int a = 0; a <= 5; a++)
+                {
+                    Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
+                }
+            }
+        }
+
+        //for double jumps
+        for (int i = 2; i <= 3; i++)
+        {
+            for (int j = 0; j <= 4; j++)
+            {
+                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
+                for (int k = 0; k < childCount - 1; k++)
+                {
+                    Vector3 pos = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position;
+                    Transform col = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k);
+
+                    transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position =
+                    new Vector3(transform.GetChild(i).transform.GetChild(j).transform.GetChild(k + 1).position.x,
+                    pos.y, pos.z);
+
+                    if (col.transform.GetComponent<RightPathCollider>())
+                        Destroy(col.transform.GetComponent<RightPathCollider>());
+                    if (col.transform.GetComponent<LeftPathCollider>())
+                        Destroy(col.transform.GetComponent<LeftPathCollider>());
+
+                    col.gameObject.AddComponent<PathCollider>();
+                }
+
+                Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(childCount - 1).gameObject);
+
+                for (int a = 0; a <= 7; a++)
+                {
+                    Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
+                }
+            }
+        }
+
+        //for u turns
+        for (int i = 4; i <= 5; i++)
+        {
+            for (int j = 0; j <= 1; j++)
+            {
+                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
+                for (int k = 0; k < childCount - 1; k++)
+                {
+                    Vector3 pos = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position;
+                    Transform col = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k);
+
+                    transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position =
+                    new Vector3(transform.GetChild(i).transform.GetChild(j).transform.GetChild(k + 1).position.x,
+                    pos.y, pos.z);
+
+                    if (col.transform.GetComponent<RightPathCollider>())
+                        Destroy(col.transform.GetComponent<RightPathCollider>());
+                    if (col.transform.GetComponent<LeftPathCollider>())
+                        Destroy(col.transform.GetComponent<LeftPathCollider>());
+
+                    col.gameObject.AddComponent<PathCollider>();
+                }
+
+                Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(childCount - 1).gameObject);
+
+                for (int a = 0; a <= 7; a++)
+                {
+                    Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
+                }
+            }
+
+            for (int j = 2; j <= 3; j++)
             {
                 int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
                 for (int k = 0; k < childCount - 1; k++)
@@ -328,44 +509,9 @@ public class JumpPath : MonoBehaviour
             }
         }
 
-        for (int i = 2; i <= 3; i++)
+        for (int i = 0; i <= 5; i++)
         {
-            for (int j = 0; j <= 3; j++)
-            {
-                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
-                for (int k = 0; k < childCount - 1; k++)
-                {
-                    Vector3 pos = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position;
-                    Transform col = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k);
-
-                    transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position =
-                    new Vector3(transform.GetChild(i).transform.GetChild(j).transform.GetChild(k + 1).position.x,
-                    pos.y, pos.z);
-
-                    if (col.transform.GetComponent<RightPathCollider>())
-                        Destroy(col.transform.GetComponent<RightPathCollider>());
-                    if (col.transform.GetComponent<LeftPathCollider>())
-                        Destroy(col.transform.GetComponent<LeftPathCollider>());
-
-                    col.gameObject.AddComponent<PathCollider>();
-                }
-
-                Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(childCount - 1).gameObject);
-
-                for (int a = 0; a <= 6; a++)
-                {
-                    Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
-                }
-            }
-        }
-
-        for (int i = 0; i <= 3; i++)
-        {
-            transform.GetChild(i).name += "Ground";
-            for (int j = 0; j <= 3; j++)
-            {
-                transform.GetChild(i).transform.GetChild(j).name += " Ground";
-            }
+            transform.GetChild(i).name += " Ground";
         }
     }
 

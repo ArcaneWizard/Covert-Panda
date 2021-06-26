@@ -41,16 +41,16 @@ public class RightPathCollider : MonoBehaviour
         if (transform.parent.parent.name == "Right Path Colliders")
         {
             if (transform.parent.name == "100% Jump")
-                jumpPath.rightJump100[transform.GetSiblingIndex()] = setting;
+                jumpPath.rightJumpList[0][transform.GetSiblingIndex()] = setting;
 
             else if (transform.parent.name == "80% Jump")
-                jumpPath.rightJump80[transform.GetSiblingIndex()] = setting;
+                jumpPath.rightJumpList[1][transform.GetSiblingIndex()] = setting;
+
+            else if (transform.parent.name == "70% Jump")
+                jumpPath.rightJumpList[2][transform.GetSiblingIndex()] = setting;
 
             else if (transform.parent.name == "60% Jump")
-                jumpPath.rightJump60[transform.GetSiblingIndex()] = setting;
-
-            else if (transform.parent.name == "40% Jump")
-                jumpPath.rightJump40[transform.GetSiblingIndex()] = setting;
+                jumpPath.rightJumpList[3][transform.GetSiblingIndex()] = setting;
             else
                 Debug.LogError("jump path hasn't been defined yet");
         }
@@ -58,19 +58,40 @@ public class RightPathCollider : MonoBehaviour
         else if (transform.parent.parent.name == "Right Path DJ Colliders")
         {
             if (transform.parent.name == "DJ, 0.5 sec, 8.0 speed, 6.4 speed")
-                jumpPath.rightDoubleJump1[transform.GetSiblingIndex()] = setting;
+                jumpPath.rightJumpList[4][transform.GetSiblingIndex()] = setting;
 
             else if (transform.parent.name == "DJ, 0.5 sec, 4.8  speed, 6.4 speed")
-                jumpPath.rightDoubleJump2[transform.GetSiblingIndex()] = setting;
+                jumpPath.rightJumpList[5][transform.GetSiblingIndex()] = setting;
 
-            else if (transform.parent.name == "DJ, 0.3 sec, 2.4 speed, 3.6 speed")
-                jumpPath.rightDoubleJump3[transform.GetSiblingIndex()] = setting;
+            else if (transform.parent.name == "DJ, 0.3 sec, 7.0 speed, 5.5 speed")
+                jumpPath.rightJumpList[6][transform.GetSiblingIndex()] = setting;
 
-            else if (transform.parent.name == "DJ, 0.6 sec, 0 speed, 3.6 speed")
-                jumpPath.rightDoubleJump4[transform.GetSiblingIndex()] = setting;
+            else if (transform.parent.name == "DJ, 0.6 sec, 2.0 speed, 3.6 speed")
+                jumpPath.rightJumpList[7][transform.GetSiblingIndex()] = setting;
+
+            else if (transform.parent.name == "DJ, 0.6 sec, 6.4 speed, 6.4 speed")
+                jumpPath.rightJumpList[8][transform.GetSiblingIndex()] = setting;
             else
                 Debug.LogError(gameObject.name + " jump path hasn't been defined yet");
         }
+
+        else if (transform.parent.parent.name == "Right U Turn Colliders")
+        {
+            if (transform.parent.name == "U turn, 0.6 sec, 8.0 speed, 6.4 speed")
+                jumpPath.rightJumpList[9][transform.GetSiblingIndex()] = setting;
+
+            else if (transform.parent.name == "U turn, 0.7 sec, 8.0 speed, 8.0 speed")
+                jumpPath.rightJumpList[10][transform.GetSiblingIndex()] = setting;
+
+            else if (transform.parent.name == "U mini turn, 8.0 speed, 0.35 sec")
+                jumpPath.rightJumpList[11][transform.GetSiblingIndex()] = setting;
+
+            else if (transform.parent.name == "U mini turn, 7.0 speed, 0.42 sec")
+                jumpPath.rightJumpList[12][transform.GetSiblingIndex()] = setting;
+            else
+                Debug.LogError(gameObject.name + " jump path hasn't been defined yet");
+        }
+
         else
             Debug.LogError("jump path hasn't been defined yet");
     }

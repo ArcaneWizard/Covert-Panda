@@ -67,21 +67,10 @@ public class NewBotAI : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(jumpBruh());
-        InvokeRepeating("printPathColliders", 0.4f, 0.2f);
+        //StartCoroutine(createNewJump());
+        //InvokeRepeating("printPathColliders", 0.4f, 0.2f);
 
         setConfiguration();
-    }
-
-    private IEnumerator jumpBruh()
-    {
-        yield return new WaitForSeconds(0.4f);
-        StartCoroutine(decision.executeJump(new Jump("right mini u-turn", 7.0f, 0.42f, 0f, Vector3.zero)));
-    }
-
-    private void printPathColliders()
-    {
-        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
     }
 
     public void jump(float speed)
@@ -297,5 +286,16 @@ public class NewBotAI : MonoBehaviour
     {
         if (col.gameObject.layer == 11)
             touchingMap = false;
+    }
+
+    private IEnumerator createNewJump()
+    {
+        yield return new WaitForSeconds(0.4f);
+        StartCoroutine(decision.executeJump(new Jump("right mini u-turn", 7.0f, 0.42f, 0f, Vector3.zero)));
+    }
+
+    private void printPathColliders()
+    {
+        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
     }
 }
