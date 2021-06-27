@@ -20,7 +20,16 @@ public class Sideview_Controller : MonoBehaviour
 
     public Camera camera;
     public Transform alienToFollow;
+
     private Vector3 cameraOffset;
+    private float cameraPosX;
+    private float cameraPosY;
+    private float cameraVelocityX = 0.0f;
+    private float cameraVelocityY = 0.0f;
+    private float smoothTimeX = 0.15f;
+    private float smoothTimeY = 0.4f;
+    private float mouseDistance;
+    public Transform centerOfMap;
 
     private float speed = 8.0f;
     private float jumpForce = 600;
@@ -65,7 +74,7 @@ public class Sideview_Controller : MonoBehaviour
         player = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
-        cameraOffset = camera.transform.position - player.position;
+        cameraOffset = camera.transform.position - transform.position;
 
         //ideal angle from shoulder to specific gun coordinates
         up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
@@ -80,11 +89,11 @@ public class Sideview_Controller : MonoBehaviour
 
     void Update()
     {
-        camera.transform.position = player.position + cameraOffset;
         grounded = isGrounded();
 
         playerAnimationController();
         StartCoroutine(handleColliders());
+        cameraMovement();
 
         //use A and D keys for left or right movement
         movementDirX = 0;
@@ -100,7 +109,7 @@ public class Sideview_Controller : MonoBehaviour
             rig.AddForce(new Vector2(0, jumpForce * 1.3f));
             rig.gravityScale = 1.4f;
 
-            spinDirection = -movementDirX;
+            spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
             spinRate = 420;
             stopSpinning = false;
             disableLimbs = true;
@@ -126,6 +135,16 @@ public class Sideview_Controller : MonoBehaviour
     private void LateUpdate()
     {
         playerLimbsOrientation();
+    }
+
+    private void cameraMovement()
+    {
+        mouseDistance = (Input.mousePosition.x - (float)Screen.width / 2f) / (float)Screen.width;
+
+        cameraPosX = Mathf.SmoothDamp(camera.transform.position.x, transform.position.x + mouseDistance * 10f, ref cameraVelocityX, smoothTimeX) + cameraOffset.x;
+        cameraPosY = Mathf.SmoothDamp(camera.transform.position.y, transform.position.y + mouseDistance * 8f, ref cameraVelocityY, smoothTimeY) + cameraOffset.y;
+
+        camera.transform.position = new Vector3(cameraPosX, cameraPosY, camera.transform.position.z);
     }
 
     private void setPlayerVelocity()
