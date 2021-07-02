@@ -97,7 +97,7 @@ public class NewBotAI : MonoBehaviour
         rig.AddForce(new Vector2(0, jumpForce * 1.3f));
 
         animationController.spinDirection = -movementDirX;
-        animationController.spinRate = 420;
+        animationController.spinRate = 920;
         animationController.stopSpinning = false;
         animationController.disableSpinningLimbs = true;
 

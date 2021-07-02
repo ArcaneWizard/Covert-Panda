@@ -30,7 +30,7 @@ public class BotAnimationController : MonoBehaviour
     [HideInInspector]
     public int spinDirection = 0;
     [HideInInspector]
-    public int spinRate = 420;
+    public int spinRate = 920;
 
     //ideal local gun coordinates when looking to the side, up or down 
     private Vector2 pointingRight = new Vector2(0.745f, 1.966f);
@@ -90,7 +90,7 @@ public class BotAnimationController : MonoBehaviour
         leftFoot.gameObject.SetActive(false);
         rightFoot.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.22f);
         stopSpinning = true;
         spinRate = 200;
 
@@ -114,7 +114,6 @@ public class BotAnimationController : MonoBehaviour
 
             //calculate the angle btwn mouse cursor and player's shooting arm
             Vector2 shootDirection = (player.position - shootingArm.position).normalized;
-            Debug.Log(shootDirection);
             float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
 
             //apply offset to the shoot Angle when the alien is tilted on a ramp:
@@ -218,8 +217,8 @@ public class BotAnimationController : MonoBehaviour
         ? new Vector3(-0.787f, leftFoot.transform.localPosition.y, 0)
         : new Vector3(-0.626f, leftFoot.transform.localPosition.y, 0);
 
-        //thin collider when jumping
-        //mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.7f : 1.035f, mainCollider.size.y);
+        //shorten collider when double jumping (to avoid hitting a wall/ceiling while spinning mid-air)
+        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 0.4f : 3.14f);
     }
 
 

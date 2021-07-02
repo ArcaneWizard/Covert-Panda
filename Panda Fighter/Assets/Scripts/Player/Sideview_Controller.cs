@@ -21,6 +21,7 @@ public class Sideview_Controller : MonoBehaviour
     public Camera camera;
     public Transform alienToFollow;
 
+    private Transform cameraTarget;
     private Vector3 cameraOffset;
     private float cameraPosX;
     private float cameraPosY;
@@ -28,7 +29,8 @@ public class Sideview_Controller : MonoBehaviour
     private float cameraVelocityY = 0.0f;
     private float smoothTimeX = 0.15f;
     private float smoothTimeY = 0.4f;
-    private float mouseDistance;
+    private float mouseDistanceX;
+    private float mouseDistanceY;
     public Transform centerOfMap;
 
     private float speed = 8.0f;
@@ -74,7 +76,8 @@ public class Sideview_Controller : MonoBehaviour
         player = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
-        cameraOffset = camera.transform.position - transform.position;
+        cameraTarget = alienToFollow;
+        cameraOffset = camera.transform.position - cameraTarget.transform.position;
 
         //ideal angle from shoulder to specific gun coordinates
         up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
@@ -110,7 +113,7 @@ public class Sideview_Controller : MonoBehaviour
             rig.gravityScale = 1.4f;
 
             spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
-            spinRate = 420;
+            spinRate = 920;
             stopSpinning = false;
             disableLimbs = true;
 
@@ -139,10 +142,19 @@ public class Sideview_Controller : MonoBehaviour
 
     private void cameraMovement()
     {
-        mouseDistance = (Input.mousePosition.x - (float)Screen.width / 2f) / (float)Screen.width;
+        mouseDistanceX = (Input.mousePosition.x - (float)Screen.width / 2f) / (float)Screen.width;
+        mouseDistanceY = (Input.mousePosition.y - (float)Screen.height / 2f) / (float)Screen.height;
 
-        cameraPosX = Mathf.SmoothDamp(camera.transform.position.x, transform.position.x + mouseDistance * 10f, ref cameraVelocityX, smoothTimeX) + cameraOffset.x;
-        cameraPosY = Mathf.SmoothDamp(camera.transform.position.y, transform.position.y + mouseDistance * 8f, ref cameraVelocityY, smoothTimeY) + cameraOffset.y;
+        if (mouseDistanceX > 0.5f || mouseDistanceX < -0.5f)
+            mouseDistanceX = 0.5f * Mathf.Sign(mouseDistanceX);
+
+        if (mouseDistanceY > 0.5f || mouseDistanceY < -0.5f)
+            mouseDistanceY = 0.5f * Mathf.Sign(mouseDistanceY);
+
+        float yDiff = Mathf.Abs(transform.position.y + mouseDistanceY * 4f - camera.transform.position.y);
+
+        cameraPosX = Mathf.SmoothDamp(camera.transform.position.x, cameraTarget.position.x + cameraOffset.x + mouseDistanceX * 10f, ref cameraVelocityX, smoothTimeX);
+        cameraPosY = Mathf.SmoothDamp(camera.transform.position.y, cameraTarget.position.y + cameraOffset.y + mouseDistanceY * 4f, ref cameraVelocityY, smoothTimeY);
 
         camera.transform.position = new Vector3(cameraPosX, cameraPosY, camera.transform.position.z);
     }
@@ -431,7 +443,7 @@ public class Sideview_Controller : MonoBehaviour
         leftFoot.gameObject.SetActive(false);
         rightFoot.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.22f);
         stopSpinning = true;
         spinRate = 200;
 

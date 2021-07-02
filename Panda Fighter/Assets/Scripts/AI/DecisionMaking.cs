@@ -71,7 +71,7 @@ public class DecisionMaking : MonoBehaviour
         if (targetDistance < 4f && canSetNewTarget)
             StartCoroutine(setNewTargetPosition(0.6f));
 
-        else if (timeElapsed > 12.0f && AI.grounded && AI.touchingMap && canSetNewTarget)
+        else if (timeElapsed > 20.0f && AI.grounded && AI.touchingMap && canSetNewTarget)
             StartCoroutine(setNewTargetPosition(0.6f));
 
         timeElapsed += Time.deltaTime;
@@ -176,7 +176,7 @@ public class DecisionMaking : MonoBehaviour
                 for (int i = 0; i < availableJumps.Count; i++)
                 {
                     //make sure the platform it jumps to is actually higher than the bot and gets the bot closer to the target 
-                    if (availableJumps[i].getLandingPosition().y > transform.position.y + 2.5f &&
+                    if (availableJumps[i].getLandingPosition().y > transform.position.y + 1.4f &&
                      Mathf.Abs(availableJumps[i].getLandingPosition().x - target.position.x) < Mathf.Abs(transform.position.x - target.position.x))
                     {
                         StartCoroutine(executeJump(availableJumps[i]));
@@ -202,7 +202,7 @@ public class DecisionMaking : MonoBehaviour
                     //make sure the platform it jumps to is actually higher than the bot and gets the bot closer to the target 
                     for (int i = 0; i < availableJumps.Count; i++)
                     {
-                        if (availableJumps[i].getLandingPosition().y > transform.position.y + 2.5f &&
+                        if (availableJumps[i].getLandingPosition().y > transform.position.y + 2f &&
                      Mathf.Abs(availableJumps[i].getLandingPosition().x - target.position.x) < Mathf.Abs(transform.position.x - target.position.x))
                         {
                             StartCoroutine(executeJump(availableJumps[i]));
@@ -223,10 +223,26 @@ public class DecisionMaking : MonoBehaviour
             //if bot's heading downwards and sees a hole, drop down the hole 85% of the time 
             else if (target.position.y <= transform.position.y && hole != Vector2.zero)
             {
+                foundHigherPlatform = false;
                 int r = UnityEngine.Random.Range(0, 100);
 
                 if (r >= 30 && r < 45)
-                    StartCoroutine(executeJump(availableJumps[0]));
+                {
+                    for (int i = 0; i < availableJumps.Count; i++)
+                    {
+                        //make sure the platform it jumps to is actually higher than the bot and gets the bot closer to the target 
+                        if (availableJumps[i].getLandingPosition().y > transform.position.y - 3f &&
+                         Mathf.Abs(availableJumps[i].getLandingPosition().x - target.position.x) < Mathf.Abs(transform.position.x - target.position.x))
+                        {
+                            StartCoroutine(executeJump(availableJumps[i]));
+                            foundHigherPlatform = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundHigherPlatform)
+                        turnAroundIfThereIsAWall();
+                }
                 else
                     turnAroundIfThereIsAWall();
             }
@@ -266,7 +282,7 @@ public class DecisionMaking : MonoBehaviour
     public IEnumerator executeJump(Jump jump)
     {
         jumpChosen.text = jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
-        //Debug.Break();
+        Debug.Break();
 
         jumpAgainTimer = 0.3f;
 
@@ -276,7 +292,7 @@ public class DecisionMaking : MonoBehaviour
 
         if (jump.getType() == "right jump" || jump.getType() == "left jump")
         {
-            AI.jumpForceMultiplier = UnityEngine.Random.Range(1.15f, 1.22f);
+            AI.jumpForceMultiplier = UnityEngine.Random.Range(1.03f, 1.05f);
             AI.jump(speed);
         }
 

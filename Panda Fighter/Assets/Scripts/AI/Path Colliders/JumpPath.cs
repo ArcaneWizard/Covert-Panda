@@ -99,7 +99,7 @@ public class JumpPath : MonoBehaviour
             possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
 
 
-        yield return new WaitForSeconds(0.35f);
+        yield return new WaitForSeconds(0.25f);
         StartCoroutine(getJumpTrajectory());
     }
 
@@ -411,6 +411,121 @@ public class JumpPath : MonoBehaviour
                 for (int a = 0; a <= 5; a++)
                 {
                     Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
+                }
+            }
+        }
+
+        //for double jumps
+        for (int i = 2; i <= 3; i++)
+        {
+            for (int j = 0; j <= 4; j++)
+            {
+                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
+                for (int k = 0; k < childCount - 1; k++)
+                {
+                    Vector3 pos = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position;
+                    Transform col = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k);
+
+                    transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position =
+                    new Vector3(transform.GetChild(i).transform.GetChild(j).transform.GetChild(k + 1).position.x,
+                    pos.y, pos.z);
+
+                    if (col.transform.GetComponent<RightPathCollider>())
+                        Destroy(col.transform.GetComponent<RightPathCollider>());
+                    if (col.transform.GetComponent<LeftPathCollider>())
+                        Destroy(col.transform.GetComponent<LeftPathCollider>());
+
+                    col.gameObject.AddComponent<PathCollider>();
+                }
+
+                Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(childCount - 1).gameObject);
+
+                for (int a = 0; a <= 7; a++)
+                {
+                    Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
+                }
+            }
+        }
+
+        //for u turns
+        for (int i = 4; i <= 5; i++)
+        {
+            for (int j = 0; j <= 1; j++)
+            {
+                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
+                for (int k = 0; k < childCount - 1; k++)
+                {
+                    Vector3 pos = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position;
+                    Transform col = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k);
+
+                    transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position =
+                    new Vector3(transform.GetChild(i).transform.GetChild(j).transform.GetChild(k + 1).position.x,
+                    pos.y, pos.z);
+
+                    if (col.transform.GetComponent<RightPathCollider>())
+                        Destroy(col.transform.GetComponent<RightPathCollider>());
+                    if (col.transform.GetComponent<LeftPathCollider>())
+                        Destroy(col.transform.GetComponent<LeftPathCollider>());
+
+                    col.gameObject.AddComponent<PathCollider>();
+                }
+
+                Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(childCount - 1).gameObject);
+
+                for (int a = 0; a <= 7; a++)
+                {
+                    Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
+                }
+            }
+
+            for (int j = 2; j <= 3; j++)
+            {
+                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
+                for (int k = 0; k < childCount - 1; k++)
+                {
+                    Vector3 pos = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position;
+                    Transform col = transform.GetChild(i).transform.GetChild(j).transform.GetChild(k);
+
+                    transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.position =
+                    new Vector3(transform.GetChild(i).transform.GetChild(j).transform.GetChild(k + 1).position.x,
+                    pos.y, pos.z);
+
+                    if (col.transform.GetComponent<RightPathCollider>())
+                        Destroy(col.transform.GetComponent<RightPathCollider>());
+                    if (col.transform.GetComponent<LeftPathCollider>())
+                        Destroy(col.transform.GetComponent<LeftPathCollider>());
+
+                    col.gameObject.AddComponent<PathCollider>();
+                }
+
+                Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(childCount - 1).gameObject);
+
+                for (int a = 0; a <= 4; a++)
+                {
+                    Destroy(transform.GetChild(i).transform.GetChild(j).transform.GetChild(a).gameObject);
+                }
+            }
+        }
+
+        for (int i = 0; i <= 5; i++)
+        {
+            transform.GetChild(i).name += " Ground";
+        }
+    }
+
+    private void generateLargerColliders()
+    {
+        //for normal jumps
+        for (int i = 0; i <= 1; i++)
+        {
+            //for diff paths
+            for (int j = 0; j <= 3; j++)
+            {
+                int childCount = transform.GetChild(i).transform.GetChild(j).childCount;
+                //for all colliders
+                for (int k = 0; k < childCount; k++)
+                {
+                    //transform.GetChild(i).transform.GetChild(j).transform.GetChild(k).transform.
                 }
             }
         }

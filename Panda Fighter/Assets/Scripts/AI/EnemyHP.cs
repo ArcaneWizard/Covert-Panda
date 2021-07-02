@@ -4,33 +4,31 @@ using UnityEngine;
 
 public class EnemyHP : MonoBehaviour
 {
-    private int hp;
+    public int hp;
     private int maxHP = 100;
 
     public Transform healthBar;
     private float healthBarSize;
 
-    void Start()
+    private Transform alien;
+    private Vector3 barOffset;
+
+    void Awake()
     {
         hp = maxHP;
         healthBarSize = healthBar.localScale.x;
+
+        alien = transform.GetChild(0).transform;
+        barOffset = healthBar.parent.position - alien.position;
     }
 
     void Update()
     {
-        healthBar.localScale = new Vector3(healthBarSize * (float)hp / (float)maxHP, healthBar.localScale.y, healthBar.localScale.z);
+        if (hp >= 0)
+            healthBar.localScale = new Vector3(healthBarSize * (float)hp / (float)maxHP, healthBar.localScale.y, healthBar.localScale.z);
+        else
+            healthBar.localScale = new Vector3(0f, healthBar.localScale.y, healthBar.localScale.z);
 
-        if (hp <= 0)
-            gameObject.SetActive(false);
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        string tag = col.transform.parent.tag;
-        if (tag == "Boomerang" || tag == "Pistol" || tag == "Boomerang")
-        {
-            hp -= 10;
-            col.gameObject.SetActive(false);
-        }
+        healthBar.parent.position = alien.position + barOffset;
     }
 }
