@@ -34,7 +34,7 @@ public class Sideview_Controller : MonoBehaviour
     public Transform centerOfMap;
 
     private float speed = 8.0f;
-    private float jumpForce = 600;
+    private float jumpForce = 810;
 
     private bool stopSpinning = true;
     private bool disableLimbs = false;
@@ -76,7 +76,7 @@ public class Sideview_Controller : MonoBehaviour
         player = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
-        cameraTarget = alienToFollow;
+        cameraTarget = player;
         cameraOffset = camera.transform.position - cameraTarget.transform.position;
 
         //ideal angle from shoulder to specific gun coordinates
@@ -109,7 +109,7 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") == true && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, jumpForce * 1.3f));
+            rig.AddForce(new Vector2(0, jumpForce * 1.1f));
             rig.gravityScale = 1.4f;
 
             spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
@@ -303,7 +303,7 @@ public class Sideview_Controller : MonoBehaviour
         {
             animator.SetBool("jumped", false);
             animator.SetBool("double jump", false);
-            rig.gravityScale = 1;
+            rig.gravityScale = 1.4f;
             setAnimation("idle");
         }
     }
