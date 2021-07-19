@@ -16,7 +16,7 @@ public class Shooting : MonoBehaviour
 
     public Transform bulletSpawnPoint;
 
-    private float grenadeThrowForce = 800;
+    private float grenadeThrowForce = 1800;
     private float grenadeYForce = -20;
     private float boomerangSpeed = 41;
     private float plasmaBulletSpeed = 30;

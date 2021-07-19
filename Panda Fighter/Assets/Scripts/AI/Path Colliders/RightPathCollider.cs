@@ -10,12 +10,13 @@ public class RightPathCollider : MonoBehaviour
 
     void Awake()
     {
-        jumpPath = transform.parent.parent.parent.transform.GetComponent<JumpPath>();
+        if (transform.parent.parent)
+            jumpPath = transform.parent.parent.parent.transform.GetComponent<JumpPath>();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.layer == 11)
+        if (other.gameObject.layer == 11 && transform.parent.parent)
         {
             if (!obstacles.Contains(other.gameObject))
                 obstacles.Add(other.gameObject);
@@ -26,7 +27,7 @@ public class RightPathCollider : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.layer == 11)
+        if (other.gameObject.layer == 11 && transform.parent.parent)
         {
             if (obstacles.Contains(other.gameObject))
                 obstacles.Remove(other.gameObject);

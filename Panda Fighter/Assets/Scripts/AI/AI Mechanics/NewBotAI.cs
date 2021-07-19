@@ -1,40 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 
 public class NewBotAI : MonoBehaviour
 {
     private Rigidbody2D rig;
-    public Transform alien;
     private Animator animator;
+    [HideInInspector]
+    public Transform alien;
 
-    public float speed = 8f;
-    private float jumpForce = 600;
-
+    [Header("Ground detection")]
     public Transform leftFoot;
     public Transform rightFoot;
     public Transform centerFoot;
-    public GameObject leftFootGround;
-    public GameObject rightFootGround;
-    public GameObject generalGround;
-    public string nextToWall;
+    [HideInInspector]
+    public GameObject leftFootGround, rightFootGround, generalGround;
 
     private GameObject groundSurface;
-    public List<bool> rightGround = new List<bool>(new bool[10]);
-    public List<bool> leftGround = new List<bool>(new bool[10]);
     public Transform leftGroundColliders;
     public Transform rightGroundColliders;
 
-    public Vector2 obstacleToTheLeft;
-    public Vector2 obstacleToTheRight;
-    public bool wallToTheLeft;
-    public bool wallToTheRight;
-    public Vector2 leftHole;
-    public Vector2 rightHole;
-    private Vector3 groundDetectionOffset;
-    private Vector3 pathCollidersOffset;
+    [HideInInspector]
+    public List<bool> rightGround = new List<bool>(new bool[10]), leftGround = new List<bool>(new bool[10]);
+    [HideInInspector]
+    public Vector2 obstacleToTheLeft, obstacleToTheRight, leftHole, rightHole;
+    [HideInInspector]
+    public bool wallToTheLeft, wallToTheRight;
+
+    [Header("Other things detected")]
     public Transform groundDetection;
     public Transform pathColliders;
+    public string nextToWall;
+    private Vector3 groundDetectionOffset;
+    private Vector3 pathCollidersOffset;
+
+    [Header("Ground inputs")]
 
     public bool grounded;
     public bool touchingMap;
@@ -42,12 +43,29 @@ public class NewBotAI : MonoBehaviour
     private float groundAngle;
     private Vector2 groundDir;
 
+    [Header("Movement stats")]
+
     public int movementDirX = 1;
+    public float jumpForceMultiplier = 1f;
+    public float speed = 8f;
+    private float jumpForce = 830;
     private float zAngle;
     private float symmetricGroundAngle;
-    public float jumpForceMultiplier = 1f;
+
+    [Header("Creating Jump paths")]
 
     public GameObject pathCollider;
+    public GameObject empty;
+    private GameObject indvCollider;
+    private Vector2 ogPosition;
+    private Queue<Jump> jumpsTested = new Queue<Jump>();
+    private Queue<int> jumpCount = new Queue<int>();
+    private Queue<int> jumpDirection = new Queue<int>();
+    private bool currTestingJump;
+    private GameObject path;
+    public GameObject testCube;
+    public GameObject testCollider;
+
     private BotAnimationController animationController;
     private DecisionMaking decision;
 
@@ -60,7 +78,8 @@ public class NewBotAI : MonoBehaviour
         animationController = transform.GetComponent<BotAnimationController>();
         decision = transform.GetComponent<DecisionMaking>();
 
-        movementDirX = 1;
+        movementDirX = (decision.botState == "experimental") ? 0 : 1;
+        ogPosition = transform.position;
 
         groundDetectionOffset = groundDetection.position - transform.position;
         pathCollidersOffset = pathColliders.position - transform.position;
@@ -70,10 +89,26 @@ public class NewBotAI : MonoBehaviour
 
     void Start()
     {
-        //StartCoroutine(createNewJump());
-        //InvokeRepeating("printPathColliders", 0.4f, 0.2f);
+        addJumpPath(new Jump("left jump", 8.0f, 0f, 0f, Vector3.zero), -1, 15);
+        addJumpPath(new Jump("left double jump", 6.0f, 0.8f, 6.4f, Vector3.zero), -1, 12);
+        addJumpPath(new Jump("right jump", 6.4f, 0f, 0f, Vector3.zero), 1, 15);
 
-        setConfiguration();
+        /*path = Instantiate(empty, testCube.transform.position, Quaternion.identity);
+        Invoke("jumpo", 1.0f);
+        InvokeRepeating("printo", 1.0f, 0.2f);
+
+        setConfiguration();*/
+    }
+
+    private void jumpo()
+    {
+        testCube.transform.GetComponent<Rigidbody2D>().AddForce(new Vector2(100, 830f));
+    }
+
+    private void printo()
+    {
+        indvCollider = Instantiate(testCollider, testCube.transform.position, Quaternion.identity);
+        indvCollider.transform.parent = path.transform;
     }
 
     public void jump(float speed)
@@ -94,7 +129,7 @@ public class NewBotAI : MonoBehaviour
 
         rig.gravityScale = 1.4f;
         rig.velocity = new Vector2(rig.velocity.x, 0);
-        rig.AddForce(new Vector2(0, jumpForce * 1.3f));
+        rig.AddForce(new Vector2(0, jumpForce * 1.1f));
 
         animationController.spinDirection = -movementDirX;
         animationController.spinRate = 920;
@@ -105,7 +140,6 @@ public class NewBotAI : MonoBehaviour
         animator.SetBool("double jump", true);
     }
 
-    // Update is called once per frame
     void Update()
     {
         grounded = isGrounded();
@@ -113,9 +147,13 @@ public class NewBotAI : MonoBehaviour
         setAlienVelocity();
         tilt();
         setConfiguration();
-        ;
-        if (pathColliders.transform.GetComponent<Rigidbody2D>().IsSleeping())
-            Debug.LogWarning("Pathcollider rigidbody is sleeping");
+
+        //for creating new jump paths while in experimental mode
+        if (decision.botState == "experimental" && jumpsTested.Count > 0 && !currTestingJump)
+        {
+            StartCoroutine(mapNewJumpPath(jumpsTested.Dequeue(), jumpDirection.Dequeue(), jumpCount.Dequeue()));
+            Debug.Log("jump tested");
+        }
     }
 
     private void setConfiguration()
@@ -256,6 +294,10 @@ public class NewBotAI : MonoBehaviour
             else
                 rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
         }
+
+        //warn if this bug pops up
+        if (pathColliders.transform.GetComponent<Rigidbody2D>().IsSleeping())
+            Debug.LogWarning("Pathcollider rigidbody is sleeping");
     }
 
     //alien's body should tilt slightly on the slanted platform
@@ -287,7 +329,10 @@ public class NewBotAI : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.layer == 11)
+        {
             touchingMap = true;
+            Debug.Log(alien.position);
+        }
     }
 
     private void OnCollisionStay2D(Collision2D col)
@@ -302,14 +347,59 @@ public class NewBotAI : MonoBehaviour
             touchingMap = false;
     }
 
-    private IEnumerator createNewJump()
+
+    private IEnumerator printPathColliders(Jump jump, int direction, int times)
     {
-        yield return new WaitForSeconds(0.4f);
-        StartCoroutine(decision.executeJump(new Jump("left jump", 6.0f, 0f, 0f, Vector3.zero)));
+        Debug.Log("running");
+        yield return new WaitForSeconds(0.3f);
+        path = Instantiate(empty, alien.transform.position, Quaternion.identity);
+        path.name = jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+
+        for (int i = 0; i < times; i++)
+        {
+            indvCollider = Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
+            indvCollider.transform.parent = path.transform;
+            indvCollider.layer = 16;
+
+            if (direction == 1)
+                indvCollider.AddComponent<RightPathCollider>();
+            else
+                indvCollider.AddComponent<LeftPathCollider>();
+
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 
-    private void printPathColliders()
+    private void addJumpPath(Jump jump, int direction, int collidersPrinted)
     {
-        Instantiate(pathCollider, alien.transform.position, Quaternion.identity);
+        jumpsTested.Enqueue(jump);
+        jumpCount.Enqueue(collidersPrinted);
+        jumpDirection.Enqueue(direction);
+    }
+
+    private IEnumerator mapNewJumpPath(Jump jump, int direction, int collidersPrinted)
+    {
+        movementDirX = 0;
+        currTestingJump = true;
+        StartCoroutine(executeJump(jump, direction));
+        StartCoroutine(printPathColliders(jump, direction, collidersPrinted));
+
+        yield return new WaitForSeconds(0.35f + 0.2f * collidersPrinted);
+
+        movementDirX = 0;
+        speed = 8f;
+        rig.velocity = new Vector2(0, rig.velocity.y);
+        animator.SetBool("jumped", false);
+        animator.SetBool("double jump", false);
+
+        transform.position = ogPosition;
+        currTestingJump = false;
+    }
+
+    private IEnumerator executeJump(Jump jump, int direction)
+    {
+        yield return new WaitForSeconds(0.3f);
+        movementDirX = direction;
+        StartCoroutine(decision.executeJump(jump));
     }
 }

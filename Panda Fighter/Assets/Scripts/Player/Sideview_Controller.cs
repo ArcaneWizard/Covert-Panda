@@ -16,6 +16,8 @@ public class Sideview_Controller : MonoBehaviour
     public BoxCollider2D mainCollider;
     public Transform gun;
     public BoxCollider2D footCollider;
+    public Transform groundColliders;
+    private float tempAngle;
     public string nextToWall;
 
     public Camera camera;
@@ -33,8 +35,8 @@ public class Sideview_Controller : MonoBehaviour
     private float mouseDistanceY;
     public Transform centerOfMap;
 
-    private float speed = 8.0f;
-    private float jumpForce = 810;
+    private float speed = 10.0f;
+    private float jumpForce = 830;
 
     private bool stopSpinning = true;
     private bool disableLimbs = false;
@@ -47,6 +49,9 @@ public class Sideview_Controller : MonoBehaviour
     public GameObject rightFootGround;
     public GameObject generalGround;
 
+    private Vector2 obstacleToTheLeft, obstacleToTheRight;
+    private bool wallToTheLeft, wallToTheRight;
+
     [SerializeField]
     private bool grounded;
     [SerializeField]
@@ -54,6 +59,7 @@ public class Sideview_Controller : MonoBehaviour
     [SerializeField]
     private float groundAngle;
     private Vector2 groundDir;
+    private bool wasGrounded;
 
     private int movementDirX;
     private float zAngle;
@@ -88,10 +94,13 @@ public class Sideview_Controller : MonoBehaviour
         upVector = (pointingUp - shoulderPos).magnitude;
         rightVector = (pointingRight - shoulderPos).magnitude;
         downVector = (pointingDown - shoulderPos).magnitude;
+
+        StartCoroutine(findWalls());
     }
 
     void Update()
     {
+        wasGrounded = grounded;
         grounded = isGrounded();
 
         playerAnimationController();
@@ -109,7 +118,7 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") == true && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, jumpForce * 1.1f));
+            rig.AddForce(new Vector2(0, jumpForce * 1.05f));
             rig.gravityScale = 1.4f;
 
             spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
@@ -151,10 +160,8 @@ public class Sideview_Controller : MonoBehaviour
         if (mouseDistanceY > 0.5f || mouseDistanceY < -0.5f)
             mouseDistanceY = 0.5f * Mathf.Sign(mouseDistanceY);
 
-        float yDiff = Mathf.Abs(transform.position.y + mouseDistanceY * 4f - camera.transform.position.y);
-
         cameraPosX = Mathf.SmoothDamp(camera.transform.position.x, cameraTarget.position.x + cameraOffset.x + mouseDistanceX * 10f, ref cameraVelocityX, smoothTimeX);
-        cameraPosY = Mathf.SmoothDamp(camera.transform.position.y, cameraTarget.position.y + cameraOffset.y + mouseDistanceY * 4f, ref cameraVelocityY, smoothTimeY);
+        cameraPosY = Mathf.SmoothDamp(camera.transform.position.y, cameraTarget.position.y + cameraOffset.y + mouseDistanceY * 8f, ref cameraVelocityY, smoothTimeY);
 
         camera.transform.position = new Vector3(cameraPosX, cameraPosY, camera.transform.position.z);
     }
@@ -169,11 +176,11 @@ public class Sideview_Controller : MonoBehaviour
         if (!animator.GetBool("jumped") && grounded && touchingMap)
         {
             //no x velocity when running into a wall to avoid bounce/fall glitch
-            if (movementDirX == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
+            if (movementDirX == 1 && wallToTheRight)
                 rig.velocity = new Vector2(0, 0);
 
             //no x velocity when running into a wall to avoid bounce/fall glitch
-            else if (movementDirX == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
+            else if (movementDirX == -1 && wallToTheLeft)
                 rig.velocity = new Vector2(0, 0);
 
             //player velocity is parallel to the slanted ground
@@ -185,11 +192,11 @@ public class Sideview_Controller : MonoBehaviour
         else
         {
             //no x velocity when running into a wall mid-air to avoid clipping glitch
-            if (movementDirX == 1 && ((player.localEulerAngles.y == 0 && nextToWall == "Forward") || (player.localEulerAngles.y == 180 && nextToWall == "Backward")))
+            if (movementDirX == 1 && wallToTheRight)
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             //no x velocity when running into a wall mid-air to avoid clipping glitch
-            else if (movementDirX == -1 && ((player.localEulerAngles.y == 0 && nextToWall == "Backward") || (player.localEulerAngles.y == 180 && nextToWall == "Forward")))
+            else if (movementDirX == -1 && wallToTheLeft)
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             //player velocity is just left or right (with gravity pulling the player down)
@@ -317,12 +324,31 @@ public class Sideview_Controller : MonoBehaviour
             collider = leftFootGround;
         else if (rightFootGround != null && leftFootGround == null)
             collider = rightFootGround;
+        else if (generalGround != null)
+        {
+            if (wasGrounded && movementDirX == 0)
+                return (rightFootGround || leftFootGround) ? true : false;
+
+            collider = generalGround;
+        }
         else if (rightFootGround != null && leftFootGround != null)
         {
-            if ((movementDirX >= 0 && player.localEulerAngles.y == 0) || (movementDirX == -1 && player.localEulerAngles.y == 180))
-                collider = rightFootGround;
+            if (!wasGrounded)
+            {
+                if ((movementDirX >= 0 && player.localEulerAngles.y == 0) || (movementDirX <= 0 && player.localEulerAngles.y == 180))
+                    collider = rightFootGround;
+                else
+                    collider = leftFootGround;
+            }
             else
-                collider = leftFootGround;
+            {
+                if (movementDirX == 0)
+                    return (rightFootGround || leftFootGround) ? true : false;
+                else if ((movementDirX == 1 && player.localEulerAngles.y == 0) || (movementDirX == -1 && player.localEulerAngles.y == 180))
+                    collider = rightFootGround;
+                else
+                    collider = leftFootGround;
+            }
         }
 
         if (collider)
@@ -332,6 +358,9 @@ public class Sideview_Controller : MonoBehaviour
             Vector2 dir = new Vector2(1, tangent).normalized;
 
             groundDir = dir;
+
+            if (groundAngle > 70f && groundAngle < 290f)
+                groundAngle = 0;
         }
         else
         {
@@ -364,6 +393,53 @@ public class Sideview_Controller : MonoBehaviour
 
         //shorten collider when double jumping
         mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 3.14f);
+
+        //ground detection colliders orient in the direction the player is facing
+        groundColliders.localEulerAngles = new Vector3(0, player.localEulerAngles.y, 0);
+        groundColliders.localPosition = transform.localPosition;
+
+        //left or right collider change in size depending on ground angle
+        tempAngle = groundAngle;
+        if (tempAngle > 180)
+            tempAngle -= 360;
+
+        if (animator.GetInteger("Phase") == 2)
+            tempAngle = 0;
+
+
+        if (tempAngle < 0)
+        {
+            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f + 0.016f * Mathf.Abs(tempAngle));
+            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));
+            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f);
+            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f);
+        }
+        else
+        {
+            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f);
+            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f);
+            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f + 0.016f * Mathf.Abs(tempAngle));
+            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));
+        }
+
+        groundColliders.transform.GetChild(2).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f + 0.016f * Mathf.Abs(tempAngle));
+        groundColliders.transform.GetChild(2).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));
+    }
+
+    public IEnumerator findWalls()
+    {
+        RaycastHit2D leftWallHit = Physics2D.Raycast(leftFoot.position, -groundDir, 2f, Constants.map);
+        wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
+        obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) - groundDir * 2;
+        Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), obstacleToTheLeft, Color.blue, 2f);
+
+        RaycastHit2D rightWallHit = Physics2D.Raycast(rightFoot.position, groundDir, 2f, Constants.map);
+        wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
+        obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + groundDir * 2;
+        Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), obstacleToTheRight, Color.red, 2f);
+
+        yield return new WaitForSeconds(0.33f);
+        StartCoroutine(findWalls());
     }
 
     //set new animation state for the player
@@ -434,7 +510,6 @@ public class Sideview_Controller : MonoBehaviour
         {
             if (!stopSpinning || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
                 transform.eulerAngles = new Vector3(0, 0, (transform.eulerAngles.z + Time.deltaTime * spinRate * spinDirection));
-
         }
     }
 
@@ -448,9 +523,11 @@ public class Sideview_Controller : MonoBehaviour
         spinRate = 200;
 
         yield return new WaitForSeconds(0.1f);
-        disableLimbs = false;
         leftFoot.gameObject.SetActive(true);
         rightFoot.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(0.32f);
+        disableLimbs = false;
     }
 
     private void debugFrameRate()

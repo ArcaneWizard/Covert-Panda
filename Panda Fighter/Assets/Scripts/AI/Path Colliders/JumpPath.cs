@@ -74,30 +74,32 @@ public class JumpPath : MonoBehaviour
 
     private IEnumerator getJumpTrajectory()
     {
-        AI.findWalls();
-        decision.rightJumps.Clear();
-        decision.leftJumps.Clear();
-
-        if (AI.grounded && AI.touchingMap)
+        if (decision.botState != "experimental")
         {
-            if ((AI.movementDirX == 1 || AI.movementDirX == 0))
-                getRightJumpTrajectory();
-            else if (AI.movementDirX == -1)
-                getLeftJumpTrajectory();
+            AI.findWalls();
+            decision.rightJumps.Clear();
+            decision.leftJumps.Clear();
 
-            decision.decideWhetherToJump();
-            jumpDecision.text = "deciding whether to jump...";
+            if (AI.grounded && AI.touchingMap)
+            {
+                if ((AI.movementDirX == 1 || AI.movementDirX == 0))
+                    getRightJumpTrajectory();
+                else if (AI.movementDirX == -1)
+                    getLeftJumpTrajectory();
+
+                decision.decideWhetherToJump();
+                jumpDecision.text = "deciding whether to jump...";
+            }
+            else
+                jumpDecision.text = "not on ground yet";
+
+            //show jumps available for debugging purposes
+            possibleJumps.text = "Jumps: ";
+            foreach (Jump jump in decision.rightJumps)
+                possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
+            foreach (Jump jump in decision.leftJumps)
+                possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
         }
-        else
-            jumpDecision.text = "not on ground yet";
-
-        //show jumps available for debugging purposes
-        possibleJumps.text = "Jumps: ";
-        foreach (Jump jump in decision.rightJumps)
-            possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
-        foreach (Jump jump in decision.leftJumps)
-            possibleJumps.text += "\n" + jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
-
 
         yield return new WaitForSeconds(0.25f);
         StartCoroutine(getJumpTrajectory());

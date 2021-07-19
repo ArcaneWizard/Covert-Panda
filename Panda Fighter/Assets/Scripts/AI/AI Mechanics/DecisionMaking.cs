@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class DecisionMaking : MonoBehaviour
 {
-    public string botState; //attack, wander, idle and maybe flee
+    public string botState; //attack, wander, idle, flee and experimental
     public Transform target;
 
     public List<Jump> rightJumps = new List<Jump>();
@@ -55,7 +55,6 @@ public class DecisionMaking : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
 
         canSetNewTarget = true;
-        botState = "wander";
 
         rightJumps.Clear();
         leftJumps.Clear();
@@ -63,7 +62,11 @@ public class DecisionMaking : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(wanderToNewTarget(0f));
+        targetNumber = UnityEngine.Random.Range(0, Targets.childCount);
+        target.position = Targets.transform.GetChild(targetNumber).position;
+
+        if (botState == "wander")
+            AI.movementDirX = (int)Mathf.Sign(target.position.x - transform.position.x);
     }
 
     void Update()
@@ -85,10 +88,10 @@ public class DecisionMaking : MonoBehaviour
         float targetDistance = Vector2.Distance(target.position, transform.position);
 
         if (targetDistance < 3f && canSetNewTarget)
-            StartCoroutine(wanderToNewTarget(0.6f));
+            StartCoroutine(setNewRandomTarget(0.6f));
 
         else if (timeElapsed > 20.0f && AI.grounded && AI.touchingMap && canSetNewTarget)
-            StartCoroutine(wanderToNewTarget(0.6f));
+            StartCoroutine(setNewRandomTarget(0.6f));
 
         timeElapsed += Time.deltaTime;
 
@@ -109,13 +112,13 @@ public class DecisionMaking : MonoBehaviour
         if (botState != "attack")
         {
             botState = "wander";
-            StartCoroutine(wanderToNewTarget(0f));
+            StartCoroutine(setNewRandomTarget(0f));
             idle = false;
         }
     }
 
     //find a new target to wander to
-    public IEnumerator wanderToNewTarget(float delay)
+    public IEnumerator setNewRandomTarget(float delay)
     {
         canSetNewTarget = false;
         yield return new WaitForSeconds(delay);
@@ -133,7 +136,7 @@ public class DecisionMaking : MonoBehaviour
 
             //bot is currently mid-air in a jump so redo search after a short delay
             if (animator.GetBool("jumped"))
-                StartCoroutine(wanderToNewTarget(0.14f));
+                StartCoroutine(setNewRandomTarget(0.14f));
 
             //20% chance of going into idle state, 75% chance of staying in wander state
             idleChance = UnityEngine.Random.Range(10, 110);
@@ -325,7 +328,8 @@ public class DecisionMaking : MonoBehaviour
     public IEnumerator executeJump(Jump jump)
     {
         jumpChosen.text = jump.getType() + ", " + jump.getJumpSpeed() + ", " + jump.getDelay() + ", " + jump.getMidAirSpeed();
-        Debug.Break();
+        //Debug.Break();
+        Debug.Log("working");
 
         jumpAgainTimer = 0.3f;
 
@@ -335,7 +339,7 @@ public class DecisionMaking : MonoBehaviour
 
         if (jump.getType() == "right jump" || jump.getType() == "left jump")
         {
-            AI.jumpForceMultiplier = UnityEngine.Random.Range(1.03f, 1.05f);
+            AI.jumpForceMultiplier = 1.03f;
             AI.jump(speed);
         }
 
@@ -346,15 +350,14 @@ public class DecisionMaking : MonoBehaviour
             AI.doublejump(newSpeed, AI.movementDirX);
         }
 
-        else if (jump.getType() == "right mini u-turn" || jump.getType() == "left mini u-turn")
+        else if (jump.getType() == "right u-turn" || jump.getType() == "left u-turn")
         {
             AI.jump(speed);
             yield return new WaitForSeconds(jumpDelay);
             AI.movementDirX *= -1;
-            speed += 0.4f;
         }
 
-        else if (jump.getType() == "right u-turn" || jump.getType() == "left u-turn")
+        else if (jump.getType() == "right double u-turn" || jump.getType() == "left double u-turn")
         {
             AI.jump(speed);
             yield return new WaitForSeconds(jumpDelay);

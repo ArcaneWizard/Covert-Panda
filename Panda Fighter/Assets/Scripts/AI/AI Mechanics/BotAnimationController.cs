@@ -189,11 +189,11 @@ public class BotAnimationController : MonoBehaviour
             setAnimation("idle");
 
             AI.speed = 8.0f;
-            rig.gravityScale = 1;
+            rig.gravityScale = 1.4f;
         }
 
         //after falling down and touching the map, decide on the new direction to head in
-        if (decideMovementAfterFallingDown && AI.touchingMap)
+        if (decideMovementAfterFallingDown && AI.touchingMap && decisionMaking.botState != "experimental")
         {
             decideMovementAfterFallingDown = false;
             StartCoroutine(decisionMaking.decideMovementAfterFallingDown());

@@ -5,6 +5,7 @@ using UnityEngine;
 public class GroundCollider : MonoBehaviour
 {
     public Sideview_Controller sideview_Controller;
+    private List<GameObject> obstacles = new List<GameObject>();
 
     void Awake()
     {
@@ -29,11 +30,16 @@ public class GroundCollider : MonoBehaviour
 
     private void confirmGround(bool confirmation, Collider2D other)
     {
+        if (confirmation && !obstacles.Contains(other.gameObject))
+            obstacles.Add(other.gameObject);
+        else if (!confirmation && obstacles.Contains(other.gameObject))
+            obstacles.Remove(other.gameObject);
+
         if (gameObject.name == "Left foot" && other.gameObject.layer == 11)
-            sideview_Controller.leftFootGround = (confirmation) ? other.gameObject : null;
+            sideview_Controller.leftFootGround = (confirmation) ? obstacles[0] : null;
         else if (gameObject.name == "Right foot" && other.gameObject.layer == 11)
-            sideview_Controller.rightFootGround = (confirmation) ? other.gameObject : null;
+            sideview_Controller.rightFootGround = (confirmation) ? obstacles[0] : null;
         else if (gameObject.name == "Center foot" && other.gameObject.layer == 11)
-            sideview_Controller.generalGround = (confirmation) ? other.gameObject : null;
+            sideview_Controller.generalGround = (confirmation) ? obstacles[0] : null;
     }
 }
