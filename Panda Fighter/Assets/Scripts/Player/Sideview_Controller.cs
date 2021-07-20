@@ -14,9 +14,9 @@ public class Sideview_Controller : MonoBehaviour
     public Transform shootingArm;
     public Transform head;
     public BoxCollider2D mainCollider;
-    public Transform gun;
     public BoxCollider2D footCollider;
     public Transform groundColliders;
+    public Transform gun;
     private float tempAngle;
     public string nextToWall;
 
@@ -43,23 +43,20 @@ public class Sideview_Controller : MonoBehaviour
     private int spinDirection = 0;
     private int spinRate = 420;
 
-    public Transform leftFoot;
-    public Transform rightFoot;
-    public GameObject leftFootGround;
-    public GameObject rightFootGround;
-    public GameObject generalGround;
+    public Transform leftFoot, rightFoot;
+    private RaycastHit2D leftGroundHit, rightGroundHit;
+    [SerializeField]
+    private GameObject leftFootGround, rightFootGround;
 
     private Vector2 obstacleToTheLeft, obstacleToTheRight;
     private bool wallToTheLeft, wallToTheRight;
 
-    [SerializeField]
-    private bool grounded;
+    public bool grounded;
     [SerializeField]
     private bool touchingMap;
     [SerializeField]
     private float groundAngle;
     private Vector2 groundDir;
-    private bool wasGrounded;
 
     private int movementDirX;
     private float zAngle;
@@ -96,13 +93,11 @@ public class Sideview_Controller : MonoBehaviour
         downVector = (pointingDown - shoulderPos).magnitude;
 
         StartCoroutine(findWalls());
+        StartCoroutine(isGrounded());
     }
 
     void Update()
     {
-        wasGrounded = grounded;
-        grounded = isGrounded();
-
         playerAnimationController();
         StartCoroutine(handleColliders());
         cameraMovement();
@@ -316,59 +311,74 @@ public class Sideview_Controller : MonoBehaviour
     }
 
     //check if the player is on the ground + update the groundAngle
-    public bool isGrounded()
+    public IEnumerator isGrounded()
     {
-        GameObject collider = null;
+        //use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
+        leftGroundHit = Physics2D.Raycast(leftFoot.position, Vector2.down, 2f, Constants.map);
+        leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
+        Vector2 leftGround = (leftGroundHit.collider != null) ? leftGroundHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) + Vector2.down * 2;
+        Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), leftGround, Color.green, 2f);
 
-        if (leftFootGround != null && rightFootGround == null)
-            collider = leftFootGround;
-        else if (rightFootGround != null && leftFootGround == null)
-            collider = rightFootGround;
-        else if (generalGround != null)
-        {
-            if (wasGrounded && movementDirX == 0)
-                return (rightFootGround || leftFootGround) ? true : false;
+        rightGroundHit = Physics2D.Raycast(rightFoot.position, Vector2.down, 2f, Constants.map);
+        rightFootGround = (rightGroundHit.collider != null && rightGroundHit.normal.y >= 0.3f) ? rightGroundHit.collider.gameObject : null;
+        Vector2 rightGround = (rightGroundHit.collider != null) ? rightGroundHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + Vector2.down * 2;
+        Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), rightGround, Color.cyan, 2f);
 
-            collider = generalGround;
-        }
-        else if (rightFootGround != null && leftFootGround != null)
+        grounded = (leftFootGround || rightFootGround) ? true : false;
+
+        //register the angle of the ground
+        if (grounded)
         {
-            if (!wasGrounded)
+            //moving right while facing right or moving left while facing left -> use "right foot" gameobject
+            if (((movementDirX == 1 && player.localEulerAngles.y == 0) || (movementDirX == -1 && player.localEulerAngles.y == 180)) && rightFootGround)
             {
-                if ((movementDirX >= 0 && player.localEulerAngles.y == 0) || (movementDirX <= 0 && player.localEulerAngles.y == 180))
-                    collider = rightFootGround;
-                else
-                    collider = leftFootGround;
+                groundDir = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
+                float f = groundDir.y / groundDir.x;
+                groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
             }
+
+            //moving left while facing right or moving right facing left -> use "left foot" gameobject
+            else if (((movementDirX == -1 && player.localEulerAngles.y == 0) || (movementDirX == 1 && player.localEulerAngles.y == 180)) && leftFootGround)
+            {
+                groundDir = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
+                float f = groundDir.y / groundDir.x;
+                groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
+            }
+
+            //not moving 
+            else if (rightFootGround && rightGroundHit.normal.y != 1)
+            {
+                groundDir = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
+                float f = groundDir.y / groundDir.x;
+                groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
+            }
+
+            //not moving
+            else if (leftFootGround)
+            {
+                groundDir = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
+                float f = groundDir.y / groundDir.x;
+                groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
+            }
+
+            //not moving
             else
             {
-                if (movementDirX == 0)
-                    return (rightFootGround || leftFootGround) ? true : false;
-                else if ((movementDirX == 1 && player.localEulerAngles.y == 0) || (movementDirX == -1 && player.localEulerAngles.y == 180))
-                    collider = rightFootGround;
-                else
-                    collider = leftFootGround;
+                groundDir = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
+                float f = groundDir.y / groundDir.x;
+                groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
             }
         }
 
-        if (collider)
-        {
-            groundAngle = collider.transform.eulerAngles.z;
-            float tangent = Mathf.Tan(groundAngle * Mathf.PI / 180);
-            Vector2 dir = new Vector2(1, tangent).normalized;
-
-            groundDir = dir;
-
-            if (groundAngle > 70f && groundAngle < 290f)
-                groundAngle = 0;
-        }
         else
         {
             groundAngle = 0;
             groundDir = new Vector2(1, 0);
         }
 
-        return (rightFootGround || leftFootGround) ? true : false;
+        //reupdate the ground angle after 0.14 seconds
+        yield return new WaitForSeconds(0.14f);
+        StartCoroutine(isGrounded());
     }
 
     //foot collider becomes smaller when jumping
@@ -395,17 +405,15 @@ public class Sideview_Controller : MonoBehaviour
         mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 3.14f);
 
         //ground detection colliders orient in the direction the player is facing
-        groundColliders.localEulerAngles = new Vector3(0, player.localEulerAngles.y, 0);
-        groundColliders.localPosition = transform.localPosition;
+        //groundColliders.localPosition = transform.localPosition;
 
         //left or right collider change in size depending on ground angle
-        tempAngle = groundAngle;
+        /*tempAngle = groundAngle;
         if (tempAngle > 180)
             tempAngle -= 360;
 
         if (animator.GetInteger("Phase") == 2)
             tempAngle = 0;
-
 
         if (tempAngle < 0)
         {
@@ -423,7 +431,7 @@ public class Sideview_Controller : MonoBehaviour
         }
 
         groundColliders.transform.GetChild(2).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f + 0.016f * Mathf.Abs(tempAngle));
-        groundColliders.transform.GetChild(2).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));
+        groundColliders.transform.GetChild(2).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));*/
     }
 
     public IEnumerator findWalls()

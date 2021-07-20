@@ -143,7 +143,7 @@ public class Shooting : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         //Player is on a levitation boost platform and clicks W -> give them a jump boost 
-        if (collision.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && sideview_Controller.isGrounded())
+        if (collision.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && sideview_Controller.grounded)
             rig.AddForce(Constants.levitationBoost);
     }
 }

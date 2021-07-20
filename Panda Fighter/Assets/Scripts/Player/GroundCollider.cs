@@ -35,11 +35,11 @@ public class GroundCollider : MonoBehaviour
         else if (!confirmation && obstacles.Contains(other.gameObject))
             obstacles.Remove(other.gameObject);
 
-        if (gameObject.name == "Left foot" && other.gameObject.layer == 11)
+        /*if (gameObject.name == "Left foot" && other.gameObject.layer == 11)
             sideview_Controller.leftFootGround = (confirmation) ? obstacles[0] : null;
         else if (gameObject.name == "Right foot" && other.gameObject.layer == 11)
             sideview_Controller.rightFootGround = (confirmation) ? obstacles[0] : null;
         else if (gameObject.name == "Center foot" && other.gameObject.layer == 11)
-            sideview_Controller.generalGround = (confirmation) ? obstacles[0] : null;
+            sideview_Controller.generalGround = (confirmation) ? obstacles[0] : null;*/
     }
 }
