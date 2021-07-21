@@ -65,10 +65,10 @@ public class Sideview_Controller : MonoBehaviour
     private float frames = 0;
 
     //ideal local gun coordinates when looking to the side, up or down 
-    private Vector2 pointingRight = new Vector2(0.642f, 0.491f);
-    private Vector2 pointingUp = new Vector2(-0.24f, 1.68f);
-    private Vector2 pointingDown = new Vector2(-0.407f, -0.675f);
-    private Vector2 shoulderPos = new Vector2(-0.608f, 0.662f);
+    private Vector2 pointingRight = new Vector2(1.307f, 2.101f);
+    private Vector2 pointingUp = new Vector2(0.27f, 3.29f);
+    private Vector2 pointingDown = new Vector2(0.11f, 0.81f);
+    private Vector2 shoulderPos = new Vector2(0.173f, 2.198f);
 
     private float upVector, downVector, rightVector;
     private float up, right, down;
@@ -100,7 +100,6 @@ public class Sideview_Controller : MonoBehaviour
     {
         playerAnimationController();
         StartCoroutine(handleColliders());
-        cameraMovement();
 
         //use A and D keys for left or right movement
         movementDirX = 0;
@@ -110,7 +109,7 @@ public class Sideview_Controller : MonoBehaviour
             movementDirX--;
 
         //use W and S keys for jumping up or thrusting downwards + allow double jump
-        if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") == true && !animator.GetBool("double jump"))
+        if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce * 1.05f));
@@ -125,7 +124,7 @@ public class Sideview_Controller : MonoBehaviour
             animator.SetBool("double jump", true);
         }
 
-        if (Input.GetKeyDown(KeyCode.W) && grounded)
+        if (Input.GetKeyDown(KeyCode.W) && grounded && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce));
@@ -142,6 +141,17 @@ public class Sideview_Controller : MonoBehaviour
     private void LateUpdate()
     {
         playerLimbsOrientation();
+    }
+
+    private void FixedUpdate()
+    {
+        cameraMovement();
+
+        if (animator.GetBool("double jump"))
+        {
+            if (!stopSpinning || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
+                transform.eulerAngles = new Vector3(0, 0, (transform.eulerAngles.z + Time.deltaTime * spinRate * spinDirection));
+        }
     }
 
     private void cameraMovement()
@@ -249,7 +259,7 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponRotation = shootAngle * slope + right;
 
                 float dirSlope = (upVector - rightVector) / 90f;
-                float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
+                float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
                 gun.transform.localPosition = gunLocation;
@@ -264,7 +274,7 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponRotation = shootAngle * slope + right;
 
                 float dirSlope = (downVector - rightVector) / -90f;
-                float weaponDirMagnitude = shootAngle * dirSlope + 1.271f;
+                float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
                 gun.transform.localPosition = gunLocation;
@@ -510,15 +520,6 @@ public class Sideview_Controller : MonoBehaviour
     {
         if (col.gameObject.layer == 11)
             touchingMap = false;
-    }
-
-    private void FixedUpdate()
-    {
-        if (animator.GetBool("double jump"))
-        {
-            if (!stopSpinning || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
-                transform.eulerAngles = new Vector3(0, 0, (transform.eulerAngles.z + Time.deltaTime * spinRate * spinDirection));
-        }
     }
 
     private IEnumerator timeDoubleSpin()
