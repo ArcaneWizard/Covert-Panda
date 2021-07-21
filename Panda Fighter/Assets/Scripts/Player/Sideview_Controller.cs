@@ -17,7 +17,6 @@ public class Sideview_Controller : MonoBehaviour
     public BoxCollider2D footCollider;
     public Transform groundColliders;
     public Transform gun;
-    private float tempAngle;
     public string nextToWall;
 
     public Camera camera;
@@ -47,6 +46,7 @@ public class Sideview_Controller : MonoBehaviour
     private RaycastHit2D leftGroundHit, rightGroundHit;
     [SerializeField]
     private GameObject leftFootGround, rightFootGround;
+    private float lastGroundAngle;
 
     private Vector2 obstacleToTheLeft, obstacleToTheRight;
     private bool wallToTheLeft, wallToTheRight;
@@ -57,6 +57,7 @@ public class Sideview_Controller : MonoBehaviour
     [SerializeField]
     private float groundAngle;
     private Vector2 groundDir;
+    private bool checkForAngle;
 
     private int movementDirX;
     private float zAngle;
@@ -218,7 +219,7 @@ public class Sideview_Controller : MonoBehaviour
         if (zAngle > 180)
             zAngle = zAngle - 360;
 
-        if (grounded)
+        if (grounded && (movementDirX != 0 || (movementDirX == 0 && groundAngle == lastGroundAngle)))
         {
             float newGroundAngle = ((groundAngle - 360) / 1.4f);
 
@@ -334,6 +335,11 @@ public class Sideview_Controller : MonoBehaviour
         Vector2 rightGround = (rightGroundHit.collider != null) ? rightGroundHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + Vector2.down * 2;
         Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), rightGround, Color.cyan, 2f);
 
+        //if the player was just grounded after falling OR the player been moving on the ground, enable this bool (used later to prevent bug)
+        if ((!grounded || movementDirX != 0) && (leftFootGround || rightFootGround))
+            checkForAngle = true;
+
+        //determine if player is grounded if either foot raycast hit the ground
         grounded = (leftFootGround || rightFootGround) ? true : false;
 
         //register the angle of the ground
@@ -384,6 +390,13 @@ public class Sideview_Controller : MonoBehaviour
         {
             groundAngle = 0;
             groundDir = new Vector2(1, 0);
+        }
+
+        //lastGroundAngle is used elsewhere to prevent a bug: where the player sometimes spasms when standing still on uneven terrain
+        if (checkForAngle)
+        {
+            lastGroundAngle = groundAngle;
+            checkForAngle = false;
         }
 
         //reupdate the ground angle after 0.14 seconds
