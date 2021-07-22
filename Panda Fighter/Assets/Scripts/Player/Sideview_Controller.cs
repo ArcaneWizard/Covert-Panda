@@ -35,7 +35,7 @@ public class Sideview_Controller : MonoBehaviour
     public Transform centerOfMap;
 
     private float speed = 10.0f;
-    private float jumpForce = 830;
+    private float jumpForce = 830f;
 
     private bool stopSpinning = true;
     private bool disableLimbs = false;
@@ -113,7 +113,7 @@ public class Sideview_Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, jumpForce * 1.05f));
+            rig.AddForce(new Vector2(0, jumpForce * 1.1f));
             rig.gravityScale = 1.4f;
 
             spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
@@ -340,7 +340,8 @@ public class Sideview_Controller : MonoBehaviour
             checkForAngle = true;
 
         //determine if player is grounded if either foot raycast hit the ground
-        grounded = (leftFootGround || rightFootGround) ? true : false;
+        if (!disableLimbs)
+            grounded = (leftFootGround || rightFootGround) ? true : false;
 
         //register the angle of the ground
         if (grounded)
@@ -426,35 +427,6 @@ public class Sideview_Controller : MonoBehaviour
 
         //shorten collider when double jumping
         mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 3.14f);
-
-        //ground detection colliders orient in the direction the player is facing
-        //groundColliders.localPosition = transform.localPosition;
-
-        //left or right collider change in size depending on ground angle
-        /*tempAngle = groundAngle;
-        if (tempAngle > 180)
-            tempAngle -= 360;
-
-        if (animator.GetInteger("Phase") == 2)
-            tempAngle = 0;
-
-        if (tempAngle < 0)
-        {
-            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f + 0.016f * Mathf.Abs(tempAngle));
-            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));
-            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f);
-            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f);
-        }
-        else
-        {
-            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f);
-            groundColliders.transform.GetChild(0).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f);
-            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f + 0.016f * Mathf.Abs(tempAngle));
-            groundColliders.transform.GetChild(1).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));
-        }
-
-        groundColliders.transform.GetChild(2).transform.GetComponent<BoxCollider2D>().size = new Vector2(0.05f, 0.35f + 0.016f * Mathf.Abs(tempAngle));
-        groundColliders.transform.GetChild(2).transform.GetComponent<BoxCollider2D>().offset = new Vector2(0f, -0.15f + -0.012f * Mathf.Abs(tempAngle));*/
     }
 
     public IEnumerator findWalls()
@@ -487,23 +459,7 @@ public class Sideview_Controller : MonoBehaviour
         else
             Debug.LogError("mode not defined");
 
-        //get animation progress (as a positive number btwn 0-1 regardless of whether the animation is played forwards or backwards)
-        float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
-
-        //if walking
-        if (animator.GetInteger("Phase") == 1)
-        {
-            //go idle 
-            if (newMode == 0 && ((t >= 0.31f && t <= 0.41f) || (t >= 0.8633f && t <= 0.975f)))
-                StartCoroutine(walkingToIdle());
-
-            //go jump
-            if (newMode == 2)
-                animator.SetInteger("Phase", 2);
-        }
-
-        else
-            animator.SetInteger("Phase", newMode);
+        animator.SetInteger("Phase", newMode);
     }
 
     //Submethod that adds tiny delay before switching from walking to idle animation (cleaner transition from walking to other non-idle animations)
