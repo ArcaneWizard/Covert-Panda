@@ -93,8 +93,8 @@ ScriptedImporter:
   rigSpriteImportData:
   - name: main arm pad
     originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
+    pivot: {x: 0.23750558, y: 0.573951}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -107,9 +107,9 @@ ScriptedImporter:
     spriteBone:
     - name: bone_1
       guid: 75d70f3ad40744fd8b1d07a4a25e35a5
-      position: {x: 52.621567, y: 31.42038, z: 0}
-      rotation: {x: 0, y: 0, z: -0.042567026, w: 0.99909365}
-      length: 60.86023
+      position: {x: 24.72731, y: 36.685684, z: 0}
+      rotation: {x: 0, y: 0, z: -0.058666438, w: 0.99827766}
+      length: 89.14746
       parentId: -1
       color:
         serializedVersion: 2
@@ -512,8 +512,8 @@ ScriptedImporter:
     uvTransform: {x: -126, y: -47}
   - name: main arm
     originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
+    pivot: {x: 0.15686813, y: 0.5244802}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -526,9 +526,9 @@ ScriptedImporter:
     spriteBone:
     - name: bone_2
       guid: 2162296a04b6b49419547d9f91b9817b
-      position: {x: 10.261246, y: 25.243805, z: 0}
-      rotation: {x: 0, y: 0, z: 0.12382641, w: 0.99230397}
-      length: 54.166138
+      position: {x: 10.261124, y: 25.24376, z: 0}
+      rotation: {x: 0, y: 0, z: 0.13462164, w: 0.9908971}
+      length: 55.517845
       parentId: -1
       color:
         serializedVersion: 2
@@ -924,8 +924,8 @@ ScriptedImporter:
     uvTransform: {x: -229, y: -114}
   - name: main wrist alternate
     originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
+    pivot: {x: 0.19790284, y: 0.4191954}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -938,9 +938,9 @@ ScriptedImporter:
     spriteBone:
     - name: bone_3
       guid: b0b37913f7b5b409684f7202f325a2dc
-      position: {x: 4.766327, y: 11.554962, z: 0}
-      rotation: {x: 0, y: 0, z: 0.19139063, w: 0.98151404}
-      length: 29.52482
+      position: {x: 5.7666626, y: 13.055496, z: 0}
+      rotation: {x: 0, y: 0, z: 0.17360361, w: 0.9848156}
+      length: 28.052279
       parentId: -1
       color:
         serializedVersion: 2
@@ -1345,8 +1345,8 @@ ScriptedImporter:
     uvTransform: {x: -287, y: -3}
   - name: main wrist
     originalName: 
-    pivot: {x: 0.5, y: 0.5}
-    alignment: 0
+    pivot: {x: 0.16769329, y: 0.34618264}
+    alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -1359,9 +1359,9 @@ ScriptedImporter:
     spriteBone:
     - name: bone_3
       guid: b0b37913f7b5b409684f7202f325a2dc
-      position: {x: 4.766327, y: 11.554962, z: 0}
-      rotation: {x: 0, y: 0, z: 0.19139063, w: 0.98151404}
-      length: 29.52482
+      position: {x: 5.7666626, y: 13.055496, z: 0}
+      rotation: {x: 0, y: 0, z: 0.17360361, w: 0.9848156}
+      length: 28.052279
       parentId: -1
       color:
         serializedVersion: 2
@@ -1715,27 +1715,27 @@ ScriptedImporter:
     bones:
     - name: bone_1
       guid: 75d70f3ad40744fd8b1d07a4a25e35a5
-      position: {x: 182.62157, y: 214.42038, z: 0}
-      rotation: {x: 0, y: 0, z: -0.042567026, w: 0.99909365}
-      length: 60.86023
+      position: {x: 154.72731, y: 219.68568, z: 0}
+      rotation: {x: 0, y: 0, z: -0.058666438, w: 0.99827766}
+      length: 89.14746
       parentId: -1
       color:
         serializedVersion: 2
         rgba: 4278190335
     - name: bone_2
       guid: 2162296a04b6b49419547d9f91b9817b
-      position: {x: 60.86023, y: 0.000012150522, z: 0}
-      rotation: {x: 0, y: 0, z: 0.16595359, w: 0.9861336}
-      length: 54.166138
+      position: {x: 89.14746, y: -0.000017984448, z: 0}
+      rotation: {x: 0, y: 0, z: 0.19252217, w: 0.98129267}
+      length: 55.51785
       parentId: 0
       color:
         serializedVersion: 2
         rgba: 4278255615
     - name: bone_3
       guid: b0b37913f7b5b409684f7202f325a2dc
-      position: {x: 54.16614, y: -0.0000001569656, z: 0}
-      rotation: {x: 0, y: 0, z: 0.06838032, w: 0.9976594}
-      length: 29.524822
+      position: {x: 55.517838, y: 0.0000044394255, z: 0}
+      rotation: {x: 0, y: 0, z: 0.03944583, w: 0.99922174}
+      length: 28.052279
       parentId: 1
       color:
         serializedVersion: 2

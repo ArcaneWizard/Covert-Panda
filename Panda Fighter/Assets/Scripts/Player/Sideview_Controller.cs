@@ -40,7 +40,6 @@ public class Sideview_Controller : MonoBehaviour
     private bool stopSpinning = true;
     private bool disableLimbs = false;
     private int spinDirection = 0;
-    private int spinRate = 420;
 
     public Transform leftFoot, rightFoot;
     private RaycastHit2D leftGroundHit, rightGroundHit;
@@ -117,7 +116,6 @@ public class Sideview_Controller : MonoBehaviour
             rig.gravityScale = 1.4f;
 
             spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
-            spinRate = 920;
             stopSpinning = false;
             disableLimbs = true;
 
@@ -150,8 +148,20 @@ public class Sideview_Controller : MonoBehaviour
 
         if (animator.GetBool("double jump"))
         {
-            if (!stopSpinning || (transform.eulerAngles.z > 3 && transform.eulerAngles.z < 357))
-                transform.eulerAngles = new Vector3(0, 0, (transform.eulerAngles.z + Time.deltaTime * spinRate * spinDirection));
+            float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
+            if (t > 0.9f)
+                stopSpinning = true;
+
+            if (!stopSpinning || t > 0.1f)
+            {
+                if (t < 0.5f)
+                    transform.eulerAngles = new Vector3(0, 0, t * spinDirection * 350f / 0.5f);
+                else
+                    transform.eulerAngles = new Vector3(0, 0, 350 * spinDirection + (t - 0.5f) * spinDirection * 21);
+
+            }
+            else
+                animator.SetBool("double jump", false);
         }
     }
 
@@ -496,15 +506,11 @@ public class Sideview_Controller : MonoBehaviour
         leftFoot.gameObject.SetActive(false);
         rightFoot.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(0.22f);
-        stopSpinning = true;
-        spinRate = 200;
-
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.52f);
         leftFoot.gameObject.SetActive(true);
         rightFoot.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(0.32f);
+        yield return new WaitForSeconds(0.12f);
         disableLimbs = false;
     }
 
