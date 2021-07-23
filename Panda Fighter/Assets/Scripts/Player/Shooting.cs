@@ -12,17 +12,26 @@ public class Shooting : MonoBehaviour
 
     private WeaponSystem weaponSystem;
     private Sideview_Controller sideview_Controller;
+
     private Rigidbody2D rig;
-    private GameObject weapon;
+    private GameObject weapon = null;
+
+    [HideInInspector]
+    public GameObject weaponHeld;
+    private GameObject weaponThrown;
+    private GameObject lastBoomerangThrown;
+
+    [HideInInspector]
+    public string combatMode = "gun";
 
     private float timeLeftBtwnShots;
     private Rigidbody2D objectRig;
     private Vector2 aimDir;
 
-
     [Header("Shooting + Throwing")]
     public Transform gunSpawnPoint;
     public Transform handSpawnPoint;
+    public Transform grenadeSpawnPoint;
     public GameObject shoulderBones_GUN;
     public GameObject shoulderSprites_GUN;
     public GameObject frontShoulderBone_HAND;
@@ -33,7 +42,7 @@ public class Shooting : MonoBehaviour
     private float boomerangSpeed = 41;
     private float plasmaBulletSpeed = 30;
     private float plasmaFireRate = 0.16f;
-    private Vector2 objectSpinSpeed = new Vector2(-200, 200);
+    private Vector2 boomerangSpinSpeed = new Vector2(180, 250);
 
     void Awake()
     {
@@ -46,6 +55,9 @@ public class Shooting : MonoBehaviour
 
     void Update()
     {
+        switchCombatMode();
+        curveBoomerang();
+
         //after throwing, go back to normal swinging hands walking state
         if (armAnimator.GetInteger("Arms Phase") == 1)
             armAnimator.SetInteger("Arms Phase", 0);
@@ -104,6 +116,25 @@ public class Shooting : MonoBehaviour
             timeLeftBtwnShots -= Time.deltaTime;
     }
 
+    private void LateUpdate()
+    {
+        //the grenade or holdable weapon stays in your palm during normal animation cycles until its thrown
+        if (combatMode == "hands")
+        {
+            if (!GameObject.Equals(weaponHeld, weaponThrown))
+            {
+                weaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                weaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
+
+                weaponHeld.transform.position = grenadeSpawnPoint.position;
+                weaponHeld.transform.rotation = grenadeSpawnPoint.rotation;
+                weaponHeld.SetActive(true);
+            }
+            else
+                weaponHeld = weaponSystem.getWeapon();
+        }
+    }
+
 
     private void aimWithGun()
     {
@@ -111,7 +142,6 @@ public class Shooting : MonoBehaviour
         aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
 
         weapon.transform.position = gunSpawnPoint.position;
-        weapon.layer = LayerMask.NameToLayer("Deployed Object");
         weapon.SetActive(true);
 
         weapon.transform.GetComponent<Collider2D>().isTrigger = false;
@@ -124,14 +154,13 @@ public class Shooting : MonoBehaviour
         aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
         armAnimator.SetInteger("Arms Phase", 1);
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.299f);
 
-        weapon.transform.position = handSpawnPoint.position;
-        weapon.layer = LayerMask.NameToLayer("Deployed Object");
-        weapon.SetActive(true);
-
+        weapon.transform.position = grenadeSpawnPoint.position;
         weapon.transform.GetComponent<Collider2D>().isTrigger = false;
         weapon.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        weapon.SetActive(true);
+        weaponThrown = weapon;
     }
 
     private IEnumerator throwGrenade()
@@ -172,16 +201,31 @@ public class Shooting : MonoBehaviour
     private void shootBoomerang()
     {
         //get aim direction from mouse input
+        weapon.transform.GetComponent<Animator>().SetBool("glare", false);
         aimWithGun();
 
         //set the boomerang's velocity really high
         objectRig.velocity = aimDir * boomerangSpeed;
-        objectRig.angularVelocity = Random.Range(objectSpinSpeed.x, objectSpinSpeed.y);
+        objectRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
     }
 
-    public void switchMode(string type)
+    private void curveBoomerang()
     {
-        if (type == "gun")
+        if (weaponSystem.weaponSelected == "Boomerang" && Input.GetMouseButtonDown(1) && weapon && weapon.activeSelf)
+        {
+            if (aimDir.x >= 0)
+                objectRig.velocity = Quaternion.Euler(0, 0, -90) * aimDir * boomerangSpeed;
+            else
+                objectRig.velocity = Quaternion.Euler(0, 0, 90) * aimDir * boomerangSpeed;
+
+            objectRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
+            weapon.transform.GetComponent<Animator>().SetBool("glare", true);
+        }
+    }
+
+    public void switchCombatMode()
+    {
+        if (combatMode == "gun")
         {
             shoulderBones_GUN.SetActive(true);
             shoulderSprites_GUN.SetActive(true);
@@ -189,7 +233,7 @@ public class Shooting : MonoBehaviour
             backShoulderBone_HAND.gameObject.SetActive(false);
         }
 
-        else if (type == "hands")
+        else if (combatMode == "hands")
         {
             shoulderBones_GUN.SetActive(false);
             shoulderSprites_GUN.SetActive(false);

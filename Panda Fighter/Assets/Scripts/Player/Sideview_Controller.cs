@@ -35,7 +35,7 @@ public class Sideview_Controller : MonoBehaviour
     public Transform centerOfMap;
 
     private float speed = 10.0f;
-    private float jumpForce = 830f;
+    private float jumpForce = 1130f;
 
     private bool stopSpinning = true;
     private bool disableLimbs = false;
@@ -113,7 +113,6 @@ public class Sideview_Controller : MonoBehaviour
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce * 1.1f));
-            rig.gravityScale = 1.4f;
 
             spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
             stopSpinning = false;
@@ -326,7 +325,6 @@ public class Sideview_Controller : MonoBehaviour
         {
             animator.SetBool("jumped", false);
             animator.SetBool("double jump", false);
-            rig.gravityScale = 1.4f;
             setAnimation("idle");
         }
     }

@@ -79,7 +79,7 @@ public class WeaponSystem : MonoBehaviour
     // --------------------------------------------------------------------
     // FOR MOBILE VERSION: allow player to tap to select a different weapon 
     // --------------------------------------------------------------------
-    public void SelectWeapon(string useMode)
+    public void SelectWeapon(string combatMode)
     {
         string weapon = (EventSystem.current.currentSelectedGameObject) ? EventSystem.current.currentSelectedGameObject.transform.tag : "Pistol";
         int weaponAmmo = Int32.Parse(ammo[weapon].text);
@@ -92,25 +92,36 @@ public class WeaponSystem : MonoBehaviour
 
         //update which bullet in the bullet list to use
         bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
-        shooting.switchMode(useMode);
+        shooting.combatMode = combatMode;
     }
 
     // --------------------------------------------------------------------
     // FOR PC VERSION: allow player to select a different weapon 
     // --------------------------------------------------------------------
-    public void SelectWeapon(string weapon, string useMode)
+    public void SelectWeapon(string weapon, string combatMode)
     {
+        //if the weapon is already selected, no need to do anything
+        if (weapon == weaponSelected)
+            return;
+
+        //if a weapon/grenade is currently held by the player but not "thrown", hide it before selecting the new weapon
+        if (weapon != weaponSelected && shooting.weaponHeld)
+            shooting.weaponHeld.gameObject.SetActive(false);
+
         int weaponAmmo = Int32.Parse(ammo[weapon].text);
 
-        //if that weapon has ammo, equip it
+        //if the selected weapon has ammo, equip it
         if (weaponAmmo > 0)
             weaponSelected = weapon;
         else
             return;
 
-        //update which bullet in the bullet list to use
+        //use the next bullet in the bullet pool next time you fire
         bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
-        shooting.switchMode(useMode);
+        shooting.combatMode = combatMode;
+
+        if (combatMode == "hands")
+            shooting.weaponHeld = getWeapon();
     }
 
     // --------------------------------------------------------------------
