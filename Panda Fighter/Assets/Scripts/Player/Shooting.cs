@@ -121,7 +121,7 @@ public class Shooting : MonoBehaviour
         //the grenade or holdable weapon stays in your palm during normal animation cycles until its thrown
         if (combatMode == "hands")
         {
-            if (!GameObject.Equals(weaponHeld, weaponThrown))
+            if (!GameObject.Equals(weaponHeld, weaponThrown) && weaponSystem.getAmmo() > 0)
             {
                 weaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
                 weaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
