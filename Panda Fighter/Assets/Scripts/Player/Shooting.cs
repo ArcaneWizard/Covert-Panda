@@ -33,15 +33,12 @@ public class Shooting : MonoBehaviour
     public Transform grenadeSpawnPoint;
 
     [Header("Arm Bones + Sprites")]
-    public GameObject GUN_LIMB;
-    public GameObject HAND_LIMB_FRONT;
-    public GameObject HAND_LIMB_BACK;
-    public GameObject SCYTHE_LIMB;
+    public GameObject Gun_limb;
+    public GameObject Hand_limb_front, Hand_limb_back, Scythe_limb;
 
     [Header("Weapons")]
     public GameObject Beamer;
-    public GameObject BoomerangLauncher;
-    public GameObject Scythe;
+    public GameObject BoomerangLauncher, Scythe;
 
     private List<GameObject> WeaponSetup = new List<GameObject>();
 
@@ -113,7 +110,7 @@ public class Shooting : MonoBehaviour
         //Weapons where you can hold the right mouse button down to continously use and drain the weapon
         if (Input.GetMouseButton(0) && weaponSystem.weaponSelected != null)
         {
-            if (weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
+            if (combatMode != "meelee" && weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
             {
                 weapon = weaponSystem.getWeapon();
                 weaponSystem.useOneAmmo();
@@ -261,26 +258,26 @@ public class Shooting : MonoBehaviour
 
         if (weapon == "Grenade" || weapon == "Plasma Orb")
         {
-            WeaponSetup.Add(HAND_LIMB_BACK);
-            WeaponSetup.Add(HAND_LIMB_FRONT);
+            WeaponSetup.Add(Hand_limb_back);
+            WeaponSetup.Add(Hand_limb_front);
             armAnimator.SetInteger("Arms Phase", 0);
         }
 
         else if (weapon == "Pistol")
         {
-            WeaponSetup.Add(GUN_LIMB);
+            WeaponSetup.Add(Gun_limb);
             WeaponSetup.Add(Beamer);
         }
 
         else if (weapon == "Boomerang")
         {
-            WeaponSetup.Add(GUN_LIMB);
+            WeaponSetup.Add(Gun_limb);
             WeaponSetup.Add(BoomerangLauncher);
         }
 
         else if (weapon == "Scythe")
         {
-            WeaponSetup.Add(SCYTHE_LIMB);
+            WeaponSetup.Add(Scythe_limb);
             WeaponSetup.Add(Scythe);
         }
 

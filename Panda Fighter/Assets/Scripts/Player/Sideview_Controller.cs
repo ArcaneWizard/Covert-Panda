@@ -11,14 +11,16 @@ public class Sideview_Controller : MonoBehaviour
     private Transform player;
     private Animator animator;
 
+    [Header("Limbs and colliders")]
     public Transform shootingArm;
     public Transform head;
     public BoxCollider2D mainCollider;
     public BoxCollider2D footCollider;
     public Transform groundColliders;
-    public Transform gun;
+    [HideInInspector]
     public string nextToWall;
 
+    [Header("Camera stuff")]
     public Camera camera;
     public Transform alienToFollow;
 
@@ -41,9 +43,10 @@ public class Sideview_Controller : MonoBehaviour
     private bool disableLimbs = false;
     private int spinDirection = 0;
 
-    public Transform leftFoot, rightFoot;
+    [Header("Ground detection")]
+    public Transform leftFoot;
+    public Transform rightFoot;
     private RaycastHit2D leftGroundHit, rightGroundHit;
-    [SerializeField]
     private GameObject leftFootGround, rightFootGround;
     private float lastGroundAngle;
 
@@ -51,9 +54,7 @@ public class Sideview_Controller : MonoBehaviour
     private bool wallToTheLeft, wallToTheRight;
 
     public bool grounded;
-    [SerializeField]
     private bool touchingMap;
-    [SerializeField]
     private float groundAngle;
     private Vector2 groundDir;
     private bool checkForAngle;
@@ -64,12 +65,12 @@ public class Sideview_Controller : MonoBehaviour
     private float time = 0;
     private float frames = 0;
 
-    //ideal local gun coordinates when looking to the side, up or down 
-    private Vector2 pointingRight = new Vector2(1.307f, 2.101f);
-    private Vector2 pointingUp = new Vector2(0.27f, 3.29f);
-    private Vector2 pointingDown = new Vector2(0.11f, 0.81f);
-    private Vector2 shoulderPos = new Vector2(0.173f, 2.198f);
+    [Header("IK targets")]
+    public Transform beamer_target;
+    public Transform scythe_target;
 
+    //ideal aim coordinates when looking to the side, up or down 
+    private Vector2 pointingRight, pointingUp, pointingDown, shoulderPos;
     private float upVector, downVector, rightVector;
     private float up, right, down;
 
@@ -82,15 +83,12 @@ public class Sideview_Controller : MonoBehaviour
         cameraTarget = player;
         cameraOffset = camera.transform.position - cameraTarget.transform.position;
 
-        //ideal angle from shoulder to specific gun coordinates
-        up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
-        right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
-        down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
-
-        //ideal vector magnitudes from shoulder to specific gun coordinates
-        upVector = (pointingUp - shoulderPos).magnitude;
-        rightVector = (pointingRight - shoulderPos).magnitude;
-        downVector = (pointingDown - shoulderPos).magnitude;
+        //get ideal angle aim coordinates
+        pointingRight = AimingDir.gunPointingRight;
+        pointingUp = AimingDir.gunPointingUp;
+        pointingDown = AimingDir.gunPointingDown;
+        shoulderPos = AimingDir.gunShoulderPos;
+        calculateShoulderAngles();
 
         StartCoroutine(findWalls());
         StartCoroutine(isGrounded());
@@ -272,7 +270,7 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                gun.transform.localPosition = gunLocation;
+                beamer_target.transform.localPosition = gunLocation;
 
                 float headSlope = (122f - 92.4f) / 90f;
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
@@ -287,7 +285,7 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                gun.transform.localPosition = gunLocation;
+                beamer_target.transform.localPosition = gunLocation;
 
                 float headSlope = (67f - 92.4f) / -90f;
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
@@ -524,4 +522,18 @@ public class Sideview_Controller : MonoBehaviour
             frames = 0;
         }
     }
+
+    private void calculateShoulderAngles()
+    {
+        //ideal angle from shoulder to specific gun coordinates
+        up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+        right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+        down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+
+        //ideal vector magnitudes from shoulder to specific gun coordinates
+        upVector = (pointingUp - shoulderPos).magnitude;
+        rightVector = (pointingRight - shoulderPos).magnitude;
+        downVector = (pointingDown - shoulderPos).magnitude;
+    }
+
 }
