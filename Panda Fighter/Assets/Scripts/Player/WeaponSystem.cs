@@ -8,15 +8,19 @@ using UnityEngine.UI;
 
 public class WeaponSystem : MonoBehaviour
 {
-    private Dictionary<string, Image> weapons = new Dictionary<string, Image>();
+    private Dictionary<string, Image> weaponIcon = new Dictionary<string, Image>();
+    private Dictionary<string, Image> weaponSlot = new Dictionary<string, Image>();
     private Dictionary<string, Text> ammo = new Dictionary<string, Text>();
     private Dictionary<string, Sprite> equipped = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> notEquipped = new Dictionary<string, Sprite>();
 
     private Dictionary<string, List<Transform>> physicalWeapons = new Dictionary<string, List<Transform>>();
     public Transform inventory;
-    public Transform weaponSprites;
     public Transform physicalWeapon;
+    public Transform equippedWeaponSprites;
+    public Transform unequippedWeaponSprites;
+
+    public Sprite slotSelected, slotNotSelected;
 
     [HideInInspector]
     public string weaponSelected;
@@ -32,18 +36,16 @@ public class WeaponSystem : MonoBehaviour
         //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
         {
-            weapons.Add(weapon.tag, weapon.transform.GetComponent<Image>());
-            ammo.Add(weapon.tag, weapon.GetChild(0).transform.GetComponent<Text>());
+            weaponSlot.Add(weapon.tag, weapon.GetChild(0).transform.GetComponent<Image>());
+            ammo.Add(weapon.tag, weapon.GetChild(1).transform.GetComponent<Text>());
+            weaponIcon.Add(weapon.tag, weapon.GetChild(2).transform.GetComponent<Image>());
         }
 
         //add each weapon sprite (equipped vs not equipped) to a dictionary, accessible by weapon tag
-        foreach (Transform weapon in weaponSprites)
-        {
-            if (weapon.name == "Equipped")
-                equipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
-            else
-                notEquipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
-        }
+        foreach (Transform weapon in equippedWeaponSprites)
+            equipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
+        foreach (Transform weapon in unequippedWeaponSprites)
+            notEquipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
 
         //add each weapon's physical ammo to a dictionary, accessible by weapon tag
         foreach (Transform weaponType in physicalWeapon)
@@ -66,13 +68,13 @@ public class WeaponSystem : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown("0"))
-            SelectWeapon("Grenade", "hands");
         if (Input.GetKeyDown("1"))
-            SelectWeapon("Boomerang", "gun");
+            SelectWeapon("Grenade", "hands");
         if (Input.GetKeyDown("2"))
             SelectWeapon("Pistol", "gun");
         if (Input.GetKeyDown("3"))
+            SelectWeapon("Boomerang", "gun");
+        if (Input.GetKeyDown("4"))
             SelectWeapon("Plasma Orb", "hands");
     }
 
@@ -112,9 +114,18 @@ public class WeaponSystem : MonoBehaviour
 
         //if the selected weapon has ammo, equip it
         if (weaponAmmo > 0)
+        {
+            //unselect previous weapon slot
+            if (weaponSelected != "")
+                weaponSlot[weaponSelected].sprite = slotNotSelected;
+
+            //select new weapon + new weapon slot
             weaponSelected = weapon;
+            weaponSlot[weaponSelected].sprite = slotSelected;
+        }
         else
             return;
+
 
         //use the next bullet in the bullet pool next time you fire
         bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
@@ -130,7 +141,7 @@ public class WeaponSystem : MonoBehaviour
     public void EquipNewWeapon(string weapon, int bullets)
     {
         //update weapon sprite + ammo
-        weapons[weapon].sprite = equipped[weapon];
+        weaponIcon[weapon].sprite = equipped[weapon];
         ammo[weapon].text = bullets.ToString();
     }
 
@@ -149,7 +160,7 @@ public class WeaponSystem : MonoBehaviour
 
         //if weapon is out of ammo, update its sprite
         if (weaponAmmo <= 0)
-            weapons[weaponSelected].sprite = notEquipped[weaponSelected];
+            weaponIcon[weaponSelected].sprite = notEquipped[weaponSelected];
     }
 
     // --------------------------------------------------------------------
