@@ -7,13 +7,15 @@ public class Shooting : MonoBehaviour
     [Header("Entities")]
     public Camera camera;
     public Transform shootingArm;
-    private Animator armAnimator;
+    [HideInInspector]
+    public Animator armAnimator;
 
     private WeaponSystem weaponSystem;
     private Sideview_Controller sideview_Controller;
 
     private Rigidbody2D rig;
-    private GameObject weapon = null;
+    private GameObject ammunition = null;
+    private string weapon;
 
     [HideInInspector]
     public GameObject weaponHeld;
@@ -29,18 +31,7 @@ public class Shooting : MonoBehaviour
 
     [Header("Bullet Spawn Points")]
     public Transform gunSpawnPoint;
-    public Transform handSpawnPoint;
-    public Transform grenadeSpawnPoint;
-
-    [Header("Arm Bones + Sprites")]
-    public GameObject Gun_limb;
-    public GameObject Hand_limb_front, Hand_limb_back, Scythe_limb;
-
-    [Header("Weapons")]
-    public GameObject Beamer;
-    public GameObject BoomerangLauncher, Scythe;
-
-    private List<GameObject> WeaponSetup = new List<GameObject>();
+    public Transform handHeldSpawnPoint;
 
     private float grenadeThrowForce = 1800;
     private float grenadeYForce = -20;
@@ -69,40 +60,33 @@ public class Shooting : MonoBehaviour
         //Weapons where you right click but don't hold down the right mouse button
         if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
         {
+            weapon = weaponSystem.weaponSelected;
+
             if (combatMode != "meelee" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
             {
-                weapon = weaponSystem.getWeapon();
+                ammunition = weaponSystem.getWeapon();
                 weaponSystem.useOneAmmo();
-                objectRig = weapon.transform.GetComponent<Rigidbody2D>();
+                objectRig = ammunition.transform.GetComponent<Rigidbody2D>();
 
-                switch (weaponSystem.weaponSelected)
-                {
-                    case "Grenade":
-                        StartCoroutine(throwGrenade());
-                        break;
-                    case "Boomerang":
-                        shootBoomerang();
-                        break;
-                    case "Plasma Orb":
-                        StartCoroutine(throwPlasmaOrb());
-                        break;
-                    default:
-                        Debug.LogError("You haven't specified how to shoot this particular object");
-                        break;
-                }
+                if (combatMode == "gun")
+                    StartCoroutine(aimWithHands());
+
+                if (weapon == "Grenade")
+                    StartCoroutine(throwGrenade());
+                else if (weapon == "Boomerang")
+                    shootBoomerang();
+                else if (weapon == "Plasma Orb")
+                    StartCoroutine(throwPlasmaOrb());
+                else
+                    Debug.LogError("You haven't specified how to shoot this particular object");
             }
 
             else if (combatMode == "meelee")
             {
-                switch (weaponSystem.weaponSelected)
-                {
-                    case "Scythe":
-                        attackWithScythe();
-                        break;
-                    default:
-                        Debug.LogError("You haven't specified how to shoot this particular object");
-                        break;
-                }
+                if (weapon == "Scythe")
+                    attackWithScythe();
+                else
+                    Debug.LogError("You haven't specified how to shoot this particular object");
             }
         }
 
@@ -112,21 +96,16 @@ public class Shooting : MonoBehaviour
         {
             if (combatMode != "meelee" && weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
             {
-                weapon = weaponSystem.getWeapon();
+                ammunition = weaponSystem.getWeapon();
                 weaponSystem.useOneAmmo();
                 timeLeftBtwnShots = plasmaFireRate;
-                objectRig = weapon.transform.GetComponent<Rigidbody2D>();
+                objectRig = ammunition.transform.GetComponent<Rigidbody2D>();
+                weapon = weaponSystem.weaponSelected;
 
-
-                switch (weaponSystem.weaponSelected)
-                {
-                    case "Pistol":
-                        shootPlasmaBullet();
-                        break;
-                    default:
-                        Debug.LogError("You haven't specified how to shoot this particular object");
-                        break;
-                }
+                if (weapon == "Pistol")
+                    shootPlasmaBullet();
+                else
+                    Debug.LogError("You haven't specified how to shoot this particular object");
             }
         }
 
@@ -144,8 +123,8 @@ public class Shooting : MonoBehaviour
                 weaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
                 weaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
 
-                weaponHeld.transform.position = grenadeSpawnPoint.position;
-                weaponHeld.transform.rotation = grenadeSpawnPoint.rotation;
+                weaponHeld.transform.position = handHeldSpawnPoint.position;
+                weaponHeld.transform.rotation = handHeldSpawnPoint.rotation;
                 weaponHeld.SetActive(true);
             }
             else
@@ -159,11 +138,11 @@ public class Shooting : MonoBehaviour
         //calculate direction to throw or shoot object in
         aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
 
-        weapon.transform.position = gunSpawnPoint.position;
-        weapon.SetActive(true);
+        ammunition.transform.position = gunSpawnPoint.position;
+        ammunition.SetActive(true);
 
-        weapon.transform.GetComponent<Collider2D>().isTrigger = false;
-        weapon.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        ammunition.transform.GetComponent<Collider2D>().isTrigger = false;
+        ammunition.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
     }
 
 
@@ -175,11 +154,11 @@ public class Shooting : MonoBehaviour
 
         yield return new WaitForSeconds(0.299f);
 
-        weapon.transform.position = grenadeSpawnPoint.position;
-        weapon.transform.GetComponent<Collider2D>().isTrigger = false;
-        weapon.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-        weapon.SetActive(true);
-        weaponThrown = weapon;
+        ammunition.transform.position = handHeldSpawnPoint.position;
+        ammunition.transform.GetComponent<Collider2D>().isTrigger = false;
+        ammunition.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        ammunition.SetActive(true);
+        weaponThrown = ammunition;
     }
 
     private IEnumerator throwGrenade()
@@ -213,14 +192,14 @@ public class Shooting : MonoBehaviour
         aimWithGun();
 
         //spawn and orient the bullet correctly
-        weapon.transform.right = aimDir;
+        ammunition.transform.right = aimDir;
         objectRig.velocity = aimDir * plasmaBulletSpeed;
     }
 
     private void shootBoomerang()
     {
         //get aim direction from mouse input
-        weapon.transform.GetComponent<Animator>().SetBool("glare", false);
+        ammunition.transform.GetComponent<Animator>().SetBool("glare", false);
         aimWithGun();
 
         //set the boomerang's velocity really high
@@ -230,7 +209,7 @@ public class Shooting : MonoBehaviour
 
     private void curveBoomerang()
     {
-        if (weaponSystem.weaponSelected == "Boomerang" && Input.GetMouseButtonDown(1) && weapon && weapon.activeSelf)
+        if (weaponSystem.weaponSelected == "Boomerang" && Input.GetMouseButtonDown(1) && ammunition && ammunition.activeSelf)
         {
             if (aimDir.x >= 0)
                 objectRig.velocity = Quaternion.Euler(0, 0, -90) * aimDir * boomerangSpeed;
@@ -238,7 +217,7 @@ public class Shooting : MonoBehaviour
                 objectRig.velocity = Quaternion.Euler(0, 0, 90) * aimDir * boomerangSpeed;
 
             objectRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
-            weapon.transform.GetComponent<Animator>().SetBool("glare", true);
+            ammunition.transform.GetComponent<Animator>().SetBool("glare", true);
         }
     }
 
@@ -247,58 +226,4 @@ public class Shooting : MonoBehaviour
         aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
     }
 
-    public void configureWeaponAndArms()
-    {
-        string weapon = weaponSystem.weaponSelected;
-
-        //deactivate the previous animated arm limbs + weapon
-        foreach (GameObject limb_Or_Weapon in WeaponSetup)
-            limb_Or_Weapon.SetActive(false);
-        WeaponSetup.Clear();
-
-        if (weapon == "Grenade" || weapon == "Plasma Orb")
-        {
-            WeaponSetup.Add(Hand_limb_back);
-            WeaponSetup.Add(Hand_limb_front);
-            armAnimator.SetInteger("Arms Phase", 0);
-        }
-
-        else if (weapon == "Pistol")
-        {
-            WeaponSetup.Add(Gun_limb);
-            WeaponSetup.Add(Beamer);
-        }
-
-        else if (weapon == "Boomerang")
-        {
-            WeaponSetup.Add(Gun_limb);
-            WeaponSetup.Add(BoomerangLauncher);
-        }
-
-        else if (weapon == "Scythe")
-        {
-            WeaponSetup.Add(Scythe_limb);
-            WeaponSetup.Add(Scythe);
-        }
-
-        foreach (GameObject limb_Or_Weapon in WeaponSetup)
-            limb_Or_Weapon.SetActive(true);
-    }
-
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        //Player collides with weapon, so equip it
-        if (col.gameObject.layer == LayerMask.NameToLayer("Object"))
-        {
-            weaponSystem.EquipNewWeapon(col.gameObject.tag, 25);
-            col.gameObject.SetActive(false);
-        }
-    }
-
-    private void OnTriggerStay2D(Collider2D col)
-    {
-        //Player is on a levitation boost platform and clicks W -> give them a jump boost 
-        if (col.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && sideview_Controller.grounded)
-            rig.AddForce(Constants.levitationBoost);
-    }
 }

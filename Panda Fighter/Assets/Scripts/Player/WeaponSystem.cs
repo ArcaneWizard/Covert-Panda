@@ -27,11 +27,13 @@ public class WeaponSystem : MonoBehaviour
     private int bulletNumber = 0;
 
     private Shooting shooting;
+    private HoldingTheWeapon holdTheWeapon;
 
     void Awake()
     {
         //define components
         shooting = transform.GetComponent<Shooting>();
+        holdTheWeapon = transform.GetComponent<HoldingTheWeapon>();
 
         //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
@@ -142,7 +144,7 @@ public class WeaponSystem : MonoBehaviour
 
         //switch combat mode for this specific weapon (update arm limb animations)
         shooting.combatMode = combatMode;
-        shooting.configureWeaponAndArms();
+        holdTheWeapon.configureWeaponAndArms();
 
         if (combatMode == "handheld")
             shooting.weaponHeld = getWeapon();

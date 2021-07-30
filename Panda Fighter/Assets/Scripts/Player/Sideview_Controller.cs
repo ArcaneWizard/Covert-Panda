@@ -10,6 +10,7 @@ public class Sideview_Controller : MonoBehaviour
     private Rigidbody2D rig;
     private Transform player;
     private Animator animator;
+    private WeaponSystem weaponSystem;
 
     [Header("Limbs and colliders")]
     public Transform shootingArm;
@@ -65,20 +66,20 @@ public class Sideview_Controller : MonoBehaviour
     private float time = 0;
     private float frames = 0;
 
-    [Header("IK targets")]
-    public Transform beamer_target;
-    public Transform scythe_target;
-
     //ideal aim coordinates when looking to the side, up or down 
     private Vector2 pointingRight, pointingUp, pointingDown, shoulderPos;
     private float upVector, downVector, rightVector;
     private float up, right, down;
+
+    [HideInInspector]
+    public Transform aimTarget;
 
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
         player = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
+        weaponSystem = transform.GetComponent<WeaponSystem>();
 
         cameraTarget = player;
         cameraOffset = camera.transform.position - cameraTarget.transform.position;
@@ -269,8 +270,8 @@ public class Sideview_Controller : MonoBehaviour
                 float dirSlope = (upVector - rightVector) / 90f;
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
-                Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                beamer_target.transform.localPosition = gunLocation;
+                Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+                aimTarget.transform.localPosition = targetLocation;
 
                 float headSlope = (122f - 92.4f) / 90f;
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
@@ -284,8 +285,8 @@ public class Sideview_Controller : MonoBehaviour
                 float dirSlope = (downVector - rightVector) / -90f;
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
-                Vector2 gunLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                beamer_target.transform.localPosition = gunLocation;
+                Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
+                aimTarget.transform.localPosition = targetLocation;
 
                 float headSlope = (67f - 92.4f) / -90f;
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
@@ -536,4 +537,20 @@ public class Sideview_Controller : MonoBehaviour
         downVector = (pointingDown - shoulderPos).magnitude;
     }
 
+    //Player collides with weapon, so equip it
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Object"))
+        {
+            weaponSystem.EquipNewWeapon(col.gameObject.tag, 25);
+            col.gameObject.SetActive(false);
+        }
+    }
+
+    //Player is on a levitation boost platform and clicks W -> give them a jump boost 
+    private void OnTriggerStay2D(Collider2D col)
+    {
+        if (col.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && grounded)
+            rig.AddForce(Constants.levitationBoost);
+    }
 }
