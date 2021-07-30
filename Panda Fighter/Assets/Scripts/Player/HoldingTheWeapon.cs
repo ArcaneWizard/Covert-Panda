@@ -16,6 +16,10 @@ public class HoldingTheWeapon : MonoBehaviour
     public Transform beamerTarget;
     public Transform scytheTarget;
 
+    [Header("Ammo spawn points")]
+    public Transform beamerSpawnPoint;
+    public Transform grenadeSpawnPoint;
+
     private List<GameObject> WeaponSetup = new List<GameObject>();
 
     private WeaponSystem weaponSystem;
@@ -45,6 +49,7 @@ public class HoldingTheWeapon : MonoBehaviour
         {
             WeaponSetup.Add(Hand_limb_back);
             WeaponSetup.Add(Hand_limb_front);
+            shooting.bulletSpawnPoint = grenadeSpawnPoint;
             shooting.armAnimator.SetInteger("Arms Phase", 0);
         }
 
@@ -52,6 +57,7 @@ public class HoldingTheWeapon : MonoBehaviour
         {
             WeaponSetup.Add(Gun_limb);
             WeaponSetup.Add(Beamer);
+            shooting.bulletSpawnPoint = beamerSpawnPoint;
             controller.aimTarget = beamerTarget;
         }
 
@@ -59,6 +65,7 @@ public class HoldingTheWeapon : MonoBehaviour
         {
             WeaponSetup.Add(Gun_limb);
             WeaponSetup.Add(BoomerangLauncher);
+            shooting.bulletSpawnPoint = beamerSpawnPoint;
             controller.aimTarget = beamerTarget;
         }
 
@@ -67,6 +74,7 @@ public class HoldingTheWeapon : MonoBehaviour
             WeaponSetup.Add(Scythe_limb);
             WeaponSetup.Add(Scythe);
             controller.aimTarget = scytheTarget;
+            shooting.armAnimator.SetInteger("Arms Phase", 10);
         }
 
         foreach (GameObject limb_Or_Weapon in WeaponSetup)
