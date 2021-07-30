@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Shooting : MonoBehaviour
 {
 
@@ -28,14 +27,23 @@ public class Shooting : MonoBehaviour
     private Rigidbody2D objectRig;
     private Vector2 aimDir;
 
-    [Header("Shooting + Throwing")]
+    [Header("Bullet Spawn Points")]
     public Transform gunSpawnPoint;
     public Transform handSpawnPoint;
     public Transform grenadeSpawnPoint;
-    public GameObject shoulderBones_GUN;
-    public GameObject shoulderSprites_GUN;
-    public GameObject frontShoulderBone_HAND;
-    public GameObject backShoulderBone_HAND;
+
+    [Header("Arm Bones + Sprites")]
+    public GameObject GUN_LIMB;
+    public GameObject HAND_LIMB_FRONT;
+    public GameObject HAND_LIMB_BACK;
+    public GameObject SCYTHE_LIMB;
+
+    [Header("Weapons")]
+    public GameObject Beamer;
+    public GameObject BoomerangLauncher;
+    public GameObject Scythe;
+
+    private List<GameObject> WeaponSetup = new List<GameObject>();
 
     private float grenadeThrowForce = 1800;
     private float grenadeYForce = -20;
@@ -55,17 +63,16 @@ public class Shooting : MonoBehaviour
 
     void Update()
     {
-        switchCombatMode();
         curveBoomerang();
 
         //after throwing, go back to normal swinging hands walking state
         if (armAnimator.GetInteger("Arms Phase") == 1)
             armAnimator.SetInteger("Arms Phase", 0);
 
-        //Weapons where you right click to throw/shoot 
+        //Weapons where you right click but don't hold down the right mouse button
         if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
         {
-            if (weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
+            if (combatMode != "meelee" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
             {
                 weapon = weaponSystem.getWeapon();
                 weaponSystem.useOneAmmo();
@@ -87,9 +94,23 @@ public class Shooting : MonoBehaviour
                         break;
                 }
             }
+
+            else if (combatMode == "meelee")
+            {
+                switch (weaponSystem.weaponSelected)
+                {
+                    case "Scythe":
+                        attackWithScythe();
+                        break;
+                    default:
+                        Debug.LogError("You haven't specified how to shoot this particular object");
+                        break;
+                }
+            }
         }
 
-        //Weapons where you hold the right mouse button down to continously shoot 
+
+        //Weapons where you can hold the right mouse button down to continously use and drain the weapon
         if (Input.GetMouseButton(0) && weaponSystem.weaponSelected != null)
         {
             if (weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
@@ -119,7 +140,7 @@ public class Shooting : MonoBehaviour
     private void LateUpdate()
     {
         //the grenade or holdable weapon stays in your palm during normal animation cycles until its thrown
-        if (combatMode == "hands")
+        if (combatMode == "handheld")
         {
             if (!GameObject.Equals(weaponHeld, weaponThrown) && weaponSystem.getAmmo() > 0)
             {
@@ -147,6 +168,7 @@ public class Shooting : MonoBehaviour
         weapon.transform.GetComponent<Collider2D>().isTrigger = false;
         weapon.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
     }
+
 
     private IEnumerator aimWithHands()
     {
@@ -223,25 +245,47 @@ public class Shooting : MonoBehaviour
         }
     }
 
-    public void switchCombatMode()
+    private void attackWithScythe()
     {
-        if (combatMode == "gun")
-        {
-            shoulderBones_GUN.SetActive(true);
-            shoulderSprites_GUN.SetActive(true);
-            frontShoulderBone_HAND.gameObject.SetActive(false);
-            backShoulderBone_HAND.gameObject.SetActive(false);
-        }
+        aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+    }
 
-        else if (combatMode == "hands")
-        {
-            shoulderBones_GUN.SetActive(false);
-            shoulderSprites_GUN.SetActive(false);
-            frontShoulderBone_HAND.gameObject.SetActive(true);
-            backShoulderBone_HAND.gameObject.SetActive(true);
+    public void configureWeaponAndArms()
+    {
+        string weapon = weaponSystem.weaponSelected;
 
+        //deactivate the previous animated arm limbs + weapon
+        foreach (GameObject limb_Or_Weapon in WeaponSetup)
+            limb_Or_Weapon.SetActive(false);
+        WeaponSetup.Clear();
+
+        if (weapon == "Grenade" || weapon == "Plasma Orb")
+        {
+            WeaponSetup.Add(HAND_LIMB_BACK);
+            WeaponSetup.Add(HAND_LIMB_FRONT);
             armAnimator.SetInteger("Arms Phase", 0);
         }
+
+        else if (weapon == "Pistol")
+        {
+            WeaponSetup.Add(GUN_LIMB);
+            WeaponSetup.Add(Beamer);
+        }
+
+        else if (weapon == "Boomerang")
+        {
+            WeaponSetup.Add(GUN_LIMB);
+            WeaponSetup.Add(BoomerangLauncher);
+        }
+
+        else if (weapon == "Scythe")
+        {
+            WeaponSetup.Add(SCYTHE_LIMB);
+            WeaponSetup.Add(Scythe);
+        }
+
+        foreach (GameObject limb_Or_Weapon in WeaponSetup)
+            limb_Or_Weapon.SetActive(true);
     }
 
     private void OnTriggerEnter2D(Collider2D col)

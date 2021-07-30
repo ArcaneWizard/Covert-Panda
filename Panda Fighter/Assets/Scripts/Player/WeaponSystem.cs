@@ -66,16 +66,26 @@ public class WeaponSystem : MonoBehaviour
         SelectWeapon("Pistol", "gun");
     }
 
+    // --------------------------------------------------------------------
+    // Associate each weapon with a different number key
+    // --------------------------------------------------------------------
     void Update()
     {
+        //Note that for the second parameter, ie. the combat mode
+        //If you're literally holding the "bullet" you have  to throw, like with a grenade, use the string "handheld"
+        //If it's a gun that has ammo and shoots bullets, use the string "gun"
+        //If it's a meelee based weapon with no bullets, use the string "meelee"
+
         if (Input.GetKeyDown("1"))
-            SelectWeapon("Grenade", "hands");
+            SelectWeapon("Grenade", "handheld");
         if (Input.GetKeyDown("2"))
             SelectWeapon("Pistol", "gun");
         if (Input.GetKeyDown("3"))
             SelectWeapon("Boomerang", "gun");
         if (Input.GetKeyDown("4"))
-            SelectWeapon("Plasma Orb", "hands");
+            SelectWeapon("Plasma Orb", "handheld");
+        if (Input.GetKeyDown("5"))
+            SelectWeapon("Scythe", "meelee");
     }
 
     // --------------------------------------------------------------------
@@ -126,12 +136,15 @@ public class WeaponSystem : MonoBehaviour
         else
             return;
 
-
         //use the next bullet in the bullet pool next time you fire
-        bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
-        shooting.combatMode = combatMode;
+        if (combatMode != "meelee")
+            bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
 
-        if (combatMode == "hands")
+        //switch combat mode for this specific weapon (update arm limb animations)
+        shooting.combatMode = combatMode;
+        shooting.configureWeaponAndArms();
+
+        if (combatMode == "handheld")
             shooting.weaponHeld = getWeapon();
     }
 
