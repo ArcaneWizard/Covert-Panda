@@ -95,6 +95,8 @@ public class WeaponSystem : MonoBehaviour
             SelectWeapon("Scythe", "meelee");
         if (Input.GetKeyDown("6"))
             SelectWeapon("Sniper", "gun");
+        if (Input.GetKeyDown("7"))
+            SelectWeapon("Shotgun", "gun");
     }
 
     // --------------------------------------------------------------------
