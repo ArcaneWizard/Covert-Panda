@@ -15,8 +15,7 @@ public class WeaponSystem : MonoBehaviour
     private Dictionary<string, Sprite> notEquipped = new Dictionary<string, Sprite>();
 
     private Dictionary<string, List<Transform>> physicalWeapons = new Dictionary<string, List<Transform>>();
-    private Dictionary<string, WeaponConfig> weaponConfigurations = new Dictionary<string, WeaponConfig>();
-    private List<Transform> physicalAmmo;
+    public Dictionary<string, WeaponConfig> weaponConfigurations = new Dictionary<string, WeaponConfig>();
 
     public Transform inventory;
     public Transform physicalWeapon;
@@ -25,7 +24,6 @@ public class WeaponSystem : MonoBehaviour
 
     public Sprite slotSelected, slotNotSelected;
 
-    [HideInInspector]
     public string weaponSelected;
     private int bulletNumber = 0;
 
@@ -56,13 +54,13 @@ public class WeaponSystem : MonoBehaviour
         //add 2) each weapon's physical ammo to a dictionary, accessible by weapon tag
         foreach (Transform weaponType in physicalWeapon)
         {
-            weaponConfigurations.Add(weaponType.tag, weaponType.transform.GetComponent<WeaponConfig>());
-            physicalAmmo.Clear();
+            List<Transform> physicalAmmo = new List<Transform>();
 
             foreach (Transform ammo in weaponType)
                 physicalAmmo.Add(ammo);
 
             physicalWeapons.Add(weaponType.tag, physicalAmmo);
+            weaponConfigurations.Add(weaponType.tag, weaponType.transform.GetComponent<WeaponConfig>());
         }
     }
 

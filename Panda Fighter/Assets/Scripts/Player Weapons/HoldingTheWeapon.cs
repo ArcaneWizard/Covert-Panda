@@ -42,54 +42,33 @@ public class HoldingTheWeapon : MonoBehaviour
     public void configureWeaponAndArms()
     {
         string weapon = weaponSystem.weaponSelected;
+        WeaponConfig config = weaponSystem.weaponConfigurations[weapon];
 
         //deactivate the previous animated arm limbs + weapon
         foreach (GameObject limb_Or_Weapon in WeaponSetup)
             limb_Or_Weapon.SetActive(false);
         WeaponSetup.Clear();
 
-        //activate the animated arm limbs + weapon + aim target (if needed) + bullet spawn point (if applicable)
-        if (weapon == "Grenade" || weapon == "Plasma Orb")
-        {
-            WeaponSetup.Add(Hand_limb_back);
-            WeaponSetup.Add(Hand_limb_front);
-            shooting.bulletSpawnPoint = grenadeSpawnPoint;
-            armAnimator.SetInteger("Arms Phase", 0);
-        }
+        //activate the animated arm limbs + weapon and configure the aim target + bullet spawn point (if applicable)
+        if (config.weapon)
+            WeaponSetup.Add(config.weapon);
+        foreach (GameObject limb in config.limbs)
+            WeaponSetup.Add(limb);
 
-        else if (weapon == "Pistol")
-        {
-            WeaponSetup.Add(Gun_limb);
-            WeaponSetup.Add(Beamer);
-            shooting.bulletSpawnPoint = beamerSpawnPoint;
-            controller.aimTarget = beamerTarget;
-        }
-
-        else if (weapon == "Boomerang")
-        {
-            WeaponSetup.Add(Gun_limb);
-            WeaponSetup.Add(BoomerangLauncher);
-            shooting.bulletSpawnPoint = beamerSpawnPoint;
-            controller.aimTarget = beamerTarget;
-        }
-
-        else if (weapon == "Scythe")
-        {
-            WeaponSetup.Add(Scythe_limb);
-            WeaponSetup.Add(Scythe);
-            controller.aimTarget = scytheTarget;
-            armAnimator.SetInteger("Arms Phase", 10);
-        }
-
-        else if (weapon == "Sniper")
-        {
-            WeaponSetup.Add(Long_Barrel_limb);
-            WeaponSetup.Add(Sniper);
-            shooting.bulletSpawnPoint = sniperBulletPoint;
-            controller.aimTarget = longBarrelTarget;
-        }
+        shooting.bulletSpawnPoint = config.bulletSpawnPoint;
+        controller.aimTarget = config.aimTarget;
+        defaultWeaponAnimations(weapon);
 
         foreach (GameObject limb_Or_Weapon in WeaponSetup)
             limb_Or_Weapon.SetActive(true);
+    }
+
+    private void defaultWeaponAnimations(string weapon)
+    {
+        if (weapon == "Grenade" || weapon == "Plasma Orb")
+            armAnimator.SetInteger("Arms Phase", 0);
+
+        else if (weapon == "Scythe")
+            armAnimator.SetInteger("Arms Phase", 10);
     }
 }

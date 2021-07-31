@@ -5,7 +5,7 @@ using UnityEngine;
 public class WeaponConfig : MonoBehaviour
 {
     public List<GameObject> limbs = new List<GameObject>();
-    public GameObject bulletSpawnPoint;
+    public Transform bulletSpawnPoint;
     public GameObject weapon;
-    public GameObject IK_Target;
+    public Transform aimTarget;
 }

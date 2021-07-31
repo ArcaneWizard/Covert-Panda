@@ -273,7 +273,8 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                aimTarget.transform.localPosition = targetLocation;
+                if (aimTarget)
+                    aimTarget.transform.localPosition = targetLocation;
 
                 float headSlope = (122f - 92.4f) / 90f;
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
@@ -288,7 +289,8 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                aimTarget.transform.localPosition = targetLocation;
+                if (aimTarget)
+                    aimTarget.transform.localPosition = targetLocation;
 
                 float headSlope = (67f - 92.4f) / -90f;
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);

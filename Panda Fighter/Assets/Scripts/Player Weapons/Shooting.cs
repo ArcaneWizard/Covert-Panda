@@ -23,7 +23,6 @@ public class Shooting : MonoBehaviour
     private GameObject weaponThrown;
     private GameObject lastBoomerangThrown;
 
-    [HideInInspector]
     public string combatMode = "gun";
 
     [HideInInspector]
