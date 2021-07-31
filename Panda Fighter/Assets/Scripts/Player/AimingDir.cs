@@ -15,4 +15,5 @@ public static class AimingDir
     public static Vector2 scythePointingUp = new Vector2(0.27f, 3.29f);
     public static Vector2 scythePointingDown = new Vector2(0.11f, 0.81f);
     public static Vector2 scytheShoulderPos = new Vector2(0.228f, 2.125f);
+    public static Vector2 scytheAttackPos = new Vector2(0.672f, 0.977f);
 }

@@ -11,6 +11,7 @@ public class Sideview_Controller : MonoBehaviour
     private Transform player;
     private Animator animator;
     private WeaponSystem weaponSystem;
+    private WeaponAttacks weaponAttacks;
 
     [Header("Limbs and colliders")]
     public Transform shootingArm;
@@ -80,6 +81,7 @@ public class Sideview_Controller : MonoBehaviour
         player = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         weaponSystem = transform.GetComponent<WeaponSystem>();
+        weaponAttacks = transform.GetComponent<WeaponAttacks>();
 
         cameraTarget = player;
         cameraOffset = camera.transform.position - cameraTarget.transform.position;
@@ -262,7 +264,7 @@ public class Sideview_Controller : MonoBehaviour
             shootAngle -= zAngle;
 
 
-            if (shootDirection.y >= 0)
+            if (shootDirection.y >= 0 && !weaponAttacks.disableAiming)
             {
                 float slope = (up - right) / 90f;
                 float weaponRotation = shootAngle * slope + right;
@@ -277,7 +279,7 @@ public class Sideview_Controller : MonoBehaviour
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
             }
 
-            if (shootDirection.y < 0)
+            if (shootDirection.y < 0 && !weaponAttacks.disableAiming)
             {
                 float slope = (down - right) / -90f;
                 float weaponRotation = shootAngle * slope + right;
