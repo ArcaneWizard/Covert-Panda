@@ -65,7 +65,7 @@ public class HoldingTheWeapon : MonoBehaviour
 
     private void defaultWeaponAnimations(string weapon)
     {
-        if (weapon == "Grenade" || weapon == "Plasma Orb")
+        if (weapon == "Grenade" || weapon == "Plasma Orb" || weapon == "Boomerang")
             armAnimator.SetInteger("Arms Phase", 0);
 
         else if (weapon == "Scythe")

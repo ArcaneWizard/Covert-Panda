@@ -69,8 +69,8 @@ public class WeaponSystem : MonoBehaviour
     // --------------------------------------------------------------------
     void Start()
     {
-        EquipNewWeapon("Pistol", 25);
-        SelectWeapon("Pistol", "gun");
+        EquipNewWeapon("Shielder", 25);
+        SelectWeapon("Shielder", "gun");
     }
 
     // --------------------------------------------------------------------
@@ -86,9 +86,9 @@ public class WeaponSystem : MonoBehaviour
         if (Input.GetKeyDown("1"))
             SelectWeapon("Grenade", "handheld");
         if (Input.GetKeyDown("2"))
-            SelectWeapon("Pistol", "gun");
+            SelectWeapon("Shielder", "gun");
         if (Input.GetKeyDown("3"))
-            SelectWeapon("Boomerang", "gun");
+            SelectWeapon("Boomerang", "handheld");
         if (Input.GetKeyDown("4"))
             SelectWeapon("Plasma Orb", "handheld");
         if (Input.GetKeyDown("5"))

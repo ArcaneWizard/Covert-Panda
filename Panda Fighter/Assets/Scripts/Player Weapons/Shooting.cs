@@ -17,8 +17,8 @@ public class Shooting : MonoBehaviour
     private string weapon;
     [HideInInspector]
     public Vector2 aimDir;
+    private float wait;
 
-    [HideInInspector]
     public GameObject weaponHeld;
     private GameObject weaponThrown;
     private GameObject lastBoomerangThrown;
@@ -110,25 +110,31 @@ public class Shooting : MonoBehaviour
         aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
 
         ammunition.transform.position = bulletSpawnPoint.position;
-        ammunition.SetActive(true);
-
         ammunition.transform.GetComponent<Collider2D>().isTrigger = false;
         ammunition.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        ammunition.transform.GetComponent<Rigidbody2D>().angularVelocity = 0;
+
+        ammunition.SetActive(true);
     }
 
 
-    public IEnumerator aimWithHands()
+    public IEnumerator aimWithHands(float trackingMultiplier, float trackingOffset)
     {
         //calculate direction to throw or shoot object in
         aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+        wait = ((-aimDir.y + 1) * trackingMultiplier + trackingOffset);
 
-        yield return new WaitForSeconds(0.299f);
-
+        yield return new WaitForSeconds(wait);
         ammunition.transform.position = bulletSpawnPoint.position;
+        weaponThrown = ammunition;
+
         ammunition.transform.GetComponent<Collider2D>().isTrigger = false;
         ammunition.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+        ammunition.transform.GetComponent<Rigidbody2D>().angularVelocity = 0;
+
         ammunition.SetActive(true);
-        weaponThrown = ammunition;
+        ammunition.transform.localEulerAngles = new Vector3(0, 0, ammunition.transform.localEulerAngles.z);
+        weaponAttacks.isThrowing = false;
     }
 
 }

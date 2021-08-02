@@ -8,15 +8,16 @@ public class WeaponAttacks : MonoBehaviour
     private float grenadeThrowForce = 1800;
     private float grenadeYForce = -20;
     private float boomerangSpeed = 41;
-    private float plasmaBulletSpeed = 30;
-    private float plasmaFireRate = 0.16f;
-    private Vector2 boomerangSpinSpeed = new Vector2(180, 250);
+    private Vector2 boomerangSpinSpeed = new Vector2(600, 750);
+    private float sniperBulletSpeed = 100;
+    private float shielderBulletSpeed = 31;
 
     private Animator armAnimator;
     public GameObject scytheTracker;
 
     [HideInInspector]
     public bool disableAiming = false;
+    public bool isThrowing = false;
 
     private Shooting shooting;
     private WeaponSystem weaponSystem;
@@ -36,21 +37,20 @@ public class WeaponAttacks : MonoBehaviour
         if (weapon == "Grenade")
             StartCoroutine(throwGrenade());
         else if (weapon == "Boomerang")
-            shootBoomerang();
+            StartCoroutine(throwBoomerang());
         else if (weapon == "Plasma Orb")
             StartCoroutine(throwPlasmaOrb());
         else if (weapon == "Sniper")
-            shootPlasmaBullet();
+            shootBulletInStraightLine(sniperBulletSpeed);
+        else if (weapon == "Shielder")
+            shootBulletInStraightLine(shielderBulletSpeed);
         else
             Debug.LogError("You haven't specified how to shoot this particular object");
     }
 
     public void spamFireAttack(string weapon)
     {
-        if (weapon == "Pistol")
-            shootPlasmaBullet();
-        else
-            Debug.LogError("You haven't specified how to shoot this particular object");
+
     }
 
     public void meeleeAttack(string weapon)
@@ -63,10 +63,12 @@ public class WeaponAttacks : MonoBehaviour
 
     private IEnumerator throwGrenade()
     {
-        //get aim direction from mouse input
-        StartCoroutine(shooting.aimWithHands());
+        isThrowing = true;
+        StartCoroutine(shooting.aimWithHands(0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
-        yield return new WaitForSeconds(0.3f);
+
+        while (isThrowing)
+            yield return null;
 
         //apply a large force to throw the grenadeaa
         Vector2 unadjustedForce = grenadeThrowForce * shooting.aimDir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
@@ -77,9 +79,12 @@ public class WeaponAttacks : MonoBehaviour
     private IEnumerator throwPlasmaOrb()
     {
         //get aim direction from mouse input
-        StartCoroutine(shooting.aimWithHands());
+        isThrowing = true;
+        StartCoroutine(shooting.aimWithHands(0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
-        yield return new WaitForSeconds(0.3f);
+
+        while (isThrowing)
+            yield return null;
 
         //apply a large force to throw the grenade
         Vector2 unadjustedForce = grenadeThrowForce * shooting.aimDir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
@@ -87,15 +92,29 @@ public class WeaponAttacks : MonoBehaviour
         objectRig.AddForce(unadjustedForce * objectRig.mass);
     }
 
-    private void shootPlasmaBullet()
+    private void shootBulletInStraightLine(float speed)
     {
         //get aim direction from mouse input
         shooting.aimWithGun();
-        shooting.timeLeftBtwnShots = plasmaFireRate;
 
         //spawn and orient the bullet correctly
         ammunition.transform.right = shooting.aimDir;
-        objectRig.velocity = shooting.aimDir * plasmaBulletSpeed;
+        objectRig.velocity = shooting.aimDir * speed;
+    }
+
+    private IEnumerator throwBoomerang()
+    {
+        //get aim direction from mouse input
+        isThrowing = true;
+        StartCoroutine(shooting.aimWithHands(0.22f, 0.22f));
+        armAnimator.SetInteger("Arms Phase", 1);
+
+        while (isThrowing)
+            yield return null;
+
+        ammunition.transform.GetComponent<Animator>().SetBool("glare", false);
+        objectRig.velocity = shooting.aimDir * boomerangSpeed;
+        objectRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
     }
 
     private void shootBoomerang()
@@ -128,6 +147,7 @@ public class WeaponAttacks : MonoBehaviour
         armAnimator.SetInteger("Arms Phase", 11);
         disableAiming = true;
 
+        //stop "aiming" the scythe wherever the player looks while the attack animation plays
         scytheTracker.transform.GetChild(0).localPosition = AimingDir.scytheAttackPos;
         yield return new WaitForSeconds(0.04f);
         scytheTracker.SetActive(false);
