@@ -165,6 +165,7 @@ public class WeaponSystem : MonoBehaviour
     public void EquipNewWeapon(string weapon, int bullets)
     {
         //update weapon sprite + ammo
+        Debug.Log(weapon);
         weaponIcon[weapon].sprite = equipped[weapon];
         ammo[weapon].text = bullets.ToString();
     }
