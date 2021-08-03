@@ -151,7 +151,7 @@ public class WeaponSystem : MonoBehaviour
             return;
 
         //use the next bullet in the bullet pool next time you fire
-        if (combatMode != "meelee")
+        if (combatMode != "meelee" || physicalWeapons.ContainsKey(weaponSelected))
             bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
 
         //switch combat mode for this specific weapon (update arm limb animations)

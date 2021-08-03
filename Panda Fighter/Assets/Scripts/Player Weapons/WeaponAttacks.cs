@@ -5,18 +5,21 @@ using UnityEngine;
 
 public class WeaponAttacks : MonoBehaviour
 {
-    private float grenadeThrowForce = 1800;
+    private float grenadeThrowForce = 2200;
     private float grenadeYForce = -20;
-    private float boomerangSpeed = 41;
+    private float boomerangSpeed = 61;
     private Vector2 boomerangSpinSpeed = new Vector2(600, 750);
     private float sniperBulletSpeed = 100;
-    private float shielderBulletSpeed = 31;
-    private float shotgunBulletSpeed = 30;
+    private float shielderBulletSpeed = 45;
+    private float shotgunBulletSpeed = 52;
+
+    public float scytheThrowSpeed = 50;
+    public Vector2 scytheSpinSpeed = new Vector2(400, 600);
 
     public List<Transform> goldenShotgunBits = new List<Transform>();
     private int shotgunBitCounter = 0;
     public Vector2 goldenBitsForceX, goldenBitsForceY;
-    public float goldenShotgunSpread = 15;
+    private float goldenShotgunSpread = 22;
 
     private List<GameObject> bullets = new List<GameObject>();
     private List<Rigidbody2D> objectRigs = new List<Rigidbody2D>();
@@ -141,7 +144,7 @@ public class WeaponAttacks : MonoBehaviour
 
     public void curveBoomerang()
     {
-        if (weaponSystem.weaponSelected == "Boomerang" && Input.GetMouseButtonDown(1) && ammunition && ammunition.activeSelf)
+        if (weaponSystem.weaponSelected == "Boomerang" && ammunition && ammunition.activeSelf)
         {
             if (shooting.aimDir.x >= 0)
                 objectRig.velocity = Quaternion.Euler(0, 0, -90) * shooting.aimDir * boomerangSpeed;
@@ -153,23 +156,36 @@ public class WeaponAttacks : MonoBehaviour
         }
     }
 
+    public IEnumerator throwScythe()
+    {
+        if (weaponSystem.weaponSelected == "Scythe")
+        {
+            shooting.shootAnotherBullet();
+            StartCoroutine(shooting.aimThrowableWeapon(0.04f, 0.22f));
+            armAnimator.SetInteger("Arms Phase", 11);
+
+            while (!shouldThrow)
+                yield return null;
+
+            objectRig.velocity = shooting.aimDir * scytheThrowSpeed;
+            objectRig.angularVelocity = Random.Range(scytheSpinSpeed.x, scytheSpinSpeed.y) * Mathf.Sign(-shooting.aimDir.x);
+        }
+    }
+
+
     private IEnumerator attackWithScythe()
     {
         armAnimator.SetInteger("Arms Phase", 11);
         attackAnimationPlaying = true;
         disableAiming = true;
 
-        //stop "aiming" the scythe wherever the player looks while the attack animation plays
-        scytheTracker.transform.GetChild(0).localPosition = AimingDir.scytheAttackPos;
-        yield return new WaitForSeconds(0.04f);
-        scytheTracker.SetActive(false);
-
         while (armAnimator.GetCurrentAnimatorClipInfo(0)[0].clip.name == "swinging scythe" ||
         armAnimator.GetInteger("Arms Phase") == 11)
             yield return null;
 
-        scytheTracker.SetActive(true);
         disableAiming = false;
+        yield return new WaitForSeconds(0.04f);
+        scytheTracker.SetActive(true);
     }
 
     private void shootBulletInArcWithParticles()
@@ -196,7 +212,8 @@ public class WeaponAttacks : MonoBehaviour
             goldenShotgunBits[i].transform.right = shooting.aimDir;
             goldenShotgunBits[i].position = shooting.bulletSpawnPoint.position;
             goldenShotgunBits[i].GetComponent<Rigidbody2D>().AddForce(new Vector2(
-                Random.Range(goldenBitsForceX.x, goldenBitsForceY.y), Random.Range(goldenBitsForceY.x, goldenBitsForceY.y))
+                Random.Range(goldenBitsForceX.x, goldenBitsForceY.y) * Mathf.Sign(shooting.aimDir.x),
+                Random.Range(goldenBitsForceY.x, goldenBitsForceY.y))
             );
         }
 
