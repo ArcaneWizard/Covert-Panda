@@ -264,7 +264,7 @@ public class Sideview_Controller : MonoBehaviour
             shootAngle -= zAngle;
 
 
-            if (shootDirection.y >= 0 && !weaponAttacks.disableAiming)
+            if (shootDirection.y >= 0)
             {
                 float slope = (up - right) / 90f;
                 float weaponRotation = shootAngle * slope + right;
@@ -273,14 +273,14 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                if (aimTarget)
+                if (aimTarget && !weaponAttacks.disableAiming)
                     aimTarget.transform.localPosition = targetLocation;
 
                 float headSlope = (122f - 92.4f) / 90f;
                 head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
             }
 
-            if (shootDirection.y < 0 && !weaponAttacks.disableAiming)
+            if (shootDirection.y < 0)
             {
                 float slope = (down - right) / -90f;
                 float weaponRotation = shootAngle * slope + right;
@@ -289,7 +289,7 @@ public class Sideview_Controller : MonoBehaviour
                 float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
 
                 Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-                if (aimTarget)
+                if (aimTarget && !weaponAttacks.disableAiming)
                     aimTarget.transform.localPosition = targetLocation;
 
                 float headSlope = (67f - 92.4f) / -90f;

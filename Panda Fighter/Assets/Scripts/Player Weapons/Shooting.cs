@@ -114,6 +114,7 @@ public class Shooting : MonoBehaviour
         ammunition.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         ammunition.transform.GetComponent<Rigidbody2D>().angularVelocity = 0;
 
+        ammunition.SetActive(false);
         ammunition.SetActive(true);
     }
 
@@ -132,6 +133,7 @@ public class Shooting : MonoBehaviour
         ammunition.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         ammunition.transform.GetComponent<Rigidbody2D>().angularVelocity = 0;
 
+        ammunition.SetActive(false);
         ammunition.SetActive(true);
         ammunition.transform.localEulerAngles = new Vector3(0, 0, ammunition.transform.localEulerAngles.z);
         weaponAttacks.isThrowing = false;
