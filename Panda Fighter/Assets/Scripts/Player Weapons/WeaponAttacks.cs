@@ -63,11 +63,11 @@ public class WeaponAttacks : MonoBehaviour
 
     private IEnumerator throwGrenade()
     {
-        isThrowing = true;
+        isThrowing = false;
         StartCoroutine(shooting.aimWithHands(0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (isThrowing)
+        while (!isThrowing)
             yield return null;
 
         //apply a large force to throw the grenadeaa
@@ -79,17 +79,20 @@ public class WeaponAttacks : MonoBehaviour
     private IEnumerator throwPlasmaOrb()
     {
         //get aim direction from mouse input
-        isThrowing = true;
+        isThrowing = false;
         StartCoroutine(shooting.aimWithHands(0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (isThrowing)
+        while (!isThrowing)
             yield return null;
 
         //apply a large force to throw the grenade
         Vector2 unadjustedForce = grenadeThrowForce * shooting.aimDir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
         objectRig.velocity = new Vector2(0, 0);
         objectRig.AddForce(unadjustedForce * objectRig.mass);
+
+        //start timed plasma explosion
+        StartCoroutine(ammunition.transform.GetComponent<PlasmaOrb>().startTimedPlasmaExplosion());
     }
 
     private void shootBulletInStraightLine(float speed)
@@ -105,11 +108,11 @@ public class WeaponAttacks : MonoBehaviour
     private IEnumerator throwBoomerang()
     {
         //get aim direction from mouse input
-        isThrowing = true;
+        isThrowing = false;
         StartCoroutine(shooting.aimWithHands(0.22f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (isThrowing)
+        while (!isThrowing)
             yield return null;
 
         ammunition.transform.GetComponent<Animator>().SetBool("glare", false);

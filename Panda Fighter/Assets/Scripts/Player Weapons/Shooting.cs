@@ -136,7 +136,7 @@ public class Shooting : MonoBehaviour
         ammunition.SetActive(false);
         ammunition.SetActive(true);
         ammunition.transform.localEulerAngles = new Vector3(0, 0, ammunition.transform.localEulerAngles.z);
-        weaponAttacks.isThrowing = false;
+        weaponAttacks.isThrowing = true;
     }
 
 }
