@@ -14,7 +14,6 @@ public class Shooting : MonoBehaviour
 
     private Rigidbody2D rig;
     private GameObject ammunition = null;
-    private string weapon;
     [HideInInspector]
     public Vector2 aimDir;
     private float wait;
@@ -43,22 +42,17 @@ public class Shooting : MonoBehaviour
     void Update()
     {
         weaponAttacks.curveBoomerang();
-        weaponAttacks.resetAttackAnimations();
 
         //Weapons where you right click but don't hold down the right mouse button
         if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
         {
-            if (combatMode != "meelee" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
-            {
-                ammunition = weaponSystem.getWeapon();
-                weaponSystem.useOneAmmo();
-                objectRig = ammunition.transform.GetComponent<Rigidbody2D>();
+            if (combatMode == "gun" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
+                singleFireAttack();
 
-                weaponAttacks.updateEntities(ammunition, objectRig);
-                weaponAttacks.singleFireAttack(weaponSystem.weaponSelected);
-            }
+            else if (combatMode == "handheld" && !weaponAttacks.attackAnimationPlaying && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
+                singleFireAttack();
 
-            else if (combatMode == "meelee")
+            else if (combatMode == "meelee" && !weaponAttacks.attackAnimationPlaying)
             {
                 weaponAttacks.updateEntities(ammunition, objectRig);
                 weaponAttacks.meeleeAttack(weaponSystem.weaponSelected);
@@ -69,12 +63,11 @@ public class Shooting : MonoBehaviour
         //Weapons where you can hold the right mouse button down to continously use and drain the weapon
         if (Input.GetMouseButton(0) && weaponSystem.weaponSelected != null)
         {
-            if (combatMode != "meelee" && weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
+            if (combatMode == "gun" && weaponSystem.getAmmo() > 0 && timeLeftBtwnShots <= 0 && weaponSystem.getWeapon().tag == "spamFire")
             {
                 ammunition = weaponSystem.getWeapon();
                 weaponSystem.useOneAmmo();
                 objectRig = ammunition.transform.GetComponent<Rigidbody2D>();
-                weapon = weaponSystem.weaponSelected;
 
                 weaponAttacks.updateEntities(ammunition, objectRig);
                 weaponAttacks.spamFireAttack(weaponSystem.weaponSelected);
@@ -104,6 +97,24 @@ public class Shooting : MonoBehaviour
         }
     }
 
+    private void singleFireAttack()
+    {
+        ammunition = weaponSystem.getWeapon();
+        weaponSystem.useOneAmmo();
+        objectRig = ammunition.transform.GetComponent<Rigidbody2D>();
+
+        weaponAttacks.updateEntities(ammunition, objectRig);
+        weaponAttacks.singleFireAttack(weaponSystem.weaponSelected);
+    }
+
+    public void shootAnotherBullet()
+    {
+        ammunition = weaponSystem.getWeapon();
+        weaponSystem.useOneAmmo();
+        objectRig = ammunition.transform.GetComponent<Rigidbody2D>();
+        weaponAttacks.updateEntities(ammunition, objectRig);
+    }
+
     public void aimWithGun()
     {
         //calculate direction to throw or shoot object in
@@ -125,6 +136,10 @@ public class Shooting : MonoBehaviour
         aimDir = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
         wait = ((-aimDir.y + 1) * trackingMultiplier + trackingOffset);
 
+        weaponAttacks.shouldThrow = false;
+        weaponAttacks.attackAnimationPlaying = true;
+
+        Debug.Log(wait);
         yield return new WaitForSeconds(wait);
         ammunition.transform.position = bulletSpawnPoint.position;
         weaponThrown = ammunition;
@@ -132,11 +147,11 @@ public class Shooting : MonoBehaviour
         ammunition.transform.GetComponent<Collider2D>().isTrigger = false;
         ammunition.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
         ammunition.transform.GetComponent<Rigidbody2D>().angularVelocity = 0;
-
         ammunition.SetActive(false);
         ammunition.SetActive(true);
         ammunition.transform.localEulerAngles = new Vector3(0, 0, ammunition.transform.localEulerAngles.z);
-        weaponAttacks.isThrowing = true;
+
+        weaponAttacks.shouldThrow = true;
     }
 
 }

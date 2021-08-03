@@ -11,13 +11,22 @@ public class WeaponAttacks : MonoBehaviour
     private Vector2 boomerangSpinSpeed = new Vector2(600, 750);
     private float sniperBulletSpeed = 100;
     private float shielderBulletSpeed = 31;
+    private float shotgunBulletSpeed = 30;
 
-    private Animator armAnimator;
+    public List<Transform> goldenShotgunBits = new List<Transform>();
+    private int shotgunBitCounter = 0;
+    public Vector2 goldenBitsForceX, goldenBitsForceY;
+    public float goldenShotgunSpread = 15;
+
+    private List<GameObject> bullets = new List<GameObject>();
+    private List<Rigidbody2D> objectRigs = new List<Rigidbody2D>();
+
+    [HideInInspector]
+    public Animator armAnimator;
     public GameObject scytheTracker;
 
     [HideInInspector]
-    public bool disableAiming = false;
-    public bool isThrowing = false;
+    public bool disableAiming, shouldThrow, attackAnimationPlaying;
 
     private Shooting shooting;
     private WeaponSystem weaponSystem;
@@ -44,6 +53,8 @@ public class WeaponAttacks : MonoBehaviour
             shootBulletInStraightLine(sniperBulletSpeed);
         else if (weapon == "Shielder")
             shootBulletInStraightLine(shielderBulletSpeed);
+        else if (weapon == "Shotgun")
+            shootBulletInArcWithParticles();
         else
             Debug.LogError("You haven't specified how to shoot this particular object");
     }
@@ -63,11 +74,10 @@ public class WeaponAttacks : MonoBehaviour
 
     private IEnumerator throwGrenade()
     {
-        isThrowing = false;
         StartCoroutine(shooting.aimWithHands(0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (!isThrowing)
+        while (!shouldThrow)
             yield return null;
 
         //apply a large force to throw the grenadeaa
@@ -79,11 +89,10 @@ public class WeaponAttacks : MonoBehaviour
     private IEnumerator throwPlasmaOrb()
     {
         //get aim direction from mouse input
-        isThrowing = false;
         StartCoroutine(shooting.aimWithHands(0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (!isThrowing)
+        while (!shouldThrow)
             yield return null;
 
         //apply a large force to throw the grenade
@@ -108,11 +117,10 @@ public class WeaponAttacks : MonoBehaviour
     private IEnumerator throwBoomerang()
     {
         //get aim direction from mouse input
-        isThrowing = false;
         StartCoroutine(shooting.aimWithHands(0.22f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (!isThrowing)
+        while (!shouldThrow)
             yield return null;
 
         ammunition.transform.GetComponent<Animator>().SetBool("glare", false);
@@ -148,6 +156,7 @@ public class WeaponAttacks : MonoBehaviour
     private IEnumerator attackWithScythe()
     {
         armAnimator.SetInteger("Arms Phase", 11);
+        attackAnimationPlaying = true;
         disableAiming = true;
 
         //stop "aiming" the scythe wherever the player looks while the attack animation plays
@@ -163,20 +172,40 @@ public class WeaponAttacks : MonoBehaviour
         disableAiming = false;
     }
 
+    private void shootBulletInArcWithParticles()
+    {
+        //shoot three golden shotgun bullets with spread
+        shooting.aimWithGun();
+        ammunition.transform.right = shooting.aimDir;
+        objectRig.velocity = shooting.aimDir * shotgunBulletSpeed;
+
+        shooting.shootAnotherBullet();
+        shooting.aimWithGun();
+        ammunition.transform.right = Quaternion.AngleAxis(goldenShotgunSpread, Vector3.forward) * shooting.aimDir;
+        objectRig.velocity = Quaternion.AngleAxis(goldenShotgunSpread, Vector3.forward) * shooting.aimDir * shotgunBulletSpeed;
+
+        shooting.shootAnotherBullet();
+        shooting.aimWithGun();
+        ammunition.transform.right = Quaternion.AngleAxis(-goldenShotgunSpread, Vector3.forward) * shooting.aimDir;
+        objectRig.velocity = Quaternion.AngleAxis(-goldenShotgunSpread, Vector3.forward) * shooting.aimDir * shotgunBulletSpeed;
+
+        //explode golden shotgun dust everywhere
+        for (int i = shotgunBitCounter; i < shotgunBitCounter + goldenShotgunBits.Count / 2; i++)
+        {
+            goldenShotgunBits[i].gameObject.SetActive(true);
+            goldenShotgunBits[i].transform.right = shooting.aimDir;
+            goldenShotgunBits[i].position = shooting.bulletSpawnPoint.position;
+            goldenShotgunBits[i].GetComponent<Rigidbody2D>().AddForce(new Vector2(
+                Random.Range(goldenBitsForceX.x, goldenBitsForceY.y), Random.Range(goldenBitsForceY.x, goldenBitsForceY.y))
+            );
+        }
+
+        shotgunBitCounter = (shotgunBitCounter + goldenShotgunBits.Count / 2) % goldenShotgunBits.Count;
+    }
+
     public void updateEntities(GameObject ammunition, Rigidbody2D objectRig)
     {
         this.objectRig = objectRig;
         this.ammunition = ammunition;
-    }
-
-    public void resetAttackAnimations()
-    {
-        //after throwing grenade
-        if (armAnimator.GetInteger("Arms Phase") == 1)
-            armAnimator.SetInteger("Arms Phase", 0);
-
-        //after swinging scythe
-        if (armAnimator.GetInteger("Arms Phase") == 11)
-            armAnimator.SetInteger("Arms Phase", 10);
     }
 }

@@ -29,12 +29,14 @@ public class WeaponSystem : MonoBehaviour
 
     private Shooting shooting;
     private HoldingTheWeapon holdTheWeapon;
+    private IKTracking iKTracking;
 
     void Awake()
     {
         //define components
         shooting = transform.GetComponent<Shooting>();
         holdTheWeapon = transform.GetComponent<HoldingTheWeapon>();
+        iKTracking = transform.GetComponent<IKTracking>();
 
         //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
@@ -71,6 +73,7 @@ public class WeaponSystem : MonoBehaviour
     {
         EquipNewWeapon("Shielder", 25);
         SelectWeapon("Shielder", "gun");
+        iKTracking.setIKCoordinates("Shielder");
     }
 
     // --------------------------------------------------------------------

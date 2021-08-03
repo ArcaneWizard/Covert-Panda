@@ -28,6 +28,7 @@ public class HoldingTheWeapon : MonoBehaviour
     private Shooting shooting;
     private Sideview_Controller controller;
     private Animator armAnimator;
+    private IKTracking iKTracking;
 
 
     private void Awake()
@@ -36,6 +37,7 @@ public class HoldingTheWeapon : MonoBehaviour
         weaponSystem = transform.GetComponent<WeaponSystem>();
         controller = transform.GetComponent<Sideview_Controller>();
         armAnimator = transform.GetComponent<Animator>();
+        iKTracking = transform.GetComponent<IKTracking>();
     }
 
     //specify which limbs, weapon and aim target to activate (the latter helps a weapon track while aiming) 
@@ -61,6 +63,9 @@ public class HoldingTheWeapon : MonoBehaviour
 
         foreach (GameObject limb_Or_Weapon in WeaponSetup)
             limb_Or_Weapon.SetActive(true);
+
+        //use the right coordinates for the weapon's IK aim target
+        iKTracking.setIKCoordinates(weapon);
     }
 
     private void defaultWeaponAnimations(string weapon)

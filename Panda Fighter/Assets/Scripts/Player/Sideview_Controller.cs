@@ -68,7 +68,8 @@ public class Sideview_Controller : MonoBehaviour
     private float frames = 0;
 
     //ideal aim coordinates when looking to the side, up or down 
-    private Vector2 pointingRight, pointingUp, pointingDown, shoulderPos;
+    [HideInInspector]
+    public Vector2 pointingRight, pointingUp, pointingDown, shoulderPos;
     private float upVector, downVector, rightVector;
     private float up, right, down;
 
@@ -85,13 +86,6 @@ public class Sideview_Controller : MonoBehaviour
 
         cameraTarget = player;
         cameraOffset = camera.transform.position - cameraTarget.transform.position;
-
-        //get ideal angle aim coordinates
-        pointingRight = AimingDir.gunPointingRight;
-        pointingUp = AimingDir.gunPointingUp;
-        pointingDown = AimingDir.gunPointingDown;
-        shoulderPos = AimingDir.gunShoulderPos;
-        calculateShoulderAngles();
 
         StartCoroutine(findWalls());
         StartCoroutine(isGrounded());
@@ -528,7 +522,7 @@ public class Sideview_Controller : MonoBehaviour
         }
     }
 
-    private void calculateShoulderAngles()
+    public void calculateShoulderAngles()
     {
         //ideal angle from shoulder to specific gun coordinates
         up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
