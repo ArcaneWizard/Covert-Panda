@@ -12,6 +12,7 @@ public class Sideview_Controller : MonoBehaviour
     private Animator animator;
     private WeaponSystem weaponSystem;
     private WeaponAttacks weaponAttacks;
+    private AnimationController controller;
 
     [Header("Limbs and colliders")]
     public Transform shootingArm;
@@ -26,24 +27,8 @@ public class Sideview_Controller : MonoBehaviour
     public Camera camera;
     public Transform alienToFollow;
 
-    private Transform cameraTarget;
-    private Vector3 cameraOffset;
-    private float cameraPosX;
-    private float cameraPosY;
-    private float cameraVelocityX = 0.0f;
-    private float cameraVelocityY = 0.0f;
-    private float smoothTimeX = 0.15f;
-    private float smoothTimeY = 0.4f;
-    private float mouseDistanceX;
-    private float mouseDistanceY;
-    public Transform centerOfMap;
-
     private float speed = 10.0f;
     private float jumpForce = 1130f;
-
-    private bool stopSpinning = true;
-    private bool disableLimbs = false;
-    private int spinDirection = 0;
 
     [Header("Ground detection")]
     public Transform leftFoot;
@@ -61,7 +46,8 @@ public class Sideview_Controller : MonoBehaviour
     private Vector2 groundDir;
     private bool checkForAngle;
 
-    private int movementDirX;
+    [HideInInspector]
+    public int movementDirX;
     private float zAngle;
 
     private float time = 0;
@@ -83,9 +69,7 @@ public class Sideview_Controller : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         weaponSystem = transform.GetComponent<WeaponSystem>();
         weaponAttacks = transform.GetComponent<WeaponAttacks>();
-
-        cameraTarget = player;
-        cameraOffset = camera.transform.position - cameraTarget.transform.position;
+        controller = transform.GetComponent<AnimationController>();
 
         StartCoroutine(findWalls());
         StartCoroutine(isGrounded());
@@ -93,9 +77,6 @@ public class Sideview_Controller : MonoBehaviour
 
     void Update()
     {
-        playerAnimationController();
-        StartCoroutine(handleColliders());
-
         //use A and D keys for left or right movement
         movementDirX = 0;
         if (Input.GetKey(KeyCode.D))
@@ -108,13 +89,7 @@ public class Sideview_Controller : MonoBehaviour
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce * 1.1f));
-
-            spinDirection = (movementDirX != 0) ? -movementDirX : ((player.localEulerAngles.y == 0) ? -1 : 1);
-            stopSpinning = false;
-            disableLimbs = true;
-
-            StartCoroutine(timeDoubleSpin());
-            animator.SetBool("double jump", true);
+            controller.startDoubleJumpAnimation();
         }
 
         if (Input.GetKeyDown(KeyCode.W) && grounded && !animator.GetBool("double jump"))
@@ -133,47 +108,7 @@ public class Sideview_Controller : MonoBehaviour
 
     private void LateUpdate()
     {
-        playerLimbsOrientation();
-    }
-
-    private void FixedUpdate()
-    {
-        cameraMovement();
-
-        if (animator.GetBool("double jump"))
-        {
-            float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
-            if (t > 0.9f)
-                stopSpinning = true;
-
-            if (!stopSpinning || t > 0.1f)
-            {
-                if (t < 0.5f)
-                    transform.eulerAngles = new Vector3(0, 0, t * spinDirection * 350f / 0.5f);
-                else
-                    transform.eulerAngles = new Vector3(0, 0, 350 * spinDirection + (t - 0.5f) * spinDirection * 21);
-
-            }
-            else
-                animator.SetBool("double jump", false);
-        }
-    }
-
-    private void cameraMovement()
-    {
-        mouseDistanceX = (Input.mousePosition.x - (float)Screen.width / 2f) / (float)Screen.width;
-        mouseDistanceY = (Input.mousePosition.y - (float)Screen.height / 2f) / (float)Screen.height;
-
-        if (mouseDistanceX > 0.5f || mouseDistanceX < -0.5f)
-            mouseDistanceX = 0.5f * Mathf.Sign(mouseDistanceX);
-
-        if (mouseDistanceY > 0.5f || mouseDistanceY < -0.5f)
-            mouseDistanceY = 0.5f * Mathf.Sign(mouseDistanceY);
-
-        cameraPosX = Mathf.SmoothDamp(camera.transform.position.x, cameraTarget.position.x + cameraOffset.x + mouseDistanceX * 10f, ref cameraVelocityX, smoothTimeX);
-        cameraPosY = Mathf.SmoothDamp(camera.transform.position.y, cameraTarget.position.y + cameraOffset.y + mouseDistanceY * 8f, ref cameraVelocityY, smoothTimeY);
-
-        camera.transform.position = new Vector3(cameraPosX, cameraPosY, camera.transform.position.z);
+        lookAndAimInRightDirection();
     }
 
     private void setPlayerVelocity()
@@ -237,10 +172,10 @@ public class Sideview_Controller : MonoBehaviour
     }
 
     //handles player orientation (left/right), gun rotation, gun position, head rotation
-    private void playerLimbsOrientation()
+    private void lookAndAimInRightDirection()
     {
         //if player isn't spinning in mid-air with a double jump
-        if (!disableLimbs)
+        if (!controller.disableLimbsDuringDoubleJump)
         {
             //player faces left or right depending on mouse cursor
             if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
@@ -292,60 +227,26 @@ public class Sideview_Controller : MonoBehaviour
         }
     }
 
-    //states when to transition btwn diff player animation states 
-    private void playerAnimationController()
-    {
-        //if the player isn't currently in the jump state 
-        if (animator.GetInteger("Phase") != 2)
-        {
-            if (!grounded)
-                setAnimation("jumping");
-            else if (movementDirX != 0)
-                setAnimation("walking");
-            else
-                setAnimation("idle");
-
-            bool facingRight = Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x;
-
-            //if you're looking in the opposite direction as you're running, set walking speed to -1 (which auto triggers backwards walking animation)
-            if (animator.GetInteger("Phase") == 1)
-            {
-                if ((movementDirX == 1 && facingRight) || movementDirX == -1 && !facingRight)
-                    animator.SetFloat("walking speed", 1);
-                else if (movementDirX != 0)
-                    animator.SetFloat("walking speed", -1);
-            }
-        }
-
-        //if you are grounded, exit out of jump animation
-        if (animator.GetInteger("Phase") == 2 && grounded)
-        {
-            animator.SetBool("jumped", false);
-            animator.SetBool("double jump", false);
-            setAnimation("idle");
-        }
-    }
-
     //check if the player is on the ground + update the groundAngle
     public IEnumerator isGrounded()
     {
         //use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
         leftGroundHit = Physics2D.Raycast(leftFoot.position, Vector2.down, 2f, Constants.map);
         leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
-        Vector2 leftGround = (leftGroundHit.collider != null) ? leftGroundHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) + Vector2.down * 2;
-        Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), leftGround, Color.green, 2f);
+        //Vector2 leftGround = (leftGroundHit.collider != null) ? leftGroundHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) + Vector2.down * 2;
+        //Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), leftGround, Color.green, 2f);
 
         rightGroundHit = Physics2D.Raycast(rightFoot.position, Vector2.down, 2f, Constants.map);
         rightFootGround = (rightGroundHit.collider != null && rightGroundHit.normal.y >= 0.3f) ? rightGroundHit.collider.gameObject : null;
-        Vector2 rightGround = (rightGroundHit.collider != null) ? rightGroundHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + Vector2.down * 2;
-        Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), rightGround, Color.cyan, 2f);
+        //Vector2 rightGround = (rightGroundHit.collider != null) ? rightGroundHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + Vector2.down * 2;
+        //Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), rightGround, Color.cyan, 2f);
 
         //if the player was just grounded after falling OR the player been moving on the ground, enable this bool (used later to prevent bug)
         if ((!grounded || movementDirX != 0) && (leftFootGround || rightFootGround))
             checkForAngle = true;
 
         //determine if player is grounded if either foot raycast hit the ground
-        if (!disableLimbs)
+        if (!controller.disableLimbsDuringDoubleJump)
             grounded = (leftFootGround || rightFootGround) ? true : false;
 
         //register the angle of the ground
@@ -410,72 +311,35 @@ public class Sideview_Controller : MonoBehaviour
         StartCoroutine(isGrounded());
     }
 
-    //foot collider becomes smaller when jumping
-    private IEnumerator handleColliders()
+    private IEnumerator findWalls()
     {
-        yield return new WaitForSeconds(0.03f);
+        if (player.localEulerAngles.y == 0)
+        {
+            RaycastHit2D leftWallHit = Physics2D.Raycast(leftFoot.position, -groundDir, 2f, Constants.map);
+            wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
+            //obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) - groundDir * 2;
+            //Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), obstacleToTheLeft, Color.blue, 2f);
 
-        //disable main foot's collider when not walking
-        footCollider.gameObject.SetActive(animator.GetInteger("Phase") == 1);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(rightFoot.position, groundDir, 2f, Constants.map);
+            wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
+            //obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + groundDir * 2;
+            //Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), obstacleToTheRight, Color.red, 2f);
+        }
+        else
+        {
+            RaycastHit2D leftWallHit = Physics2D.Raycast(rightFoot.position, -groundDir, 2f, Constants.map);
+            wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
+            //obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) - groundDir * 2;
+            //Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), obstacleToTheLeft, Color.blue, 2f);
 
-        //tuck the feet ground raycasters in when jumping
-        rightFoot.transform.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(0.99f, rightFoot.transform.localPosition.y, 0)
-        : new Vector3(0.332f, rightFoot.transform.localPosition.y, 0);
-
-        leftFoot.transform.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(-0.357f, leftFoot.transform.localPosition.y, 0)
-        : new Vector3(-0.157f, leftFoot.transform.localPosition.y, 0);
-
-        //thin collider when jumping
-        mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.68f : 1f, mainCollider.size.y);
-
-        //shorten collider when double jumping
-        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 3.14f);
-    }
-
-    public IEnumerator findWalls()
-    {
-        RaycastHit2D leftWallHit = Physics2D.Raycast(leftFoot.position, -groundDir, 2f, Constants.map);
-        wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
-        obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) - groundDir * 2;
-        Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), obstacleToTheLeft, Color.blue, 2f);
-
-        RaycastHit2D rightWallHit = Physics2D.Raycast(rightFoot.position, groundDir, 2f, Constants.map);
-        wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
-        obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + groundDir * 2;
-        Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), obstacleToTheRight, Color.red, 2f);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(leftFoot.position, groundDir, 2f, Constants.map);
+            wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
+            //obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) + groundDir * 2;
+            //Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), obstacleToTheRight, Color.red, 2f);
+        }
 
         yield return new WaitForSeconds(0.33f);
         StartCoroutine(findWalls());
-    }
-
-    //set new animation state for the player
-    private void setAnimation(string mode)
-    {
-        int newMode = 0;
-
-        if (mode == "idle")
-            newMode = 0;
-        else if (mode == "walking")
-            newMode = 1;
-        else if (mode == "jumping")
-            newMode = 2;
-        else
-            Debug.LogError("mode not defined");
-
-        animator.SetInteger("Phase", newMode);
-    }
-
-    //Submethod that adds tiny delay before switching from walking to idle animation (cleaner transition from walking to other non-idle animations)
-    private IEnumerator walkingToIdle()
-    {
-        yield return new WaitForSeconds(0.045f);
-
-        if (movementDirX != 0)
-            yield return null;
-        else
-            animator.SetInteger("Phase", 0);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -494,19 +358,6 @@ public class Sideview_Controller : MonoBehaviour
     {
         if (col.gameObject.layer == 11)
             touchingMap = false;
-    }
-
-    private IEnumerator timeDoubleSpin()
-    {
-        leftFoot.gameObject.SetActive(false);
-        rightFoot.gameObject.SetActive(false);
-
-        yield return new WaitForSeconds(0.52f);
-        leftFoot.gameObject.SetActive(true);
-        rightFoot.gameObject.SetActive(true);
-
-        yield return new WaitForSeconds(0.12f);
-        disableLimbs = false;
     }
 
     private void debugFrameRate()
@@ -533,16 +384,6 @@ public class Sideview_Controller : MonoBehaviour
         upVector = (pointingUp - shoulderPos).magnitude;
         rightVector = (pointingRight - shoulderPos).magnitude;
         downVector = (pointingDown - shoulderPos).magnitude;
-    }
-
-    //Player collides with weapon, so equip it
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.layer == LayerMask.NameToLayer("Object"))
-        {
-            weaponSystem.EquipNewWeapon(col.gameObject.tag, 25);
-            col.gameObject.SetActive(false);
-        }
     }
 
     //Player is on a levitation boost platform and clicks W -> give them a jump boost 

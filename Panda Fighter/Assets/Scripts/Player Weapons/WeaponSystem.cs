@@ -207,5 +207,18 @@ public class WeaponSystem : MonoBehaviour
     {
         return Int32.Parse(ammo[weaponSelected].text);
     }
+
+
+    // --------------------------------------------------------------------
+    //Player collides with weapon, so equip it
+    // --------------------------------------------------------------------
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.layer == LayerMask.NameToLayer("Weapon Pickup"))
+        {
+            EquipNewWeapon(col.gameObject.tag, 25);
+            col.gameObject.SetActive(false);
+        }
+    }
 }
 
