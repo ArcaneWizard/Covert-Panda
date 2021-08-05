@@ -23,7 +23,7 @@ public class Sideview_Controller : CentralController
         if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, jumpForce * 1.1f));
+            rig.AddForce(new Vector2(0, doublejumpForce));
             controller.startDoubleJumpAnimation(movementDirX, leftFoot.gameObject, rightFoot.gameObject);
         }
 

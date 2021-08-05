@@ -24,6 +24,7 @@ public class CentralController : MonoBehaviour
 
     protected float speed = 10.0f;
     protected float jumpForce = 1130f;
+    protected float doublejumpForce = 1243f;
 
     protected RaycastHit2D leftGroundHit, rightGroundHit;
     protected GameObject leftFootGround, rightFootGround;
@@ -66,7 +67,7 @@ public class CentralController : MonoBehaviour
         controller = transform.GetComponent<CentralAnimationController>();
     }
 
-    void Start()
+    public virtual void Start()
     {
         StartCoroutine(findWalls());
         StartCoroutine(isGrounded(controller.disableLimbsDuringDoubleJump));
