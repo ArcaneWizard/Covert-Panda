@@ -9,7 +9,6 @@ public class Shooting : MonoBehaviour
     public Transform shootingArm;
 
     private WeaponSystem weaponSystem;
-    private Sideview_Controller sideview_Controller;
     private WeaponAttacks weaponAttacks;
 
     private Rigidbody2D rig;
@@ -18,6 +17,7 @@ public class Shooting : MonoBehaviour
     public Vector2 aimDir;
     private float wait;
 
+    [HideInInspector]
     public GameObject weaponHeld;
     private GameObject weaponThrown;
     private GameObject lastBoomerangThrown;
@@ -28,13 +28,13 @@ public class Shooting : MonoBehaviour
     public float timeLeftBtwnShots;
     private Rigidbody2D objectRig;
 
+    [HideInInspector]
     public Transform bulletSpawnPoint;
 
     void Awake()
     {
         weaponSystem = transform.GetComponent<WeaponSystem>();
         weaponAttacks = transform.GetComponent<WeaponAttacks>();
-        sideview_Controller = transform.GetComponent<Sideview_Controller>();
 
         rig = transform.GetComponent<Rigidbody2D>();
     }

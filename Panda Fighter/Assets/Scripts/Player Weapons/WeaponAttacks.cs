@@ -13,12 +13,12 @@ public class WeaponAttacks : MonoBehaviour
     private float shielderBulletSpeed = 45;
     private float shotgunBulletSpeed = 52;
 
-    public float scytheThrowSpeed = 50;
-    public Vector2 scytheSpinSpeed = new Vector2(400, 600);
+    private float scytheThrowSpeed = 60;
+    private Vector2 scytheSpinSpeed = new Vector2(1200, 1400);
 
     public List<Transform> goldenShotgunBits = new List<Transform>();
     private int shotgunBitCounter = 0;
-    public Vector2 goldenBitsForceX, goldenBitsForceY;
+    private Vector2 goldenBitsForceX = new Vector2(-50, 70), goldenBitsForceY = new Vector2(0, 290);
     private float goldenShotgunSpread = 22;
 
     private List<GameObject> bullets = new List<GameObject>();

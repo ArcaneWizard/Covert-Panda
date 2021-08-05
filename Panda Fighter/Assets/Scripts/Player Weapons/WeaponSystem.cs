@@ -29,6 +29,7 @@ public class WeaponSystem : MonoBehaviour
 
     private Shooting shooting;
     private HoldingTheWeapon holdTheWeapon;
+    private Sideview_Controller player_Controller;
     private IKTracking iKTracking;
 
     void Awake()
@@ -37,6 +38,7 @@ public class WeaponSystem : MonoBehaviour
         shooting = transform.GetComponent<Shooting>();
         holdTheWeapon = transform.GetComponent<HoldingTheWeapon>();
         iKTracking = transform.GetComponent<IKTracking>();
+        player_Controller = transform.GetComponent<Sideview_Controller>();
 
         //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
@@ -73,7 +75,8 @@ public class WeaponSystem : MonoBehaviour
     {
         EquipNewWeapon("Shielder", 25);
         SelectWeapon("Shielder", "gun");
-        iKTracking.setIKCoordinates("Shielder");
+        List<Vector2> aiming = iKTracking.setIKCoordinates("Shielder");
+        player_Controller.calculateShoulderAngles(aiming);
     }
 
     // --------------------------------------------------------------------
@@ -81,10 +84,10 @@ public class WeaponSystem : MonoBehaviour
     // --------------------------------------------------------------------
     void Update()
     {
-        //Note that for the second parameter, ie. the combat mode
+        //Note for the combat mode
         //If you're literally holding the "bullet" you have  to throw, like with a grenade, use the string "handheld"
         //If it's a gun that has ammo and shoots bullets, use the string "gun"
-        //If it's a meelee based weapon with no bullets, use the string "meelee"
+        //If it's a meelee based weapon with "infinite ammo" while hitting bots with it, use the string "meelee"
 
         if (Input.GetKeyDown("1"))
             SelectWeapon("Grenade", "handheld");
@@ -100,6 +103,7 @@ public class WeaponSystem : MonoBehaviour
             SelectWeapon("Sniper", "gun");
         if (Input.GetKeyDown("7"))
             SelectWeapon("Shotgun", "gun");
+
     }
 
     // --------------------------------------------------------------------
@@ -168,7 +172,6 @@ public class WeaponSystem : MonoBehaviour
     public void EquipNewWeapon(string weapon, int bullets)
     {
         //update weapon sprite + ammo
-        Debug.Log(weapon);
         weaponIcon[weapon].sprite = equipped[weapon];
         ammo[weapon].text = bullets.ToString();
     }

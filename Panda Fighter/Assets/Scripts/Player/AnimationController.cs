@@ -16,8 +16,9 @@ public class AnimationController : MonoBehaviour
     void Awake()
     {
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        controller = transform.GetComponent<Sideview_Controller>();
         player = transform.GetChild(0).transform;
+
+        controller = transform.GetComponent<Sideview_Controller>();
     }
 
     void Update()

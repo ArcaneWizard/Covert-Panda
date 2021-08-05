@@ -373,8 +373,14 @@ public class Sideview_Controller : MonoBehaviour
         }
     }
 
-    public void calculateShoulderAngles()
+    public void calculateShoulderAngles(List<Vector2> aiming)
     {
+        //get specific weapon aim coordinates
+        pointingRight = aiming[0];
+        pointingUp = aiming[1];
+        pointingDown = aiming[2];
+        shoulderPos = aiming[3];
+
         //ideal angle from shoulder to specific gun coordinates
         up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
         right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;

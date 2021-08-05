@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class GroundCollider : MonoBehaviour
 {
-    public Sideview_Controller sideview_Controller;
     private List<GameObject> obstacles = new List<GameObject>();
 
     void Awake()
     {
         if (gameObject.name != "Left foot" && gameObject.name != "Right foot" && gameObject.name != "Center foot")
-            Debug.LogError("Don't change this gameObject's name as it is used to identify it in the sideview_controller script");
+            Debug.LogError("Don't change this gameObject's name as it is used to identify it in the main controller script");
     }
 
     private void OnTriggerEnter2D(Collider2D other)

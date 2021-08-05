@@ -4,29 +4,11 @@ using UnityEngine;
 
 public class HoldingTheWeapon : MonoBehaviour
 {
-    [Header("Arm Bones + Sprites")]
-    public GameObject Gun_limb;
-    public GameObject Hand_limb_front, Hand_limb_back, Scythe_limb, Long_Barrel_limb;
-
-    [Header("Weapons")]
-    public GameObject Beamer;
-    public GameObject BoomerangLauncher, Scythe, Sniper;
-
-    [Header("IK targets")]
-    public Transform beamerTarget;
-    public Transform scytheTarget;
-    public Transform longBarrelTarget;
-
-    [Header("Ammo spawn points")]
-    public Transform beamerSpawnPoint;
-    public Transform grenadeSpawnPoint;
-    public Transform sniperBulletPoint;
-
     private List<GameObject> WeaponSetup = new List<GameObject>();
 
     private WeaponSystem weaponSystem;
     private Shooting shooting;
-    private Sideview_Controller controller;
+    private Sideview_Controller player_controller;
     private Animator armAnimator;
     private IKTracking iKTracking;
 
@@ -35,7 +17,7 @@ public class HoldingTheWeapon : MonoBehaviour
     {
         shooting = transform.GetComponent<Shooting>();
         weaponSystem = transform.GetComponent<WeaponSystem>();
-        controller = transform.GetComponent<Sideview_Controller>();
+        player_controller = transform.GetComponent<Sideview_Controller>();
         armAnimator = transform.GetComponent<Animator>();
         iKTracking = transform.GetComponent<IKTracking>();
     }
@@ -51,21 +33,25 @@ public class HoldingTheWeapon : MonoBehaviour
             limb_Or_Weapon.SetActive(false);
         WeaponSetup.Clear();
 
-        //activate the animated arm limbs + weapon and configure the aim target + bullet spawn point (if applicable)
+        //set the right aim target for the new weapon
+        player_controller.aimTarget = config.aimTarget;
+
+        //activate the animated arms + display the actual weapon )
         if (config.weapon)
             WeaponSetup.Add(config.weapon);
         foreach (GameObject limb in config.limbs)
             WeaponSetup.Add(limb);
 
+        //specify the new bullet point location
         shooting.bulletSpawnPoint = config.bulletSpawnPoint;
-        controller.aimTarget = config.aimTarget;
         defaultWeaponAnimations(weapon);
 
         foreach (GameObject limb_Or_Weapon in WeaponSetup)
             limb_Or_Weapon.SetActive(true);
 
         //use the right coordinates for the weapon's IK aim target
-        iKTracking.setIKCoordinates(weapon);
+        List<Vector2> aiming = iKTracking.setIKCoordinates(weapon);
+        player_controller.calculateShoulderAngles(aiming);
     }
 
     private void defaultWeaponAnimations(string weapon)

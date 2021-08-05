@@ -6,12 +6,16 @@ public class AttackIsOver : StateMachineBehaviour
 {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
     {
-        resetAttackAnimations(animator, animator.transform.GetComponent<WeaponAttacks>());
+        resetAttackAnimations(animator, animator.transform.GetComponent<WeaponAttacks>(), animator.transform.GetComponent<AI_WeaponAttacks>());
     }
 
-    public void resetAttackAnimations(Animator armAnimator, WeaponAttacks weaponAttacks)
+    public void resetAttackAnimations(Animator armAnimator, WeaponAttacks weaponAttacks, AI_WeaponAttacks aiWeaponAttacks)
     {
-        weaponAttacks.attackAnimationPlaying = false;
+        //turn off attack animation
+        if (weaponAttacks)
+            weaponAttacks.attackAnimationPlaying = false;
+        else
+            aiWeaponAttacks.attackAnimationPlaying = false;
 
         //after throwing grenade
         if (armAnimator.GetInteger("Arms Phase") == 1)
