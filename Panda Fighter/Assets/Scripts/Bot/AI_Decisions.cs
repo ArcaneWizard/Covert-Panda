@@ -11,6 +11,7 @@ public class AI_Decisions : MonoBehaviour
     private TestingTrajectories trajectory;
 
     private Queue<Transform> decisionZones = new Queue<Transform>();
+
     public Text decisionZonesPending;
     public Text lastDecision;
 
@@ -21,16 +22,18 @@ public class AI_Decisions : MonoBehaviour
 
     void Update()
     {
-        if (decisionZones.Count >= 1 && Mathf.Abs(decisionZones.Peek().position.x - transform.position.x) > 8.5f)
+        if (decisionZones.Count >= 1 && getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 49)
         {
-            Debug.Log("Discarded " + decisionZones.Peek());
+            Debug.Log("Discarded " + decisionZones.Peek() + " " + getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
             decisionZones.Dequeue();
+            updateZonesText();
             return;
         }
 
         if (decisionZones.Count >= 1 && controller.actionProgress == "finished")
         {
             controller.decisionZone = decisionZones.Dequeue();
+            updateZonesText();
 
             AI_ACTIONS.Clear();
             foreach (Transform decision in controller.decisionZone)
@@ -46,16 +49,37 @@ public class AI_Decisions : MonoBehaviour
             controller.shouldExecuteAction = true;
         }
 
-        decisionZonesPending.text = decisionZones.Count + " zones queued up";
-
         lastDecision.text = controller.AI_action.action + (controller.decisionZone ? ", " + controller.decisionZone.name : "none");
     }
 
     //if the AI bot collides with a decision making zone
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == 8)
+        Debug.Log(col.transform.name);
+        if (col.gameObject.layer == 8 && col.transform != controller.decisionZone)
+        {
+            if (decisionZones.Count > 0 && col.transform == decisionZones.Peek())
+                return;
+
+            Debug.Log("Queue " + col.transform.name);
             decisionZones.Enqueue(col.transform);
+            updateZonesText();
+        }
+    }
+
+    private float getSquaredDistanceBtwnVectors(Vector2 a, Vector2 b)
+    {
+        Vector2 c = a - b;
+        return c.x * c.x + c.y * c.y;
+    }
+
+    private void updateZonesText()
+    {
+        decisionZonesPending.text = "";
+        foreach (Transform decisionZone in decisionZones)
+        {
+            decisionZonesPending.text += decisionZone.name + "\n";
+        }
     }
 
     private void addTrajectoryAsPossibleAction(Transform decision)
