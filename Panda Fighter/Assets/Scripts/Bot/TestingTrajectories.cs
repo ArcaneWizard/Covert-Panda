@@ -5,26 +5,29 @@ using UnityEngine;
 
 public class TestingTrajectories : MonoBehaviour
 {
-    public int movementDirX = 1;
+    [Header("Jump Type")]
+    public bool headStraight = false;
+    public bool doubleJump = false;
+    public bool fallDown = false;
+    public bool fallDownCurve = false;
 
+    [Header("Describe Jump")]
+    public int movementDirX = 1;
     private float jumpForce = 1130f;
     private float doubleJumpForce = 1243f;
-
     public Vector2 speedRange = new Vector2(10f, 10f);
     public Vector2 timeB4Change = new Vector2(0f, 0f);
     public float changedSpeed;
 
     private float mass = 1f;
-    private float defaultGravity = -24.7f;
+    private float defaultGravity = -32.5f;
     private float gravity;
 
+    [Header("Other Settings")]
+    public Vector2 bonusTrait = new Vector2(0, 0);
+    public int considerationWeight = 1;
     public float lengthShown = 14;
     private float length;
-
-    public bool headStraight = false;
-    public bool doubleJump = false;
-    public bool fallDown = false;
-    public bool fallDownCurve = false;
 
     [HideInInspector]
     public Vector2 endPoint;
@@ -44,6 +47,9 @@ public class TestingTrajectories : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        defaultGravity = -32.5f;
+        mass = 1f;
+
         if (headStraight)
             drawNormalJumpParabola(0, 5, jumpForce);
 
@@ -100,7 +106,7 @@ public class TestingTrajectories : MonoBehaviour
         drawParabolaWithFasterFrames(timeB4DoubleJump * 5f + 0.01f, transform.position, speedRange.x, jumpForce);
 
         lastP_b4DirSwitch = lastP;
-        drawParabolaWithTimeOffset(length, lastP_b4DirSwitch, changedSpeed, doubleJumpForce, timeB4DoubleJump * 5f);
+        drawParabola(length, lastP_b4DirSwitch, changedSpeed, doubleJumpForce);
     }
 
     private void drawFallDownCurveParabola(float timeB4DirSwitch)
@@ -163,21 +169,27 @@ public class TestingTrajectories : MonoBehaviour
         }
     }
 }
+
+[System.Serializable]
 public struct AI_ACTION
 {
+    public int dirX { get; private set; }
     public Vector2 speed { get; private set; }
     public Vector2 timeB4Change { get; private set; }
     public float changedSpeed { get; private set; }
     public string action { get; private set; }
     public Vector2 endLocation { get; private set; }
+    public Vector2 bonusTrait { get; private set; }
 
-    public AI_ACTION(string action, Vector2 speed, Vector2 timeB4Change, float changedSpeed, Vector2 endLocation)
+    public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, float changedSpeed, Vector2 bonusTrait, Vector2 endLocation)
     {
         this.action = action;
+        this.dirX = direction;
         this.speed = speed;
         this.timeB4Change = timeB4Change;
         this.changedSpeed = changedSpeed;
         this.endLocation = endLocation;
+        this.bonusTrait = bonusTrait;
     }
 }
 

@@ -22,7 +22,8 @@ public class CentralController : MonoBehaviour
     public Transform rightFoot;
     public Transform groundColliders;
 
-    protected float speed = 10.0f;
+    protected float maxSpeed = 13.0f;
+    protected float speed;
     protected float jumpForce = 1130f;
     protected float doublejumpForce = 1243f;
 
@@ -33,15 +34,13 @@ public class CentralController : MonoBehaviour
     protected Vector2 obstacleToTheLeft, obstacleToTheRight;
     protected bool wallToTheLeft, wallToTheRight;
 
-    public bool grounded;
-    [SerializeField]
-    protected bool touchingMap;
+    public bool isGrounded { get; private set; }
+    public bool isTouchingMap { get; private set; }
     protected float groundAngle;
     protected Vector2 groundDir;
     protected bool checkForAngle;
 
-    [HideInInspector]
-    public int movementDirX;
+    public int dirX;
     protected float zAngle;
 
     //ideal aim coordinates when looking to the side, up or down 
@@ -65,12 +64,14 @@ public class CentralController : MonoBehaviour
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         weaponAttacks = transform.GetComponent<CentralWeaponAttacks>();
         controller = transform.GetComponent<CentralAnimationController>();
+
+        speed = maxSpeed;
     }
 
     public virtual void Start()
     {
         StartCoroutine(findWalls());
-        StartCoroutine(isGrounded(controller.disableLimbsDuringDoubleJump));
+        StartCoroutine(determineIfGrounded(controller.disableLimbsDuringDoubleJump));
     }
 
     //player or alien's body should tilt slightly on the slanted platform
@@ -81,7 +82,7 @@ public class CentralController : MonoBehaviour
         if (zAngle > 180)
             zAngle = zAngle - 360;
 
-        if (grounded && (movementDirX != 0 || (movementDirX == 0 && groundAngle == lastGroundAngle)))
+        if (isGrounded && (dirX != 0 || (dirX == 0 && groundAngle == lastGroundAngle)))
         {
             float newGroundAngle = ((groundAngle - 360) / 1.4f);
 
@@ -90,7 +91,7 @@ public class CentralController : MonoBehaviour
             else if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
                 transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20f * Time.deltaTime);
         }
-        else if (!grounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
+        else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
     }
 
@@ -131,7 +132,7 @@ public class CentralController : MonoBehaviour
 
 
     //check if the creature is on the ground + update the groundAngle
-    public IEnumerator isGrounded(bool disableLimbsDuringDoubleJump)
+    public IEnumerator determineIfGrounded(bool disableLimbsDuringDoubleJump)
     {
         //use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
         leftGroundHit = Physics2D.Raycast(leftFoot.position, Vector2.down, 2f, Constants.map);
@@ -145,18 +146,18 @@ public class CentralController : MonoBehaviour
         //Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), rightGround, Color.cyan, 2f);
 
         //if the creature was just grounded after falling OR the player been moving on the ground, enable this bool (used later to prevent bug)
-        if ((!grounded || movementDirX != 0) && (leftFootGround || rightFootGround))
+        if ((!isGrounded || dirX != 0) && (leftFootGround || rightFootGround))
             checkForAngle = true;
 
         //determine if creature is grounded if either foot raycast hit the ground
         if (!disableLimbsDuringDoubleJump)
-            grounded = (leftFootGround || rightFootGround) ? true : false;
+            isGrounded = (leftFootGround || rightFootGround) ? true : false;
 
         //register the angle of the ground
-        if (grounded)
+        if (isGrounded)
         {
             //moving right while facing right or moving left while facing left -> use "right foot" gameobject
-            if (((movementDirX == 1 && body.localEulerAngles.y == 0) || (movementDirX == -1 && body.localEulerAngles.y == 180)) && rightFootGround)
+            if (((dirX == 1 && body.localEulerAngles.y == 0) || (dirX == -1 && body.localEulerAngles.y == 180)) && rightFootGround)
             {
                 groundDir = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
                 float f = groundDir.y / groundDir.x;
@@ -164,7 +165,7 @@ public class CentralController : MonoBehaviour
             }
 
             //moving left while facing right or moving right facing left -> use "left foot" gameobject
-            else if (((movementDirX == -1 && body.localEulerAngles.y == 0) || (movementDirX == 1 && body.localEulerAngles.y == 180)) && leftFootGround)
+            else if (((dirX == -1 && body.localEulerAngles.y == 0) || (dirX == 1 && body.localEulerAngles.y == 180)) && leftFootGround)
             {
                 groundDir = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
                 float f = groundDir.y / groundDir.x;
@@ -211,7 +212,7 @@ public class CentralController : MonoBehaviour
 
         //reupdate the ground angle after 0.14 seconds
         yield return new WaitForSeconds(0.14f);
-        StartCoroutine(isGrounded(disableLimbsDuringDoubleJump));
+        StartCoroutine(determineIfGrounded(disableLimbsDuringDoubleJump));
     }
 
     protected IEnumerator findWalls()
@@ -248,19 +249,19 @@ public class CentralController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.layer == 11)
-            touchingMap = true;
+            isTouchingMap = true;
     }
 
     private void OnCollisionStay2D(Collision2D col)
     {
         if (col.gameObject.layer == 11)
-            touchingMap = true;
+            isTouchingMap = true;
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
         if (col.gameObject.layer == 11)
-            touchingMap = false;
+            isTouchingMap = false;
     }
 
     public void calculateShoulderAngles(List<Vector2> aiming)

@@ -7,25 +7,184 @@ using UnityEngine;
 
 public class AI_Controller : CentralController
 {
-    private TestingTrajectories trajectory;
-    private AI_ACTION AI_action;
-    private List<AI_ACTION> AI_ACTIONS = new List<AI_ACTION>();
+    [HideInInspector]
+    public Transform decisionZone;
 
-    private bool needsToFall = false;
+    [HideInInspector]
+    public bool needsToFall, shouldExecuteAction;
+    public string actionProgress;
+
+    private int lastMovementDirX;
+    private float randomDistance;
+    public AI_ACTION AI_action;
 
     public override void Start()
     {
         base.Start();
-        movementDirX = -1;
+
+        dirX = -1;
+        actionProgress = "finished";
+    }
+
+    //------------------------------------------------------------------
+    //-------Call the right AI action at the right time-----------------
+    //------------------------------------------------------------------
+
+    public void executeAction()
+    {
+        Debug.Log(AI_action.action + ", " + decisionZone.name);
+
+        if (AI_action.action == "keepWalking")
+            actionProgress = "in progress";
+
+        else if (AI_action.action == "fallDown")
+            needsToFall = true;
+
+        else if (AI_action.action == "fallDownCurve")
+            needsToFall = true;
+
+        else if (AI_action.action == "normalJump")
+            StartCoroutine(executeNormalJumpAtRightMoment());
+
+        else if (AI_action.action == "doubleJump")
+            StartCoroutine(executeDoubleJumpAtRightMoment());
     }
 
     private void Update()
     {
-        //use A and D keys for left or right movement
-
         tilt();
-        actionScenarios();
+
+        if (needsToFall)
+            executeFall();
+
+        if (shouldExecuteAction && isGrounded && isTouchingMap)
+        {
+            speed = maxSpeed;
+            dirX = AI_action.dirX;
+
+            shouldExecuteAction = false;
+            actionProgress = "started";
+            executeAction();
+        }
+
+        if (actionProgress == "in progress" && isGrounded && isTouchingMap)
+        {
+            speed = maxSpeed;
+            actionProgress = "finished";
+        }
     }
+
+    //------------------------------------------------------------------
+    //----------Handle Falling at the right time------------------------
+    //------------------------------------------------------------------
+
+    private void executeFall()
+    {
+        //set fall speed only when actually falling
+        if (needsToFall && !isGrounded && !isTouchingMap && AI_action.action == "fallDown")
+        {
+            speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
+            needsToFall = false;
+            actionProgress = "in progress";
+        }
+
+        //set initial fall speed only when actually falling (+ will change dir midway during fall)
+        else if (needsToFall && !isGrounded && !isTouchingMap && AI_action.action == "fallDownCurve")
+        {
+            StartCoroutine(executeFallingDownCurveMotion());
+            needsToFall = false;
+        }
+
+        //slow down right as the bot is about to fall (one foot off the ledge)
+        if (needsToFall && (AI_action.action == "fallDownCurve" || AI_action.action == "fallDown") && (!leftFootGround || !rightFootGround) && isGrounded)
+            speed = 7f;
+    }
+
+    private IEnumerator executeFallingDownCurveMotion()
+    {
+        lastMovementDirX = dirX;
+
+        speed = AI_action.speed.x;
+        yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
+        speed = AI_action.changedSpeed + AI_action.bonusTrait.x;
+        dirX = lastMovementDirX * -1;
+
+        actionProgress = "in progress";
+    }
+
+    //------------------------------------------------------------------
+    //---------Handle Jumping at the right time------------------------
+    //------------------------------------------------------------------
+
+    private IEnumerator executeNormalJumpAtRightMoment()
+    {
+        dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
+
+        randomDistance = UnityEngine.Random.Range(0.3f, 0.7f);
+        Debug.Log("randomDistance: " + randomDistance);
+
+        while (dirX == 1 && transform.position.x - decisionZone.position.x < randomDistance)
+            yield return null;
+        while (dirX == -1 && transform.position.x - decisionZone.position.x > -randomDistance)
+            yield return null;
+
+        dirX = AI_action.dirX;
+        speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
+        Debug.Log(speed + ", " + UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y));
+        normalJump();
+
+        yield return new WaitForSeconds(Time.deltaTime * 2);
+        actionProgress = "in progress";
+    }
+
+    private IEnumerator executeDoubleJumpAtRightMoment()
+    {
+        dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
+
+        randomDistance = UnityEngine.Random.Range(0.3f, 0.7f);
+        Debug.Log("randomDistance: " + randomDistance);
+
+        while (
+            (dirX == 1 && transform.position.x - decisionZone.position.x < randomDistance) ||
+            (dirX == -1 && transform.position.x - decisionZone.position.x > -randomDistance)
+        )
+            yield return null;
+
+        dirX = AI_action.dirX;
+        speed = AI_action.speed.x;
+        normalJump();
+
+        yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
+        dirX = AI_action.dirX * (int)Mathf.Sign(AI_action.changedSpeed);
+        speed = Mathf.Abs(AI_action.changedSpeed + AI_action.bonusTrait.x);
+        doubleJump();
+
+        actionProgress = "in progress";
+    }
+
+    private void normalJump()
+    {
+        if (isGrounded && !animator.GetBool("double jump"))
+        {
+            rig.velocity = new Vector2(rig.velocity.x, 0);
+            rig.AddForce(new Vector2(0, jumpForce));
+            animator.SetBool("jumped", true);
+        }
+    }
+
+    private void doubleJump()
+    {
+        if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
+        {
+            rig.velocity = new Vector2(rig.velocity.x, 0);
+            rig.AddForce(new Vector2(0, doublejumpForce));
+            controller.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
+        }
+    }
+
+    //------------------------------------------------------------------
+    //---------Handle Looking around and Moving------------------------
+    //------------------------------------------------------------------
 
     private void LateUpdate()
     {
@@ -40,12 +199,14 @@ public class AI_Controller : CentralController
             rig.velocity = new Vector2(0, 0);
 
         //when alien is on the ground, player velocity is parallel to the slanted ground 
-        if (!animator.GetBool("jumped") && grounded && touchingMap)
-            rig.velocity = groundDir * speed * movementDirX;
+        if (!animator.GetBool("jumped") && isGrounded && isTouchingMap)
+            rig.velocity = groundDir * speed * dirX;
 
         //when alien is not on the ground, player velocity is just left/right with gravity applied
         else
-            rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+        {
+            rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
+        }
     }
 
 
@@ -56,7 +217,7 @@ public class AI_Controller : CentralController
         if (!controller.disableLimbsDuringDoubleJump)
         {
             //player faces left or right depending on mouse cursor
-            if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
+            if (dirX >= 0)
                 body.localRotation = Quaternion.Euler(0, 0, 0);
             else
                 body.localRotation = Quaternion.Euler(0, 180, 0);
@@ -70,125 +231,8 @@ public class AI_Controller : CentralController
             zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
             shootAngle -= zAngle;
 
-            rotateHeadAndWeapon(shootDirection, shootAngle, weaponAttacks.disableAiming);
+            // rotateHeadAndWeapon(shootDirection, shootAngle, weaponAttacks.disableAiming);
         }
     }
 
-    private void normalJump()
-    {
-        if (grounded && !animator.GetBool("double jump"))
-        {
-            rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, jumpForce));
-            animator.SetBool("jumped", true);
-        }
-    }
-
-    private void doubleJump()
-    {
-        if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
-        {
-            rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, doublejumpForce));
-            controller.startDoubleJumpAnimation(movementDirX, leftFoot.gameObject, rightFoot.gameObject);
-        }
-    }
-
-    //if the AI bot collides with a decision making zone
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.layer == 8)
-        {
-            AI_ACTIONS.Clear();
-
-            foreach (Transform decision in col.transform)
-                addTrajectoryAsPossibleAction(decision);
-
-            int r = UnityEngine.Random.Range(0, AI_ACTIONS.Count);
-            AI_action = AI_ACTIONS[r];
-
-            executeAction();
-        }
-    }
-
-    private void addTrajectoryAsPossibleAction(Transform decision)
-    {
-        trajectory = decision.transform.GetComponent<TestingTrajectories>();
-
-        if (trajectory.headStraight)
-            AI_action = new AI_ACTION("keepWalking", trajectory.speedRange, trajectory.timeB4Change, trajectory.changedSpeed, decision.GetChild(0).position);
-        else if (trajectory.fallDown)
-            AI_action = new AI_ACTION("fallDown", trajectory.speedRange, trajectory.timeB4Change, trajectory.changedSpeed, decision.GetChild(0).position);
-        else if (trajectory.fallDownCurve)
-            AI_action = new AI_ACTION("fallDownCurve", trajectory.speedRange, trajectory.timeB4Change, trajectory.changedSpeed, decision.GetChild(0).position);
-        else if (trajectory.doubleJump)
-            AI_action = new AI_ACTION("doubleJump", trajectory.speedRange, trajectory.timeB4Change, trajectory.changedSpeed, decision.GetChild(0).position);
-        else
-            AI_action = new AI_ACTION("normalJump", trajectory.speedRange, trajectory.timeB4Change, trajectory.changedSpeed, decision.GetChild(0).position);
-
-        AI_ACTIONS.Add(AI_action);
-    }
-
-    private void executeAction()
-    {
-        Debug.Log(AI_action.action);
-
-        if (AI_action.action == "keep Walking")
-            return;
-        else if (AI_action.action == "fallDown")
-            needsToFall = true;
-        else if (AI_action.action == "fallDownCurve")
-            needsToFall = true;
-        else if (AI_action.action == "normalJump")
-            StartCoroutine(normalJumpTimer());
-        else if (AI_action.action == "doubleJump")
-            StartCoroutine(doubleJumpTimer());
-    }
-
-    private void actionScenarios()
-    {
-        if (needsToFall && !grounded && !touchingMap && AI_action.action == "fallDown")
-        {
-            speed = UnityEngine.Random.Range(trajectory.speedRange.x, trajectory.speedRange.y);
-            needsToFall = false;
-        }
-
-        else if (needsToFall && !grounded && !touchingMap && AI_action.action == "fallDownCurve")
-        {
-            StartCoroutine(fallDownCurve());
-            needsToFall = false;
-        }
-
-        if (needsToFall && AI_action.action == "fallDownCurve" && (!leftFootGround || !rightFootGround) && grounded)
-            speed = 7f;
-    }
-
-    private IEnumerator fallDownCurve()
-    {
-        int sign = movementDirX;
-        Debug.Log(sign);
-
-        speed = trajectory.speedRange.x;
-        yield return new WaitForSeconds(UnityEngine.Random.Range(trajectory.timeB4Change.x, trajectory.timeB4Change.y));
-        speed = trajectory.changedSpeed;
-        movementDirX = sign * -1;
-    }
-
-    private IEnumerator normalJumpTimer()
-    {
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.2f));
-        speed = UnityEngine.Random.Range(trajectory.speedRange.x, trajectory.speedRange.y);
-        normalJump();
-    }
-
-    private IEnumerator doubleJumpTimer()
-    {
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.2f));
-        speed = trajectory.speedRange.x;
-        normalJump();
-
-        yield return new WaitForSeconds(UnityEngine.Random.Range(trajectory.timeB4Change.x, trajectory.timeB4Change.y));
-        speed = trajectory.changedSpeed;
-        doubleJump();
-    }
 }

@@ -13,21 +13,21 @@ public class Sideview_Controller : CentralController
     private void Update()
     {
         //use A and D keys for left or right movement
-        movementDirX = 0;
+        dirX = 0;
         if (Input.GetKey(KeyCode.D))
-            movementDirX++;
+            dirX++;
         if (Input.GetKey(KeyCode.A))
-            movementDirX--;
+            dirX--;
 
         //use W and S keys for jumping up or thrusting downwards + allow double jump
         if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, doublejumpForce));
-            controller.startDoubleJumpAnimation(movementDirX, leftFoot.gameObject, rightFoot.gameObject);
+            controller.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
         }
 
-        if (Input.GetKeyDown(KeyCode.W) && grounded && !animator.GetBool("double jump"))
+        if (Input.GetKeyDown(KeyCode.W) && isGrounded && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, jumpForce));
@@ -53,35 +53,35 @@ public class Sideview_Controller : CentralController
             rig.velocity = new Vector2(0, 0);
 
         //when player is on the ground, player velocity is parallel to the slanted ground 
-        if (!animator.GetBool("jumped") && grounded && touchingMap)
+        if (!animator.GetBool("jumped") && isGrounded && isTouchingMap)
         {
             //no x velocity when running into a wall to avoid bounce/fall glitch
-            if (movementDirX == 1 && wallToTheRight)
+            if (dirX == 1 && wallToTheRight)
                 rig.velocity = new Vector2(0, 0);
 
             //no x velocity when running into a wall to avoid bounce/fall glitch
-            else if (movementDirX == -1 && wallToTheLeft)
+            else if (dirX == -1 && wallToTheLeft)
                 rig.velocity = new Vector2(0, 0);
 
             //player velocity is parallel to the slanted ground
             else
-                rig.velocity = groundDir * speed * movementDirX;
+                rig.velocity = groundDir * speed * dirX;
         }
 
         //when player is not on the ground, player velocity is just left/right with gravity applied
         else
         {
             //no x velocity when running into a wall mid-air to avoid clipping glitch
-            if (movementDirX == 1 && wallToTheRight)
+            if (dirX == 1 && wallToTheRight)
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             //no x velocity when running into a wall mid-air to avoid clipping glitch
-            else if (movementDirX == -1 && wallToTheLeft)
+            else if (dirX == -1 && wallToTheLeft)
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             //player velocity is just left or right (with gravity pulling the player down)
             else
-                rig.velocity = new Vector2(speed * movementDirX, rig.velocity.y);
+                rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
         }
     }
 
@@ -126,7 +126,7 @@ public class Sideview_Controller : CentralController
     //Player is on a levitation boost platform and clicks W -> give them a jump boost 
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (col.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && grounded)
+        if (col.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && isGrounded)
             rig.AddForce(Constants.levitationBoost);
     }
 }

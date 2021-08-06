@@ -64,9 +64,9 @@ public class CentralAnimationController : MonoBehaviour
         //if the player isn't currently in the jump state 
         if (animator.GetInteger("Phase") != 2)
         {
-            if (!controller.grounded)
+            if (!controller.isGrounded)
                 setAnimation("jumping");
-            else if (controller.movementDirX != 0)
+            else if (controller.dirX != 0)
                 setAnimation("walking");
             else
                 setAnimation("idle");
@@ -76,15 +76,15 @@ public class CentralAnimationController : MonoBehaviour
             //if you're looking in the opposite direction as you're running, set walking speed to -1 (which auto triggers backwards walking animation)
             if (animator.GetInteger("Phase") == 1)
             {
-                if ((controller.movementDirX == 1 && facingRight) || controller.movementDirX == -1 && !facingRight)
+                if ((controller.dirX == 1 && facingRight) || controller.dirX == -1 && !facingRight)
                     animator.SetFloat("walking speed", 1);
-                else if (controller.movementDirX != 0)
+                else if (controller.dirX != 0)
                     animator.SetFloat("walking speed", -1);
             }
         }
 
         //if you are grounded, exit out of jump animation
-        if (animator.GetInteger("Phase") == 2 && controller.grounded)
+        if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
         {
             animator.SetBool("jumped", false);
             animator.SetBool("double jump", false);
