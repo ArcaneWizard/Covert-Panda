@@ -16,6 +16,7 @@ public class AI_Controller : CentralController
 
     private int lastMovementDirX;
     private float randomDistance;
+    private float randomSpeed;
     public AI_ACTION AI_action;
 
     public override void Start()
@@ -106,9 +107,11 @@ public class AI_Controller : CentralController
 
         speed = AI_action.speed.x;
         yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
-        speed = AI_action.changedSpeed + AI_action.bonusTrait.x;
-        dirX = lastMovementDirX * -1;
 
+
+        randomSpeed = AI_action.changedSpeed + UnityEngine.Random.Range(0, AI_action.bonusTrait.x);
+        dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
+        speed = Mathf.Abs(randomSpeed);
         actionProgress = "in progress";
     }
 
@@ -155,8 +158,9 @@ public class AI_Controller : CentralController
         normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
-        dirX = AI_action.dirX * (int)Mathf.Sign(AI_action.changedSpeed);
-        speed = Mathf.Abs(AI_action.changedSpeed + AI_action.bonusTrait.x);
+        randomSpeed = AI_action.changedSpeed + UnityEngine.Random.Range(0, AI_action.bonusTrait.x);
+        dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
+        speed = Mathf.Abs(randomSpeed);
         doubleJump();
 
         actionProgress = "in progress";

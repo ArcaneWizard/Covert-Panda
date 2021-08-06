@@ -51,22 +51,33 @@ public class TestingTrajectories : MonoBehaviour
         mass = 1f;
 
         if (headStraight)
+        {
+            transform.name = "Head Straight";
             drawNormalJumpParabola(0, 5, jumpForce);
+        }
 
         else if (fallDown)
+        {
+            transform.name = "Fall Down";
             drawNormalJumpParabola(defaultGravity, lengthShown, 0);
+        }
 
         else if (fallDownCurve)
         {
+            transform.name = "Fall Down Curve";
             drawFallDownCurveParabola(timeB4Change.x);
             drawFallDownCurveParabola(timeB4Change.y);
         }
 
         else if (!doubleJump)
+        {
+            transform.name = "Normal Jump";
             drawNormalJumpParabola(defaultGravity, lengthShown, jumpForce);
+        }
 
         else if (doubleJump)
         {
+            transform.name = "Double Jump";
             drawDoubleJumpParabola(timeB4Change.x);
             drawDoubleJumpParabola(timeB4Change.y);
         }
@@ -118,7 +129,7 @@ public class TestingTrajectories : MonoBehaviour
         drawParabolaWithFasterFrames(timeB4DirSwitch * 5f + 0.01f, transform.position, speedRange.x, 0);
 
         lastP_b4DirSwitch = lastP;
-        drawParabolaWithTimeOffset(length, lastP_b4DirSwitch, -changedSpeed, 0, timeB4DirSwitch * 5f);
+        drawParabolaWithTimeOffset(length, lastP_b4DirSwitch, changedSpeed, 0, timeB4DirSwitch * 5f);
     }
 
     private void drawParabola(float linesDrawn, Vector2 start, float speed, float jumpForce)

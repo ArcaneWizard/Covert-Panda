@@ -69,8 +69,8 @@ public class AI_Decisions : MonoBehaviour
 
     private float getSquaredDistanceBtwnVectors(Vector2 a, Vector2 b)
     {
-        Vector2 c = a - b;
-        return c.x * c.x + c.y * c.y;
+        Vector2 distanceBtwnVectors = a - b;
+        return distanceBtwnVectors.x * distanceBtwnVectors.x + distanceBtwnVectors.y * distanceBtwnVectors.y;
     }
 
     private void updateZonesText()
