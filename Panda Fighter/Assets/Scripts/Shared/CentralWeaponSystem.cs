@@ -70,7 +70,7 @@ public class CentralWeaponSystem : MonoBehaviour
     // --------------------------------------------------------------------
     // FOR PC VERSION: allow player to select a different weapon 
     // --------------------------------------------------------------------
-    public virtual void SelectWeapon(string weapon, string combatMode)
+    public virtual void selectWeapon(string weapon, string combatMode)
     {
         //if the weapon is already selected, no need to do anything
         if (weapon == weaponSelected)

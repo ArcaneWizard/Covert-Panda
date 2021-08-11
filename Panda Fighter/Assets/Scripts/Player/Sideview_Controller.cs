@@ -30,6 +30,7 @@ public class Sideview_Controller : CentralController
         if (Input.GetKeyDown(KeyCode.W) && isGrounded && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
+            rig.gravityScale = maxGravity;
             rig.AddForce(new Vector2(0, jumpForce));
             animator.SetBool("jumped", true);
         }
@@ -66,6 +67,9 @@ public class Sideview_Controller : CentralController
             //player velocity is parallel to the slanted ground
             else
                 rig.velocity = groundDir * speed * dirX;
+
+            //don't slip on steep slopes
+            rig.gravityScale = (dirX == 0) ? 0f : maxGravity;
         }
 
         //when player is not on the ground, player velocity is just left/right with gravity applied
@@ -82,6 +86,8 @@ public class Sideview_Controller : CentralController
             //player velocity is just left or right (with gravity pulling the player down)
             else
                 rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
+
+            rig.gravityScale = maxGravity;
         }
     }
 

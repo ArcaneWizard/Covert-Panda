@@ -5,6 +5,11 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     public Transform cameraTarget;
+    public Transform centerOfMap;
+
+    [Range(0, 1)]
+    public float mapLocationOffsetMultiplier;
+
     private Vector3 cameraOffset;
     private float cameraPosX;
     private float cameraPosY;
@@ -14,6 +19,7 @@ public class CameraMovement : MonoBehaviour
     private float smoothTimeY = 0.4f;
     private float mouseDistanceX;
     private float mouseDistanceY;
+    private float locationBasedOffset;
 
     void Start()
     {
@@ -36,8 +42,10 @@ public class CameraMovement : MonoBehaviour
         if (mouseDistanceY > 0.5f || mouseDistanceY < -0.5f)
             mouseDistanceY = 0.5f * Mathf.Sign(mouseDistanceY);
 
+        locationBasedOffset = (centerOfMap.position.y - cameraTarget.position.y) * mapLocationOffsetMultiplier;
+
         cameraPosX = Mathf.SmoothDamp(transform.position.x, cameraTarget.position.x + cameraOffset.x + mouseDistanceX * 10f, ref cameraVelocityX, smoothTimeX);
-        cameraPosY = Mathf.SmoothDamp(transform.position.y, cameraTarget.position.y + cameraOffset.y + mouseDistanceY * 8f, ref cameraVelocityY, smoothTimeY);
+        cameraPosY = Mathf.SmoothDamp(transform.position.y, cameraTarget.position.y + cameraOffset.y + mouseDistanceY * 8f + locationBasedOffset, ref cameraVelocityY, smoothTimeY);
 
         transform.position = new Vector3(cameraPosX, cameraPosY, transform.position.z);
     }

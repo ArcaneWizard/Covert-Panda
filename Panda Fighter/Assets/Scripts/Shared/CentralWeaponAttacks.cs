@@ -6,8 +6,8 @@ public class CentralWeaponAttacks : MonoBehaviour
 {
     protected float grenadeThrowForce = 2200;
     protected float grenadeYForce = -20;
-    protected float boomerangSpeed = 45;
-    protected Vector2 boomerangSpinSpeed = new Vector2(600, 750);
+    protected float boomerangSpeed = 52;
+    protected Vector2 boomerangSpinSpeed = new Vector2(600, 1050);
     protected float sniperBulletSpeed = 100;
     protected float shielderBulletSpeed = 45;
     protected float shotgunBulletSpeed = 52;
@@ -21,7 +21,6 @@ public class CentralWeaponAttacks : MonoBehaviour
     protected float goldenShotgunSpread = 22;
 
     protected List<GameObject> bullets = new List<GameObject>();
-    protected List<Rigidbody2D> objectRigs = new List<Rigidbody2D>();
 
     [HideInInspector]
     public Animator armAnimator;
@@ -31,9 +30,9 @@ public class CentralWeaponAttacks : MonoBehaviour
     protected CentralWeaponSystem weaponSystem;
 
     [HideInInspector]
-    public bool disableAiming, shouldThrow, attackAnimationPlaying;
+    public bool disableAiming, shouldLetGoOfObject, attackAnimationPlaying;
 
-    protected Rigidbody2D objectRig;
+    protected Rigidbody2D ammunitionRig;
     protected GameObject ammunition = null;
 
     public void Awake()
@@ -43,8 +42,11 @@ public class CentralWeaponAttacks : MonoBehaviour
         armAnimator = transform.GetComponent<Animator>();
     }
 
-    public void singleFireAttack(string weapon)
+    public void weaponAttack()
     {
+        retrieveSomeAmmunition();
+        string weapon = weaponSystem.weaponSelected;
+
         if (weapon == "Grenade")
             StartCoroutine(throwGrenade());
         else if (weapon == "Boomerang")
@@ -61,13 +63,10 @@ public class CentralWeaponAttacks : MonoBehaviour
             Debug.LogError("You haven't specified how to shoot this particular object");
     }
 
-    public void spamFireAttack(string weapon)
+    public void meeleeAttack()
     {
+        string weapon = weaponSystem.weaponSelected;
 
-    }
-
-    public void meeleeAttack(string weapon)
-    {
         if (weapon == "Scythe")
             StartCoroutine(attackWithScythe());
         else
@@ -76,58 +75,56 @@ public class CentralWeaponAttacks : MonoBehaviour
 
     private IEnumerator throwGrenade()
     {
-        StartCoroutine(shooting.SetupThrowingObject(0.1f, 0.22f));
+        //Help track the object on the hand and confirm when the "ammunition" can be let go off / force applied
+        StartCoroutine(shooting.HandleThrowingMechanics(ammunition, 0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (!shouldThrow)
+        while (!shouldLetGoOfObject)
             yield return null;
 
         //apply a large force to throw the grenadeaa
         Vector2 unadjustedForce = grenadeThrowForce * shooting.aimDir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
-        objectRig.velocity = new Vector2(0, 0);
-        objectRig.AddForce(unadjustedForce * objectRig.mass);
+        ammunitionRig.velocity = new Vector2(0, 0);
+        ammunitionRig.AddForce(unadjustedForce * ammunitionRig.mass);
     }
 
     private IEnumerator throwPlasmaOrb()
     {
-        //get aim direction from mouse input
-        StartCoroutine(shooting.SetupThrowingObject(0.1f, 0.22f));
+        //Help track the object on the hand, and confirm when the "ammunition" can be let go off / force applied
+        StartCoroutine(shooting.HandleThrowingMechanics(ammunition, 0.1f, 0.22f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (!shouldThrow)
+        while (!shouldLetGoOfObject)
             yield return null;
 
         //apply a large force to throw the grenade
         Vector2 unadjustedForce = grenadeThrowForce * shooting.aimDir * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
-        objectRig.velocity = new Vector2(0, 0);
-        objectRig.AddForce(unadjustedForce * objectRig.mass);
-
-        //start timed plasma explosion
-        StartCoroutine(ammunition.transform.GetComponent<PlasmaOrb>().startTimedPlasmaExplosion());
+        ammunitionRig.velocity = new Vector2(0, 0);
+        ammunitionRig.AddForce(unadjustedForce * ammunitionRig.mass);
     }
 
     private void shootBulletInStraightLine(float speed)
     {
-        //get aim direction from mouse input
-        shooting.SetupGunBullet();
+        //Get aim direction and spawn ammo at the right gun tip
+        shooting.SpawnGunBulletAndAim(ammunition);
 
         //spawn and orient the bullet correctly
         ammunition.transform.right = shooting.aimDir;
-        objectRig.velocity = shooting.aimDir * speed;
+        ammunitionRig.velocity = shooting.aimDir * speed;
     }
 
     private IEnumerator throwBoomerang()
     {
-        //get aim direction from mouse input
-        StartCoroutine(shooting.SetupThrowingObject(0.22f, 0.22f));
+        //Help track the object on the hand, and confirm when the "ammunition" can be let go off / force applied
+        StartCoroutine(shooting.HandleThrowingMechanics(ammunition, 0.1f, 0.2f));
         armAnimator.SetInteger("Arms Phase", 1);
 
-        while (!shouldThrow)
+        while (!shouldLetGoOfObject)
             yield return null;
 
         ammunition.transform.GetComponent<Animator>().SetBool("glare", false);
-        objectRig.velocity = shooting.aimDir * boomerangSpeed;
-        objectRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
+        ammunitionRig.velocity = shooting.aimDir * boomerangSpeed;
+        ammunitionRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
     }
 
     public void curveBoomerang()
@@ -135,11 +132,11 @@ public class CentralWeaponAttacks : MonoBehaviour
         if (weaponSystem.weaponSelected == "Boomerang" && ammunition && ammunition.activeSelf)
         {
             if (shooting.aimDir.x >= 0)
-                objectRig.velocity = Quaternion.Euler(0, 0, -90) * shooting.aimDir * boomerangSpeed;
+                ammunitionRig.velocity = Quaternion.Euler(0, 0, -90) * shooting.aimDir * boomerangSpeed;
             else
-                objectRig.velocity = Quaternion.Euler(0, 0, 90) * shooting.aimDir * boomerangSpeed;
+                ammunitionRig.velocity = Quaternion.Euler(0, 0, 90) * shooting.aimDir * boomerangSpeed;
 
-            objectRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
+            ammunitionRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
             ammunition.transform.GetComponent<Animator>().SetBool("glare", true);
         }
     }
@@ -148,15 +145,15 @@ public class CentralWeaponAttacks : MonoBehaviour
     {
         if (weaponSystem.weaponSelected == "Scythe")
         {
-            shooting.retrieveWeaponAmmunition();
-            StartCoroutine(shooting.SetupThrowableBlade(0.04f, 0.22f));
+            retrieveSomeAmmunition();
+            StartCoroutine(shooting.HandleThrowableBladeMechanics(ammunition, 0.04f, 0.22f));
             armAnimator.SetInteger("Arms Phase", 11);
 
-            while (!shouldThrow)
+            while (!shouldLetGoOfObject)
                 yield return null;
 
-            objectRig.velocity = shooting.aimDir * scytheThrowSpeed;
-            objectRig.angularVelocity = Random.Range(scytheSpinSpeed.x, scytheSpinSpeed.y) * Mathf.Sign(-shooting.aimDir.x);
+            ammunitionRig.velocity = shooting.aimDir * scytheThrowSpeed;
+            ammunitionRig.angularVelocity = Random.Range(scytheSpinSpeed.x, scytheSpinSpeed.y) * Mathf.Sign(-shooting.aimDir.x);
         }
     }
 
@@ -179,19 +176,19 @@ public class CentralWeaponAttacks : MonoBehaviour
     private void shootBulletInArcWithParticles()
     {
         //shoot three golden shotgun bullets with spread
-        shooting.SetupGunBullet();
+        shooting.SpawnGunBulletAndAim(ammunition);
         ammunition.transform.right = shooting.aimDir;
-        objectRig.velocity = shooting.aimDir * shotgunBulletSpeed;
+        ammunitionRig.velocity = shooting.aimDir * shotgunBulletSpeed;
 
-        shooting.retrieveWeaponAmmunition();
-        shooting.SetupGunBullet();
+        retrieveSomeAmmunition();
+        shooting.SpawnGunBulletAndAim(ammunition);
         ammunition.transform.right = Quaternion.AngleAxis(goldenShotgunSpread, Vector3.forward) * shooting.aimDir;
-        objectRig.velocity = Quaternion.AngleAxis(goldenShotgunSpread, Vector3.forward) * shooting.aimDir * shotgunBulletSpeed;
+        ammunitionRig.velocity = Quaternion.AngleAxis(goldenShotgunSpread, Vector3.forward) * shooting.aimDir * shotgunBulletSpeed;
 
-        shooting.retrieveWeaponAmmunition();
-        shooting.SetupGunBullet();
+        retrieveSomeAmmunition();
+        shooting.SpawnGunBulletAndAim(ammunition);
         ammunition.transform.right = Quaternion.AngleAxis(-goldenShotgunSpread, Vector3.forward) * shooting.aimDir;
-        objectRig.velocity = Quaternion.AngleAxis(-goldenShotgunSpread, Vector3.forward) * shooting.aimDir * shotgunBulletSpeed;
+        ammunitionRig.velocity = Quaternion.AngleAxis(-goldenShotgunSpread, Vector3.forward) * shooting.aimDir * shotgunBulletSpeed;
 
         //explode golden shotgun dust everywhere
         for (int i = shotgunBitCounter; i < shotgunBitCounter + goldenShotgunBits.Count / 2; i++)
@@ -208,9 +205,10 @@ public class CentralWeaponAttacks : MonoBehaviour
         shotgunBitCounter = (shotgunBitCounter + goldenShotgunBits.Count / 2) % goldenShotgunBits.Count;
     }
 
-    public void updateEntities(GameObject ammunition, Rigidbody2D objectRig)
+    private void retrieveSomeAmmunition()
     {
-        this.objectRig = objectRig;
-        this.ammunition = ammunition;
+        ammunition = weaponSystem.getWeapon();
+        weaponSystem.useOneAmmo();
+        ammunitionRig = ammunition.transform.GetComponent<Rigidbody2D>();
     }
 }

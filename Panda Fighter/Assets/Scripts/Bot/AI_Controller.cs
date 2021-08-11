@@ -70,7 +70,7 @@ public class AI_Controller : CentralController
 
         if (actionProgress == "in progress" && isGrounded && isTouchingMap)
         {
-            speed = maxSpeed;
+            speed = maxSpeed * UnityEngine.Random.Range(0.95f, 1f);
             actionProgress = "finished";
         }
     }
@@ -123,7 +123,7 @@ public class AI_Controller : CentralController
     {
         dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
 
-        randomDistance = UnityEngine.Random.Range(0.3f, 0.7f);
+        randomDistance = UnityEngine.Random.Range(0.3f, 0.6f) * Mathf.Abs(Mathf.Cos(groundAngle));
         Debug.Log("randomDistance: " + randomDistance);
 
         while (dirX == 1 && transform.position.x - decisionZone.position.x < randomDistance)
@@ -144,7 +144,7 @@ public class AI_Controller : CentralController
     {
         dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
 
-        randomDistance = UnityEngine.Random.Range(0.3f, 0.7f);
+        randomDistance = UnityEngine.Random.Range(0.3f, 0.6f) * Mathf.Abs(Mathf.Cos(groundAngle));
         Debug.Log("randomDistance: " + randomDistance);
 
         while (
@@ -181,6 +181,7 @@ public class AI_Controller : CentralController
         if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
+            rig.gravityScale = maxGravity;
             rig.AddForce(new Vector2(0, doublejumpForce));
             controller.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
         }
@@ -204,12 +205,16 @@ public class AI_Controller : CentralController
 
         //when alien is on the ground, player velocity is parallel to the slanted ground 
         if (!animator.GetBool("jumped") && isGrounded && isTouchingMap)
+        {
             rig.velocity = groundDir * speed * dirX;
+            rig.gravityScale = (dirX == 0) ? 0f : maxGravity;
+        }
 
         //when alien is not on the ground, player velocity is just left/right with gravity applied
         else
         {
             rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
+            rig.gravityScale = maxGravity;
         }
     }
 

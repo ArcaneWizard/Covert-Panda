@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class AI_Decisions : MonoBehaviour
 {
@@ -14,10 +15,13 @@ public class AI_Decisions : MonoBehaviour
 
     public Text decisionZonesPending;
     public Text lastDecision;
+    private System.Random random, random2;
 
     void Awake()
     {
         controller = transform.GetComponent<AI_Controller>();
+        random = new System.Random();
+        random2 = new System.Random();
     }
 
     void Update()
@@ -38,11 +42,17 @@ public class AI_Decisions : MonoBehaviour
             AI_ACTIONS.Clear();
             foreach (Transform decision in controller.decisionZone)
             {
-                if (decision.gameObject.activeSelf)
-                    addTrajectoryAsPossibleAction(decision);
+                trajectory = decision.transform.GetComponent<TestingTrajectories>();
+                if (decision.gameObject.activeSelf && trajectory.movementDirX == controller.dirX)
+                    addTrajectoryAsPossibleAction();
+                else if (decision.gameObject.activeSelf && trajectory.movementDirX == -controller.dirX && random2.Next(0, 100) >= 98)
+                    addTrajectoryAsPossibleAction();
             }
 
-            int r = UnityEngine.Random.Range(0, AI_ACTIONS.Count);
+            if (AI_ACTIONS.Count == 0 && controller.decisionZone.childCount > 0)
+                addTrajectoryAsPossibleAction();
+
+            int r = random.Next(0, AI_ACTIONS.Count);
             controller.AI_action = AI_ACTIONS[r];
 
             controller.actionProgress = "started";
@@ -82,10 +92,8 @@ public class AI_Decisions : MonoBehaviour
         }
     }
 
-    private void addTrajectoryAsPossibleAction(Transform decision)
+    private void addTrajectoryAsPossibleAction()
     {
-        trajectory = decision.transform.GetComponent<TestingTrajectories>();
-
         for (int i = 0; i < trajectory.considerationWeight; i++)
         {
             if (trajectory.headStraight)

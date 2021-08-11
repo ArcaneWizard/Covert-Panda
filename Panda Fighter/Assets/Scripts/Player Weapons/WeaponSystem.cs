@@ -44,7 +44,7 @@ public class WeaponSystem : CentralWeaponSystem
     void Start()
     {
         EquipNewWeapon("Shielder", 25);
-        SelectWeapon("Shielder", "gun");
+        selectWeapon("Shielder", "gun");
         List<Vector2> aiming = iKTracking.setIKCoordinates("Shielder");
         controller.calculateShoulderAngles(aiming);
     }
@@ -55,25 +55,25 @@ public class WeaponSystem : CentralWeaponSystem
     void Update()
     {
         if (Input.GetKeyDown("1"))
-            SelectWeapon("Grenade", "handheld");
+            selectWeapon("Grenade", "handheld");
         if (Input.GetKeyDown("2"))
-            SelectWeapon("Shielder", "gun");
+            selectWeapon("Shielder", "gun");
         if (Input.GetKeyDown("3"))
-            SelectWeapon("Boomerang", "handheld");
+            selectWeapon("Boomerang", "handheld");
         if (Input.GetKeyDown("4"))
-            SelectWeapon("Plasma Orb", "handheld");
+            selectWeapon("Plasma Orb", "handheld");
         if (Input.GetKeyDown("5"))
-            SelectWeapon("Scythe", "meelee");
+            selectWeapon("Scythe", "meelee");
         if (Input.GetKeyDown("6"))
-            SelectWeapon("Sniper", "gun");
+            selectWeapon("Sniper", "gun");
         if (Input.GetKeyDown("7"))
-            SelectWeapon("Shotgun", "gun");
+            selectWeapon("Shotgun", "gun");
     }
 
     // --------------------------------------------------------------------
     // FOR PC VERSION: allow player to select a different weapon 
     // --------------------------------------------------------------------
-    public override void SelectWeapon(string weapon, string combatMode)
+    public override void selectWeapon(string weapon, string combatMode)
     {
         //if the weapon is already selected, no need to do anything
         if (weapon == weaponSelected)

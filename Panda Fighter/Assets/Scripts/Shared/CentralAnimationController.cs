@@ -59,7 +59,7 @@ public class CentralAnimationController : MonoBehaviour
     }
 
     //states when to transition btwn diff player animation states 
-    protected void setAnimationState()
+    protected virtual void setAnimationState()
     {
         //if the player isn't currently in the jump state 
         if (animator.GetInteger("Phase") != 2)
@@ -70,17 +70,6 @@ public class CentralAnimationController : MonoBehaviour
                 setAnimation("walking");
             else
                 setAnimation("idle");
-
-            bool facingRight = Input.mousePosition.x >= controller.camera.WorldToScreenPoint(controller.shootingArm.parent.position).x;
-
-            //if you're looking in the opposite direction as you're running, set walking speed to -1 (which auto triggers backwards walking animation)
-            if (animator.GetInteger("Phase") == 1)
-            {
-                if ((controller.dirX == 1 && facingRight) || controller.dirX == -1 && !facingRight)
-                    animator.SetFloat("walking speed", 1);
-                else if (controller.dirX != 0)
-                    animator.SetFloat("walking speed", -1);
-            }
         }
 
         //if you are grounded, exit out of jump animation

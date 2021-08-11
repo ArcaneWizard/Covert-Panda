@@ -26,9 +26,10 @@ public class CentralController : MonoBehaviour
     protected float speed;
     protected float jumpForce = 1130f;
     protected float doublejumpForce = 1243f;
+    protected float maxGravity = 2.5f;
 
-    protected RaycastHit2D leftGroundHit, rightGroundHit;
-    protected GameObject leftFootGround, rightFootGround;
+    protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
+    protected GameObject leftFootGround, rightFootGround, centerGround;
     protected float lastGroundAngle;
 
     protected Vector2 obstacleToTheLeft, obstacleToTheRight;
