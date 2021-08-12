@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
+using UnityEditor;
 
 public class TestingTrajectories : MonoBehaviour
 {
@@ -18,16 +19,19 @@ public class TestingTrajectories : MonoBehaviour
     public Vector2 speedRange = new Vector2(10f, 10f);
     public Vector2 timeB4Change = new Vector2(0f, 0f);
     public float changedSpeed;
+    public Vector2 bonusTrait = new Vector2(0, 0);
 
     private float mass = 1f;
     private float defaultGravity = -32.5f;
     private float gravity;
 
     [Header("Other Settings")]
-    public Vector2 bonusTrait = new Vector2(0, 0);
     public int considerationWeight = 1;
     public float lengthShown = 14;
     private float length;
+
+    [Header("Connected Zone")]
+    public Transform chainedDirectionZone;
 
     [HideInInspector]
     public Vector2 endPoint;
@@ -82,8 +86,16 @@ public class TestingTrajectories : MonoBehaviour
             drawDoubleJumpParabola(timeB4Change.y);
         }
 
+        //white sphere on end Point
         Gizmos.color = Color.white;
         Gizmos.DrawSphere(transform.GetChild(0).position, 0.25f);
+
+        //yellow rec on connected decision zone
+        if (chainedDirectionZone != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(chainedDirectionZone.position, 0.7f);
+        }
     }
 
     Vector2 sampleParabola(Vector2 start, float time, float speed, float jumpForce)
@@ -178,6 +190,12 @@ public class TestingTrajectories : MonoBehaviour
             Gizmos.DrawLine(lastP, p);
             lastP = p;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (Selection.transforms.Length != 0 && Selection.transforms[0].parent == this.transform)
+            OnDrawGizmosSelected();
     }
 }
 

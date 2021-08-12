@@ -7,7 +7,6 @@ public class CentralHoldingTheWeapon : MonoBehaviour
     protected List<GameObject> WeaponSetup = new List<GameObject>();
 
     protected Animator armAnimator;
-    protected IKTracking iKTracking;
     protected CentralWeaponSystem weaponSystem;
     protected CentralController controller;
     protected CentralShooting shooting;
@@ -16,7 +15,6 @@ public class CentralHoldingTheWeapon : MonoBehaviour
     public virtual void Awake()
     {
         armAnimator = transform.GetComponent<Animator>();
-        iKTracking = transform.GetComponent<IKTracking>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         controller = transform.GetComponent<CentralController>();
         shooting = transform.GetComponent<CentralShooting>();
@@ -43,7 +41,7 @@ public class CentralHoldingTheWeapon : MonoBehaviour
         WeaponSetup.Clear();
 
         //set the right aim target for the new weapon
-        controller.aimTarget = config.aimTarget;
+        controller.setAimTarget(config.aimTarget);
 
         //activate the animated arms + display the actual weapon )
         if (config.weapon)
@@ -59,7 +57,7 @@ public class CentralHoldingTheWeapon : MonoBehaviour
             limb_Or_Weapon.SetActive(true);
 
         //use the right coordinates for the weapon's IK aim target
-        List<Vector2> aiming = iKTracking.setIKCoordinates(weapon);
+        List<Vector2> aiming = IKTracking.setIKCoordinates(weapon);
         controller.calculateShoulderAngles(aiming);
     }
 

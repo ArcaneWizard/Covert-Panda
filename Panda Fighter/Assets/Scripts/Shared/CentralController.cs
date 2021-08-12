@@ -6,7 +6,9 @@ public class CentralController : MonoBehaviour
 {
     protected Rigidbody2D rig;
     protected Transform body;
-    protected Animator animator;
+
+    [HideInInspector]
+    public Animator animator { get; private set; }
 
     [Header("Limbs and colliders")]
     public Transform shootingArm;
@@ -18,6 +20,7 @@ public class CentralController : MonoBehaviour
     public Camera camera;
 
     [Header("Ground detection")]
+
     public Transform leftFoot;
     public Transform rightFoot;
     public Transform groundColliders;
@@ -41,7 +44,7 @@ public class CentralController : MonoBehaviour
     protected Vector2 groundDir;
     protected bool checkForAngle;
 
-    public int dirX;
+    public int dirX { get; protected set; }
     protected float zAngle;
 
     //ideal aim coordinates when looking to the side, up or down 
@@ -51,7 +54,7 @@ public class CentralController : MonoBehaviour
     protected float up, right, down;
 
     [HideInInspector]
-    public Transform aimTarget;
+    public Transform aimTarget { get; private set; }
 
     protected CentralWeaponSystem weaponSystem;
     protected CentralWeaponAttacks weaponAttacks;
@@ -265,6 +268,10 @@ public class CentralController : MonoBehaviour
             isTouchingMap = false;
     }
 
+    //-------------------------------------------------------------------------------------------
+    //----------Functions used by other scripts to carry out intertwined logic--------------------
+    //-------------------------------------------------------------------------------------------
+
     public void calculateShoulderAngles(List<Vector2> aiming)
     {
         //get specific weapon aim coordinates
@@ -284,4 +291,8 @@ public class CentralController : MonoBehaviour
         downVector = (pointingDown - shoulderPos).magnitude;
     }
 
+    public void setAimTarget(Transform aimTarget)
+    {
+        this.aimTarget = aimTarget;
+    }
 }

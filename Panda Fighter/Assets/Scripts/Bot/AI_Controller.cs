@@ -7,17 +7,16 @@ using UnityEngine;
 
 public class AI_Controller : CentralController
 {
-    [HideInInspector]
-    public Transform decisionZone;
+    public Transform decisionZone { get; private set; }
+    public AI_ACTION AI_action { get; private set; }
 
-    [HideInInspector]
-    public bool needsToFall, shouldExecuteAction;
-    public string actionProgress;
+    public bool needsToFall { get; private set; }
+    public bool shouldExecuteAction { get; private set; }
+    public string actionProgress { get; private set; }
 
     private int lastMovementDirX;
     private float randomDistance;
     private float randomSpeed;
-    public AI_ACTION AI_action;
 
     public override void Start()
     {
@@ -187,6 +186,27 @@ public class AI_Controller : CentralController
         }
     }
 
+    //-------------------------------------------------------------------------------------------
+    //----------Functions used by other scripts to carry out intertwined logic-------------------
+    //-------------------------------------------------------------------------------------------
+
+    public void executeNewAIAction(AI_ACTION action)
+    {
+        AI_action = action;
+        actionProgress = "started";
+        shouldExecuteAction = true;
+    }
+
+    public void registerNewDecisionZone(Transform zone)
+    {
+        decisionZone = zone;
+    }
+
+    public void moveInOtherDirection()
+    {
+        dirX = (dirX != 1) ? 1 : -1;
+    }
+
     //------------------------------------------------------------------
     //---------Handle Looking around and Moving------------------------
     //------------------------------------------------------------------
@@ -217,7 +237,6 @@ public class AI_Controller : CentralController
             rig.gravityScale = maxGravity;
         }
     }
-
 
     //handles player orientation (left/right), gun rotation, gun position, head rotation
     private void lookAndAimInRightDirection()

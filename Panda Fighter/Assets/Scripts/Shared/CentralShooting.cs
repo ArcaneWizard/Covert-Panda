@@ -59,7 +59,6 @@ public class CentralShooting : MonoBehaviour
     public void SpawnGunBulletAndAim(GameObject ammunition)
     {
         aimDir = calculateAimDirection();
-
         ammunition.transform.position = bulletSpawnPoint.position;
         resetAmmunitionSettingsWhenSpawned(ammunition);
     }

@@ -17,14 +17,12 @@ public class CentralWeaponSystem : MonoBehaviour
     public string weaponSelected;
     protected int bulletNumber = 0;
 
-    protected IKTracking iKTracking;
     protected CentralShooting shooting;
     protected CentralHoldingTheWeapon holdTheWeapon;
     protected CentralController controller;
 
     public virtual void Awake()
     {
-        iKTracking = transform.GetComponent<IKTracking>();
         holdTheWeapon = transform.GetComponent<CentralHoldingTheWeapon>();
         controller = transform.GetComponent<CentralController>();
         shooting = transform.GetComponent<CentralShooting>();
