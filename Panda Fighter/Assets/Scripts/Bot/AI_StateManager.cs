@@ -10,8 +10,8 @@ public class AI_StateManager : MonoBehaviour
 
     [SerializeField]
     private Transform placesToVisit, target;
+    public bool useTargetForTesting;
     public Vector2 visitingPlaceLocation { get; private set; }
-
     private CentralController controller;
     private PathFinding pathFinding;
 
@@ -42,8 +42,10 @@ public class AI_StateManager : MonoBehaviour
         state = AI_STATE.Wandering;
         visitingPlaceLocation = getLocationOfNewPlaceToVisit();
 
-        StartCoroutine(pathFinding.FindMultiplePaths(0.8f, visitingPlaceLocation));
-        yield return new WaitForSeconds(0.8f + 2 * Time.deltaTime);
+        StartCoroutine(pathFinding.FindMultiplePaths(2f, visitingPlaceLocation));
+
+        while (pathFinding.getChosenPath() == null)
+            yield return new WaitForSeconds(Time.deltaTime * 2);
 
         pathFinding.debugPathInConsole(pathFinding.getChosenPath());
     }
@@ -55,7 +57,7 @@ public class AI_StateManager : MonoBehaviour
 
     private Vector2 getLocationOfNewPlaceToVisit()
     {
-        return placesToVisit.GetChild(UnityEngine.Random.Range(0, placesToVisit.childCount)).position;
+        return (useTargetForTesting) ? target.position : placesToVisit.GetChild(UnityEngine.Random.Range(0, placesToVisit.childCount)).position;
     }
 
     private float getSquaredDistanceBtwnVectors(Vector2 a, Vector2 b)

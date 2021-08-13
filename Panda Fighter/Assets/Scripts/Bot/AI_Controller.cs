@@ -22,7 +22,7 @@ public class AI_Controller : CentralController
     {
         base.Start();
 
-        dirX = -1;
+        dirX = 0;
         actionProgress = "finished";
     }
 
