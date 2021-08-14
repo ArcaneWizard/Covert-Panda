@@ -10,6 +10,8 @@ public class CentralShooting : MonoBehaviour
     public Transform shootingArm;
 
     protected Rigidbody2D rig;
+    protected Animator armAnimator;
+
     [HideInInspector]
     public Vector2 aimDir;
     protected float wait;
@@ -28,11 +30,17 @@ public class CentralShooting : MonoBehaviour
 
     protected CentralWeaponAttacks weaponAttacks;
     protected CentralWeaponSystem weaponSystem;
+    protected CentralController controller;
+
+    private List<GameObject> WeaponSetup = new List<GameObject>();
 
     public void Awake()
     {
         weaponAttacks = transform.GetComponent<CentralWeaponAttacks>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
+        controller = transform.GetComponent<CentralController>();
+
+        armAnimator = transform.GetComponent<Animator>();
         rig = transform.GetComponent<Rigidbody2D>();
     }
 
@@ -113,6 +121,47 @@ public class CentralShooting : MonoBehaviour
     private Vector2 calculateAimDirection()
     {
         return (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+    }
+
+    //specify which limbs, weapon and aim target to activate (the latter helps a weapon track while aiming) 
+    public void configureWeaponAndArms()
+    {
+        string weapon = weaponSystem.weaponSelected;
+        WeaponConfig config = weaponSystem.weaponConfigurations[weapon];
+
+        //deactivate the previous animated arm limbs + weapon
+        foreach (GameObject limb_Or_Weapon in WeaponSetup)
+            limb_Or_Weapon.SetActive(false);
+        WeaponSetup.Clear();
+
+        //set the right aim target for the new weapon
+        controller.setAimTarget(config.aimTarget);
+
+        //activate the animated arms + display the actual weapon )
+        if (config.weapon)
+            WeaponSetup.Add(config.weapon);
+        foreach (GameObject limb in config.limbs)
+            WeaponSetup.Add(limb);
+
+        //specify the new bullet point location
+        bulletSpawnPoint = config.bulletSpawnPoint;
+        defaultWeaponAnimations(weapon);
+
+        foreach (GameObject limb_Or_Weapon in WeaponSetup)
+            limb_Or_Weapon.SetActive(true);
+
+        //use the right coordinates for the weapon's IK aim target
+        List<Vector2> aiming = IKTracking.setIKCoordinates(weapon);
+        controller.calculateShoulderAngles(aiming);
+    }
+
+    private void defaultWeaponAnimations(string weapon)
+    {
+        if (weapon == "Grenade" || weapon == "Plasma Orb" || weapon == "Boomerang")
+            armAnimator.SetInteger("Arms Phase", 0);
+
+        else if (weapon == "Scythe")
+            armAnimator.SetInteger("Arms Phase", 10);
     }
 
 }

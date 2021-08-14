@@ -18,12 +18,10 @@ public class CentralWeaponSystem : MonoBehaviour
     protected int bulletNumber = 0;
 
     protected CentralShooting shooting;
-    protected CentralHoldingTheWeapon holdTheWeapon;
     protected CentralController controller;
 
     public virtual void Awake()
     {
-        holdTheWeapon = transform.GetComponent<CentralHoldingTheWeapon>();
         controller = transform.GetComponent<CentralController>();
         shooting = transform.GetComponent<CentralShooting>();
 
@@ -92,7 +90,7 @@ public class CentralWeaponSystem : MonoBehaviour
 
         //switch combat mode for this specific weapon (update arm limb animations)
         shooting.combatMode = combatMode;
-        holdTheWeapon.configureWeaponAndArms();
+        shooting.configureWeaponAndArms();
 
         if (combatMode == "handheld")
             shooting.weaponHeld = getWeapon();

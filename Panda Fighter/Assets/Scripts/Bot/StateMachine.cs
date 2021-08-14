@@ -10,7 +10,7 @@ public class StateMachine : MonoBehaviour
     private IState currentState;
 
     //all transitions
-    private Dictionary<Type, List<Transition>> transitions = new Dictionary<Type, List<Transition>>();
+    private Dictionary<String, List<Transition>> transitions = new Dictionary<String, List<Transition>>();
 
     //transitions for our current state
     private List<Transition> currentStateTransitions = new List<Transition>();
@@ -20,6 +20,8 @@ public class StateMachine : MonoBehaviour
 
     //empty list of transitions 
     private static List<Transition> EmptyTransitions = new List<Transition>();
+
+    private string IStateName;
 
     public void DoStuff()
     {
@@ -38,22 +40,24 @@ public class StateMachine : MonoBehaviour
         currentState?.OnExit();
         currentState = state;
 
-        transitions.TryGetValue(currentState.GetType(), out currentStateTransitions);
+        transitions.TryGetValue(currentState.GetType().ToString(), out currentStateTransitions);
         if (currentStateTransitions == null)
             currentStateTransitions = EmptyTransitions;
 
         currentState.OnEnter();
     }
 
-    public void AddTransition(IState from, IState to, Func<bool> predicate)
+    public void AddTransition(IState from, IState to, Func<bool> condition)
     {
-        if (!transitions.TryGetValue(from.GetType(), out var newTransitions))
+        IStateName = from.GetType().ToString();
+
+        if (!transitions.TryGetValue(IStateName, out var IStateTransitions))
         {
-            newTransitions = new List<Transition>();
-            transitions[from.GetType()] = newTransitions;
+            IStateTransitions = new List<Transition>();
+            transitions[IStateName] = IStateTransitions;
         }
 
-        newTransitions.Add(new Transition(to, predicate));
+        IStateTransitions.Add(new Transition(to, condition));
     }
 
     public void AddAlwaysCalledTransition(IState state, Func<bool> predicate)

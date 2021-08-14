@@ -105,7 +105,7 @@ public class WeaponSystem : CentralWeaponSystem
 
         //switch combat mode for this specific weapon (update arm limb animations)
         shooting.combatMode = combatMode;
-        holdTheWeapon.configureWeaponAndArms();
+        shooting.configureWeaponAndArms();
 
         if (combatMode == "handheld")
             shooting.weaponHeld = getWeapon();

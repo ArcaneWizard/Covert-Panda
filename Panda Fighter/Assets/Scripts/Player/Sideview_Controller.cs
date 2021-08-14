@@ -129,10 +129,10 @@ public class Sideview_Controller : CentralController
         }
     }
 
-    //Player is on a levitation boost platform and clicks W -> give them a jump boost 
+    /*//Player is on a levitation boost platform and clicks W -> give them a jump boost 
     private void OnTriggerStay2D(Collider2D col)
     {
         if (col.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && isGrounded)
             rig.AddForce(Constants.levitationBoost);
-    }
+    }*/
 }
