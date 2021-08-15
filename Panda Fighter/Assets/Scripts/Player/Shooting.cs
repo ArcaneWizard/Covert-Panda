@@ -18,7 +18,7 @@ public class Shooting : CentralShooting
             Attack();
 
             else if (combatMode == "handheld" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
-            ThrowAttack();
+            Attack();
 
             else if (combatMode == "meelee" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
             MeeleeAttack();
@@ -31,18 +31,9 @@ public class Shooting : CentralShooting
 
 
     private void Attack() {
-        weaponSystem.useOneAmmo();
         bullet = weaponSystem.getWeapon().transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-        
-        weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
-    }
-
-    private void ThrowAttack() {
         weaponSystem.useOneAmmo();
-        bullet = weaponSystem.getWeapon().transform;
-        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-        newWeaponHeld = bullet.gameObject;
         
         weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
     }

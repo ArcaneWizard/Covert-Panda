@@ -11,6 +11,7 @@ public abstract class IWeapon : MonoBehaviour
     public virtual void BonusAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) {return;}
 
     [HideInInspector] public string attackProgress {get; private set;} 
+    [HideInInspector] public WeaponConfig config;
 
     public void DoSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) 
     {
@@ -21,6 +22,7 @@ public abstract class IWeapon : MonoBehaviour
     public void DoAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) 
     {
         Attack(aim, bullet, rig);
+        config.shooting.updateWeaponHeldForHandheldWeapons();
         attackProgress = "finished";
     }  
 
@@ -36,8 +38,10 @@ public abstract class IWeapon : MonoBehaviour
         attackProgress = "finished";
     }  
 
-    [HideInInspector] public WeaponConfig config;
-    public virtual void Awake() => config = transform.GetComponent<WeaponConfig>();
+    public virtual void Awake() { 
+        config = transform.GetComponent<WeaponConfig>();
+        attackProgress = "finished";
+    }
 }
 
 //reusable weapon methods
@@ -66,8 +70,9 @@ public static class reusableWeaponMethods {
     
     public static Transform retrieveNextBullet(CentralWeaponSystem weaponSystem)
     {
+        Transform bullet = weaponSystem.getWeapon().transform;
         weaponSystem.useOneAmmo();
-        return weaponSystem.getWeapon().transform;
+        return bullet;
     }
 
     public static float calculateTimeB4ReleasingWeapon(float trackingMultiplier, float trackingOffset, Vector2 aimDir) =>  ((-aimDir.y + 1) * trackingMultiplier + trackingOffset);

@@ -52,8 +52,8 @@ public class CentralWeaponSystem : MonoBehaviour
             return;
 
         //if a weapon/grenade is currently held by the player but not "thrown", hide it before selecting the new weapon
-        if (weapon != weaponSelected && shooting.newWeaponHeld != null)
-            shooting.newWeaponHeld.gameObject.SetActive(false);
+        if (weapon != weaponSelected && shooting.weaponHeld != null)
+            shooting.weaponHeld.gameObject.SetActive(false);
 
         int weaponAmmo = Int32.Parse(ammo[weapon].text);
 
@@ -72,7 +72,7 @@ public class CentralWeaponSystem : MonoBehaviour
         shooting.configureWeaponAndArms();
 
         if (combatMode == "handheld")
-            shooting.newWeaponHeld = getWeapon();
+            shooting.weaponHeld = getWeapon();
 
         weapons[weaponSelected].SetDefaultAnimation();
     }

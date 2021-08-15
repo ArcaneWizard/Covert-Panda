@@ -17,6 +17,7 @@ public class WeaponConfig : MonoBehaviour
     
     [HideInInspector] public List<Vector2> IK_Coordinates = AimingDir.defaultAiming;
     [HideInInspector] public CentralWeaponSystem weaponSystem;
+    [HideInInspector] public CentralShooting shooting;
     [HideInInspector] public Animator animator;
 
     private Transform entity;
@@ -25,9 +26,7 @@ public class WeaponConfig : MonoBehaviour
     {
         entity = transform.parent.parent.parent.GetChild(0);
         weaponSystem = entity.GetComponent<CentralWeaponSystem>();
+        shooting = entity.GetComponent<CentralShooting>();
         animator = entity.GetComponent<Animator>();
-
-        if (weaponSystem == null || animator == null)
-            Debug.LogError("entity's hierarchy may have been changed");
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CentralShooting : MonoBehaviour
 {
     [HideInInspector]
-    public GameObject newWeaponHeld = null;
+    public GameObject weaponHeld = null;
     public string combatMode = "gun";
 
     protected CentralWeaponSystem weaponSystem;
@@ -26,15 +26,17 @@ public class CentralShooting : MonoBehaviour
         {
             if (weaponSystem.getAmmo() > 0)
             {
-                newWeaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-                newWeaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
+                weaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                weaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
 
-                newWeaponHeld.transform.position = bulletSpawnPoint.position;
-                newWeaponHeld.transform.rotation = bulletSpawnPoint.rotation;
-                newWeaponHeld.SetActive(true);
+                weaponHeld.transform.position = bulletSpawnPoint.position;
+                weaponHeld.transform.rotation = bulletSpawnPoint.rotation;
+                weaponHeld.SetActive(true);
             }
         }
     }
+
+    public void updateWeaponHeldForHandheldWeapons() => weaponHeld = weaponSystem.getWeapon();
 
     //specify which limbs, weapon and aim target to activate (the latter helps a weapon track while aiming) 
     public void configureWeaponAndArms()
@@ -44,13 +46,16 @@ public class CentralShooting : MonoBehaviour
             limb_Or_Weapon.SetActive(false);
         WeaponSetup.Clear();
 
-        IWeapon Iweapon = weaponSystem.getWeaponConfig();
-
-        lookAround.setAimTarget(Iweapon.config.aimTarget);
+        IWeapon Iweapon = weaponSystem.getWeaponConfig();   
+        
+        Debug.Log(Iweapon.config.aimTarget);
+        if (Iweapon.config.aimTarget != null)
+            lookAround.setAimTarget(Iweapon.config.aimTarget);
         bulletSpawnPoint = Iweapon.config.bulletSpawnPoint;
         
-        if (Iweapon.config.weapon != null)
+        if (Iweapon.config.weapon != null) 
             WeaponSetup.Add(Iweapon.config.weapon);
+
         foreach (GameObject limb in Iweapon.config.limbs)
             WeaponSetup.Add(limb);
 

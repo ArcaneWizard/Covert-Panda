@@ -14,13 +14,13 @@ public class wScythe : IWeapon {
         config.animator.SetInteger("Arms Phase", 11);
         config.aimTarget.gameObject.SetActive(false);
 
-        while (config.animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == "swinging scythe" || config.animator.GetInteger("Arms Phase") == 11)
+        while (config.animator.GetInteger("Arms Phase") == 11)
             yield return null;
 
-        config.aimTarget.gameObject.SetActive(true);
+        DoAttack(aim, bullet, rig);
     }
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) {return;}
+    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) => config.aimTarget.gameObject.SetActive(true);
 
     public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig) 
     {

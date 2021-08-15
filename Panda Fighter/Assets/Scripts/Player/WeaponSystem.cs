@@ -75,40 +75,17 @@ public class WeaponSystem : CentralWeaponSystem
     // --------------------------------------------------------------------
     public override void selectWeapon(string weapon, string combatMode)
     {
-        //if the weapon is already selected, no need to do anything
-        if (weapon == weaponSelected)
-            return;
+        string lastWeapon = weaponSelected;
+        base.selectWeapon(weapon, combatMode);
 
-        //if a weapon/grenade is currently held by the player but not "thrown", hide it before selecting the new weapon
-        if (weapon != weaponSelected && shooting.newWeaponHeld)
-            shooting.newWeaponHeld.gameObject.SetActive(false);
-
-        int weaponAmmo = Int32.Parse(ammo[weapon].text);
-
-        //if the selected weapon has ammo, equip it
-        if (weaponAmmo > 0)
-        {
+        if (weaponSelected != lastWeapon) {
             //unselect previous weapon slot
-            if (weaponSelected != "")
-                weaponSlot[weaponSelected].sprite = slotNotSelected;
+            if (lastWeapon != "")
+                weaponSlot[lastWeapon].sprite = slotNotSelected;
 
-            //select new weapon + new weapon slot
-            weaponSelected = weapon;
+            //select new weapon slot
             weaponSlot[weaponSelected].sprite = slotSelected;
         }
-        else
-            return;
-
-        //use the next bullet in the bullet pool next time you fire
-        if (combatMode != "meelee" || weaponAmmoPools.ContainsKey(weaponSelected))
-            bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
-
-        //switch combat mode for this specific weapon (update arm limb animations)
-        shooting.combatMode = combatMode;
-        shooting.configureWeaponAndArms();
-
-        if (combatMode == "handheld")
-            shooting.newWeaponHeld = getWeapon();
     }
 
     // --------------------------------------------------------------------
