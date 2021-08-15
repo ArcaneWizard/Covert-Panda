@@ -33,8 +33,8 @@ public class AI_WeaponSystem : CentralWeaponSystem
     {
         EquipNewWeapon(weapon, 20);
         selectWeapon(weapon, combatMode);
-        List<Vector2> aiming = IKTracking.setIKCoordinates(weapon);
-        controller.calculateShoulderAngles(aiming);
+        List<Vector2> aiming = getWeaponConfig().config.IK_Coordinates;
+        lookAround.calculateShoulderAngles(aiming);
     }
 }
 

@@ -8,8 +8,8 @@ public class CentralWeaponSystem : MonoBehaviour
 {
     protected Dictionary<string, Text> ammo = new Dictionary<string, Text>();
 
-    protected Dictionary<string, List<Transform>> physicalWeapons = new Dictionary<string, List<Transform>>();
-    public Dictionary<string, WeaponConfig> weaponConfigurations = new Dictionary<string, WeaponConfig>();
+    protected Dictionary<string, List<Transform>> weaponAmmoPools = new Dictionary<string, List<Transform>>();
+    protected Dictionary<string, IWeapon> weapons = new Dictionary<string, IWeapon>();
 
     public Transform inventory;
     public Transform physicalWeapon;
@@ -18,54 +18,33 @@ public class CentralWeaponSystem : MonoBehaviour
     protected int bulletNumber = 0;
 
     protected CentralShooting shooting;
-    protected CentralController controller;
+    protected CentralLookAround lookAround;
+
 
     public virtual void Awake()
     {
-        controller = transform.GetComponent<CentralController>();
         shooting = transform.GetComponent<CentralShooting>();
+        lookAround = transform.GetComponent<CentralLookAround>();
 
         //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
             ammo.Add(weapon.tag, weapon.GetChild(1).transform.GetComponent<Text>());
 
-        //add 1) each weapon's weapon configuration to a dictionary, accessible by weapon tag
-        //add 2) each weapon's physical ammo to a dictionary, accessible by weapon tag
         foreach (Transform weaponType in physicalWeapon)
         {
-            List<Transform> physicalAmmo = new List<Transform>();
-
+            //add each weapon's pool of ammo to a dictionary, accessible by weapon tag
+            List<Transform> ammoPool = new List<Transform>();
             foreach (Transform ammo in weaponType)
-                physicalAmmo.Add(ammo);
+                ammoPool.Add(ammo);
+            weaponAmmoPools.Add(weaponType.tag, ammoPool);
 
-            physicalWeapons.Add(weaponType.tag, physicalAmmo);
-            weaponConfigurations.Add(weaponType.tag, weaponType.transform.GetComponent<WeaponConfig>());
+            //add each weapon's shootingInstructions to a dictionary, accessible by weapon tag
+            IWeapon weapon = weaponType.transform.GetComponent<IWeapon>();
+            weapons.Add(weaponType.tag, weapon);
         }
+
     }
 
-
-    // --------------------------------------------------------------------
-    // FOR MOBILE VERSION: allow player to tap to select a different weapon 
-    // --------------------------------------------------------------------
-    public void SelectWeapon(string combatMode)
-    {
-        string weapon = (EventSystem.current.currentSelectedGameObject) ? EventSystem.current.currentSelectedGameObject.transform.tag : "Pistol";
-        int weaponAmmo = Int32.Parse(ammo[weapon].text);
-
-        //if that weapon has ammo, equip it
-        if (weaponAmmo > 0)
-            weaponSelected = weapon;
-        else
-            return;
-
-        //update which bullet in the bullet list to use
-        bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
-        shooting.combatMode = combatMode;
-    }
-
-    // --------------------------------------------------------------------
-    // FOR PC VERSION: allow player to select a different weapon 
-    // --------------------------------------------------------------------
     public virtual void selectWeapon(string weapon, string combatMode)
     {
         //if the weapon is already selected, no need to do anything
@@ -73,8 +52,8 @@ public class CentralWeaponSystem : MonoBehaviour
             return;
 
         //if a weapon/grenade is currently held by the player but not "thrown", hide it before selecting the new weapon
-        if (weapon != weaponSelected && shooting.weaponHeld != null)
-            shooting.weaponHeld.gameObject.SetActive(false);
+        if (weapon != weaponSelected && shooting.newWeaponHeld != null)
+            shooting.newWeaponHeld.gameObject.SetActive(false);
 
         int weaponAmmo = Int32.Parse(ammo[weapon].text);
 
@@ -85,29 +64,21 @@ public class CentralWeaponSystem : MonoBehaviour
             return;
 
         //use the next bullet in the bullet pool next time you fire
-        if (combatMode != "meelee" || physicalWeapons.ContainsKey(weaponSelected))
-            bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
+        if (combatMode != "meelee" || weaponAmmoPools.ContainsKey(weaponSelected))
+            bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
 
         //switch combat mode for this specific weapon (update arm limb animations)
         shooting.combatMode = combatMode;
         shooting.configureWeaponAndArms();
 
         if (combatMode == "handheld")
-            shooting.weaponHeld = getWeapon();
+            shooting.newWeaponHeld = getWeapon();
+
+        weapons[weaponSelected].SetDefaultAnimation();
     }
 
-    // --------------------------------------------------------------------
-    // Player collects a weapon by physically touching it
-    // --------------------------------------------------------------------
-    public virtual void EquipNewWeapon(string weapon, int bullets)
-    {
-        //update weapon sprite + ammo
-        ammo[weapon].text = bullets.ToString();
-    }
+    public virtual void EquipNewWeapon(string weapon, int bullets) => ammo[weapon].text = bullets.ToString();
 
-    // --------------------------------------------------------------------
-    // Player uses up ammo of a certain weapon
-    // --------------------------------------------------------------------
     public virtual void useOneAmmo()
     {
         //decrease ammo by 1 and update ammo text
@@ -116,25 +87,12 @@ public class CentralWeaponSystem : MonoBehaviour
         ammo[weaponSelected].text = weaponAmmo.ToString();
 
         //use diff gameobject bullet next time
-        bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
+        bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
     }
 
-    // --------------------------------------------------------------------
-    // Get the weapon bullet from the list in the dictionary + return different bullet next time
-    // --------------------------------------------------------------------
-    public GameObject getWeapon()
-    {
-        Transform theWeapon = physicalWeapons[weaponSelected][bulletNumber];
-        return theWeapon.gameObject;
-    }
-
-    // --------------------------------------------------------------------
-    // Get the weapon's ammo
-    // --------------------------------------------------------------------
-    public int getAmmo()
-    {
-        return Int32.Parse(ammo[weaponSelected].text);
-    }
+    public GameObject getWeapon() => weaponAmmoPools[weaponSelected][bulletNumber].gameObject;
+    public int getAmmo() => Int32.Parse(ammo[weaponSelected].text);
+    public IWeapon getWeaponConfig() => weapons[weaponSelected];
 
     // --------------------------------------------------------------------
     //Player collides with weapon, so equip it

@@ -42,11 +42,6 @@ public class Sideview_Controller : CentralController
         tilt();
     }
 
-    private void LateUpdate()
-    {
-        lookAndAimInRightDirection();
-    }
-
     private void setPlayerVelocity()
     {
         //nullify the slight bounce on a slope glitch when changing slopes
@@ -88,31 +83,6 @@ public class Sideview_Controller : CentralController
                 rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
 
             rig.gravityScale = maxGravity;
-        }
-    }
-
-    //handles player orientation (left/right), gun rotation, gun position, head rotation
-    private void lookAndAimInRightDirection()
-    {
-        //if player isn't spinning in mid-air with a double jump
-        if (!controller.disableLimbsDuringDoubleJump)
-        {
-            //player faces left or right depending on mouse cursor
-            if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
-                body.localRotation = Quaternion.Euler(0, 0, 0);
-            else
-                body.localRotation = Quaternion.Euler(0, 180, 0);
-
-            //calculate the angle btwn mouse cursor and player's shooting arm
-            Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
-            float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
-
-            //apply offset to the shoot Angle when the player is tilted on a ramp:
-            float zAngle = ((180 - Mathf.Abs(180 - transform.eulerAngles.z))); // <- maps angles above 180 to their negative value instead (ex. 330 becomes -30)
-            zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
-            shootAngle -= zAngle;
-
-            rotateHeadAndWeapon(shootDirection, shootAngle, weaponAttacks.disableAiming);
         }
     }
 

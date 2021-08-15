@@ -1,21 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public class IState : MonoBehaviour
+
+public interface IState 
 {
-    public void OnEnter()
-    {
-
-    }
-
-    public void DoStuff()
-    {
-
-    }
-
-    public void OnExit()
-    {
-
-    }
+     void OnEnter();
+     void DoStuff();
+     void OnExit();
 }
