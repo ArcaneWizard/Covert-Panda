@@ -48,7 +48,7 @@ public class CentralShooting : MonoBehaviour
 
         IWeapon Iweapon = weaponSystem.getWeaponConfig();   
         
-        Debug.Log(Iweapon.config.aimTarget);
+        Debug.Log(lookAround);
         if (Iweapon.config.aimTarget != null)
             lookAround.setAimTarget(Iweapon.config.aimTarget);
         bulletSpawnPoint = Iweapon.config.bulletSpawnPoint;
