@@ -65,4 +65,6 @@ public class CentralShooting : MonoBehaviour
         List<Vector2> aiming = Iweapon.config.IK_Coordinates;
         lookAround.calculateShoulderAngles(aiming);
     }
+
+
 }

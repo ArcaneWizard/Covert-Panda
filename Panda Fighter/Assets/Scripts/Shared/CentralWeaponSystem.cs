@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class CentralWeaponSystem : MonoBehaviour
 {
-    protected Dictionary<string, Text> ammo = new Dictionary<string, Text>();
+    protected Dictionary<string, Text> ammoText = new Dictionary<string, Text>();
+    protected Dictionary<string, int> ammo = new Dictionary<string, int>();
 
     protected Dictionary<string, List<Transform>> weaponAmmoPools = new Dictionary<string, List<Transform>>();
     protected Dictionary<string, IWeapon> weapons = new Dictionary<string, IWeapon>();
@@ -28,8 +29,8 @@ public class CentralWeaponSystem : MonoBehaviour
 
         //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
-            ammo.Add(weapon.tag, weapon.GetChild(1).transform.GetComponent<Text>());
-
+            ammoText.Add(weapon.tag, weapon.GetChild(1).transform.GetComponent<Text>());
+       
         foreach (Transform weaponType in physicalWeapon)
         {
             //add each weapon's pool of ammo to a dictionary, accessible by weapon tag
@@ -41,8 +42,13 @@ public class CentralWeaponSystem : MonoBehaviour
             //add each weapon's shootingInstructions to a dictionary, accessible by weapon tag
             IWeapon weapon = weaponType.transform.GetComponent<IWeapon>();
             weapons.Add(weaponType.tag, weapon);
-        }
 
+            //add each weapon's equipped ammo ammount to a dictionary, accessible by weapon tag
+            ammo.Add(weaponType.tag, weapon.config.ammoWhenEquipped);
+
+            //DEBUGGING: START WITH ALL WEAPONS AVAILABLE TO BEGIN WITH
+            ammoText[weaponType.tag].text = ammo[weaponType.tag].ToString();
+        }
     }
 
     public virtual void selectWeapon(string weapon, string combatMode)
@@ -55,10 +61,8 @@ public class CentralWeaponSystem : MonoBehaviour
         if (weapon != weaponSelected && shooting.weaponHeld != null)
             shooting.weaponHeld.gameObject.SetActive(false);
 
-        int weaponAmmo = Int32.Parse(ammo[weapon].text);
-
         //if the selected weapon has ammo, equip it
-        if (weaponAmmo > 0)
+        if (ammo[weapon] > 0)
             weaponSelected = weapon;
         else
             return;
@@ -77,32 +81,21 @@ public class CentralWeaponSystem : MonoBehaviour
         weapons[weaponSelected].SetDefaultAnimation();
     }
 
-    public virtual void EquipNewWeapon(string weapon, int bullets) => ammo[weapon].text = bullets.ToString();
+    public virtual void EquipNewWeapon(string weapon) {
+        ammo[weapon] = weapons[weapon].config.ammoWhenEquipped;
+      }
 
     public virtual void useOneAmmo()
     {
         //decrease ammo by 1 and update ammo text
-        int weaponAmmo = Int32.Parse(ammo[weaponSelected].text);
-        weaponAmmo--;
-        ammo[weaponSelected].text = weaponAmmo.ToString();
+        ammo[weaponSelected] -= 1;
+        ammoText[weaponSelected].text = ammo[weaponSelected].ToString();
 
         //use diff gameobject bullet next time
         bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
     }
 
     public GameObject getWeapon() => weaponAmmoPools[weaponSelected][bulletNumber].gameObject;
-    public int getAmmo() => Int32.Parse(ammo[weaponSelected].text);
+    public int getAmmo() => ammo[weaponSelected];
     public IWeapon getWeaponConfig() => weapons[weaponSelected];
-
-    // --------------------------------------------------------------------
-    //Player collides with weapon, so equip it
-    // --------------------------------------------------------------------
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.layer == LayerMask.NameToLayer("Weapon Pickup"))
-        {
-            EquipNewWeapon(col.gameObject.tag, 25);
-            col.gameObject.SetActive(false);
-        }
-    }
 }

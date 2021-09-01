@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class WeaponConfig : MonoBehaviour
 {
-    //unique for each weapon
+    [Header("Key Info")]
     public string combatMode;
+    public int ammoWhenEquipped;
 
     [Header("Required")]
     public List<GameObject> limbs = new List<GameObject>();
@@ -24,7 +25,7 @@ public class WeaponConfig : MonoBehaviour
 
     void Awake() 
     {
-        entity = transform.parent.parent.parent.GetChild(0);
+        entity = transform.parent.parent.parent.parent.parent;
         weaponSystem = entity.GetComponent<CentralWeaponSystem>();
         shooting = entity.GetComponent<CentralShooting>();
         animator = entity.GetComponent<Animator>();

@@ -43,7 +43,7 @@ public class WeaponSystem : CentralWeaponSystem
     // --------------------------------------------------------------------
     void Start()
     {
-        EquipNewWeapon("Shielder", 25);
+        EquipNewWeapon("Shielder");
         selectWeapon("Shielder", "gun");
         List<Vector2> aiming = getWeaponConfig().config.IK_Coordinates;
         lookAround.calculateShoulderAngles(aiming);
@@ -91,9 +91,9 @@ public class WeaponSystem : CentralWeaponSystem
     // --------------------------------------------------------------------
     // Player collects a weapon by physically touching it
     // --------------------------------------------------------------------
-    public override void EquipNewWeapon(string weapon, int bullets)
+    public override void EquipNewWeapon(string weapon)
     {
-        base.EquipNewWeapon(weapon, bullets);
+        base.EquipNewWeapon(weapon);
         weaponIcon[weapon].sprite = equipped[weapon];
     }
 
@@ -102,16 +102,10 @@ public class WeaponSystem : CentralWeaponSystem
     // --------------------------------------------------------------------
     public override void useOneAmmo()
     {
-        //decrease ammo by 1 and update ammo text
-        int weaponAmmo = Int32.Parse(ammo[weaponSelected].text);
-        weaponAmmo--;
-        ammo[weaponSelected].text = weaponAmmo.ToString();
-
-        //use diff gameobject bullet next time
-        bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
+        base.useOneAmmo();
 
         //if weapon is out of ammo, update its sprite
-        if (weaponAmmo <= 0)
+        if (ammo[weaponSelected] <= 0)
             weaponIcon[weaponSelected].sprite = notEquipped[weaponSelected];
     }
 }

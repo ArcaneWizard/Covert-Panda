@@ -12,15 +12,15 @@ public class Shooting : CentralShooting
     void Update()
     {
         //Weapons where you left click each time to shoot
-        if (Input.GetMouseButtonDown(0) && weaponSystem.weaponSelected != null)
+        if (Input.GetMouseButtonDown(0) && weaponSystem.getAmmo() > 0 && weaponSystem.weaponSelected != null)
         {
-            if (combatMode == "gun" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
+            if (combatMode == "gun" && weaponSystem.getWeapon().tag == "singleFire")
             Attack();
 
-            else if (combatMode == "handheld" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
+            else if (combatMode == "handheld" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getWeapon().tag == "singleFire")
             Attack();
 
-            else if (combatMode == "meelee" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
+            else if (combatMode == "meelee" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getWeapon().tag == "singleFire")
             MeeleeAttack();
         }
 

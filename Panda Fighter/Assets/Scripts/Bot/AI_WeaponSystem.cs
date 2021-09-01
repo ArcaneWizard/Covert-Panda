@@ -31,7 +31,7 @@ public class AI_WeaponSystem : CentralWeaponSystem
 
     private void startWithWeapon(string weapon, string combatMode)
     {
-        EquipNewWeapon(weapon, 20);
+        EquipNewWeapon(weapon);
         selectWeapon(weapon, combatMode);
         List<Vector2> aiming = getWeaponConfig().config.IK_Coordinates;
         lookAround.calculateShoulderAngles(aiming);
