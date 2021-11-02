@@ -9,7 +9,7 @@ public class HP : MonoBehaviour
     public static int playerHP = 100;
     private static int maxPlayerHP = 100;
 
-    public Image hpBar;
+    //public Image hpBar;
 
     void Awake()
     {
@@ -19,7 +19,7 @@ public class HP : MonoBehaviour
     void Update()
     {
         //update health bar visually 
-        hpBar.fillAmount = (float)playerHP / (float)maxPlayerHP;
+        //hpBar.fillAmount = (float)playerHP / (float)maxPlayerHP;
 
         if (playerHP < 0)
             deathAnimation();
@@ -28,6 +28,6 @@ public class HP : MonoBehaviour
     private void deathAnimation()
     {
         //death animation 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
     }
 }

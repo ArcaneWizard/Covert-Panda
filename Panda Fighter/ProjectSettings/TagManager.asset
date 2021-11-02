@@ -9,9 +9,16 @@ TagManager:
   - Grenade
   - Levitation
   - Pistol
-  - flare pistol
   - spamFire
   - singleFire
+  - Plasma Orb
+  - Equipped
+  - Not Equipped
+  - Scythe
+  - Sniper
+  - Shotgun
+  - Shielder
+  - Ghost Gun
   layers:
   - Default
   - TransparentFX
@@ -19,19 +26,19 @@ TagManager:
   - 
   - Water
   - UI
+  - Alien Armor
+  - Weapon Pickup
+  - Decision Zone
+  - Alien
   - 
-  - 
-  - Object
-  - Bot
-  - Thrown Object
-  - Map
+  - Ground
   - Player
   - Bullet
   - Player Armor
   - 
-  - 
-  - 
-  - 
+  - Path Collider
+  - Enemy Bullet
+  - Target
   - 
   - 
   - 
@@ -48,4 +55,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: gun
+    uniqueID: 1612381571
     locked: 0

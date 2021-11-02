@@ -1,110 +1,112 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class WeaponSystem : MonoBehaviour
+public class WeaponSystem : CentralWeaponSystem
 {
-    private Dictionary<string, Image> weapons = new Dictionary<string, Image>();
-    private Dictionary<string, Text> ammo = new Dictionary<string, Text>();
+    private Dictionary<string, Image> weaponIcon = new Dictionary<string, Image>();
+    private Dictionary<string, Image> weaponSlot = new Dictionary<string, Image>();
     private Dictionary<string, Sprite> equipped = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> notEquipped = new Dictionary<string, Sprite>();
 
-    private Dictionary<string, List<Transform>> physicalWeapons = new Dictionary<string, List<Transform>>();
+    public Transform equippedWeaponSprites;
+    public Transform unequippedWeaponSprites;
 
-    public Transform inventory;
-    public Transform weaponSprites;
-    public Transform physicalWeapon;
+    public Sprite slotSelected, slotNotSelected;
 
-    [HideInInspector]
-    public string weaponSelected;
-    private int bulletNumber = 0;
 
-    void Awake()
+    public override void Awake()
     {
-        //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
+        //initial setup
+        base.Awake();
+
+        //add each weapon's icon image + weapon slot border to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
         {
-            weapons.Add(weapon.tag, weapon.transform.GetComponent<Image>());
-            ammo.Add(weapon.tag, weapon.GetChild(0).transform.GetComponent<Text>());
+            weaponSlot.Add(weapon.tag, weapon.GetChild(0).transform.GetComponent<Image>());
+            weaponIcon.Add(weapon.tag, weapon.GetChild(2).transform.GetComponent<Image>());
         }
 
-        //add each weapon sprite (equipped vs not equipped) to a dictionary, accessible by weapon tag
-        foreach (Transform weapon in weaponSprites)
-        {
-            if (weapon.name == "Equipped")
-                equipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
-            else
-                notEquipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
+        //add each weapon sprite (for equipped vs not equipped states) to a dictionary, accessible by weapon tag
+        foreach (Transform weapon in equippedWeaponSprites)
+            equipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
+        foreach (Transform weapon in unequippedWeaponSprites)
+            notEquipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
+    }
+
+    // --------------------------------------------------------------------
+    // Default weapon you start off with
+    // --------------------------------------------------------------------
+    void Start()
+    {
+        EquipNewWeapon("Shielder");
+        selectWeapon("Shielder", "gun");
+        List<Vector2> aiming = getWeaponConfig().config.IK_Coordinates;
+        lookAround.calculateShoulderAngles(aiming);
+    }
+
+    // --------------------------------------------------------------------
+    // Associate each weapon with a different number key
+    // --------------------------------------------------------------------
+    void Update()
+    {
+        if (Input.GetKeyDown("1"))
+            selectWeapon("Grenade", "handheld");
+        if (Input.GetKeyDown("2"))
+            selectWeapon("Shielder", "gun");
+        if (Input.GetKeyDown("3"))
+            selectWeapon("Boomerang", "handheld");
+        if (Input.GetKeyDown("4"))
+            selectWeapon("Plasma Orb", "handheld");
+        if (Input.GetKeyDown("5"))
+            selectWeapon("Scythe", "meelee");
+        if (Input.GetKeyDown("6"))
+            selectWeapon("Sniper", "gun");
+        if (Input.GetKeyDown("7"))
+            selectWeapon("Shotgun", "gun");
+    }
+
+    // --------------------------------------------------------------------
+    // FOR PC VERSION: allow player to select a different weapon 
+    // --------------------------------------------------------------------
+    public override void selectWeapon(string weapon, string combatMode)
+    {
+        string lastWeapon = weaponSelected;
+        base.selectWeapon(weapon, combatMode);
+
+        if (weaponSelected != lastWeapon) {
+            //unselect previous weapon slot
+            if (lastWeapon != "")
+                weaponSlot[lastWeapon].sprite = slotNotSelected;
+
+            //select new weapon slot
+            weaponSlot[weaponSelected].sprite = slotSelected;
         }
-
-        //add each weapon's physical ammo to a dictionary, accessible by weapon tag
-        foreach (Transform weaponType in physicalWeapon)
-        {
-            List<Transform> physicalAmmo = new List<Transform>();
-            foreach (Transform ammo in weaponType)
-                physicalAmmo.Add(ammo);
-            physicalWeapons.Add(weaponType.tag, physicalAmmo); ;
-        }
-
-        //start with grenade equipped
-        weaponSelected = "Pistol";
-        EquipNewWeapon("Pistol");
     }
 
-    //allow player to select a different weapon 
-    public void SelectWeapon()
+    // --------------------------------------------------------------------
+    // Player collects a weapon by physically touching it
+    // --------------------------------------------------------------------
+    public override void EquipNewWeapon(string weapon)
     {
-        string weapon = EventSystem.current.currentSelectedGameObject.transform.tag;
-        int weaponAmmo = Int32.Parse(ammo[weapon].text);
-
-        //if that weapon has ammo, equip it
-        if (weaponAmmo > 0)
-            weaponSelected = weapon;
-        else
-            return;
-
-        //update which bullet in the bullet list to use
-        bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
+        base.EquipNewWeapon(weapon);
+        weaponIcon[weapon].sprite = equipped[weapon];
     }
 
-    //player collects a weapon by physically touching it
-    public void EquipNewWeapon(string weapon)
+    // --------------------------------------------------------------------
+    // Player uses up ammo of a certain weapon
+    // --------------------------------------------------------------------
+    public override void useOneAmmo()
     {
-        //update weapon sprite + ammo
-        weapons[weapon].sprite = equipped[weapon];
-        ammo[weapon].text = "40";
-    }
-
-    //player uses up ammo of a certain weapon
-    public void usedOneAmmo()
-    {
-        //decrease ammo by 1 and update ammo text
-        int weaponAmmo = Int32.Parse(ammo[weaponSelected].text);
-        weaponAmmo--;
-        ammo[weaponSelected].text = weaponAmmo.ToString();
-
-        //use diff gameobject bullet next time
-        bulletNumber = ++bulletNumber % physicalWeapons[weaponSelected].Count;
+        base.useOneAmmo();
 
         //if weapon is out of ammo, update its sprite
-        if (weaponAmmo <= 0)
-            weapons[weaponSelected].sprite = notEquipped[weaponSelected];
-    }
-
-    //get the weapon bullet from the list in the dictionary + return different bullet next time
-    public GameObject getWeapon()
-    {
-        Transform theWeapon = physicalWeapons[weaponSelected][bulletNumber];
-        return theWeapon.gameObject;
-    }
-
-    //get the weapon's ammo
-    public int getAmmo()
-    {
-        return Int32.Parse(ammo[weaponSelected].text);
+        if (ammo[weaponSelected] <= 0)
+            weaponIcon[weaponSelected].sprite = notEquipped[weaponSelected];
     }
 }
 
