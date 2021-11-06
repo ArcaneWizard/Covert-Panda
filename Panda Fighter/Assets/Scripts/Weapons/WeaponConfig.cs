@@ -12,9 +12,12 @@ public class WeaponConfig : MonoBehaviour
     public List<GameObject> limbs = new List<GameObject>();
     public Transform bulletSpawnPoint;
 
-    [Header("Optional for handheld weapons")]
+    [Header("Required for handheld weapons")]
     public GameObject weapon;
     public Transform aimTarget;
+
+    [Header("Required for spamFire weapons")]
+    public float ratePerSecond;
     
     [HideInInspector] public List<Vector2> IK_Coordinates = AimingDir.defaultAiming;
     [HideInInspector] public CentralWeaponSystem weaponSystem;

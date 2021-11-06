@@ -17,13 +17,10 @@ public class WeaponSystem : CentralWeaponSystem
     public Transform unequippedWeaponSprites;
 
     public Sprite slotSelected, slotNotSelected;
+    private String weaponTag;
 
-
-    public override void Awake()
+    public void Awake()
     {
-        //initial setup
-        base.Awake();
-
         //add each weapon's icon image + weapon slot border to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
         {
@@ -43,40 +40,30 @@ public class WeaponSystem : CentralWeaponSystem
     // --------------------------------------------------------------------
     void Start()
     {
-        EquipNewWeapon("Shielder");
-        selectWeapon("Shielder", "gun");
-        List<Vector2> aiming = getWeaponConfig().config.IK_Coordinates;
-        lookAround.calculateShoulderAngles(aiming);
+        base.Start();
+        
+        collectNewWeapon("Shielder");
+        selectWeapon("Shielder");
     }
 
     // --------------------------------------------------------------------
-    // Associate each weapon with a different number key
+    // Associate each weapon with a different number key on the keyboard
     // --------------------------------------------------------------------
     void Update()
     {
-        if (Input.GetKeyDown("1"))
-            selectWeapon("Grenade", "handheld");
-        if (Input.GetKeyDown("2"))
-            selectWeapon("Shielder", "gun");
-        if (Input.GetKeyDown("3"))
-            selectWeapon("Boomerang", "handheld");
-        if (Input.GetKeyDown("4"))
-            selectWeapon("Plasma Orb", "handheld");
-        if (Input.GetKeyDown("5"))
-            selectWeapon("Scythe", "meelee");
-        if (Input.GetKeyDown("6"))
-            selectWeapon("Sniper", "gun");
-        if (Input.GetKeyDown("7"))
-            selectWeapon("Shotgun", "gun");
+        for (int weaponCount = 1; weaponCount <= inventory.childCount; weaponCount++) {
+            if (Input.GetKeyDown(weaponCount.ToString())) 
+                selectWeapon(inventory.GetChild(weaponCount-1).tag);
+        }
     }
 
     // --------------------------------------------------------------------
     // FOR PC VERSION: allow player to select a different weapon 
     // --------------------------------------------------------------------
-    public override void selectWeapon(string weapon, string combatMode)
+    public override void selectWeapon(string weapon)
     {
         string lastWeapon = weaponSelected;
-        base.selectWeapon(weapon, combatMode);
+        base.selectWeapon(weapon);
 
         if (weaponSelected != lastWeapon) {
             //unselect previous weapon slot
@@ -91,9 +78,9 @@ public class WeaponSystem : CentralWeaponSystem
     // --------------------------------------------------------------------
     // Player collects a weapon by physically touching it
     // --------------------------------------------------------------------
-    public override void EquipNewWeapon(string weapon)
+    public override void collectNewWeapon(string weapon)
     {
-        base.EquipNewWeapon(weapon);
+        base.collectNewWeapon(weapon);
         weaponIcon[weapon].sprite = equipped[weapon];
     }
 

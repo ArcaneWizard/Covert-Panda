@@ -21,8 +21,7 @@ public class CentralWeaponSystem : MonoBehaviour
     protected CentralShooting shooting;
     protected CentralLookAround lookAround;
 
-
-    public virtual void Awake()
+    public virtual void Start()
     {
         shooting = transform.GetComponent<CentralShooting>();
         lookAround = transform.GetComponent<CentralLookAround>();
@@ -51,7 +50,7 @@ public class CentralWeaponSystem : MonoBehaviour
         }
     }
 
-    public virtual void selectWeapon(string weapon, string combatMode)
+    public virtual void selectWeapon(string weapon)
     {
         //if the weapon is already selected, no need to do anything
         if (weapon == weaponSelected)
@@ -68,6 +67,7 @@ public class CentralWeaponSystem : MonoBehaviour
             return;
 
         //use the next bullet in the bullet pool next time you fire
+        string combatMode = weapons[weapon].config.combatMode;
         if (combatMode != "meelee" || weaponAmmoPools.ContainsKey(weaponSelected))
             bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
 
@@ -81,7 +81,7 @@ public class CentralWeaponSystem : MonoBehaviour
         weapons[weaponSelected].SetDefaultAnimation();
     }
 
-    public virtual void EquipNewWeapon(string weapon) {
+    public virtual void collectNewWeapon(string weapon) {
         ammo[weapon] = weapons[weapon].config.ammoWhenEquipped;
       }
 
@@ -98,4 +98,10 @@ public class CentralWeaponSystem : MonoBehaviour
     public GameObject getWeapon() => weaponAmmoPools[weaponSelected][bulletNumber].gameObject;
     public int getAmmo() => ammo[weaponSelected];
     public IWeapon getWeaponConfig() => weapons[weaponSelected];
+
+    //useful for special attacks (right click)
+    public GameObject getLastWeapon() {
+        int totalBullets = weaponAmmoPools[weaponSelected].Count;
+        return weaponAmmoPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;
+    }
 }

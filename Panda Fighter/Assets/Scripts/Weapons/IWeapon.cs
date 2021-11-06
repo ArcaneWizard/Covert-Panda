@@ -42,7 +42,7 @@ public abstract class IWeapon : MonoBehaviour
         config = transform.GetComponent<WeaponConfig>();
         attackProgress = "finished";
     }
-}
+ }
 
 //reusable weapon methods
 public static class reusableWeaponMethods {

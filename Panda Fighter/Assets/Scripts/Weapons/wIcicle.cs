@@ -2,9 +2,9 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wShielder : IWeapon {
+public class wIcicle : IWeapon {
     
-    private float shielderBulletSpeed = 39;
+    private float shielderBulletSpeed = 72;
  
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     { 

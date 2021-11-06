@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
-using UnityEditor;
+
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
+
 
 public class TestingTrajectories : MonoBehaviour
 {
@@ -192,11 +196,13 @@ public class TestingTrajectories : MonoBehaviour
         }
     }
 
+    #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (Selection.transforms.Length != 0 && Selection.transforms[0].parent == this.transform)
             OnDrawGizmosSelected();
     }
+    #endif
 }
 
 [System.Serializable]

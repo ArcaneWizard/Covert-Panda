@@ -9,6 +9,8 @@ public class Shooting : CentralShooting
     public Camera camera;
     public Transform shootingArm;
 
+    private float countdownBtwnShots = 0f;
+
     void Update()
     {
         //Weapons where you left click each time to shoot
@@ -24,9 +26,21 @@ public class Shooting : CentralShooting
             MeeleeAttack();
         }
 
+        //Weapons where you hold left click to shoot
+        if (Input.GetMouseButton(0) && countdownBtwnShots <= 0f && weaponSystem.getAmmo() > 0 && weaponSystem.weaponSelected != null) 
+        {
+            if (combatMode == "gun" && weaponSystem.getWeapon().tag == "spamFire") {
+                countdownBtwnShots = 1f / weaponSystem.getWeaponConfig().config.ratePerSecond;
+                Attack();
+            }
+        }
+
         //Weapons where you right click for a diff attack or weapon mechanic
         if (Input.GetMouseButtonDown(1) && weaponSystem.weaponSelected != null)
             RightClickAttack();
+
+        if (countdownBtwnShots > 0f)
+            countdownBtwnShots -= Time.deltaTime;
     }
 
 
@@ -46,9 +60,9 @@ public class Shooting : CentralShooting
     }
 
     private void RightClickAttack() {
-        bullet = weaponSystem.getWeapon().transform;
+        bullet = weaponSystem.getLastWeapon().transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-
+    
         weaponSystem.getWeaponConfig().DoBonusSetupAttack(getAim(), bullet, bulletRig);
     }
 
