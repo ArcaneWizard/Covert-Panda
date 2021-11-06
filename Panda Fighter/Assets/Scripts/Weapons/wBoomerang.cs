@@ -20,7 +20,6 @@ public class wBoomerang : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig) 
     {
-        Debug.Log("launched " + bullet.name);
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.bulletSpawnPoint);
         bullet.transform.GetComponent<Animator>().SetBool("glare", false);
         

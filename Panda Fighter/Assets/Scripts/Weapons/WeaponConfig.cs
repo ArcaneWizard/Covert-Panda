@@ -25,7 +25,7 @@ public class WeaponConfig : MonoBehaviour
 
     void Awake() 
     {
-        entity = transform.parent.parent.parent.parent.parent;
+        entity = transform.parent.parent.parent.transform.GetChild(0);
         weaponSystem = entity.GetComponent<CentralWeaponSystem>();
         shooting = entity.GetComponent<CentralShooting>();
         animator = entity.GetComponent<Animator>();
