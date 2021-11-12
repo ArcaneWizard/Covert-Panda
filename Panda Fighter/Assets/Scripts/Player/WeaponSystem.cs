@@ -14,14 +14,16 @@ public class WeaponSystem : CentralWeaponSystem
     private Dictionary<string, Sprite> notEquipped = new Dictionary<string, Sprite>();
     private Dictionary<string, Text> ammoText = new Dictionary<string, Text>();
 
-    public Transform equippedWeaponSprites;
-    public Transform unequippedWeaponSprites;
+    public Transform inventory;
+    public Transform equippedWeaponSprites, unequippedWeaponSprites;
 
     public Sprite slotSelected, slotNotSelected;
     private String weaponTag;
 
-    public void Awake()
+    public override void Awake()
     {
+        base.Awake();
+
         //add each weapon's icon image, ammo text and weapon slot border to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
         {

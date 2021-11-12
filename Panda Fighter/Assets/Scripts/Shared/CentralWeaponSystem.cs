@@ -10,8 +10,7 @@ public class CentralWeaponSystem : MonoBehaviour
     protected Dictionary<string, List<Transform>> weaponAmmoPools = new Dictionary<string, List<Transform>>();
     protected Dictionary<string, IWeapon> weapons = new Dictionary<string, IWeapon>();
 
-    public Transform inventory;
-    public Transform physicalWeapon;
+    protected Transform physicalWeapon;
 
     public string weaponSelected;
     protected int bulletNumber = 0;
@@ -19,11 +18,15 @@ public class CentralWeaponSystem : MonoBehaviour
     protected CentralShooting shooting;
     protected CentralLookAround lookAround;
 
-    public virtual void Start()
+    public virtual void Awake()
     {
         shooting = transform.GetComponent<CentralShooting>();
         lookAround = transform.GetComponent<CentralLookAround>();
+        physicalWeapon = transform.parent.GetChild(1).transform.GetChild(0);
+    }
 
+    public virtual void Start()
+    {
         foreach (Transform weaponType in physicalWeapon)
         {
             //add each weapon's pool of ammo to a dictionary, accessible by weapon tag
@@ -36,8 +39,8 @@ public class CentralWeaponSystem : MonoBehaviour
             IWeapon weapon = weaponType.transform.GetComponent<IWeapon>();
             weapons.Add(weaponType.tag, weapon);
 
-            //add each weapon's equipped ammo ammount to a dictionary, accessible by weapon tag
-            ammo.Add(weaponType.tag, weapon.config.ammoWhenEquipped);
+            //define each weapon's ammo in a dictionary, accessible by weapon tag
+            ammo.Add(weaponType.tag, 0);
         }
     }
 
@@ -72,7 +75,7 @@ public class CentralWeaponSystem : MonoBehaviour
         weapons[weaponSelected].SetDefaultAnimation();
     }
 
-    public virtual void collectNewWeapon(string weapon) => ammo[weapon] = weapons[weapon].config.ammoWhenEquipped;
+    public virtual void collectNewWeapon(string weapon) => ammo[weapon] = weapons[weapon].config.startingAmmo;
 
     public virtual void useOneAmmo()
     {
