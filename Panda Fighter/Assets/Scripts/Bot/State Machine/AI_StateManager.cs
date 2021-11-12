@@ -12,7 +12,6 @@ public class AI_StateManager : MonoBehaviour
     private Transform placesToVisit, target;
     public bool useTargetForTesting;
     public Vector2 visitingPlaceLocation { get; private set; }
-    private CentralController controller;
     private AI_FollowPath AI_pathFollower;
     private PathFinding pathFinding;
 
@@ -20,7 +19,6 @@ public class AI_StateManager : MonoBehaviour
 
     void Awake()
     {
-        controller = transform.GetChild(0).GetComponent<CentralController>();
         AI_pathFollower = transform.GetChild(0).GetComponent<AI_FollowPath>();
         pathFinding = transform.GetComponent<PathFinding>();
     }
@@ -50,9 +48,10 @@ public class AI_StateManager : MonoBehaviour
     {
         state = AI_STATE.Wandering;
 
-        StartCoroutine(figureOutWhereToWanderTo((List<Node> path) => {
+       /* StartCoroutine(figureOutWhereToWanderTo((List<Node> path) => {
             AI_pathFollower.follow(path);
         }));
+        */
     }
 
     private IEnumerator figureOutWhereToWanderTo(System.Action<List<Node>> callbackOnFinish)

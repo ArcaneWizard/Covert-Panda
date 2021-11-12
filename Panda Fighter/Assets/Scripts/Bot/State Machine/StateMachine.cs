@@ -5,9 +5,10 @@ using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class StateMachine : MonoBehaviour
+public class StateMachine
 {
     private IState currentState;
+
     //all transitions
     private Dictionary<Type, List<Transition>> transitions = new Dictionary<Type, List<Transition>>();
     //transitions from our current state
@@ -19,7 +20,7 @@ public class StateMachine : MonoBehaviour
     private static List<Transition> EmptyTransitions = new List<Transition>();
 
     private string IStateName;
-    
+
     public void Tick()
     {
         var transition = GetTransition();
@@ -27,6 +28,8 @@ public class StateMachine : MonoBehaviour
             SetState(transition.To);
 
         currentState?.Tick();
+
+        Debug.Log("STATE: " + currentState);
     }
 
     public void SetState(IState state)
@@ -46,7 +49,7 @@ public class StateMachine : MonoBehaviour
 
     public void AddTransition(IState start, IState end, Func<bool> condition)
     {
-        if (!transitions.TryGetValue(start.GetType(), out var startStateTransitions ))
+        if (!transitions.TryGetValue(start.GetType(), out var startStateTransitions))
         {
             startStateTransitions = new List<Transition>();
             transitions[start.GetType()] = startStateTransitions;

@@ -196,6 +196,29 @@ public class TestingTrajectories : MonoBehaviour
         }
     }
 
+    //Converts trajectory info to a condensed, easy to read form (of type AI_ACTION)
+    public AI_ACTION convertToAction()
+    {
+        AI_ACTION action;
+            
+            if (headStraight)
+                action = defineAction("keepWalking");
+            else if (fallDown)
+                action = defineAction("fallDown");
+            else if (fallDownCurve)
+                action = defineAction("fallDownCurve");
+            else if (doubleJump)
+                action = defineAction("doubleJump");
+            else
+                action = defineAction("normalJump");
+        
+        return action;
+    }
+    
+    //helper method for converting trajectory info to a condensed readable form
+    private AI_ACTION defineAction(string actionName) => new AI_ACTION(actionName, movementDirX,
+            speedRange, timeB4Change, changedSpeed, bonusTrait, transform.GetChild(0).position);
+
     #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

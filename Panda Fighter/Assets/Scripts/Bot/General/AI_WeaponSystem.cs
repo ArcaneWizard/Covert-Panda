@@ -8,12 +8,12 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class AI_WeaponSystem : CentralWeaponSystem
-{  
+{
     // Default weapon you start with
-    void Start()
+    public override void Start()
     {
         base.Start();
-        
+
         int r = UnityEngine.Random.Range(0, weapons.Count);
         startWithWeapon(weapons.Keys.ToArray()[r]);
     }

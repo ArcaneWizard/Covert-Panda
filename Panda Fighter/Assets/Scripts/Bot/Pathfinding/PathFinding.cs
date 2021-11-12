@@ -41,24 +41,18 @@ public class PathFinding : MonoBehaviour
         }
 
         List<Node> path = pathsFound.ElementAt(random.Next(0, pathsFound.Count)).Value;
-        Debug.Log("final chosen path: ");
 
         //show the path visually and share it with state manager script
         showPathOnGrid(path);
         chosenPath = path;
-
-        string a = "";
-        foreach (Node n in universalClosedSet)
-        {
-            a += $"{n.transform.name} ";
-        }
-        Debug.Log(a);
     }
 
     private void findOnePath(Vector2 startPos, Vector2 targetPos)
     {
         Node startNode = grid.getClosestNodeToWorldPosition(startPos, 5);
         Node targetNode = grid.getClosestNodeToWorldPosition(targetPos, 5);
+
+        Debug.Log(targetNode.transform.name);
 
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
@@ -133,8 +127,6 @@ public class PathFinding : MonoBehaviour
 
             path.Reverse();
             pathsFound.Add(endNode.pathID, path);
-
-            debugPathInConsole(path);
             showPathOnGrid(path);
         }
     }

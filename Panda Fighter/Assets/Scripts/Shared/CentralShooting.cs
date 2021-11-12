@@ -46,13 +46,13 @@ public class CentralShooting : MonoBehaviour
             limb_Or_Weapon.SetActive(false);
         WeaponSetup.Clear();
 
-        IWeapon Iweapon = weaponSystem.getWeaponConfig();   
-        
+        IWeapon Iweapon = weaponSystem.getWeaponConfig();
+
         if (Iweapon.config.aimTarget != null)
             lookAround.setAimTarget(Iweapon.config.aimTarget);
         bulletSpawnPoint = Iweapon.config.bulletSpawnPoint;
-        
-        if (Iweapon.config.weapon != null) 
+
+        if (Iweapon.config.weapon != null)
             WeaponSetup.Add(Iweapon.config.weapon);
 
         foreach (GameObject limb in Iweapon.config.limbs)

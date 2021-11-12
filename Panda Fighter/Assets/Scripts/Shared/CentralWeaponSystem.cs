@@ -6,9 +6,7 @@ using UnityEngine.UI;
 
 public class CentralWeaponSystem : MonoBehaviour
 {
-    protected Dictionary<string, Text> ammoText = new Dictionary<string, Text>();
     protected Dictionary<string, int> ammo = new Dictionary<string, int>();
-
     protected Dictionary<string, List<Transform>> weaponAmmoPools = new Dictionary<string, List<Transform>>();
     protected Dictionary<string, IWeapon> weapons = new Dictionary<string, IWeapon>();
 
@@ -26,10 +24,6 @@ public class CentralWeaponSystem : MonoBehaviour
         shooting = transform.GetComponent<CentralShooting>();
         lookAround = transform.GetComponent<CentralLookAround>();
 
-        //add each weapon's image + ammo text to a dictionary, accessible by weapon tag
-        foreach (Transform weapon in inventory)
-            ammoText.Add(weapon.tag, weapon.GetChild(1).transform.GetComponent<Text>());
-       
         foreach (Transform weaponType in physicalWeapon)
         {
             //add each weapon's pool of ammo to a dictionary, accessible by weapon tag
@@ -44,9 +38,6 @@ public class CentralWeaponSystem : MonoBehaviour
 
             //add each weapon's equipped ammo ammount to a dictionary, accessible by weapon tag
             ammo.Add(weaponType.tag, weapon.config.ammoWhenEquipped);
-
-            //DEBUGGING: START WITH ALL WEAPONS AVAILABLE TO BEGIN WITH
-            ammoText[weaponType.tag].text = ammo[weaponType.tag].ToString();
         }
     }
 
@@ -81,17 +72,11 @@ public class CentralWeaponSystem : MonoBehaviour
         weapons[weaponSelected].SetDefaultAnimation();
     }
 
-    public virtual void collectNewWeapon(string weapon) {
-        ammo[weapon] = weapons[weapon].config.ammoWhenEquipped;
-      }
+    public virtual void collectNewWeapon(string weapon) => ammo[weapon] = weapons[weapon].config.ammoWhenEquipped;
 
     public virtual void useOneAmmo()
     {
-        //decrease ammo by 1 and update ammo text
         ammo[weaponSelected] -= 1;
-        ammoText[weaponSelected].text = ammo[weaponSelected].ToString();
-
-        //use diff gameobject bullet next time
         bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
     }
 
@@ -100,7 +85,8 @@ public class CentralWeaponSystem : MonoBehaviour
     public IWeapon getWeaponConfig() => weapons[weaponSelected];
 
     //useful for special attacks (right click)
-    public GameObject getLastWeapon() {
+    public GameObject getLastWeapon()
+    {
         int totalBullets = weaponAmmoPools[weaponSelected].Count;
         return weaponAmmoPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;
     }

@@ -9,10 +9,11 @@ using System.Runtime.CompilerServices;
 public class AI_FollowPath : MonoBehaviour
 {
     private AI_Controller controller;
-    private AI_StateManager stateManager;
+    private PathFinding pathFinding;
     private System.Random random, random2;
 
-    private string journey = "pending start";
+    //VALUES: pending start, started, in progress, ended, got lost
+    public string journey { get; private set; }
 
     private List<Node> path;
     private int pathProgress;
@@ -20,17 +21,33 @@ public class AI_FollowPath : MonoBehaviour
     void Awake()
     {
         controller = transform.GetComponent<AI_Controller>();
-        stateManager = transform.parent.GetComponent<AI_StateManager>();
+        pathFinding = transform.parent.GetComponent<PathFinding>();
         random = new System.Random();
         random2 = new System.Random();
+
+        journey = "ended";
     }
 
-    //follow the provided path (to some intended target)
-    public void follow(List<Node> path) 
+    //AI heads to the specified destination
+    public IEnumerator startJourney(Vector3 destination)
     {
+        journey = "pending start";
+
+        //scan available routes for 2 seconds
+        StartCoroutine(pathFinding.FindMultiplePaths(2f, destination));
+
+        while (pathFinding.getChosenPath() == null)
+            yield return new WaitForSeconds(Time.deltaTime * 2);
+
+        pathFinding.debugPathInConsole(pathFinding.getChosenPath());
+
+        //don't do anything if the AI prematurely ended its journey (ex. cuz of a state change)
+        if (journey == "ended")
+            yield return null;
+
         //reset variables
         journey = "started";
-        this.path = path;
+        this.path = pathFinding.getChosenPath();
         pathProgress = 0;
 
         //head towards starting path Node
@@ -40,58 +57,73 @@ public class AI_FollowPath : MonoBehaviour
             controller.setDirection(-1);
     }
 
-    //bot no longer must follow set path
-    public void endJourney() => journey = "ended";
-
-    void Update()
+    //To be called every frame while AI is on a journey
+    public void tick()
     {
-        //AI bot heads in the direction of it's next node when it's grounded
-        if (stateManager.AI_STATE == AI_STATE.Wandering && journey == "in progress" &&
-        controller.isGrounded && controller.isTouchingMap) {
+        if (journey == "in progress" && controller.actionProgress == "finished" && controller.isGrounded && controller.isTouchingMap)
             controller.setDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
-        }
     }
+
+    //AI no longer heads toward a target destination
+    public void endJourney()
+    {
+        journey = "ended";
+        DebugGUI.debugText8 = "journey ended";
+    }
+
+    //AI accidently got off course on its path
+    public bool gotLost() => journey == "got lost";
 
     //AI passes a node, gets potential routes from that node to neighbor nodes, and then
     //figures out which route allows it to stay on its intended path
-    private void OnTriggerEnter2D(Collider2D col) 
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == 8) {
-            
-            if (journey == "started") {
-                if (col.transform == path[0].transform)
-                    journey = "in progress";
-                else 
-                    getBackOnIntendedPath(col.transform);
-            }
+        if (col.gameObject.layer != 8)
+            return;
 
-            if (journey == "in progress") {
+        if (journey == "started")
+        {
+            if (col.transform == path[0].transform)
+                journey = "in progress";
+            else
+                getBackOnIntendedPath(col.transform);
+        }
 
-                foreach (Transform neighbourNode in col.transform) {
-                    TestingTrajectories trajectory = neighbourNode.GetComponent<TestingTrajectories>();
+        if (journey == "in progress")
+        {
+            bool stayedOnPath = false;
+            foreach (Transform neighbourNode in col.transform)
+            {
+                TestingTrajectories trajectory = neighbourNode.GetComponent<TestingTrajectories>();
 
-                    if (pathProgress < path.Count-1 && path[pathProgress+1].transform == trajectory.chainedDirectionZone) {
-                        controller.beginAction(convertTrajectoryToAction(trajectory), col.transform);
-                        pathProgress++;
-                        break;
-                    }
+                if (pathProgress < path.Count - 1 && path[pathProgress + 1].transform == trajectory.chainedDirectionZone)
+                {
+                    controller.beginAction(trajectory.convertToAction(), col.transform);
+                    pathProgress++;
+                    stayedOnPath = true;
+                    break;
                 }
             }
+
+            if (!stayedOnPath)
+                journey = "got lost";
         }
     }
 
     //Helper method: find trajectory that gets you back on the main intended path, 
     //otherwise teleport back on path
-    private void getBackOnIntendedPath(Transform decisionZone) 
+    private void getBackOnIntendedPath(Transform decisionZone)
     {
+        Debug.Log("getting back on intended path");
         bool foundReroute = false;
-        foreach (Transform neighborZone in decisionZone) 
+        foreach (Transform neighborZone in decisionZone)
         {
             TestingTrajectories trajectory = neighborZone.transform.GetComponent<TestingTrajectories>();
 
             //if the bot found the path's starting node, head there
-            if (path[0].transform == trajectory.chainedDirectionZone){
-                controller.beginAction(convertTrajectoryToAction(trajectory), decisionZone);
+            if (path[0].transform == trajectory.chainedDirectionZone)
+            {
+                controller.beginAction(trajectory.convertToAction(), decisionZone);
                 foundReroute = true;
                 break;
             }
@@ -99,33 +131,9 @@ public class AI_FollowPath : MonoBehaviour
 
         //otherwise teleport to the path's starting node
         if (!foundReroute)
-            transform.position = new Vector3(path[0].transform.position.x, 
+            transform.position = new Vector3(path[0].transform.position.x,
             path[0].transform.position.y + 0.5f, transform.position.z);
     }
 
-    //Converts trajectory info to a condensed, easy to read form (of type AI_ACTION)
-    private AI_ACTION convertTrajectoryToAction(TestingTrajectories trajectory)
-    {
-        AI_ACTION action;
-            
-            if (trajectory.headStraight)
-                action = defineNewAction("keepWalking", trajectory);
-            else if (trajectory.fallDown)
-                action = defineNewAction("fallDown", trajectory);
-            else if (trajectory.fallDownCurve)
-                action = defineNewAction("fallDownCurve", trajectory);
-            else if (trajectory.doubleJump)
-                action = defineNewAction("doubleJump", trajectory);
-            else
-                action = defineNewAction("normalJump", trajectory);
-        
-        return action;
-    }
-    
-    //helper method for converting trajectory info to a condensed readable form
-    private AI_ACTION defineNewAction(string actionName, TestingTrajectories trajectory) => 
-    new AI_ACTION(actionName,trajectory.movementDirX, trajectory.speedRange, 
-    trajectory.timeB4Change, trajectory.changedSpeed, trajectory.bonusTrait, 
-    trajectory.transform.GetChild(0).position);
-    
+
 }
