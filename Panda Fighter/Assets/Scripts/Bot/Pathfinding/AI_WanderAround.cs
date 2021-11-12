@@ -7,7 +7,7 @@ using UnityEngine.Assertions.Must;
 
 public class AI_WanderAround : MonoBehaviour
 {
-    private AI_Controller controller;
+    public AI_Controller controller { get; private set; }
     private List<AI_ACTION> AI_ACTIONS = new List<AI_ACTION>();
     private AI_ACTION action;
     private TestingTrajectories trajectory;
@@ -72,7 +72,7 @@ public class AI_WanderAround : MonoBehaviour
             }
 
             int r = random.Next(0, AI_ACTIONS.Count);
-            controller.beginAction(AI_ACTIONS[r], currentDecisionZone);
+            controller.BeginAction(AI_ACTIONS[r], currentDecisionZone);
         }
 
         //In scene view, display the action done and decision zone used

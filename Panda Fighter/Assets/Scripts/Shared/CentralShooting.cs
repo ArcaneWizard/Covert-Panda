@@ -2,19 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CentralShooting : MonoBehaviour
+public abstract class CentralShooting : MonoBehaviour
 {
     [HideInInspector]
     public GameObject weaponHeld = null;
     public string combatMode = "gun";
 
     protected CentralWeaponSystem weaponSystem;
-    private CentralLookAround lookAround;
+    protected CentralLookAround lookAround;
 
     private List<GameObject> WeaponSetup = new List<GameObject>();
-    private Transform bulletSpawnPoint;
+    private Transform bulletSpawnPoint, bullet;
+    private Rigidbody2D bulletRig;
 
-    public void Awake()
+    public virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         lookAround = transform.GetComponent<CentralLookAround>();
@@ -65,5 +66,31 @@ public class CentralShooting : MonoBehaviour
         lookAround.calculateShoulderAngles(aiming);
     }
 
+    protected void Attack()
+    {
+        bullet = weaponSystem.getWeapon().transform;
+        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+        weaponSystem.useOneAmmo();
+
+        weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
+    }
+
+    protected void MeeleeAttack()
+    {
+        bullet = weaponSystem.getWeapon().transform;
+        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+
+        weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
+    }
+
+    protected void RightClickAttack()
+    {
+        bullet = weaponSystem.getLastWeapon().transform;
+        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+
+        weaponSystem.getWeaponConfig().DoBonusSetupAttack(getAim(), bullet, bulletRig);
+    }
+
+    public abstract Vector2 getAim();
 
 }

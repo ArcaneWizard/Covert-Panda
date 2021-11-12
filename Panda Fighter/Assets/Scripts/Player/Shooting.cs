@@ -3,71 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Shooting : CentralShooting
 {
-    private Transform bullet;
-    private Rigidbody2D bulletRig;
-
     public Camera camera;
-    public Transform shootingArm;
-
     private float countdownBtwnShots = 0f;
+
+    public override Vector2 getAim() => (Input.mousePosition - camera.WorldToScreenPoint(lookAround.shootingArm.position)).normalized;
 
     void Update()
     {
+        if (countdownBtwnShots > 0f)
+            countdownBtwnShots -= Time.deltaTime;
+
+        if (weaponSystem.weaponSelected == null)
+            return;
+
         //Weapons where you left click each time to shoot
-        if (Input.GetMouseButtonDown(0) && weaponSystem.getAmmo() > 0 && weaponSystem.weaponSelected != null)
+        if (Input.GetMouseButtonDown(0) && weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
         {
-            if (combatMode == "gun" && weaponSystem.getWeapon().tag == "singleFire")
-            Attack();
+            if (combatMode == "gun")
+                Attack();
 
-            else if (combatMode == "handheld" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getWeapon().tag == "singleFire")
-            Attack();
+            else if (combatMode == "handheld" && weaponSystem.getWeaponConfig().attackProgress == "finished")
+                Attack();
 
-            else if (combatMode == "meelee" && weaponSystem.getWeaponConfig().attackProgress == "finished" && weaponSystem.getWeapon().tag == "singleFire")
-            MeeleeAttack();
+            else if (combatMode == "meelee" && weaponSystem.getWeaponConfig().attackProgress == "finished")
+                MeeleeAttack();
         }
 
         //Weapons where you hold left click to shoot
-        if (Input.GetMouseButton(0) && countdownBtwnShots <= 0f && weaponSystem.getAmmo() > 0 && weaponSystem.weaponSelected != null) 
+        if (Input.GetMouseButton(0) && countdownBtwnShots <= 0f && weaponSystem.getAmmo() > 0)
         {
-            if (combatMode == "gun" && weaponSystem.getWeapon().tag == "spamFire") {
+            if (combatMode == "gun" && weaponSystem.getWeapon().tag == "spamFire")
+            {
                 countdownBtwnShots = 1f / weaponSystem.getWeaponConfig().config.ratePerSecond;
                 Attack();
             }
         }
 
         //Weapons where you right click for a diff attack or weapon mechanic
-        if (Input.GetMouseButtonDown(1) && weaponSystem.weaponSelected != null)
+        if (Input.GetMouseButtonDown(1))
             RightClickAttack();
-
-        if (countdownBtwnShots > 0f)
-            countdownBtwnShots -= Time.deltaTime;
-    }
-
-
-    private void Attack() {
-        bullet = weaponSystem.getWeapon().transform;
-        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-        weaponSystem.useOneAmmo();
-        
-        weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
-    }
-
-    private void MeeleeAttack() {
-        bullet = weaponSystem.getWeapon().transform;
-        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-        
-        weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
-    }
-
-    private void RightClickAttack() {
-        bullet = weaponSystem.getLastWeapon().transform;
-        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-    
-        weaponSystem.getWeaponConfig().DoBonusSetupAttack(getAim(), bullet, bulletRig);
-    }
-
-    private Vector2 getAim()
-    {
-        return (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
     }
 }

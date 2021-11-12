@@ -26,12 +26,15 @@ public class AI_Controller : CentralController
     }
 
     //Define an action/decision, and set action progress to "pending start" 
-    public void beginAction(AI_ACTION action, Transform zone)
+    public void BeginAction(AI_ACTION action, Transform zone)
     {
         AI_action = action;
         decisionZone = zone;
         actionProgress = "pending start";
     }
+
+    //The point in space in front of the AI 
+    public Vector3 InFrontOfAI() => shootingArm.position + new Vector3(dirX, 0, 0);
 
     //excute the given action and set action progress to "in progress"
     private void executeAction()

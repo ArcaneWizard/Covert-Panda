@@ -5,12 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 
 public class AI_FollowPath : MonoBehaviour
 {
     private AI_Controller controller;
     private PathFinding pathFinding;
-    private System.Random random, random2;
 
     //VALUES: pending start, started, in progress, ended, got lost
     public string journey { get; private set; }
@@ -18,17 +18,17 @@ public class AI_FollowPath : MonoBehaviour
     private List<Node> path;
     private int pathProgress;
 
+    private float timer;
+    private float maxTimeToReachNextNode = 3.5f;
+
     void Awake()
     {
         controller = transform.GetComponent<AI_Controller>();
         pathFinding = transform.parent.GetComponent<PathFinding>();
-        random = new System.Random();
-        random2 = new System.Random();
 
         journey = "ended";
     }
 
-    //AI heads to the specified destination
     public IEnumerator startJourney(Vector3 destination)
     {
         journey = "pending start";
@@ -57,25 +57,34 @@ public class AI_FollowPath : MonoBehaviour
             controller.setDirection(-1);
     }
 
-    //To be called every frame while AI is on a journey
     public void tick()
     {
         if (journey == "in progress" && controller.actionProgress == "finished" && controller.isGrounded && controller.isTouchingMap)
             controller.setDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
+
+        if (journey == "in progress" && timer <= 0f)
+            journey = "got lost";
+
+        if (timer > 0f)
+            timer -= Time.deltaTime;
     }
 
-    //AI no longer heads toward a target destination
     public void endJourney()
     {
         journey = "ended";
         DebugGUI.debugText8 = "journey ended";
     }
 
-    //AI accidently got off course on its path
     public bool gotLost() => journey == "got lost";
 
-    //AI passes a node, gets potential routes from that node to neighbor nodes, and then
-    //figures out which route allows it to stay on its intended path
+    public Vector3 nextPathNode()
+    {
+        if (path != null && pathProgress < path.Count)
+            return path[pathProgress].transform.position;
+
+        return Vector3.zero;
+    }
+
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.layer != 8)
@@ -84,29 +93,28 @@ public class AI_FollowPath : MonoBehaviour
         if (journey == "started")
         {
             if (col.transform == path[0].transform)
+            {
+                timer = maxTimeToReachNextNode;
                 journey = "in progress";
+            }
             else
                 getBackOnIntendedPath(col.transform);
         }
 
         if (journey == "in progress")
         {
-            bool stayedOnPath = false;
             foreach (Transform neighbourNode in col.transform)
             {
                 TestingTrajectories trajectory = neighbourNode.GetComponent<TestingTrajectories>();
 
                 if (pathProgress < path.Count - 1 && path[pathProgress + 1].transform == trajectory.chainedDirectionZone)
                 {
-                    controller.beginAction(trajectory.convertToAction(), col.transform);
+                    controller.BeginAction(trajectory.convertToAction(), col.transform);
                     pathProgress++;
-                    stayedOnPath = true;
+                    timer = maxTimeToReachNextNode;
                     break;
                 }
             }
-
-            if (!stayedOnPath)
-                journey = "got lost";
         }
     }
 
@@ -120,16 +128,14 @@ public class AI_FollowPath : MonoBehaviour
         {
             TestingTrajectories trajectory = neighborZone.transform.GetComponent<TestingTrajectories>();
 
-            //if the bot found the path's starting node, head there
             if (path[0].transform == trajectory.chainedDirectionZone)
             {
-                controller.beginAction(trajectory.convertToAction(), decisionZone);
+                controller.BeginAction(trajectory.convertToAction(), decisionZone);
                 foundReroute = true;
                 break;
             }
         }
 
-        //otherwise teleport to the path's starting node
         if (!foundReroute)
             transform.position = new Vector3(path[0].transform.position.x,
             path[0].transform.position.y + 0.5f, transform.position.z);

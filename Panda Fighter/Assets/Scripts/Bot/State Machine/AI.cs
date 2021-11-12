@@ -8,7 +8,10 @@ public class AI : MonoBehaviour
     private GameObject AI_body;
     private AI_FollowPath pathFollower;
     private PathFinding pathFinding;
+    private AI_LookAround lookAround;
     private AI_WanderAround wanderAround;
+
+    public Transform Player;
 
     [SerializeField]
     private Transform possibleDestinations, manualDestination;
@@ -22,14 +25,15 @@ public class AI : MonoBehaviour
         AI_body = transform.GetChild(0).gameObject;
         pathFollower = AI_body.AddComponent<AI_FollowPath>();
         wanderAround = AI_body.AddComponent<AI_WanderAround>();
+        lookAround = AI_body.GetComponent<AI_LookAround>();
 
         stateMachine = new StateMachine();
     }
 
     void Start()
     {
-        var wander = new Wander(wanderAround);
-        var seekDestination = new SeekDestination(this, pathFollower, possibleDestinations, manualDestination);
+        var wander = new Wander(wanderAround, lookAround);
+        var seekDestination = new SeekDestination(this, pathFollower, possibleDestinations, manualDestination, lookAround);
         var attack = new AttackAggressively();
         var flee = new Flee();
         var idle = new Idle();

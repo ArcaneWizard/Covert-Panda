@@ -7,24 +7,29 @@ public class SeekDestination : IState
     private AI ai;
     private Transform aiBody;
     private AI_FollowPath pathFollower;
+    private AI_LookAround lookAround;
 
     private bool setDestinationManually;
     private Transform possibleDestinations, manualDestination;
     private Vector2 destination;
 
     public SeekDestination(AI ai, AI_FollowPath AI_pathFollower, Transform possibleDestinations,
-            Transform manualDestination)
+            Transform manualDestination, AI_LookAround lookAround)
     {
         this.ai = ai;
         this.pathFollower = AI_pathFollower;
         this.aiBody = ai.transform.GetChild(0);
         this.possibleDestinations = possibleDestinations;
         this.manualDestination = manualDestination;
+        this.lookAround = lookAround;
 
         setDestinationManually = false;
     }
 
-    public void OnEnter() => beginNewJourney();
+    public void OnEnter()
+    {
+        beginNewJourney();
+    }
 
     public void Tick()
     {
@@ -41,6 +46,9 @@ public class SeekDestination : IState
             beginNewJourney();
             Debug.Log("AI got lost");
         }
+
+        /*if (pathFollower.nextPathNode() != Vector3.zero)
+            lookAround.lookTowards(pathFollower.nextPathNode());*/
     }
 
     public void OnExit() => pathFollower.endJourney();

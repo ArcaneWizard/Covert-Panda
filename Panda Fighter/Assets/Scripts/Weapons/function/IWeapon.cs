@@ -4,48 +4,50 @@ using UnityEngine;
 
 public abstract class IWeapon : MonoBehaviour
 {
-    public virtual void SetDefaultAnimation() {return;}
+    public virtual void SetDefaultAnimation() { return; }
     public abstract IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig);
     public abstract void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig);
-    public virtual IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) {yield return null;}
-    public virtual void BonusAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) {return;}
+    public virtual IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) { yield return null; }
+    public virtual void BonusAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) { return; }
 
-    [HideInInspector] public string attackProgress {get; private set;} 
+    [HideInInspector] public string attackProgress { get; private set; }
     [HideInInspector] public WeaponConfig config;
 
-    public void DoSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) 
+    public void DoSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         attackProgress = "started";
         StartCoroutine(SetupAttack(aim, bullet, rig));
     }
 
-    public void DoAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) 
+    public void DoAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         Attack(aim, bullet, rig);
         config.shooting.updateWeaponHeldForHandheldWeapons();
         attackProgress = "finished";
-    }  
+    }
 
-    public void DoBonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) 
+    public void DoBonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         attackProgress = "started";
         StartCoroutine(BonusSetupAttack(aim, bullet, rig));
     }
 
-    public void DoBonusAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) 
+    public void DoBonusAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         BonusAttack(aim, bullet, rig);
         attackProgress = "finished";
-    }  
+    }
 
-    public virtual void Awake() { 
+    public virtual void Awake()
+    {
         config = transform.GetComponent<WeaponConfig>();
         attackProgress = "finished";
     }
- }
+}
 
 //reusable weapon methods
-public static class reusableWeaponMethods {
+public static class reusableWeaponMethods
+{
 
     public static void shootBulletInStraightLine(Vector2 aim, Transform bullet, Rigidbody2D rig, float speed)
     {
@@ -67,7 +69,7 @@ public static class reusableWeaponMethods {
         bullet.gameObject.SetActive(false);
         bullet.gameObject.SetActive(true);
     }
-    
+
     public static Transform retrieveNextBullet(CentralWeaponSystem weaponSystem)
     {
         Transform bullet = weaponSystem.getWeapon().transform;
@@ -75,9 +77,9 @@ public static class reusableWeaponMethods {
         return bullet;
     }
 
-    public static float calculateTimeB4ReleasingWeapon(float trackingMultiplier, float trackingOffset, Vector2 aimDir) =>  ((-aimDir.y + 1) * trackingMultiplier + trackingOffset);
-    
-    }
+    public static float calculateTimeB4ReleasingWeapon(float trackingMultiplier, float trackingOffset, Vector2 aimDir) => ((-aimDir.y + 1) * trackingMultiplier + trackingOffset);
+
+}
 
 
 

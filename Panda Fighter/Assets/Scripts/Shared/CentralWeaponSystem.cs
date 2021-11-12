@@ -51,7 +51,7 @@ public class CentralWeaponSystem : MonoBehaviour
             return;
 
         //if a weapon/grenade is currently held by the player but not "thrown", hide it before selecting the new weapon
-        if (weapon != weaponSelected && shooting.weaponHeld != null)
+        if (shooting.weaponHeld != null)
             shooting.weaponHeld.gameObject.SetActive(false);
 
         //if the selected weapon has ammo, equip it

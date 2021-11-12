@@ -14,8 +14,9 @@ public class AI_WeaponSystem : CentralWeaponSystem
     {
         base.Start();
 
-        int r = UnityEngine.Random.Range(0, weapons.Count);
-        startWithWeapon(weapons.Keys.ToArray()[r]);
+        //int r = UnityEngine.Random.Range(0, weapons.Count);
+        //startWithWeapon(weapons.Keys.ToArray()[r]);
+        startWithWeapon("Plasma Orb");
     }
 
     private void startWithWeapon(string weapon)
