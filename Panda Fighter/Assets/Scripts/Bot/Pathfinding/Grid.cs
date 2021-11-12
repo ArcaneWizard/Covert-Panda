@@ -1,7 +1,5 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class Grid : MonoBehaviour
 {
@@ -57,7 +55,7 @@ public class Grid : MonoBehaviour
         foreach (Transform child in node.transform)
         {
             if (child.gameObject.activeSelf)
-                connectedNodes.Add(grid[child.transform.GetComponent<TestingTrajectories>().chainedDirectionZone.transform]);
+                connectedNodes.Add(grid[child.transform.GetComponent<TestingTrajectories>().chainedDirectionZone]);
         }
 
         return connectedNodes;
@@ -70,6 +68,9 @@ public class Grid : MonoBehaviour
     }
 
     public List<Node> path;
+
+
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (Application.isPlaying)
@@ -92,4 +93,5 @@ public class Grid : MonoBehaviour
             }
         }
     }
+#endif
 }

@@ -10,8 +10,10 @@ public class Sideview_Controller : CentralController
     private int frames;
     private float time;
 
-    private void Update()
+    public override void Update()
     {
+        base.Update();
+        
         //use A and D keys for left or right movement
         dirX = 0;
         if (Input.GetKey(KeyCode.D))
@@ -39,7 +41,6 @@ public class Sideview_Controller : CentralController
             rig.AddForce(new Vector2(0, -jumpForce));
 
         setPlayerVelocity();
-        tilt();
     }
 
     private void setPlayerVelocity()

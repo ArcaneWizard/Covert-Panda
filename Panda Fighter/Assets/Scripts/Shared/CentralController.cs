@@ -64,6 +64,13 @@ public class CentralController : MonoBehaviour
         StartCoroutine(determineIfGrounded(controller.disableLimbsDuringDoubleJump));
     }
 
+    public virtual void Update() {
+        tilt();
+    }
+
+    public void setSpeed(float speed) => this.speed = speed;
+    public void setDirection(int dir) => this.dirX = dir;
+
     //player or alien's body should tilt slightly on the slanted platform
     protected void tilt()
     {
@@ -217,9 +224,4 @@ public class CentralController : MonoBehaviour
         if (col.gameObject.layer == 11)
             isTouchingMap = false;
     }
-
-    //-------------------------------------------------------------------------------------------
-    //----------Functions used by other scripts to carry out intertwined logic--------------------
-    //-------------------------------------------------------------------------------------------
-
 }

@@ -8,28 +8,25 @@ using UnityEngine.Rendering;
 public class StateMachine : MonoBehaviour
 {
     private IState currentState;
-
     //all transitions
-    private Dictionary<String, List<Transition>> transitions = new Dictionary<String, List<Transition>>();
-
-    //transitions for our current state
+    private Dictionary<Type, List<Transition>> transitions = new Dictionary<Type, List<Transition>>();
+    //transitions from our current state
     private List<Transition> currentStateTransitions = new List<Transition>();
-
-    //transitions always called
+    //transitions always called when applicable
     private List<Transition> alwaysCalledTransitions = new List<Transition>();
 
-    //empty list of transitions 
+    //universal empty list of transitions (that a list above will be set to by default)
     private static List<Transition> EmptyTransitions = new List<Transition>();
 
     private string IStateName;
-
-    public void DoStuff()
+    
+    public void Tick()
     {
         var transition = GetTransition();
         if (transition != null)
             SetState(transition.To);
 
-        currentState.DoStuff();
+        currentState?.Tick();
     }
 
     public void SetState(IState state)
@@ -40,24 +37,22 @@ public class StateMachine : MonoBehaviour
         currentState?.OnExit();
         currentState = state;
 
-        transitions.TryGetValue(currentState.GetType().ToString(), out currentStateTransitions);
+        transitions.TryGetValue(currentState.GetType(), out currentStateTransitions);
         if (currentStateTransitions == null)
             currentStateTransitions = EmptyTransitions;
 
         currentState.OnEnter();
     }
 
-    public void AddTransition(IState from, IState to, Func<bool> condition)
+    public void AddTransition(IState start, IState end, Func<bool> condition)
     {
-        IStateName = from.GetType().ToString();
-
-        if (!transitions.TryGetValue(IStateName, out var IStateTransitions))
+        if (!transitions.TryGetValue(start.GetType(), out var startStateTransitions ))
         {
-            IStateTransitions = new List<Transition>();
-            transitions[IStateName] = IStateTransitions;
+            startStateTransitions = new List<Transition>();
+            transitions[start.GetType()] = startStateTransitions;
         }
 
-        IStateTransitions.Add(new Transition(to, condition));
+        startStateTransitions.Add(new Transition(end, condition));
     }
 
     public void AddAlwaysCalledTransition(IState state, Func<bool> predicate)
@@ -77,6 +72,7 @@ public class StateMachine : MonoBehaviour
         }
     }
 
+    //returns a transition if the transition condition is met
     private Transition GetTransition()
     {
         foreach (var transition in alwaysCalledTransitions)

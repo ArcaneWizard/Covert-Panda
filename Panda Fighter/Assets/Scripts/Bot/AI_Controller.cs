@@ -9,15 +9,14 @@ public class AI_Controller : CentralController
 {
     public Transform decisionZone { get; private set; }
     public AI_ACTION AI_action { get; private set; }
-
-    public bool needsToFall { get; private set; }
-    public bool shouldExecuteAction { get; private set; }
     public string actionProgress { get; private set; }
 
+    private bool needsToFall;
     private int lastMovementDirX;
     private float randomDistance;
     private float randomSpeed;
 
+    //action progress starts off finished
     public override void Start()
     {
         base.Start();
@@ -26,18 +25,20 @@ public class AI_Controller : CentralController
         actionProgress = "finished";
     }
 
-    //------------------------------------------------------------------
-    //-------Call the right AI action at the right time-----------------
-    //------------------------------------------------------------------
-
-    public void executeAction()
+    //Define an action/decision, and set action progress to "pending start" 
+    public void beginAction(AI_ACTION action, Transform zone)
     {
-        Debug.Log(AI_action.action + ", " + decisionZone.name);
+        AI_action = action;
+        decisionZone = zone;
+        actionProgress = "pending start";
+    }
 
-        if (AI_action.action == "keepWalking")
-            actionProgress = "in progress";
+    //excute the given action and set action progress to "in progress"
+    private void executeAction()
+    {
+        actionProgress = "in progress";
 
-        else if (AI_action.action == "fallDown")
+        if (AI_action.action == "fallDown")
             needsToFall = true;
 
         else if (AI_action.action == "fallDownCurve")
@@ -50,27 +51,34 @@ public class AI_Controller : CentralController
             StartCoroutine(executeDoubleJumpAtRightMoment());
     }
 
-    private void Update()
-    {
-        tilt();
+    //called every frame
+    public override void Update()
+    {   
+        base.Update();
 
+        //if a fall action has been initiated, execute its logic/checks 
         if (needsToFall)
             executeFall();
 
-        if (shouldExecuteAction && isGrounded && isTouchingMap)
+        //if the AI is on some platform/ground 
+        if (isGrounded && isTouchingMap) 
         {
-            speed = maxSpeed;
-            dirX = AI_action.dirX;
+            //execute any pending action 
+            if (actionProgress == "pending start")
+            {
+                speed = maxSpeed;
+                dirX = AI_action.dirX;
+                actionProgress = "started";
+                executeAction();
+            }
 
-            shouldExecuteAction = false;
-            actionProgress = "started";
-            executeAction();
-        }
-
-        if (actionProgress == "in progress" && isGrounded && isTouchingMap)
-        {
-            speed = maxSpeed * UnityEngine.Random.Range(0.95f, 1f);
-            actionProgress = "finished";
+            //if an action has been executed, set action progress to 
+            //"finished" once the AI lands back on a platform
+            if (actionProgress == "in progress" && !needsToFall)
+            {
+                speed = maxSpeed * UnityEngine.Random.Range(0.95f, 1f);
+                actionProgress = "finished";
+            }
         }
     }
 
@@ -85,7 +93,6 @@ public class AI_Controller : CentralController
         {
             speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
             needsToFall = false;
-            actionProgress = "in progress";
         }
 
         //set initial fall speed only when actually falling (+ will change dir midway during fall)
@@ -111,7 +118,6 @@ public class AI_Controller : CentralController
         randomSpeed = AI_action.changedSpeed + UnityEngine.Random.Range(0, AI_action.bonusTrait.x);
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
-        actionProgress = "in progress";
     }
 
     //------------------------------------------------------------------
@@ -123,8 +129,7 @@ public class AI_Controller : CentralController
         dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
 
         randomDistance = UnityEngine.Random.Range(0.3f, 0.6f) * Mathf.Abs(Mathf.Cos(groundAngle));
-        Debug.Log("randomDistance: " + randomDistance);
-
+       
         while (dirX == 1 && transform.position.x - decisionZone.position.x < randomDistance)
             yield return null;
         while (dirX == -1 && transform.position.x - decisionZone.position.x > -randomDistance)
@@ -132,7 +137,6 @@ public class AI_Controller : CentralController
 
         dirX = AI_action.dirX;
         speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
-        Debug.Log(speed + ", " + UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y));
         normalJump();
 
         yield return new WaitForSeconds(Time.deltaTime * 2);
@@ -144,7 +148,6 @@ public class AI_Controller : CentralController
         dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
 
         randomDistance = UnityEngine.Random.Range(0.3f, 0.6f) * Mathf.Abs(Mathf.Cos(groundAngle));
-        Debug.Log("randomDistance: " + randomDistance);
 
         while (
             (dirX == 1 && transform.position.x - decisionZone.position.x < randomDistance) ||
@@ -186,31 +189,7 @@ public class AI_Controller : CentralController
         }
     }
 
-    //-------------------------------------------------------------------------------------------
-    //----------Functions used by other scripts to carry out intertwined logic-------------------
-    //-------------------------------------------------------------------------------------------
-
-    public void executeNewAIAction(AI_ACTION action)
-    {
-        AI_action = action;
-        actionProgress = "started";
-        shouldExecuteAction = true;
-    }
-
-    public void registerNewDecisionZone(Transform zone)
-    {
-        decisionZone = zone;
-    }
-
-    public void moveInOtherDirection()
-    {
-        dirX = (dirX != 1) ? 1 : -1;
-    }
-
-    //------------------------------------------------------------------
-    //---------Handle Looking around and Moving------------------------
-    //------------------------------------------------------------------
-
+    //Handle looking around and Moving
     private void LateUpdate()
     {
         lookAndAimInRightDirection();
@@ -258,8 +237,6 @@ public class AI_Controller : CentralController
             float zAngle = ((180 - Mathf.Abs(180 - transform.eulerAngles.z))); // <- maps angles above 180 to their negative value instead (ex. 330 becomes -30)
             zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
             shootAngle -= zAngle;
-
-            // rotateHeadAndWeapon(shootDirection, shootAngle, weaponAttacks.disableAiming);
         }
     }
 

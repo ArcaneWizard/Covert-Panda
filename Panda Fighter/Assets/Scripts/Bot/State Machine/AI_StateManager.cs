@@ -13,6 +13,7 @@ public class AI_StateManager : MonoBehaviour
     public bool useTargetForTesting;
     public Vector2 visitingPlaceLocation { get; private set; }
     private CentralController controller;
+    private AI_FollowPath AI_pathFollower;
     private PathFinding pathFinding;
 
     private float timer;
@@ -20,27 +21,45 @@ public class AI_StateManager : MonoBehaviour
     void Awake()
     {
         controller = transform.GetChild(0).GetComponent<CentralController>();
+        AI_pathFollower = transform.GetChild(0).GetComponent<AI_FollowPath>();
         pathFinding = transform.GetComponent<PathFinding>();
     }
 
     void Start()
     {
-        StartCoroutine(configureWanderingState());
+        enterWanderingStateAndWander();
     }
 
     void Update()
     {
-        if (state == AI_STATE.Wandering)
+        if (state == AI_STATE.Wandering && visitingPlaceLocation != null)
         {
-            if (getSquaredDistanceBtwnVectors(transform.position, visitingPlaceLocation) < 16f)
-                visitingPlaceLocation = getLocationOfNewPlaceToVisit();
+            if (getSquaredDistanceBtwnVectors(transform.GetChild(0).position, visitingPlaceLocation) < 16f) { 
+                AI_pathFollower.endJourney();
+                enterWanderingStateAndWander();
+                Debug.Log("VPL updated");
+            }
         }
     }
+    public void enterIdleState()
+    {
+        state = AI_STATE.Idle;
+    }
 
-    public IEnumerator configureWanderingState()
+    public void enterWanderingStateAndWander()
     {
         state = AI_STATE.Wandering;
-        visitingPlaceLocation = getLocationOfNewPlaceToVisit();
+
+        StartCoroutine(figureOutWhereToWanderTo((List<Node> path) => {
+            AI_pathFollower.follow(path);
+        }));
+    }
+
+    private IEnumerator figureOutWhereToWanderTo(System.Action<List<Node>> callbackOnFinish)
+    {
+        visitingPlaceLocation = (useTargetForTesting) 
+            ? target.position 
+            : placesToVisit.GetChild(UnityEngine.Random.Range(0, placesToVisit.childCount)).position;;
 
         StartCoroutine(pathFinding.FindMultiplePaths(2f, visitingPlaceLocation));
 
@@ -48,16 +67,7 @@ public class AI_StateManager : MonoBehaviour
             yield return new WaitForSeconds(Time.deltaTime * 2);
 
         pathFinding.debugPathInConsole(pathFinding.getChosenPath());
-    }
-
-    public void enterIdleState()
-    {
-        state = AI_STATE.Idle;
-    }
-
-    private Vector2 getLocationOfNewPlaceToVisit()
-    {
-        return (useTargetForTesting) ? target.position : placesToVisit.GetChild(UnityEngine.Random.Range(0, placesToVisit.childCount)).position;
+        callbackOnFinish(pathFinding.getChosenPath());
     }
 
     private float getSquaredDistanceBtwnVectors(Vector2 a, Vector2 b)

@@ -24,6 +24,8 @@ public class PathFinding : MonoBehaviour
         random = new System.Random();
     }
 
+    public List<Node> getChosenPath() => chosenPath;
+
     public IEnumerator FindMultiplePaths(float searchTime, Vector2 target)
     {
         pathsFound.Clear();
@@ -34,7 +36,7 @@ public class PathFinding : MonoBehaviour
         float time = Time.time + searchTime;
         while (Time.time < time)
         {
-            FindPath(seeker.position, target);
+            findOnePath(seeker.position, target);
             yield return new WaitForSeconds(0.01f);
         }
 
@@ -53,7 +55,7 @@ public class PathFinding : MonoBehaviour
         Debug.Log(a);
     }
 
-    public void FindPath(Vector2 startPos, Vector2 targetPos)
+    private void findOnePath(Vector2 startPos, Vector2 targetPos)
     {
         Node startNode = grid.getClosestNodeToWorldPosition(startPos, 5);
         Node targetNode = grid.getClosestNodeToWorldPosition(targetPos, 5);
@@ -74,7 +76,6 @@ public class PathFinding : MonoBehaviour
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
-            DebugGUI.debugText4 = currentNode.transform.name + ", " + targetNode.transform.name;
             if (Transform.Equals(currentNode.transform, targetNode.transform))
             {
                 savePathIfUnique(startNode, currentNode);
@@ -120,7 +121,6 @@ public class PathFinding : MonoBehaviour
         {
             List<Node> path = new List<Node>();
             Node currentNode = endNode;
-            DebugGUI.debugText5 = $"hCost: {currentNode.hCost}, gCost: {currentNode.gCost}";
 
             while (!Transform.Equals(currentNode.transform, startNode.transform))
             {
@@ -128,12 +128,7 @@ public class PathFinding : MonoBehaviour
                 currentNode = currentNode.parent;
 
                 if (path.Count > 20)
-                {
-                    path.Reverse();
-                    debugPathInConsole(path);
-                    Debug.LogWarning("Out of Memory Exception");
                     return;
-                }
             }
 
             path.Reverse();
@@ -155,11 +150,6 @@ public class PathFinding : MonoBehaviour
 
         Debug.Log(s);
         // Debug.Log($"{path[path.Count - 1].gCost} and {path[path.Count - 1].hCost}");
-    }
-
-    public List<Node> getChosenPath()
-    {
-        return chosenPath;
     }
 
     private void showPathOnGrid(List<Node> path)

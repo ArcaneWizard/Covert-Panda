@@ -3,6 +3,6 @@
 public interface IState 
 {
      void OnEnter();
-     void DoStuff();
+     void Tick();
      void OnExit();
 }
