@@ -13,12 +13,7 @@ public class Wander : IState
         this.lookAround = lookAround;
     }
 
-    public void OnEnter()
-    {
-        wanderAround.startWandering();
-        //lookAround.lookTowards(wanderAround.controller.InFrontOfAI());
-    }
-
+    public void OnEnter() => wanderAround.startWandering();
     public void Tick() => wanderAround.tick();
     public void OnExit() => wanderAround.stopWandering();
 }

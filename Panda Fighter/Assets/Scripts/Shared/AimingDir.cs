@@ -42,4 +42,13 @@ public static class AimingDir
 
     public static List<Vector2> boomerangAiming = new List<Vector2>()
     { bLauncherPointingRight, bLauncherPointingUp, bLauncherPointingDown, bLauncherShoulderPos };
+
+    //ideal arctic pistol coordinates when looking to the side, up or down 
+    static Vector2 arcticPistolPointingRight = new Vector2(1.98f, 2.49f);
+    static Vector2 arcticPistolPointingUp = new Vector2(-0.1f, 3.94f);
+    static Vector2 arcticPistolPointingDown = new Vector2(0.31f, 0.48f);
+    static Vector2 arcticPistolShoulderPos = new Vector2(0.09f, 2.18f);
+
+    public static List<Vector2> arcticPistolAiming = new List<Vector2>()
+    { arcticPistolPointingRight, arcticPistolPointingUp, arcticPistolPointingDown, arcticPistolShoulderPos };
 }

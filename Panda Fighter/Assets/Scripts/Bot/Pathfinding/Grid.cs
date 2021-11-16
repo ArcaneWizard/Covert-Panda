@@ -35,6 +35,10 @@ public class Grid : MonoBehaviour
             }
         }
 
+        //FOR DEBUGGING
+        if (radiusCheck == 90)
+            Debug.LogError("bruh stack over flow exception incoming");
+
         if (leastDistanceSoFar == 400)
             return getClosestNodeToWorldPosition(entityPos, radiusCheck + 5);
         else

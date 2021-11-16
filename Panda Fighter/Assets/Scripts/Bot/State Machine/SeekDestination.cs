@@ -26,10 +26,7 @@ public class SeekDestination : IState
         setDestinationManually = false;
     }
 
-    public void OnEnter()
-    {
-        beginNewJourney();
-    }
+    public void OnEnter() => beginNewJourney();
 
     public void Tick()
     {
@@ -46,9 +43,6 @@ public class SeekDestination : IState
             beginNewJourney();
             Debug.Log("AI got lost");
         }
-
-        /*if (pathFollower.nextPathNode() != Vector3.zero)
-            lookAround.lookTowards(pathFollower.nextPathNode());*/
     }
 
     public void OnExit() => pathFollower.endJourney();

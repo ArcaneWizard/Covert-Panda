@@ -8,6 +8,7 @@ public class Limbs : MonoBehaviour
     public List<GameObject> Short_barrel;
     public List<GameObject> Middle_barrel;
     public List<GameObject> Long_barrel;
-    public List<GameObject> Meelee_pole;
+    public List<GameObject> Meelee_grip;
+    public List<GameObject> Pistol_grip;
 }
 

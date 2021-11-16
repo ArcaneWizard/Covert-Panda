@@ -45,42 +45,4 @@ public abstract class IWeapon : MonoBehaviour
     }
 }
 
-//reusable weapon methods
-public static class reusableWeaponMethods
-{
-
-    public static void shootBulletInStraightLine(Vector2 aim, Transform bullet, Rigidbody2D rig, float speed)
-    {
-        bullet.transform.right = aim;
-        rig.velocity = aim * speed;
-    }
-
-    public static void configureReusedBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint)
-    {
-        //spawn bullet at the right place + default velocity and rotation
-        bullet.position = bulletSpawnPoint.position;
-        bullet.GetComponent<Collider2D>().isTrigger = false;
-
-        bullet.localEulerAngles = new Vector3(0, 0, bullet.transform.localEulerAngles.z);
-        bulletRig.velocity = new Vector2(0, 0);
-        bulletRig.angularVelocity = 0;
-
-        //reinitiate the OnEnable method of the bullet (where explosions/effects/traits get reset)
-        bullet.gameObject.SetActive(false);
-        bullet.gameObject.SetActive(true);
-    }
-
-    public static Transform retrieveNextBullet(CentralWeaponSystem weaponSystem)
-    {
-        Transform bullet = weaponSystem.getWeapon().transform;
-        weaponSystem.useOneAmmo();
-        return bullet;
-    }
-
-    public static float calculateTimeB4ReleasingWeapon(float trackingMultiplier, float trackingOffset, Vector2 aimDir) => ((-aimDir.y + 1) * trackingMultiplier + trackingOffset);
-
-}
-
-
-
 
