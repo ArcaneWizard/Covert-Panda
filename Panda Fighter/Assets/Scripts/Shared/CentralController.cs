@@ -24,10 +24,10 @@ public class CentralController : MonoBehaviour
     public Transform rightFoot;
     public Transform groundColliders;
 
-    protected float maxSpeed = 16.5f;
+    protected float maxSpeed = 13.5f;
     protected float speed;
-    protected float jumpForce = 1100f;
-    protected float doublejumpForce = 1100f;
+    protected float jumpForce = 1300f;
+    protected float doublejumpForce = 1200f;
     protected float maxGravity = 2.5f;
 
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
