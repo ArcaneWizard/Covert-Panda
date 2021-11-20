@@ -21,6 +21,7 @@ public class Grid : MonoBehaviour
 
     public Node getClosestNodeToWorldPosition(Vector2 entityPos, float radiusCheck)
     {
+        Debug.Log("called");
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(entityPos, radiusCheck, decisionZoneMask);
         leastDistanceSoFar = 400;
 
@@ -40,7 +41,7 @@ public class Grid : MonoBehaviour
             Debug.LogError("bruh stack over flow exception incoming");
 
         if (leastDistanceSoFar == 400)
-            return getClosestNodeToWorldPosition(entityPos, radiusCheck + 5);
+            return getClosestNodeToWorldPosition(entityPos, radiusCheck + 10);
         else
         {
             if (grid.ContainsKey(closestNode.transform))
@@ -79,7 +80,7 @@ public class Grid : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            Node alienNode = getClosestNodeToWorldPosition(alien.position, 5);
+            /*Node alienNode = getClosestNodeToWorldPosition(alien.position, 10);*/
             foreach (KeyValuePair<Transform, Node> n in grid)
             {
                 Gizmos.color = Color.black;
@@ -91,8 +92,8 @@ public class Grid : MonoBehaviour
                             Gizmos.color = Color.white;
                     }
                 }
-                if (Transform.Equals(alienNode.transform, n.Value.transform))
-                    Gizmos.color = Color.cyan;
+                /*if (Transform.Equals(alienNode.transform, n.Value.transform))
+                    Gizmos.color = Color.cyan;*/
                 Gizmos.DrawCube(n.Value.transform.position, new Vector2(0.5f, 0.5f));
             }
         }

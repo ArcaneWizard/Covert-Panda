@@ -26,14 +26,17 @@ public static class reusableWeaponMethods
         bullet.gameObject.SetActive(false);
         bullet.gameObject.SetActive(true);
 
-        //reset the trail renderer, if any
+        //reset the trail renderer and particle effect, if any
         if (bullet.transform.GetComponent<TrailRenderer>())
             bullet.transform.GetComponent<TrailRenderer>().Clear();
+
+        if (bullet.transform.GetComponent<ParticleSystem>())
+            bullet.transform.GetComponent<ParticleSystem>().Clear();
     }
 
     public static Transform retrieveNextBullet(CentralWeaponSystem weaponSystem)
     {
-        Transform bullet = weaponSystem.getWeapon().transform;
+        Transform bullet = weaponSystem.getBullet.transform;
         weaponSystem.useOneAmmo();
         return bullet;
     }

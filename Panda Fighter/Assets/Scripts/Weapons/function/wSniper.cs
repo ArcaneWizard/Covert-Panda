@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class wSniper : IWeapon
 {
-
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         DoAttack(aim, bullet, rig);

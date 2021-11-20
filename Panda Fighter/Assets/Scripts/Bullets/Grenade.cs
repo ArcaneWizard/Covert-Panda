@@ -6,6 +6,7 @@ public class Grenade : MonoBehaviour
 {
     private int surfacesTouched = 0;
     private float explosionTimer = 0;
+    private float timeTillExplosion = 1.2f;
 
     private SpriteRenderer sR;
     private Rigidbody2D rig;
@@ -14,6 +15,14 @@ public class Grenade : MonoBehaviour
     {
         sR = transform.GetComponent<SpriteRenderer>();
         rig = transform.GetComponent<Rigidbody2D>();
+    }
+
+    public void startExplosionTimer() => StartCoroutine(eStartExplosionTimer());
+
+    private IEnumerator eStartExplosionTimer()
+    {
+        yield return new WaitForSeconds(timeTillExplosion);
+        surfacesTouched = 3;
     }
 
     void Update()
@@ -42,9 +51,9 @@ public class Grenade : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D col)
+    /*private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.layer == 11 && explosionTimer <= 0f)
             surfacesTouched++;
-    }
+    }*/
 }

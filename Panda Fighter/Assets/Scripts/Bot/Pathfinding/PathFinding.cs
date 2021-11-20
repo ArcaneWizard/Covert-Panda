@@ -32,11 +32,14 @@ public class PathFinding : MonoBehaviour
         universalClosedSet.Clear();
         chosenPath = null;
 
+        Node startNode = grid.getClosestNodeToWorldPosition(seeker.position, 5);
+        Node targetNode = grid.getClosestNodeToWorldPosition(target, 5);
+
         //search for a bunch of potential paths (note: paths are stored as end nodes)
         float time = Time.time + searchTime;
         while (Time.time < time)
         {
-            findOnePath(seeker.position, target);
+            findOnePath(startNode, targetNode);
             yield return new WaitForSeconds(0.01f);
         }
 
@@ -47,11 +50,8 @@ public class PathFinding : MonoBehaviour
         chosenPath = path;
     }
 
-    private void findOnePath(Vector2 startPos, Vector2 targetPos)
+    private void findOnePath(Node startNode, Node targetNode)
     {
-        Node startNode = grid.getClosestNodeToWorldPosition(startPos, 5);
-        Node targetNode = grid.getClosestNodeToWorldPosition(targetPos, 5);
-
         Debug.Log(targetNode.transform.name);
 
         List<Node> openSet = new List<Node>();

@@ -10,7 +10,7 @@ public class StateMachine
     private IState currentState;
 
     //all transitions
-    private Dictionary<Type, List<Transition>> transitions = new Dictionary<Type, List<Transition>>();
+    private Dictionary<System.Type, List<Transition>> transitions = new Dictionary<System.Type, List<Transition>>();
     //transitions from our current state
     private List<Transition> currentStateTransitions = new List<Transition>();
     //transitions always called when applicable

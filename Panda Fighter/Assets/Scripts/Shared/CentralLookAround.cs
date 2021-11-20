@@ -49,7 +49,7 @@ public class CentralLookAround : MonoBehaviour
             if (aimTarget)
                 aimTarget.transform.localPosition = targetLocation;
 
-            float headSlope = (67f - 92.4f) / -90f;
+            float headSlope = (40f - 92.4f) / -90f;
             head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
         }
     }

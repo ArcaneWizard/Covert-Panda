@@ -117,7 +117,7 @@ public class AI_Controller : CentralController
         speed = AI_action.speed.x;
         yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
 
-        randomSpeed = AI_action.changedSpeed + UnityEngine.Random.Range(AI_action.bonusTrait.x, AI_action.bonusTrait.y);
+        randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
     }
@@ -162,7 +162,7 @@ public class AI_Controller : CentralController
         normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
-        randomSpeed = AI_action.changedSpeed + UnityEngine.Random.Range(0, AI_action.bonusTrait.x);
+        randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
         doubleJump();

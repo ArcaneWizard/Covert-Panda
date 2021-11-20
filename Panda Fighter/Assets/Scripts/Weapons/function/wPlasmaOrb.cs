@@ -4,12 +4,6 @@ using System.Collections.Generic;
 
 public class wPlasmaOrb : IWeapon
 {
-
-    protected float orbThrowForce = 2000;
-    protected float orbYForce = 0;
-
-    public override void Awake() { base.Awake(); config.IK_Coordinates = AimingDir.boomerangAiming; }
-
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         DoAttack(aim, bullet, rig);
@@ -21,7 +15,7 @@ public class wPlasmaOrb : IWeapon
         reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint);
 
         bullet.transform.right = aim;
-        Vector2 unadjustedForce = orbThrowForce * aim * new Vector2(1.2f, 1) + new Vector2(0, orbYForce);
+        Vector2 unadjustedForce = config.bulletSpeed * 40 * aim * new Vector2(1.2f, 1);
         rig.AddForce(unadjustedForce * rig.mass);
     }
 }

@@ -15,7 +15,7 @@ public class SniperBeam : MonoBehaviour
     private float beamLength;
 
     private float beamDistance = 60f;
-    private LayerMask map = 1 << 11;
+    private LayerMask map = 1 << 11 | 1 << 6;
 
     void Awake()
     {
@@ -89,7 +89,7 @@ public class SniperBeam : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == 6)
+        if (col.gameObject.layer == 6 || col.gameObject.layer == 11)
             initiateExplosionAt(col.transform.position);
     }
 

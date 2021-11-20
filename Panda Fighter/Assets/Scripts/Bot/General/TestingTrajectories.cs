@@ -4,7 +4,7 @@ using System.Net;
 using UnityEngine;
 
 #if UNITY_EDITOR
-    using UnityEditor;
+using UnityEditor;
 #endif
 
 
@@ -18,12 +18,11 @@ public class TestingTrajectories : MonoBehaviour
 
     [Header("Describe Jump")]
     public int movementDirX = 1;
-    private float jumpForce = 1130f;
-    private float doubleJumpForce = 1243f;
+    private float jumpForce = 1430;
+    private float doubleJumpForce = 1350;
     public Vector2 speedRange = new Vector2(10f, 10f);
     public Vector2 timeB4Change = new Vector2(0f, 0f);
-    public float changedSpeed;
-    public Vector2 bonusTrait = new Vector2(0, 0);
+    public Vector2 changedSpeed = new Vector2(0f, 0f);
 
     private float mass = 1f;
     private float defaultGravity = -32.5f;
@@ -97,8 +96,8 @@ public class TestingTrajectories : MonoBehaviour
         //yellow rec on connected decision zone
         if (chainedDirectionZone != null)
         {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(chainedDirectionZone.position, 0.7f);
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(chainedDirectionZone.position, 0.5f);
         }
     }
 
@@ -133,7 +132,7 @@ public class TestingTrajectories : MonoBehaviour
         drawParabolaWithFasterFrames(timeB4DoubleJump * 5f + 0.01f, transform.position, speedRange.x, jumpForce);
 
         lastP_b4DirSwitch = lastP;
-        drawParabola(length, lastP_b4DirSwitch, changedSpeed, doubleJumpForce);
+        drawParabola(length, lastP_b4DirSwitch, changedSpeed.x, doubleJumpForce);
     }
 
     private void drawFallDownCurveParabola(float timeB4DirSwitch)
@@ -145,7 +144,7 @@ public class TestingTrajectories : MonoBehaviour
         drawParabolaWithFasterFrames(timeB4DirSwitch * 5f + 0.01f, transform.position, speedRange.x, 0);
 
         lastP_b4DirSwitch = lastP;
-        drawParabolaWithTimeOffset(length, lastP_b4DirSwitch, changedSpeed, 0, timeB4DirSwitch * 5f);
+        drawParabolaWithTimeOffset(length, lastP_b4DirSwitch, changedSpeed.x, 0, timeB4DirSwitch * 5f);
     }
 
     private void drawParabola(float linesDrawn, Vector2 start, float speed, float jumpForce)
@@ -200,32 +199,32 @@ public class TestingTrajectories : MonoBehaviour
     public AI_ACTION convertToAction()
     {
         AI_ACTION action;
-            
-            if (headStraight)
-                action = defineAction("keepWalking");
-            else if (fallDown)
-                action = defineAction("fallDown");
-            else if (fallDownCurve)
-                action = defineAction("fallDownCurve");
-            else if (doubleJump)
-                action = defineAction("doubleJump");
-            else
-                action = defineAction("normalJump");
-        
+
+        if (headStraight)
+            action = defineAction("keepWalking");
+        else if (fallDown)
+            action = defineAction("fallDown");
+        else if (fallDownCurve)
+            action = defineAction("fallDownCurve");
+        else if (doubleJump)
+            action = defineAction("doubleJump");
+        else
+            action = defineAction("normalJump");
+
         return action;
     }
-    
+
     //helper method for converting trajectory info to a condensed readable form
     private AI_ACTION defineAction(string actionName) => new AI_ACTION(actionName, movementDirX,
-            speedRange, timeB4Change, changedSpeed, bonusTrait, transform.GetChild(0).position);
+            speedRange, timeB4Change, changedSpeed, transform.GetChild(0).position);
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (Selection.transforms.Length != 0 && Selection.transforms[0].parent == this.transform)
             OnDrawGizmosSelected();
     }
-    #endif
+#endif
 }
 
 [System.Serializable]
@@ -234,12 +233,11 @@ public struct AI_ACTION
     public int dirX { get; private set; }
     public Vector2 speed { get; private set; }
     public Vector2 timeB4Change { get; private set; }
-    public float changedSpeed { get; private set; }
+    public Vector2 changedSpeed { get; private set; }
     public string action { get; private set; }
     public Vector2 endLocation { get; private set; }
-    public Vector2 bonusTrait { get; private set; }
 
-    public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, float changedSpeed, Vector2 bonusTrait, Vector2 endLocation)
+    public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, Vector2 changedSpeed, Vector2 endLocation)
     {
         this.action = action;
         this.dirX = direction;
@@ -247,7 +245,6 @@ public struct AI_ACTION
         this.timeB4Change = timeB4Change;
         this.changedSpeed = changedSpeed;
         this.endLocation = endLocation;
-        this.bonusTrait = bonusTrait;
     }
 }
 

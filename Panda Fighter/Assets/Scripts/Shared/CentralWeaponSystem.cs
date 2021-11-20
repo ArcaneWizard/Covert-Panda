@@ -47,32 +47,23 @@ public class CentralWeaponSystem : MonoBehaviour
     public virtual void selectWeapon(string weapon)
     {
         //if the weapon is already selected, no need to do anything
-        if (weapon == weaponSelected)
+        if (weapon == weaponSelected || ammo[weapon] <= 0)
             return;
 
-        //if a weapon/grenade is currently held by the player but not "thrown", hide it before selecting the new weapon
         if (shooting.weaponHeld != null)
             shooting.weaponHeld.gameObject.SetActive(false);
 
-        //if the selected weapon has ammo, equip it
-        if (ammo[weapon] > 0)
-            weaponSelected = weapon;
-        else
-            return;
+        weaponSelected = weapon;
+        weapons[weaponSelected].SetDefaultAnimation();
+        shooting.combatMode = weaponConfig.combatMode;
+        shooting.configureWeaponAndArms();
+        this.weapon.resetAttackProgress();
 
-        //use the next bullet in the bullet pool next time you fire
-        string combatMode = weapons[weapon].config.combatMode;
-        if (combatMode != "meelee" || weaponAmmoPools.ContainsKey(weaponSelected))
+        if (weaponAmmoPools.ContainsKey(weaponSelected))
             bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
 
-        //switch combat mode for this specific weapon (update arm limb animations)
-        shooting.combatMode = combatMode;
-        shooting.configureWeaponAndArms();
-
-        if (combatMode == "handheld")
-            shooting.weaponHeld = getWeapon();
-
-        weapons[weaponSelected].SetDefaultAnimation();
+        if (weaponConfig.combatMode == "handheld")
+            shooting.weaponHeld = getBullet;
     }
 
     public virtual void collectNewWeapon(string weapon) => ammo[weapon] = weapons[weapon].config.startingAmmo;
@@ -83,12 +74,13 @@ public class CentralWeaponSystem : MonoBehaviour
         bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
     }
 
-    public GameObject getWeapon() => weaponAmmoPools[weaponSelected][bulletNumber].gameObject;
-    public int getAmmo() => ammo[weaponSelected];
-    public IWeapon getWeaponConfig() => weapons[weaponSelected];
+    public GameObject getBullet => weaponAmmoPools[weaponSelected][bulletNumber].gameObject;
+    public int getAmmo => ammo[weaponSelected];
+    public IWeapon weapon => weapons[weaponSelected];
+    public WeaponConfig weaponConfig => weapons[weaponSelected].config;
 
     //useful for special attacks (right click)
-    public GameObject getLastWeapon()
+    public GameObject getLastBullet()
     {
         int totalBullets = weaponAmmoPools[weaponSelected].Count;
         return weaponAmmoPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;

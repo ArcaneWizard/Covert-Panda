@@ -23,7 +23,7 @@ public class SeekDestination : IState
         this.manualDestination = manualDestination;
         this.lookAround = lookAround;
 
-        setDestinationManually = false;
+        setDestinationManually = true;
     }
 
     public void OnEnter() => beginNewJourney();

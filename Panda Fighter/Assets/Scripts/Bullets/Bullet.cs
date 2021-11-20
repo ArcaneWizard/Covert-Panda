@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
-        {
-            HP.playerHP -= 20;
-            gameObject.SetActive(false);
-        }
-
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Map"))
+        if (col.gameObject.layer == 11)
             gameObject.SetActive(false);
     }
 }

@@ -5,6 +5,7 @@ public class AI_Shooting : CentralShooting
 {
     private AI_LookAround AI_lookAround;
     private float countdownBtwnShots = 0f;
+    private WeaponConfig config;
 
     public override Vector2 getAim() => AI_lookAround.lookAt.normalized;
 
@@ -19,10 +20,14 @@ public class AI_Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (!AI_lookAround.playerIsInSight || countdownBtwnShots > 0f || weaponSystem.weaponSelected == null)
+        if (!AI_lookAround.playerIsInSight || countdownBtwnShots > 0f)
             return;
 
-        if (weaponSystem.getAmmo() > 0 && weaponSystem.getWeapon().tag == "singleFire")
+        if (weaponSystem.getAmmo <= 0 || weaponSystem.weaponSelected == null)
+            return;
+
+        config = weaponSystem.weaponConfig;
+        if (weaponSystem.getAmmo > 0 && config.weaponType == Type.singleFire)
         {
             if (combatMode == "gun")
             {
@@ -30,22 +35,22 @@ public class AI_Shooting : CentralShooting
                 Attack();
             }
 
-            else if (combatMode == "handheld" && weaponSystem.getWeaponConfig().attackProgress == "finished")
+            else if (combatMode == "handheld" && weaponSystem.weapon.attackProgress == "finished")
             {
                 countdownBtwnShots = UnityEngine.Random.Range(0.25f, 0.33f);
                 Attack();
             }
 
-            else if (combatMode == "meelee" && weaponSystem.getWeaponConfig().attackProgress == "finished")
+            else if (combatMode == "meelee" && weaponSystem.weapon.attackProgress == "finished")
             {
                 countdownBtwnShots = UnityEngine.Random.Range(0.25f, 0.33f);
-                MeeleeAttack();
+                NonAmmoAttack();
             }
         }
 
-        if (weaponSystem.getAmmo() > 0 && combatMode == "gun" && weaponSystem.getWeapon().tag == "spamFire")
+        if (weaponSystem.getAmmo > 0 && combatMode == "gun" && config.weaponType == Type.spamFire)
         {
-            countdownBtwnShots = 1f / weaponSystem.getWeaponConfig().config.ratePerSecond;
+            countdownBtwnShots = 1f / weaponSystem.weapon.config.fireRateInfo;
             Attack();
         }
     }

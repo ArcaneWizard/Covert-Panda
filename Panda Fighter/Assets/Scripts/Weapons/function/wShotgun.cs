@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class wShotgun : IWeapon
 {
-
-    private float shotgunBulletSpeed = 52;
     private float goldenShotgunSpread = 12;
 
     private float fadeOutDelay = 0.8f;
@@ -16,12 +14,6 @@ public class wShotgun : IWeapon
     private Vector2 goldenBitsForceY = new Vector2(-50, 400);
     private int shotgunBitCounter = 0;
 
-    public override void Awake()
-    {
-        base.Awake();
-        config.IK_Coordinates = AimingDir.shotgunAiming;
-    }
-
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         DoAttack(aim, bullet, rig);
@@ -31,9 +23,10 @@ public class wShotgun : IWeapon
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.bulletSpawnPoint);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, shotgunBulletSpeed);
+        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, config.bulletSpeed);
         shootNewBulletAtAngle(goldenShotgunSpread, aim, bullet, bulletRig);
         shootNewBulletAtAngle(-goldenShotgunSpread, aim, bullet, bulletRig);
+        config.bulletSpawnPoint.GetComponent<ParticleSystem>().Play();
     }
 
     private void shootNewBulletAtAngle(float angle, Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
@@ -43,10 +36,10 @@ public class wShotgun : IWeapon
 
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.bulletSpawnPoint);
         bullet.transform.right = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
-        bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * shotgunBulletSpeed;
+        bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * config.bulletSpeed;
     }
 
-    //Not being used anymore
+    /*Not being used anymore
     private void shotgunParticleExplosion(Vector2 aim)
     {
         for (int i = shotgunBitCounter; i < shotgunBitCounter + goldenShotgunBits.Count / 2; i++)
@@ -61,5 +54,5 @@ public class wShotgun : IWeapon
         }
 
         shotgunBitCounter = (shotgunBitCounter + goldenShotgunBits.Count / 2) % goldenShotgunBits.Count;
-    }
+    }*/
 }

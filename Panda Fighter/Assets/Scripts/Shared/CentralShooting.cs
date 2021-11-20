@@ -25,7 +25,7 @@ public abstract class CentralShooting : MonoBehaviour
     {
         if (combatMode == "handheld")
         {
-            if (weaponSystem.getAmmo() > 0)
+            if (weaponSystem.getAmmo > 0)
             {
                 weaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
                 weaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
@@ -37,7 +37,7 @@ public abstract class CentralShooting : MonoBehaviour
         }
     }
 
-    public void updateWeaponHeldForHandheldWeapons() => weaponHeld = weaponSystem.getWeapon();
+    public void updateWeaponHeldForHandheldWeapons() => weaponHeld = weaponSystem.getBullet;
 
     //specify which limbs, weapon and aim target to activate (the latter helps a weapon track while aiming) 
     public void configureWeaponAndArms()
@@ -47,7 +47,7 @@ public abstract class CentralShooting : MonoBehaviour
             limb_Or_Weapon.SetActive(false);
         WeaponSetup.Clear();
 
-        IWeapon Iweapon = weaponSystem.getWeaponConfig();
+        IWeapon Iweapon = weaponSystem.weapon;
 
         if (Iweapon.config.aimTarget != null)
             lookAround.setAimTarget(Iweapon.config.aimTarget);
@@ -68,27 +68,25 @@ public abstract class CentralShooting : MonoBehaviour
 
     protected void Attack()
     {
-        bullet = weaponSystem.getWeapon().transform;
+        bullet = weaponSystem.getBullet.transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
         weaponSystem.useOneAmmo();
-
-        weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.weapon.DoSetupAttack(getAim(), bullet, bulletRig);
     }
 
-    protected void MeeleeAttack()
+    protected void NonAmmoAttack()
     {
-        bullet = weaponSystem.getWeapon().transform;
+        bullet = weaponSystem.getBullet.transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-
-        weaponSystem.getWeaponConfig().DoSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.weapon.DoSetupAttack(getAim(), bullet, bulletRig);
     }
 
     protected void RightClickAttack()
     {
-        bullet = weaponSystem.getLastWeapon().transform;
+        bullet = weaponSystem.getLastBullet().transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
 
-        weaponSystem.getWeaponConfig().DoBonusSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.weapon.DoBonusSetupAttack(getAim(), bullet, bulletRig);
     }
 
     public abstract Vector2 getAim();

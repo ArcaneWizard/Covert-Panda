@@ -24,10 +24,10 @@ public class CentralController : MonoBehaviour
     public Transform rightFoot;
     public Transform groundColliders;
 
-    protected float maxSpeed = 13.0f;
+    protected float maxSpeed = 16.5f;
     protected float speed;
-    protected float jumpForce = 1130f;
-    protected float doublejumpForce = 1243f;
+    protected float jumpForce = 1100f;
+    protected float doublejumpForce = 1100f;
     protected float maxGravity = 2.5f;
 
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
@@ -64,7 +64,8 @@ public class CentralController : MonoBehaviour
         StartCoroutine(determineIfGrounded(controller.disableLimbsDuringDoubleJump));
     }
 
-    public virtual void Update() {
+    public virtual void Update()
+    {
         tilt();
     }
 
