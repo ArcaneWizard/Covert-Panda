@@ -22,21 +22,21 @@ public class wShotgun : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.bulletSpawnPoint);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, config.bulletSpeed);
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, configuration.bulletSpeed);
         shootNewBulletAtAngle(goldenShotgunSpread, aim, bullet, bulletRig);
         shootNewBulletAtAngle(-goldenShotgunSpread, aim, bullet, bulletRig);
-        config.bulletSpawnPoint.GetComponent<ParticleSystem>().Play();
+        configuration.bulletSpawnPoint.GetComponent<ParticleSystem>().Play();
     }
 
     private void shootNewBulletAtAngle(float angle, Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
-        bullet = reusableWeaponMethods.retrieveNextBullet(config.weaponSystem);
+        bullet = reusableWeaponMethods.retrieveNextBullet(configuration.weaponSystem);
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
 
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.bulletSpawnPoint);
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint);
         bullet.transform.right = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
-        bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * config.bulletSpeed;
+        bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * configuration.bulletSpeed;
     }
 
     /*Not being used anymore

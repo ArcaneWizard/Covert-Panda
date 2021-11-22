@@ -14,8 +14,8 @@ public class wBoomerang : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.bulletSpawnPoint);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, config.bulletSpeed);
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, configuration.bulletSpeed);
 
         bullet.transform.GetComponent<Animator>().SetBool("glare", false);
         bulletRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
@@ -29,7 +29,7 @@ public class wBoomerang : IWeapon
 
     public override void BonusAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
-        bulletRig.velocity = Quaternion.Euler(0, 0, 90 * -Mathf.Sign(aim.x)) * aim * config.bulletSpeed;
+        bulletRig.velocity = Quaternion.Euler(0, 0, 90 * -Mathf.Sign(aim.x)) * aim * configuration.bulletSpeed;
         bulletRig.angularVelocity = Random.Range(boomerangSpinSpeed.x, boomerangSpinSpeed.y) * (Random.Range(0, 2) * 2 - 1);
         bullet.transform.GetComponent<Animator>().SetBool("glare", true);
     }

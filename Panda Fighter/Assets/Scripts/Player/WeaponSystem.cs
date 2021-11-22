@@ -18,7 +18,7 @@ public class WeaponSystem : CentralWeaponSystem
     public Transform equippedWeaponSprites, unequippedWeaponSprites;
 
     public Sprite slotSelected, slotNotSelected;
-    private String weaponTag;
+    private String tag;
 
     public override void Awake()
     {
@@ -27,38 +27,44 @@ public class WeaponSystem : CentralWeaponSystem
         //add each weapon's icon image, ammo text and weapon slot border to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
         {
-            weaponSlot.Add(weapon.tag, weapon.GetChild(0).transform.GetComponent<Image>());
-            ammoText.Add(weapon.tag, weapon.GetChild(1).transform.GetComponent<Text>());
-            weaponIcon.Add(weapon.tag, weapon.GetChild(2).transform.GetComponent<Image>());
+            tag = weapon.GetComponent<WeaponTag>().Tag;
+            weaponSlot.Add(tag, weapon.GetChild(0).transform.GetComponent<Image>());
+            ammoText.Add(tag, weapon.GetChild(1).transform.GetComponent<Text>());
+            weaponIcon.Add(tag, weapon.GetChild(2).transform.GetComponent<Image>());
         }
 
         //add each weapon sprite (for equipped vs not equipped states) to a dictionary, accessible by weapon tag
-        foreach (Transform weapon in equippedWeaponSprites)
-            equipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
-        foreach (Transform weapon in unequippedWeaponSprites)
-            notEquipped.Add(weapon.tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
+        foreach (Transform weapon in equippedWeaponSprites) {
+            tag = weapon.GetComponent<WeaponTag>().Tag;
+            equipped.Add(tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
+        }
+
+        foreach (Transform weapon in unequippedWeaponSprites){
+            tag = weapon.GetComponent<WeaponTag>().Tag;
+            notEquipped.Add(tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
+        }
     }
 
     // Default weapon you start off with
-    public override void Start()
+    private void Start()
     {
-        base.Start();
-
-        //DEBUGGING: START WITH ALL WEAPONS AVAILABLE TO BEGIN WITH
-        foreach (String weapon in weapons.Keys)
+        foreach (String weapon in IWeapons.Keys) 
             collectNewWeapon(weapon);
 
-        selectWeapon("Shielder");
+        selectWeapon("Railgun");
     }
 
     // Associate each weapon with a different number key on the keyboard
     void Update()
     {
-        for (int weaponCount = 1; weaponCount <= inventory.childCount; weaponCount++)
+        for (int weaponCount = 1; weaponCount <= 9; weaponCount++)
         {
             if (Input.GetKeyDown(weaponCount.ToString()))
-                selectWeapon(inventory.GetChild(weaponCount - 1).tag);
+                selectWeapon(inventory.GetChild(weaponCount).GetComponent<WeaponTag>().Tag);
         }
+
+         if (Input.GetKeyDown("0"))
+            selectWeapon(inventory.GetChild(10).GetComponent<WeaponTag>().Tag);
     }
 
     // Allow player to select a different weapon 

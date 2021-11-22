@@ -12,32 +12,31 @@ public class wRailgun : IWeapon
         timer = 0f;
         showVisualChargingUp();
 
-        while (timer < config.fireRateInfo)
+        while (timer < configuration.fireRateInfo)
         {
             if (!Input.GetMouseButton(0) || Input.GetMouseButtonUp(0))
             {
                 attackProgress = "finished";
                 chargeParticles.Clear();
-                yield return null;
+                yield break;
             }
 
             yield return new WaitForSeconds(Time.deltaTime);
             timer += Time.deltaTime;
         }
 
-        if (Input.GetMouseButton(0))
-            DoAttack(shooting.getAim(), bullet, rig);
+        DoAttack(shooting.getAim(), bullet, rig);
     }
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, config.bulletSpeed);
+        reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, configuration.bulletSpeed);
     }
 
     private void Start()
     {
-        chargeParticles = config.bulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
+        chargeParticles = configuration.bulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         chargeParticles.Clear();
     }
 

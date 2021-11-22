@@ -12,7 +12,7 @@ public class wIcicle : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, config.bulletSpeed);
+        reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, configuration.bulletSpeed);
     }
 }

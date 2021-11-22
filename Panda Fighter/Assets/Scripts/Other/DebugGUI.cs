@@ -5,8 +5,8 @@ using UnityEngine;
 public class DebugGUI : MonoBehaviour
 {
     public static string debugText1;
-    public static string debugText2 = "test";
-    public static string debugText3 = "test";
+    public static string debugText2;
+    public static string debugText3;
     public static string debugText4;
     public static string debugText5;
     public static string debugText6;

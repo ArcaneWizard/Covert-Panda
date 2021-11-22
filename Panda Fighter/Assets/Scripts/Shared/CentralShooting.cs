@@ -12,7 +12,7 @@ public abstract class CentralShooting : MonoBehaviour
     protected CentralLookAround lookAround;
 
     private List<GameObject> WeaponSetup = new List<GameObject>();
-    private Transform bulletSpawnPoint, bullet;
+    private Transform bullet;
     private Rigidbody2D bulletRig;
 
     public virtual void Awake()
@@ -25,60 +25,55 @@ public abstract class CentralShooting : MonoBehaviour
     {
         if (combatMode == "handheld")
         {
-            if (weaponSystem.getAmmo > 0)
+            if (weaponSystem.GetAmmo > 0)
             {
                 weaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
                 weaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
 
-                weaponHeld.transform.position = bulletSpawnPoint.position;
-                weaponHeld.transform.rotation = bulletSpawnPoint.rotation;
+                weaponHeld.transform.position = weaponSystem.weaponConfiguration.bulletSpawnPoint.position;
+                weaponHeld.transform.rotation = weaponSystem.weaponConfiguration.bulletSpawnPoint.rotation;
                 weaponHeld.SetActive(true);
             }
         }
     }
 
-    public void updateWeaponHeldForHandheldWeapons() => weaponHeld = weaponSystem.getBullet;
+    public void updateWeaponHeldForHandheldWeapons() => weaponHeld = weaponSystem.GetBullet;
 
     //specify which limbs, weapon and aim target to activate (the latter helps a weapon track while aiming) 
     public void configureWeaponAndArms()
     {
         //deactivate the previous animated arm limbs + weapon
-        foreach (GameObject limb_Or_Weapon in WeaponSetup)
-            limb_Or_Weapon.SetActive(false);
+        foreach (GameObject things in WeaponSetup)
+            things.SetActive(false);
         WeaponSetup.Clear();
 
-        IWeapon Iweapon = weaponSystem.weapon;
+        WeaponConfiguration config = weaponSystem.weaponConfiguration;
+        if (config.aimTarget != null)
+            lookAround.setAimTarget(config.aimTarget);
 
-        if (Iweapon.config.aimTarget != null)
-            lookAround.setAimTarget(Iweapon.config.aimTarget);
-        bulletSpawnPoint = Iweapon.config.bulletSpawnPoint;
-
-        if (Iweapon.config.weapon != null)
-            WeaponSetup.Add(Iweapon.config.weapon);
-
-        foreach (GameObject limb in Iweapon.config.limbs)
+        if (config.weapon != null)
+            WeaponSetup.Add(config.weapon);
+        foreach (GameObject limb in config.limbs)
             WeaponSetup.Add(limb);
+        foreach (GameObject things in WeaponSetup)
+            things.SetActive(true);
 
-        foreach (GameObject limb_Or_Weapon in WeaponSetup)
-            limb_Or_Weapon.SetActive(true);
-
-        List<Vector2> aiming = Iweapon.config.IK_Coordinates;
-        lookAround.calculateShoulderAngles(aiming);
+        lookAround.calculateShoulderAngles(config.IK_Coordinates);
     }
 
     protected void Attack()
     {
-        bullet = weaponSystem.getBullet.transform;
+        bullet = weaponSystem.GetBullet.transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
         weaponSystem.useOneAmmo();
-        weaponSystem.weapon.DoSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.IWeapon.DoSetupAttack(getAim(), bullet, bulletRig);
     }
 
     protected void NonAmmoAttack()
     {
-        bullet = weaponSystem.getBullet.transform;
+        bullet = weaponSystem.GetBullet.transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-        weaponSystem.weapon.DoSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.IWeapon.DoSetupAttack(getAim(), bullet, bulletRig);
     }
 
     protected void RightClickAttack()
@@ -86,7 +81,7 @@ public abstract class CentralShooting : MonoBehaviour
         bullet = weaponSystem.getLastBullet().transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
 
-        weaponSystem.weapon.DoBonusSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.IWeapon.DoBonusSetupAttack(getAim(), bullet, bulletRig);
     }
 
     public abstract Vector2 getAim();

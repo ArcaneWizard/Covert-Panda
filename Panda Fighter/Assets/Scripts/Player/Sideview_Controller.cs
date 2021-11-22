@@ -13,7 +13,7 @@ public class Sideview_Controller : CentralController
     public override void Update()
     {
         base.Update();
-        
+
         //use A and D keys for left or right movement
         dirX = 0;
         if (Input.GetKey(KeyCode.D))
@@ -25,7 +25,7 @@ public class Sideview_Controller : CentralController
         if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") && !animator.GetBool("double jump"))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, doublejumpForce));
+            rig.AddForce(new Vector2(0, doubleJumpForce));
             controller.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
         }
 
@@ -86,24 +86,4 @@ public class Sideview_Controller : CentralController
             rig.gravityScale = maxGravity;
         }
     }
-
-    private void debugFrameRate()
-    {
-        frames++;
-        time += Time.deltaTime;
-
-        if (time >= 1.4f)
-        {
-            Debug.Log(frames / time);
-            time = 0;
-            frames = 0;
-        }
-    }
-
-    /*//Player is on a levitation boost platform and clicks W -> give them a jump boost 
-    private void OnTriggerStay2D(Collider2D col)
-    {
-        if (col.gameObject.tag == "Levitation" && Input.GetKeyDown(KeyCode.W) && isGrounded)
-            rig.AddForce(Constants.levitationBoost);
-    }*/
 }

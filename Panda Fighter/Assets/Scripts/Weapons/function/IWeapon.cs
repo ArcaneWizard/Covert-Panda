@@ -12,7 +12,7 @@ public abstract class IWeapon : MonoBehaviour
 
     [HideInInspector] public string attackProgress { get; protected set; }
     [HideInInspector] public string bonusAttackProgress { get; protected set; }
-    [HideInInspector] public WeaponConfig config;
+    [HideInInspector] public WeaponConfiguration configuration;
     [HideInInspector] public CentralShooting shooting;
 
     public void DoSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
@@ -24,7 +24,7 @@ public abstract class IWeapon : MonoBehaviour
     public void DoAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         Attack(aim, bullet, rig);
-        config.shooting.updateWeaponHeldForHandheldWeapons();
+        configuration.shooting.updateWeaponHeldForHandheldWeapons();
         attackProgress = "finished";
     }
 
@@ -42,7 +42,6 @@ public abstract class IWeapon : MonoBehaviour
 
     public virtual void Awake()
     {
-        config = transform.GetComponent<WeaponConfig>();
         shooting = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralShooting>();
 
         attackProgress = "finished";

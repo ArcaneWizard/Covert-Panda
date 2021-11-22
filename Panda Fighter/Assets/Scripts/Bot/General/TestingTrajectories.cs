@@ -15,11 +15,13 @@ public class TestingTrajectories : MonoBehaviour
     public bool doubleJump = false;
     public bool fallDown = false;
     public bool fallDownCurve = false;
+    public bool launchPad = false;
 
     [Header("Describe Jump")]
     public int movementDirX = 1;
-    private float jumpForce = 1430;
-    private float doubleJumpForce = 1350;
+    private float jumpForce = 1300f;
+    private float doubleJumpForce = 1200f;
+    private float launchPadForce = 2500f;
     public Vector2 speedRange = new Vector2(10f, 10f);
     public Vector2 timeB4Change = new Vector2(0f, 0f);
     public Vector2 changedSpeed = new Vector2(0f, 0f);
@@ -29,15 +31,13 @@ public class TestingTrajectories : MonoBehaviour
     private float gravity;
 
     [Header("Other Settings")]
+    public Vector2 jumpBounds = new Vector2(-1f, -1f);
     public int considerationWeight = 1;
     public float lengthShown = 14;
     private float length;
 
     [Header("Connected Zone")]
-    public Transform chainedDirectionZone;
-
-    [HideInInspector]
-    public Vector2 endPoint;
+    public int chainedDecisionZone = -1;
 
     private float yVelocity;
     private float x;
@@ -46,15 +46,13 @@ public class TestingTrajectories : MonoBehaviour
     private Vector2 lastP_b4DoubleJump;
     private Vector2 lastP_b4DirSwitch;
 
-
-    private void Awake()
-    {
-        endPoint = transform.GetChild(0).position;
-    }
-
     private void OnDrawGizmosSelected()
     {
+        jumpForce = CentralController.jumpForce;
+        doubleJumpForce = CentralController.doubleJumpForce;
+        launchPadForce = 2500f;
         defaultGravity = -32.5f;
+
         mass = 1f;
 
         if (headStraight)
@@ -76,10 +74,18 @@ public class TestingTrajectories : MonoBehaviour
             drawFallDownCurveParabola(timeB4Change.y);
         }
 
+        else if (launchPad)
+        {
+            transform.name = "Launch Pad";
+            drawJumpPadParabola(defaultGravity, lengthShown, launchPadForce);
+            showGizmoJumpBounds();
+        }
+
         else if (!doubleJump)
         {
             transform.name = "Normal Jump";
             drawNormalJumpParabola(defaultGravity, lengthShown, jumpForce);
+            showGizmoJumpBounds();
         }
 
         else if (doubleJump)
@@ -87,27 +93,32 @@ public class TestingTrajectories : MonoBehaviour
             transform.name = "Double Jump";
             drawDoubleJumpParabola(timeB4Change.x);
             drawDoubleJumpParabola(timeB4Change.y);
+            showGizmoJumpBounds();
         }
 
-        //white sphere on end Point
-        Gizmos.color = Color.white;
-        Gizmos.DrawSphere(transform.GetChild(0).position, 0.25f);
-
         //yellow rec on connected decision zone
-        if (chainedDirectionZone != null)
+        if (chainedDecisionZone != -1)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawSphere(chainedDirectionZone.position, 0.5f);
+            Gizmos.DrawSphere(getChainedZone().position, 0.5f);
         }
     }
 
-    Vector2 sampleParabola(Vector2 start, float time, float speed, float jumpForce)
+    private Vector2 sampleParabola(Vector2 start, float time, float speed, float jumpForce)
     {
         x = start.x + speed * time * movementDirX;
 
         yVelocity = !headStraight ? (jumpForce * 0.02f / mass) : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
         y = start.y + yVelocity * time + 0.5f * gravity * time * time;
+        return new Vector2(x, y);
+    }
 
+    private Vector2 alteredParabola(Vector2 start, float time, float speed, float newTime, float newXSpeed, float jumpForce)
+    {
+        x = start.x + speed * time * movementDirX + newXSpeed * newTime * movementDirX;
+
+        yVelocity = !headStraight ? (jumpForce * 0.02f / mass) : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
+        y = start.y + yVelocity * (time + newTime) + 0.5f * gravity * (time + newTime) * (time + newTime);
         return new Vector2(x, y);
     }
 
@@ -145,6 +156,39 @@ public class TestingTrajectories : MonoBehaviour
 
         lastP_b4DirSwitch = lastP;
         drawParabolaWithTimeOffset(length, lastP_b4DirSwitch, changedSpeed.x, 0, timeB4DirSwitch * 5f);
+    }
+
+    private void drawJumpPadParabola(float gravity, float lengthShown, float jumpForce)
+    {
+        this.gravity = gravity;
+        this.length = lengthShown;
+
+        lastP = transform.position;
+        for (float i = 0; i <= timeB4Change.x * 5; i++)
+        {
+            Vector2 p = sampleParabola(transform.position, i / 5f, speedRange.x, jumpForce);
+
+            if (movementDirX == 1)
+                Gizmos.color = i % 2 == 0 ? Color.blue : Color.green;
+            else
+                Gizmos.color = i % 2 == 0 ? Color.red : Color.magenta;
+
+            Gizmos.DrawLine(lastP, p);
+            lastP = p;
+        }
+
+        for (float i = 0; i <= length; i++)
+        {
+            Vector2 p = alteredParabola(transform.position, timeB4Change.x, speedRange.x, i / 5f, changedSpeed.x, jumpForce);
+
+            if (movementDirX == 1)
+                Gizmos.color = i % 2 == 0 ? Color.blue : Color.green;
+            else
+                Gizmos.color = i % 2 == 0 ? Color.red : Color.magenta;
+
+            Gizmos.DrawLine(lastP, p);
+            lastP = p;
+        }
     }
 
     private void drawParabola(float linesDrawn, Vector2 start, float speed, float jumpForce)
@@ -195,19 +239,34 @@ public class TestingTrajectories : MonoBehaviour
         }
     }
 
+    public Transform getChainedZone() => transform.parent.parent.GetChild(chainedDecisionZone);
+
+    //draw spheres on jump bounds in scene editor
+    private void showGizmoJumpBounds()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(transform.position + new Vector3(jumpBounds.x,
+            transform.right.y / transform.right.x * jumpBounds.x, 0), 0.3f);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(transform.position + new Vector3(jumpBounds.y,
+            transform.right.y / transform.right.x * jumpBounds.y, 0), 0.3f);
+    }
+
     //Converts trajectory info to a condensed, easy to read form (of type AI_ACTION)
     public AI_ACTION convertToAction()
     {
         AI_ACTION action;
 
         if (headStraight)
-            action = defineAction("keepWalking");
+            action = defineAction("headStraight");
         else if (fallDown)
             action = defineAction("fallDown");
         else if (fallDownCurve)
             action = defineAction("fallDownCurve");
         else if (doubleJump)
             action = defineAction("doubleJump");
+        else if (launchPad)
+            action = defineAction("launchPad");
         else
             action = defineAction("normalJump");
 
@@ -216,7 +275,7 @@ public class TestingTrajectories : MonoBehaviour
 
     //helper method for converting trajectory info to a condensed readable form
     private AI_ACTION defineAction(string actionName) => new AI_ACTION(actionName, movementDirX,
-            speedRange, timeB4Change, changedSpeed, transform.GetChild(0).position);
+            speedRange, timeB4Change, changedSpeed, jumpBounds, transform.position);
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
@@ -235,16 +294,22 @@ public struct AI_ACTION
     public Vector2 timeB4Change { get; private set; }
     public Vector2 changedSpeed { get; private set; }
     public string action { get; private set; }
-    public Vector2 endLocation { get; private set; }
+    public Vector2 jumpBounds { get; private set; }
 
-    public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, Vector2 changedSpeed, Vector2 endLocation)
+    public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, Vector2 changedSpeed, Vector2 jumpBounds, Vector3 trajectoryPos)
     {
         this.action = action;
         this.dirX = direction;
         this.speed = speed;
         this.timeB4Change = timeB4Change;
         this.changedSpeed = changedSpeed;
-        this.endLocation = endLocation;
+        this.jumpBounds = new Vector2(trajectoryPos.x + jumpBounds.x, trajectoryPos.x + jumpBounds.y);
+    }
+
+    public override string ToString()
+    {
+        return $"action: {action}, dirX: {dirX}, speed: {speed}, timeB4CHange: {timeB4Change}" +
+        $"changedSpeed: {changedSpeed} + jumpBounds: {jumpBounds}";
     }
 }
 

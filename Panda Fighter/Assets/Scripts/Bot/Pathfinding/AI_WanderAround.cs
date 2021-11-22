@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using UnityEngine.Assertions.Must;
+using System.Security.Policy;
 
 public class AI_WanderAround : MonoBehaviour
 {
@@ -44,8 +45,20 @@ public class AI_WanderAround : MonoBehaviour
         if (!wander || decisionZones.Count == 0)
             return;
 
+
+        //In scene view, display the action done and decision zone used
+        DebugGUI.debugText3 = controller.AI_action.action + (controller.decisionZone ? ", " +
+                controller.decisionZone.name : "none");
+
+        String a = "hello + \n";
+
+        foreach (Transform zone in decisionZones)
+            a += zone.name + " " + zone.position + ", " + transform.position + " \n";
+        DebugGUI.debugText1 = a;
+
+
         //discard the next pending decision zone if the bot has gotten too far from it
-        if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 49)
+        if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900)
         {
             DebugGUI.debugText5 = ("Discarded " + decisionZones.Peek() + " " +
              getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
@@ -72,13 +85,9 @@ public class AI_WanderAround : MonoBehaviour
             }
 
             int r = random.Next(0, AI_ACTIONS.Count);
+            Debug.Log(AI_ACTIONS[r].ToString());
             controller.BeginAction(AI_ACTIONS[r], currentDecisionZone);
         }
-
-        //In scene view, display the action done and decision zone used
-        DebugGUI.debugText6 = controller.AI_action.action + (controller.decisionZone ? ", " +
-                controller.decisionZone.name : "none");
-
     }
 
     //if the AI bot passes a new decision zone, add it to the list

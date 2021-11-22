@@ -5,18 +5,20 @@ using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class StateMachine
+public class StateMachine : MonoBehaviour
 {
     private IState currentState;
+    private IState lastState;
 
     //all transitions
     private Dictionary<System.Type, List<Transition>> transitions = new Dictionary<System.Type, List<Transition>>();
-    //transitions from our current state
+
+    //transitions from our current state to a specified state | called when conditions' met
     private List<Transition> currentStateTransitions = new List<Transition>();
-    //transitions always called when applicable
+    //transitions to a specified state | called whenever applicable
     private List<Transition> alwaysCalledTransitions = new List<Transition>();
 
-    //universal empty list of transitions (that a list above will be set to by default)
+    //empty list of transitions 
     private static List<Transition> EmptyTransitions = new List<Transition>();
 
     private string IStateName;
@@ -25,7 +27,10 @@ public class StateMachine
     {
         var transition = GetTransition();
         if (transition != null)
+        {
+            Debug.Log("Transitioning from " + currentState + " to " + transition.To);
             SetState(transition.To);
+        }
 
         currentState?.Tick();
 
@@ -38,6 +43,7 @@ public class StateMachine
             return;
 
         currentState?.OnExit();
+        lastState = currentState;
         currentState = state;
 
         transitions.TryGetValue(currentState.GetType(), out currentStateTransitions);
@@ -46,6 +52,8 @@ public class StateMachine
 
         currentState.OnEnter();
     }
+
+    public IState getLastState => lastState;
 
     public void AddTransition(IState start, IState end, Func<bool> condition)
     {
@@ -57,6 +65,7 @@ public class StateMachine
 
         startStateTransitions.Add(new Transition(end, condition));
     }
+
 
     public void AddAlwaysCalledTransition(IState state, Func<bool> predicate)
     {

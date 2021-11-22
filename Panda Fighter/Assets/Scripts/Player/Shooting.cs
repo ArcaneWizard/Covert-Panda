@@ -9,15 +9,15 @@ public class Shooting : CentralShooting
     private float countdownBtwnShots = 0f;
     private float timeHeld = 0f;
 
-    private WeaponConfig config;
+    private WeaponConfiguration configuration;
     private String attackProgress;
 
     public override Vector2 getAim() => (Input.mousePosition - camera.WorldToScreenPoint(lookAround.shootingArm.position)).normalized;
 
     void Update()
     {
-        config = weaponSystem.weaponConfig;
-        attackProgress = weaponSystem.weapon.attackProgress;
+        configuration = weaponSystem.weaponConfiguration;
+        attackProgress = weaponSystem.IWeapon.attackProgress;
 
         //Weapons where you right click for a diff attack or weapon mechanic
         if (Input.GetMouseButtonDown(1))
@@ -26,10 +26,10 @@ public class Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (weaponSystem.weaponSelected == null || weaponSystem.getAmmo <= 0 || attackProgress != "finished")
+        if (weaponSystem.weaponSelected == null || weaponSystem.GetAmmo <= 0 || attackProgress != "finished")
             return;
 
-        if (config.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))
+        if (configuration.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))
         {
             if (combatMode == "gun" || combatMode == "handheld")
                 Attack();
@@ -38,13 +38,13 @@ public class Shooting : CentralShooting
                 NonAmmoAttack();
         }
 
-        else if (config.weaponType == Type.spamFire && Input.GetMouseButton(0) && countdownBtwnShots <= 0f)
+        else if (configuration.weaponType == Type.spamFire && Input.GetMouseButton(0) && countdownBtwnShots <= 0f)
         {
-            countdownBtwnShots = 1f / weaponSystem.weaponConfig.fireRateInfo;
+            countdownBtwnShots = 1f / configuration.fireRateInfo;
             Attack();
         }
 
-        else if (config.weaponType == Type.holdFire && Input.GetMouseButtonDown(0))
+        else if (configuration.weaponType == Type.holdFire && Input.GetMouseButtonDown(0))
             Attack();
     }
 }

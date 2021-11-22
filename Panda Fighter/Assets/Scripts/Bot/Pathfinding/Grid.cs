@@ -21,7 +21,6 @@ public class Grid : MonoBehaviour
 
     public Node getClosestNodeToWorldPosition(Vector2 entityPos, float radiusCheck)
     {
-        Debug.Log("called");
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(entityPos, radiusCheck, decisionZoneMask);
         leastDistanceSoFar = 400;
 
@@ -60,7 +59,7 @@ public class Grid : MonoBehaviour
         foreach (Transform child in node.transform)
         {
             if (child.gameObject.activeSelf)
-                connectedNodes.Add(grid[child.transform.GetComponent<TestingTrajectories>().chainedDirectionZone]);
+                connectedNodes.Add(grid[child.transform.GetComponent<TestingTrajectories>().getChainedZone()]);
         }
 
         return connectedNodes;

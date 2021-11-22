@@ -13,7 +13,7 @@ public class AI_Controller : CentralController
 
     private bool needsToFall;
     private int lastMovementDirX;
-    private float randomDistance;
+    private float randomXPos;
     private float randomSpeed;
 
     //action progress starts off finished
@@ -40,18 +40,19 @@ public class AI_Controller : CentralController
     private void executeAction()
     {
         actionProgress = "in progress";
+        String action = AI_action.action;
 
-        if (AI_action.action == "fallDown")
+        if (action == "fallDown" || action == "fallDownCurve")
             needsToFall = true;
 
-        else if (AI_action.action == "fallDownCurve")
-            needsToFall = true;
+        else if (action == "headStraight")
+            dirX = AI_action.dirX;
 
-        else if (AI_action.action == "normalJump")
-            StartCoroutine(executeNormalJumpAtRightMoment());
+        else if (action == "normalJump" || action == "doubleJump" || action == "launchPad")
+            StartCoroutine(executeVerticalMotionAction());
 
-        else if (AI_action.action == "doubleJump")
-            StartCoroutine(executeDoubleJumpAtRightMoment());
+        else
+            Debug.LogError($"Action {action} has no hard coded AI logic.");
     }
 
     //called every frame
@@ -79,9 +80,13 @@ public class AI_Controller : CentralController
             //"finished" once the AI lands back on a platform
             if (actionProgress == "in progress" && !needsToFall)
             {
-                speed = maxSpeed * UnityEngine.Random.Range(0.95f, 1f);
+                speed = maxSpeed;
                 actionProgress = "finished";
             }
+
+            //AI moves at its max speed when not carrying out an action
+            if (actionProgress == "finished")
+                speed = maxSpeed;
         }
     }
 
@@ -126,47 +131,58 @@ public class AI_Controller : CentralController
     //---------Handle Jumping at the right time------------------------
     //------------------------------------------------------------------
 
-    private IEnumerator executeNormalJumpAtRightMoment()
+    private IEnumerator executeVerticalMotionAction()
     {
-        dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
+        randomXPos = UnityEngine.Random.Range(AI_action.jumpBounds.x, AI_action.jumpBounds.y);
+        dirX = Math.Sign(randomXPos - transform.position.x);
 
-        randomDistance = UnityEngine.Random.Range(0.1f, 0.3f) * Mathf.Abs(Mathf.Cos(groundAngle));
-
-        while (dirX == 1 && transform.position.x - decisionZone.position.x < randomDistance)
-            yield return null;
-        while (dirX == -1 && transform.position.x - decisionZone.position.x > -randomDistance)
+        while ((dirX == 1 && transform.position.x < randomXPos) || (dirX == -1 && transform.position.x > randomXPos))
             yield return null;
 
         dirX = AI_action.dirX;
         speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
-        normalJump();
 
+        if (AI_action.action == "launchPad")
+            StartCoroutine(executeLaunchAtRightMoment());
+
+        else if (AI_action.action == "normalJump")
+            StartCoroutine(executeNormalJumpAtRightMoment());
+
+        else if (AI_action.action == "doubleJump")
+            StartCoroutine(executeDoubleJumpAtRightMoment());
+    }
+
+    private IEnumerator executeNormalJumpAtRightMoment()
+    {
+        normalJump();
         yield return new WaitForSeconds(Time.deltaTime * 2);
         actionProgress = "in progress";
     }
 
     private IEnumerator executeDoubleJumpAtRightMoment()
     {
-        dirX = (decisionZone.transform.position.x > transform.position.x) ? 1 : -1;
-
-        randomDistance = UnityEngine.Random.Range(0.1f, 0.3f) * Mathf.Abs(Mathf.Cos(groundAngle));
-
-        while (
-            (dirX == 1 && transform.position.x - decisionZone.position.x < randomDistance) ||
-            (dirX == -1 && transform.position.x - decisionZone.position.x > -randomDistance)
-        )
-            yield return null;
-
-        dirX = AI_action.dirX;
-        speed = AI_action.speed.x;
         normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
         randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
-        doubleJump();
 
+        doubleJump();
+        actionProgress = "in progress";
+    }
+
+    //apply a huge launch boost force and alter the alien's horizontal speed midway in its arc
+    private IEnumerator executeLaunchAtRightMoment()
+    {
+        launchBoost();
+
+        yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
+        randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
+        dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
+        speed = Mathf.Abs(randomSpeed);
+
+        yield return new WaitForSeconds(Time.deltaTime * 2);
         actionProgress = "in progress";
     }
 
@@ -186,7 +202,7 @@ public class AI_Controller : CentralController
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.gravityScale = maxGravity;
-            rig.AddForce(new Vector2(0, doublejumpForce));
+            rig.AddForce(new Vector2(0, doubleJumpForce));
             controller.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
         }
     }

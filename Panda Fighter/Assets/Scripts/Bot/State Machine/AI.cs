@@ -10,11 +10,13 @@ public class AI : MonoBehaviour
     private PathFinding pathFinding;
     private AI_LookAround lookAround;
     private AI_WanderAround wanderAround;
+    private AI_Controller controller;
 
     public Transform Player;
 
     [SerializeField]
     private Transform possibleDestinations, manualDestination;
+    private bool occasionallyGrounded;
 
     private StateMachine stateMachine;
 
@@ -26,6 +28,7 @@ public class AI : MonoBehaviour
         pathFollower = AI_body.AddComponent<AI_FollowPath>();
         wanderAround = AI_body.AddComponent<AI_WanderAround>();
         lookAround = AI_body.GetComponent<AI_LookAround>();
+        controller = AI_body.GetComponent<AI_Controller>();
 
         stateMachine = new StateMachine();
     }
@@ -36,19 +39,19 @@ public class AI : MonoBehaviour
         var seekDestination = new SeekDestination(this, pathFollower, possibleDestinations, manualDestination, lookAround);
         var attack = new AttackAggressively();
         var flee = new Flee();
-        var idle = new Idle();
+        var idle = new Idle(controller);
 
+        IState a = attack;
         transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.journey == "ended");
         transition(wander, seekDestination, () => Input.GetKeyDown(KeyCode.O));
+        transition(wander, idle, () => idle.GoodTimeToGoIdle);
+        transition(idle, wander, () => idle.StopBeingIdle);
 
-        stateMachine.SetState(seekDestination);
+        stateMachine.SetState(wander);
 
         void transition(IState from, IState to, Func<bool> condition) =>
             stateMachine.AddTransition(from, to, condition);
     }
 
-    void Update()
-    {
-        stateMachine.Tick();
-    }
+    void Update() => stateMachine.Tick();
 }

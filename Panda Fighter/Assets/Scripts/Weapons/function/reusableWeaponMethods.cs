@@ -36,7 +36,7 @@ public static class reusableWeaponMethods
 
     public static Transform retrieveNextBullet(CentralWeaponSystem weaponSystem)
     {
-        Transform bullet = weaponSystem.getBullet.transform;
+        Transform bullet = weaponSystem.GetBullet.transform;
         weaponSystem.useOneAmmo();
         return bullet;
     }

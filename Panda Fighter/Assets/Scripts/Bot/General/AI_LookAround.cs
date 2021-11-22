@@ -17,20 +17,26 @@ public class AI_LookAround : CentralLookAround
 
     private int[] signs = new int[3];
     private System.Random random;
+    private CentralShooting shooting;
 
     public override void Awake()
     {
         base.Awake();
 
         random = new System.Random();
+        shooting = transform.GetComponent<CentralShooting>();
         pretendCursor = newCursorPosition();
+
         StartCoroutine(pretendCursorMovement());
         StartCoroutine(IsPlayerInLineOfSight());
     }
 
     private void LateUpdate()
     {
-        lookAt = (playerIsInSight) ? player.position - shootingArm.position : pretendCursor;
+        lookAt = (playerIsInSight)
+            ? player.position - shootingArm.position
+            : new Vector3(shooting.getAim().x, shooting.getAim().y, 0);
+
         lookAndAimInRightDirection();
 
         if (pretendCursor != updatedCursorPos)

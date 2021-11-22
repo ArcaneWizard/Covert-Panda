@@ -18,9 +18,6 @@ public class AI_FollowPath : MonoBehaviour
     private List<Node> path;
     private int pathProgress;
 
-    private float timer;
-    private float maxTimeToReachNextNode = 3.5f;
-
     void Awake()
     {
         controller = transform.GetComponent<AI_Controller>();
@@ -31,6 +28,7 @@ public class AI_FollowPath : MonoBehaviour
 
     public IEnumerator startJourney(Vector3 destination)
     {
+        Debug.Log("bruh");
         journey = "pending start";
 
         //scan available routes for 2 seconds
@@ -41,9 +39,18 @@ public class AI_FollowPath : MonoBehaviour
 
         pathFinding.debugPathInConsole(pathFinding.getChosenPath());
 
-        //don't do anything if the AI prematurely ended its journey (ex. cuz of a state change)
+        //end journey if the route is already over, ie. alien is already where it needs to be
+        if (pathFinding.getChosenPath().Count == 0)
+            journey = "ended";
+
+        //don't do anything if the AI prematurely ended its journey (ex. cuz the AI state changed)
         if (journey == "ended")
-            yield return null;
+        {
+            Debug.Log("test ended");
+            yield break;
+        }
+
+        Debug.Log("test error");
 
         //reset variables
         journey = "started";
@@ -51,7 +58,7 @@ public class AI_FollowPath : MonoBehaviour
         pathProgress = 0;
 
         //head towards starting path Node
-        if (transform.GetChild(0).position.x < path[0].transform.position.x)
+        if (transform.position.x < path[0].transform.position.x)
             controller.setDirection(1);
         else
             controller.setDirection(-1);
@@ -61,12 +68,6 @@ public class AI_FollowPath : MonoBehaviour
     {
         if (journey == "in progress" && controller.actionProgress == "finished" && controller.isGrounded && controller.isTouchingMap)
             controller.setDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
-
-        if (journey == "in progress" && timer <= 0f)
-            journey = "got lost";
-
-        if (timer > 0f)
-            timer -= Time.deltaTime;
     }
 
     public void endJourney()
@@ -93,10 +94,7 @@ public class AI_FollowPath : MonoBehaviour
         if (journey == "started")
         {
             if (col.transform == path[0].transform)
-            {
-                timer = maxTimeToReachNextNode;
                 journey = "in progress";
-            }
             else
                 getBackOnIntendedPath(col.transform);
         }
@@ -107,11 +105,10 @@ public class AI_FollowPath : MonoBehaviour
             {
                 TestingTrajectories trajectory = neighbourNode.GetComponent<TestingTrajectories>();
 
-                if (pathProgress < path.Count - 1 && path[pathProgress + 1].transform == trajectory.chainedDirectionZone)
+                if (pathProgress < path.Count - 1 && path[pathProgress + 1].transform == trajectory.getChainedZone())
                 {
                     controller.BeginAction(trajectory.convertToAction(), col.transform);
                     pathProgress++;
-                    timer = maxTimeToReachNextNode;
                     break;
                 }
             }
@@ -128,7 +125,7 @@ public class AI_FollowPath : MonoBehaviour
         {
             TestingTrajectories trajectory = neighborZone.transform.GetComponent<TestingTrajectories>();
 
-            if (path[0].transform == trajectory.chainedDirectionZone)
+            if (path[0].transform == trajectory.getChainedZone())
             {
                 controller.BeginAction(trajectory.convertToAction(), decisionZone);
                 foundReroute = true;

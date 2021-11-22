@@ -13,6 +13,7 @@ public class Weapons : MonoBehaviour
     public GameObject GoldenShotgun;
     public GameObject ArcticCannon;
     public GameObject Needler;
+    public GameObject FocusBeamer;
 }
 
 //combat Modes

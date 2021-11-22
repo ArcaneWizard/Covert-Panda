@@ -7,41 +7,50 @@ using UnityEngine.UI;
 public class CentralWeaponSystem : MonoBehaviour
 {
     protected Dictionary<string, int> ammo = new Dictionary<string, int>();
-    protected Dictionary<string, List<Transform>> weaponAmmoPools = new Dictionary<string, List<Transform>>();
-    protected Dictionary<string, IWeapon> weapons = new Dictionary<string, IWeapon>();
-
-    protected Transform physicalWeapon;
+    protected Dictionary<string, List<Transform>> bulletPools = new Dictionary<string, List<Transform>>();
+    protected Dictionary<string, IWeapon> IWeapons = new Dictionary<string, IWeapon>();
+    protected Dictionary<string, WeaponConfiguration> weaponConfigurations = new Dictionary<string, WeaponConfiguration>();
+    protected Transform allBulletPools;
 
     public string weaponSelected;
     protected int bulletNumber = 0;
 
     protected CentralShooting shooting;
     protected CentralLookAround lookAround;
+    private List<GameObject> Limbs_And_Weapons;
 
     public virtual void Awake()
     {
         shooting = transform.GetComponent<CentralShooting>();
         lookAround = transform.GetComponent<CentralLookAround>();
-        physicalWeapon = transform.parent.GetChild(1).transform.GetChild(0);
-    }
 
-    public virtual void Start()
-    {
-        foreach (Transform weaponType in physicalWeapon)
+        Limbs_And_Weapons = new List<GameObject>();
+        allBulletPools = transform.parent.GetChild(1).transform.GetChild(0);
+
+        foreach (Transform bulletPool in allBulletPools)
         {
-            //add each weapon's pool of ammo to a dictionary, accessible by weapon tag
-            List<Transform> ammoPool = new List<Transform>();
-            foreach (Transform ammo in weaponType)
-                ammoPool.Add(ammo);
-            weaponAmmoPools.Add(weaponType.tag, ammoPool);
+            string tag = bulletPool.GetComponent<WeaponTag>().Tag;
 
-            //add each weapon's shootingInstructions to a dictionary, accessible by weapon tag
-            IWeapon weapon = weaponType.transform.GetComponent<IWeapon>();
-            weapons.Add(weaponType.tag, weapon);
+            //add each weapon's pool of ammo to a dictionary
+            List<Transform> tempBulletPool = new List<Transform>();
+            foreach (Transform bullet in bulletPool)
+            {
+                tempBulletPool.Add(bullet);
+            }
+            bulletPools.Add(tag, tempBulletPool);
 
-            //define each weapon's ammo in a dictionary, accessible by weapon tag
-            ammo.Add(weaponType.tag, 0);
+            //add each weapon's shooting instructions and weapon configuration to a dictionary
+            IWeapon weapon = bulletPool.GetComponent<IWeapon>();
+            IWeapons.Add(tag, weapon);
+            WeaponConfiguration config = bulletPool.GetComponent<WeaponConfiguration>();
+            weaponConfigurations.Add(tag, config);
+            weapon.configuration = config;
+
+            //add each weapon's ammo in a dictionary
+            ammo.Add(tag, 0);
         }
+
+        WeaponStats weaponStats = new WeaponStats(this);
     }
 
     public virtual void selectWeapon(string weapon)
@@ -54,35 +63,51 @@ public class CentralWeaponSystem : MonoBehaviour
             shooting.weaponHeld.gameObject.SetActive(false);
 
         weaponSelected = weapon;
-        weapons[weaponSelected].SetDefaultAnimation();
-        shooting.combatMode = weaponConfig.combatMode;
-        shooting.configureWeaponAndArms();
-        this.weapon.resetAttackProgress();
+        IWeapons[weaponSelected].SetDefaultAnimation();
+        IWeapons[weaponSelected].resetAttackProgress();
+        shooting.combatMode = weaponConfiguration.combatMode;
+        lookAround.setAimTarget(weaponConfiguration.aimTarget);
+        lookAround.calculateShoulderAngles(weaponConfiguration.IK_Coordinates);
 
-        if (weaponAmmoPools.ContainsKey(weaponSelected))
-            bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
+        if (bulletPools.ContainsKey(weaponSelected))
+            bulletNumber = ++bulletNumber % bulletPools[weaponSelected].Count;
 
-        if (weaponConfig.combatMode == "handheld")
-            shooting.weaponHeld = getBullet;
+        if (weaponConfiguration.combatMode == "handheld")
+            shooting.weaponHeld = GetBullet;
+
+        //deactivate the previous animated arm limbs + enable new ones
+        foreach (GameObject limb_or_weapon in Limbs_And_Weapons)
+            limb_or_weapon.SetActive(false);
+        Limbs_And_Weapons.Clear();
+
+        Limbs_And_Weapons.Add(weaponConfiguration.weapon);
+        weaponConfiguration.weapon.SetActive(true);
+
+        foreach (GameObject limb_or_weapon in weaponConfiguration.limbs)
+        {
+            Limbs_And_Weapons.Add(limb_or_weapon);
+            limb_or_weapon.SetActive(true);
+        }
     }
 
-    public virtual void collectNewWeapon(string weapon) => ammo[weapon] = weapons[weapon].config.startingAmmo;
+    public virtual void collectNewWeapon(string weapon) => ammo[weapon] = IWeapons[weapon].configuration.startingAmmo;
 
     public virtual void useOneAmmo()
     {
         ammo[weaponSelected] -= 1;
-        bulletNumber = ++bulletNumber % weaponAmmoPools[weaponSelected].Count;
+        bulletNumber = ++bulletNumber % bulletPools[weaponSelected].Count;
     }
 
-    public GameObject getBullet => weaponAmmoPools[weaponSelected][bulletNumber].gameObject;
-    public int getAmmo => ammo[weaponSelected];
-    public IWeapon weapon => weapons[weaponSelected];
-    public WeaponConfig weaponConfig => weapons[weaponSelected].config;
+    public GameObject GetBullet => bulletPools[weaponSelected][bulletNumber].gameObject;
+    public int GetAmmo => ammo[weaponSelected];
+    public IWeapon IWeapon => IWeapons[weaponSelected];
+    public WeaponConfiguration weaponConfiguration => weaponConfigurations[weaponSelected];
+    public WeaponConfiguration getWeaponConfiguration(String weapon) => weaponConfigurations[weapon];
 
     //useful for special attacks (right click)
     public GameObject getLastBullet()
     {
-        int totalBullets = weaponAmmoPools[weaponSelected].Count;
-        return weaponAmmoPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;
+        int totalBullets = bulletPools[weaponSelected].Count;
+        return bulletPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;
     }
 }

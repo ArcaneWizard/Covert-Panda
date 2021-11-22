@@ -10,13 +10,12 @@ using UnityEngine.UI;
 public class AI_WeaponSystem : CentralWeaponSystem
 {
     // Default weapon you start with
-    public override void Start()
+    private void Start()
     {
-        base.Start();
-
-        int r = UnityEngine.Random.Range(0, weapons.Count);
-        startWithWeapon(weapons.Keys.ToArray()[r]);
-        //startWithWeapon("Plasma Orb");
+        int r = UnityEngine.Random.Range(0, IWeapons.Count);
+        startWithWeapon(IWeapons.Keys.ToArray()[r]);
+        
+        //startWithWeapon(WeaponTags.Shielder.ToString());
     }
 
     private void startWithWeapon(string weapon)

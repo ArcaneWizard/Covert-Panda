@@ -24,17 +24,17 @@ public class CentralController : MonoBehaviour
     public Transform rightFoot;
     public Transform groundColliders;
 
-    protected float maxSpeed = 13.5f;
+    public float maxSpeed { get; private set; }
     protected float speed;
-    protected float jumpForce = 1300f;
-    protected float doublejumpForce = 1200f;
+    public static float jumpForce = 1300f;
+    public static float doubleJumpForce = 1200f;
+    public static float launchBoostForce = 2500f;
     protected float maxGravity = 2.5f;
 
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
     protected GameObject leftFootGround, rightFootGround, centerGround;
     protected float lastGroundAngle;
 
-    protected Vector2 obstacleToTheLeft, obstacleToTheRight;
     protected bool wallToTheLeft, wallToTheRight;
 
     public bool isGrounded { get; private set; }
@@ -55,6 +55,7 @@ public class CentralController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         controller = transform.GetComponent<CentralAnimationController>();
 
+        maxSpeed = 14.5f;
         speed = maxSpeed;
     }
 
@@ -206,6 +207,14 @@ public class CentralController : MonoBehaviour
 
         yield return new WaitForSeconds(0.33f);
         StartCoroutine(findWalls());
+    }
+
+    protected void launchBoost()
+    {
+        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.gravityScale = maxGravity;
+        rig.AddForce(new Vector2(0, launchBoostForce));
+        animator.SetBool("jumped", true);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
