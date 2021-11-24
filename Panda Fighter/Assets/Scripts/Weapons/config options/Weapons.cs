@@ -14,6 +14,8 @@ public class Weapons : MonoBehaviour
     public GameObject ArcticCannon;
     public GameObject Needler;
     public GameObject FocusBeamer;
+    public GameObject RocketLauncher;
+    public GameObject ArcticSprayer;
 }
 
 //combat Modes
@@ -30,5 +32,6 @@ public class Type
     public const string singleFire = "single fire";
     public const string spamFire = "spam fire";
     public const string holdFire = "hold fire";
+    public const string chargeUpFire = "charge up fire";
 }
 

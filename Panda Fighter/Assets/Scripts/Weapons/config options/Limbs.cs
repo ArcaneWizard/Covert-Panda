@@ -10,6 +10,7 @@ public class Limbs : MonoBehaviour
     public List<GameObject> Long_barrel;
     public List<GameObject> Meelee_grip;
     public List<GameObject> Pistol_grip;
+    public List<GameObject> Shoulder_rest;
 
     private AimTargets Targets;
 
@@ -28,6 +29,8 @@ public class Limbs : MonoBehaviour
             return Targets.MeeleePoleAim;
         else if (limb == Pistol_grip)
             return Targets.PistolGripAim;
+        else if (limb == Shoulder_rest)
+            return Targets.ShoulderRestAim;
 
         return null;
     }
@@ -43,6 +46,8 @@ public class Limbs : MonoBehaviour
             return AimingDir.MeeleeGripAiming;
         else if (limb == Pistol_grip)
             return AimingDir.PistolGripAiming;
+        else if (limb == Shoulder_rest)
+            return AimingDir.ShoulderRestAiming;
 
         return AimingDir.DefaultAiming;
     }

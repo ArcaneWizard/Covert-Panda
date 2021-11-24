@@ -17,14 +17,12 @@ public class AI_LookAround : CentralLookAround
 
     private int[] signs = new int[3];
     private System.Random random;
-    private CentralShooting shooting;
 
     public override void Awake()
     {
         base.Awake();
 
         random = new System.Random();
-        shooting = transform.GetComponent<CentralShooting>();
         pretendCursor = newCursorPosition();
 
         StartCoroutine(pretendCursorMovement());

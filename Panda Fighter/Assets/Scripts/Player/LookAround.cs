@@ -5,10 +5,18 @@ using UnityEngine;
 public class LookAround : CentralLookAround
 {
     public Camera camera;
+    public Shooting playerShooting;
+
+    public override void Awake()
+    {
+        base.Awake();
+        playerShooting = transform.GetComponent<Shooting>();
+    }
 
     private void LateUpdate()
     {
         lookAndAimInRightDirection();
+        playerShooting.LateLateUpdate();
     }
 
     //handles player orientation (left/right), gun rotation, gun position, head rotation
@@ -24,7 +32,7 @@ public class LookAround : CentralLookAround
                 body.localRotation = Quaternion.Euler(0, 180, 0);
 
             //calculate the angle btwn mouse cursor and player's shooting arm
-            Vector2 shootDirection = (Input.mousePosition - camera.WorldToScreenPoint(shootingArm.position)).normalized;
+            Vector2 shootDirection = shooting.getAim();
             float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
 
             //apply offset to the shoot Angle when the player is tilted on a ramp:

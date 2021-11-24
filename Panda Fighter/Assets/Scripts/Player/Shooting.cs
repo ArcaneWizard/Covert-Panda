@@ -7,14 +7,13 @@ public class Shooting : CentralShooting
     public Camera camera;
 
     private float countdownBtwnShots = 0f;
-    private float timeHeld = 0f;
 
     private WeaponConfiguration configuration;
     private String attackProgress;
 
     public override Vector2 getAim() => (Input.mousePosition - camera.WorldToScreenPoint(lookAround.shootingArm.position)).normalized;
 
-    void Update()
+    private void Update()
     {
         configuration = weaponSystem.weaponConfiguration;
         attackProgress = weaponSystem.IWeapon.attackProgress;
@@ -26,7 +25,7 @@ public class Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (weaponSystem.weaponSelected == null || weaponSystem.GetAmmo <= 0 || attackProgress != "finished")
+        if (weaponSystem.GetAmmo <= 0 || attackProgress != "finished")
             return;
 
         if (configuration.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))
@@ -44,7 +43,17 @@ public class Shooting : CentralShooting
             Attack();
         }
 
-        else if (configuration.weaponType == Type.holdFire && Input.GetMouseButtonDown(0))
+        else if (configuration.weaponType == Type.chargeUpFire && Input.GetMouseButton(0))
             Attack();
     }
+
+    public void LateLateUpdate()
+    {
+        if (weaponSystem.GetAmmo <= 0 || configuration == null)
+            return;
+
+        if (configuration.weaponType == Type.holdFire && Input.GetMouseButton(0))
+            Attack();
+    }
+
 }

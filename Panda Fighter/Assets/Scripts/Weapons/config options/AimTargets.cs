@@ -9,5 +9,6 @@ public class AimTargets : MonoBehaviour
     public Transform MediumBarrelAim;
     public Transform LongBarrelAim;
     public Transform PistolGripAim;
+    public Transform ShoulderRestAim;
 }
 

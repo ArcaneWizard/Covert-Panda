@@ -5,13 +5,10 @@ using UnityEngine.Animations;
 
 public class PlasmaOrb : MonoBehaviour
 {
-    private int surfacesTouched = 0;
     private float explosionTimer = 0;
-
     private LayerMask surfaces = 1 << 11 | 1 << 14;
 
-    [Range(0, 3)]
-    private float delayTillExplosion = 0.5f;
+    private float delayTillExplosion = 0.9f;
 
     private SpriteRenderer sR;
     private Rigidbody2D rig;
@@ -59,8 +56,6 @@ public class PlasmaOrb : MonoBehaviour
         transform.localEulerAngles = new Vector3(0, 0, 0);
         explosion.SetActive(true);
         explosionTimer = 1.4f;
-
-        yield return new WaitForSeconds(0.24f);
         sR.enabled = false;
     }
 

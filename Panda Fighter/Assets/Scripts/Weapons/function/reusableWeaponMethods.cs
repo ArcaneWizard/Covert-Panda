@@ -19,8 +19,12 @@ public static class reusableWeaponMethods
         bulletRig.velocity = new Vector2(0, 0);
         bulletRig.angularVelocity = 0;
 
-        Color color = bullet.GetComponent<SpriteRenderer>().color;
-        bullet.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
+        //reset the bullet sprite to be opaque (ie. alpha = 1)
+        if (bullet.GetComponent<SpriteRenderer>())
+        {
+            Color color = bullet.GetComponent<SpriteRenderer>().color;
+            bullet.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
+        }
 
         //reinitiate the OnEnable method of the bullet (where variables get reset)
         bullet.gameObject.SetActive(false);

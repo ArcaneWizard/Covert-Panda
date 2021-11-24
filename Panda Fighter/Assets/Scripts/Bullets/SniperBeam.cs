@@ -73,6 +73,8 @@ public class SniperBeam : MonoBehaviour
             alterBeamColor(0.08f, 0.088f, 0.08f, 0.08f);
             yield return new WaitForSeconds(0.04f);
         }
+
+        gameObject.SetActive(false);
     }
 
     private void alterBeamColor(float r, float g, float b, float a)

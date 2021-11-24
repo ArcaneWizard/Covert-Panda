@@ -15,7 +15,7 @@ public class wPlasmaOrb : IWeapon
         reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint);
 
         bullet.transform.right = aim;
-        Vector2 unadjustedForce = configuration.bulletSpeed * 40 * aim * new Vector2(1.2f, 1);
+        Vector2 unadjustedForce = configuration.bulletSpeed * 40 * aim * new Vector2(1.4f, 1);
         rig.AddForce(unadjustedForce * rig.mass);
     }
 }

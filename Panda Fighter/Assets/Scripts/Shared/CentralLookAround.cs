@@ -16,8 +16,13 @@ public class CentralLookAround : MonoBehaviour
     public Transform body;
 
     protected CentralAnimationController animController;
+    protected CentralShooting shooting;
 
-    public virtual void Awake() => animController = transform.GetComponent<CentralAnimationController>();
+    public virtual void Awake()
+    {
+        animController = transform.GetComponent<CentralAnimationController>();
+        shooting = transform.GetComponent<CentralShooting>();
+    }
 
     protected void rotateHeadAndWeapon(Vector2 shootDirection, float shootAngle)
     {

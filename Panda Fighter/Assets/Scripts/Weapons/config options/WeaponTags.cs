@@ -1,5 +1,6 @@
 
-public enum WeaponTags {
+public enum WeaponTags
+{
     Grenades,
     Railgun,
     LavaPistol,
@@ -9,5 +10,7 @@ public enum WeaponTags {
     ArcticPistol,
     Needler,
     FocusBeamer,
-    PlasmaSniper
+    PlasmaSniper,
+    RocketLauncher,
+    ArcticSprayer
 }
