@@ -10,11 +10,13 @@ public class Grenade : MonoBehaviour
 
     private SpriteRenderer sR;
     private Rigidbody2D rig;
+    private GameObject explosion;
 
     void Awake()
     {
         sR = transform.GetComponent<SpriteRenderer>();
         rig = transform.GetComponent<Rigidbody2D>();
+        explosion = transform.GetChild(0).gameObject;
     }
 
     public void startExplosionTimer() => StartCoroutine(eStartExplosionTimer());
@@ -22,38 +24,27 @@ public class Grenade : MonoBehaviour
     private IEnumerator eStartExplosionTimer()
     {
         yield return new WaitForSeconds(timeTillExplosion);
-        surfacesTouched = 3;
+
+        rig.constraints = RigidbodyConstraints2D.FreezeAll;
+        transform.localEulerAngles = new Vector3(0, 0, 0);
+
+        sR.enabled = false;
+        explosion.SetActive(true);
+        explosionTimer = 1.4f;
     }
 
     void Update()
     {
-        if (surfacesTouched >= 3)
-        {
-            sR.enabled = false;
-            transform.localEulerAngles = new Vector3(0, 0, 0);
-            transform.GetChild(0).gameObject.SetActive(true);
-            rig.constraints = RigidbodyConstraints2D.FreezeAll;
-
-            explosionTimer = 1.4f;
-            surfacesTouched = 0;
-        }
-
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
-        else if (!sR.enabled)
+        else if (explosion.activeSelf)
         {
-            sR.enabled = true;
-            transform.GetChild(0).gameObject.SetActive(false);
             rig.constraints = RigidbodyConstraints2D.None;
 
+            sR.enabled = true;
+            explosion.SetActive(false);
             gameObject.SetActive(false);
         }
     }
-
-    /*private void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.layer == 11 && explosionTimer <= 0f)
-            surfacesTouched++;
-    }*/
 }
