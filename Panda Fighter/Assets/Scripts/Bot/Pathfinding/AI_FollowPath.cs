@@ -28,10 +28,7 @@ public class AI_FollowPath : MonoBehaviour
 
     public IEnumerator startJourney(Vector3 destination)
     {
-        Debug.Log("bruh");
         journey = "pending start";
-
-        //scan available routes for 2 seconds
         StartCoroutine(pathFinding.FindMultiplePaths(2f, destination));
 
         while (pathFinding.getChosenPath() == null)
@@ -39,25 +36,18 @@ public class AI_FollowPath : MonoBehaviour
 
         pathFinding.debugPathInConsole(pathFinding.getChosenPath());
 
-        //end journey if the route is already over, ie. alien is already where it needs to be
         if (pathFinding.getChosenPath().Count == 0)
             journey = "ended";
 
-        //don't do anything if the AI prematurely ended its journey (ex. cuz the AI state changed)
         if (journey == "ended")
-        {
-            Debug.Log("test ended");
             yield break;
-        }
 
-        Debug.Log("test error");
-
-        //reset variables
+        // reset variables
         journey = "started";
         this.path = pathFinding.getChosenPath();
         pathProgress = 0;
 
-        //head towards starting path Node
+        // head towards starting path Node
         if (transform.position.x < path[0].transform.position.x)
             controller.setDirection(1);
         else
@@ -70,12 +60,7 @@ public class AI_FollowPath : MonoBehaviour
             controller.setDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
     }
 
-    public void endJourney()
-    {
-        journey = "ended";
-        DebugGUI.debugText8 = "journey ended";
-    }
-
+    public void endJourney() => journey = "ended";
     public bool gotLost() => journey == "got lost";
 
     public Vector3 nextPathNode()
@@ -119,7 +104,6 @@ public class AI_FollowPath : MonoBehaviour
     //otherwise teleport back on path
     private void getBackOnIntendedPath(Transform decisionZone)
     {
-        Debug.Log("getting back on intended path");
         bool foundReroute = false;
         foreach (Transform neighborZone in decisionZone)
         {

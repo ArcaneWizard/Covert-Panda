@@ -8,7 +8,6 @@ using UnityEngine.Rendering;
 public class StateMachine : MonoBehaviour
 {
     private IState currentState;
-    private IState lastState;
 
     //all transitions
     private Dictionary<System.Type, List<Transition>> transitions = new Dictionary<System.Type, List<Transition>>();
@@ -28,13 +27,12 @@ public class StateMachine : MonoBehaviour
         var transition = GetTransition();
         if (transition != null)
         {
-            Debug.Log("Transitioning from " + currentState + " to " + transition.To);
+            DebugGUI.debugText4 = "Transitioning from " + currentState + " to " + transition.To;
             SetState(transition.To);
         }
 
         currentState?.Tick();
-
-        Debug.Log("STATE: " + currentState);
+        DebugGUI.debugText5 = "STATE: " + currentState;
     }
 
     public void SetState(IState state)
@@ -43,7 +41,6 @@ public class StateMachine : MonoBehaviour
             return;
 
         currentState?.OnExit();
-        lastState = currentState;
         currentState = state;
 
         transitions.TryGetValue(currentState.GetType(), out currentStateTransitions);
@@ -52,8 +49,6 @@ public class StateMachine : MonoBehaviour
 
         currentState.OnEnter();
     }
-
-    public IState getLastState => lastState;
 
     public void AddTransition(IState start, IState end, Func<bool> condition)
     {

@@ -4,12 +4,14 @@ using UnityEngine;
 
 public abstract class CentralShooting : MonoBehaviour
 {
-    [HideInInspector]
-    public GameObject weaponHeld = null;
-    public string combatMode = "gun";
+    [HideInInspector] public GameObject weaponHeld = null;
+    [HideInInspector] public string combatMode = "gun";
 
     protected CentralWeaponSystem weaponSystem;
     protected CentralLookAround lookAround;
+    protected WeaponConfiguration configuration;
+    protected string attackProgress;
+    protected float countdownBtwnShots;
 
     private List<GameObject> WeaponSetup = new List<GameObject>();
     private Transform bullet;
@@ -21,7 +23,10 @@ public abstract class CentralShooting : MonoBehaviour
         lookAround = transform.GetComponent<CentralLookAround>();
     }
 
-    private void LateUpdate()
+    public abstract void Update();
+    public abstract void LateUpdateAfterWeaponRotation();
+
+    public virtual void LateUpdate()
     {
         if (combatMode == "handheld")
         {

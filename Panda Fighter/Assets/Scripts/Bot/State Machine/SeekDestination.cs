@@ -35,13 +35,13 @@ public class SeekDestination : IState
         if (getSquaredDistanceBtwnVectors(aiBody.position, destination) < 16f)
         {
             pathFollower.endJourney();
-            Debug.Log("journey over");
+            DebugGUI.debugText10 = ("journey over");
         }
 
         if (pathFollower.gotLost())
         {
             beginNewJourney();
-            Debug.Log("AI got lost");
+            DebugGUI.debugText10 = ("AI got lost");
         }
     }
 

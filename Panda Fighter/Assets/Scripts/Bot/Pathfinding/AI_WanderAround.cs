@@ -15,98 +15,154 @@ public class AI_WanderAround : MonoBehaviour
 
     private Queue<Transform> decisionZones = new Queue<Transform>();
     private Transform currentDecisionZone;
+    private Collider2D decisionZoneAiIsTouching;
 
     private int headingDirX;
     private float distance;
     private System.Random random;
 
-    private bool wander;
+    private bool wander, stuckOnTheWall;
+    private Vector3 lastPos;
 
     void Awake()
     {
         controller = transform.GetComponent<AI_Controller>();
         random = new System.Random();
+
+        StartCoroutine(stuckOnWall());
     }
 
-    //start wandering around
+    // initialize variables + start wandering (called when AI enters the Wander State)
     public void startWandering()
     {
-        decisionZones.Clear();
-        AI_ACTIONS.Clear();
         wander = true;
+        decisionZones.Clear();
+
+        // manually add any decision zone that the AI has already entered to the queue
+        if (decisionZoneAiIsTouching != null)
+            OnTriggerEnter2D(decisionZoneAiIsTouching);
     }
 
-    //stop wandering around
-    public void stopWandering() => wander = false;
+    // reset variables + stop wandering (called when AI exits the Wander State)
+    public void stopWandering()
+    {
+        wander = false;
+        decisionZones.Clear();
+        controller.CurrentActionIsFinished();
+    }
 
-    //to be called every frame whlie wandering
+    // wandering logic (called every frame when the AI's in the Wander State)
     public void tick()
     {
+        DebugGUI.debugText6 = "wander: " + wander;
         if (!wander || decisionZones.Count == 0)
             return;
 
-
-        //In scene view, display the action done and decision zone used
-        DebugGUI.debugText3 = controller.AI_action.action + (controller.decisionZone ? ", " +
+        DebugGUI.debugText2 = controller.AI_action.action + (controller.decisionZone ? ", " +
                 controller.decisionZone.name : "none");
 
-        String a = "hello + \n";
-
+        String a = "";
         foreach (Transform zone in decisionZones)
             a += zone.name + " " + zone.position + ", " + transform.position + " \n";
         DebugGUI.debugText1 = a;
+        DebugGUI.debugText6 = "2";
 
-
-        //discard the next pending decision zone if the bot has gotten too far from it
-        if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900)
+        // discard the next pending decision zone if the bot has gotten too far from it,
+        // distance wise or elevation wise
+        if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900f
+            || Mathf.Abs(decisionZones.Peek().position.y - transform.position.y) > 12f)
         {
-            DebugGUI.debugText5 = ("Discarded " + decisionZones.Peek() + " " +
+            DebugGUI.debugText3 = ("Discarded " + decisionZones.Peek() + " " +
              getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
             decisionZones.Dequeue();
             return;
         }
 
-        //analyze the next pending decision if the bot isn't performing an action rn
+        DebugGUI.debugText6 = "3 and " + controller.actionProgress;
+
+        // perform a new action if the bot is not currently executing an action.
         if (controller.actionProgress == "finished")
+            beginNewAction();
+
+        // if the bot is stuck on a wall while grounded, flip what direction it was heading, 
+        // set it to head right if it didn't have a direction, and manually add any decision
+        // zone that the AI has already entered to the queue
+        if (controller.isGrounded && stuckOnTheWall)
         {
-            currentDecisionZone = decisionZones.Dequeue();
-            AI_ACTIONS.Clear();
+            stuckOnTheWall = false;
+            controller.setDirection(-controller.dirX);
 
-            if (currentDecisionZone.childCount == 0)
-                Debug.LogError("Empty Decision Zone");
+            if (controller.dirX == 0)
+                controller.setDirection(1);
 
-            foreach (Transform decision in currentDecisionZone)
-            {
-                trajectory = decision.transform.GetComponent<TestingTrajectories>();
-                for (int i = 0; i < trajectory.considerationWeight; i++)
-                {
-                    AI_ACTIONS.Add(trajectory.convertToAction());
-                }
-            }
-
-            int r = random.Next(0, AI_ACTIONS.Count);
-            Debug.Log(AI_ACTIONS[r].ToString());
-            controller.BeginAction(AI_ACTIONS[r], currentDecisionZone);
+            if (decisionZoneAiIsTouching != null)
+                OnTriggerEnter2D(decisionZoneAiIsTouching);
         }
     }
 
-    //if the AI bot passes a new decision zone, add it to the list
+    // pick the next pending decision zone in the queue, and choose a random
+    // trajectory branching out from it
+    private void beginNewAction()
+    {
+        currentDecisionZone = decisionZones.Dequeue();
+        AI_ACTIONS.Clear();
+
+        if (currentDecisionZone.childCount == 0)
+            Debug.LogError("Empty Decision Zone");
+
+        foreach (Transform decision in currentDecisionZone)
+        {
+            trajectory = decision.transform.GetComponent<TestingTrajectories>();
+            for (int i = 0; i < trajectory.considerationWeight; i++)
+            {
+                AI_ACTIONS.Add(trajectory.convertToAction());
+            }
+        }
+
+        int r = random.Next(0, AI_ACTIONS.Count);
+        DebugGUI.debugText7 = currentDecisionZone.name + ": " + (AI_ACTIONS[r].ToString());
+        controller.BeginAction(AI_ACTIONS[r], currentDecisionZone);
+    }
+
+    // when the AI bot touches a decision zone, add it to the list. However, it must
+    // contain at least 1 viable trajectory to follow and not be a repeat of the last
+    // zone added to the queue
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (!wander)
-            return;
-
         if (decisionZones.Count > 0 && col.transform == decisionZones.Peek())
             return;
 
-        if (col.gameObject.layer == 8 && col.transform != controller.decisionZone)
+        if (col.gameObject.layer == 8)
             decisionZones.Enqueue(col.transform);
     }
 
-    //Helper method that returns squared distance btwn 2 vectors
+    // update what decision zone the AI is currently touching 
+    private void OnTriggerStay2D(Collider2D col)
+    {
+        decisionZoneAiIsTouching = col.gameObject.layer == 8 ? col : null;
+    }
+
+    // helper method that returns squared distance btwn 2 vectors
     private float getSquaredDistanceBtwnVectors(Vector2 a, Vector2 b)
     {
         Vector2 distanceBtwnVectors = a - b;
         return distanceBtwnVectors.x * distanceBtwnVectors.x + distanceBtwnVectors.y * distanceBtwnVectors.y;
+    }
+
+    // update a bool to indicate whether the AI is stuck in a wall. Checks if the AI is
+    // in the wander state and either not moving or moving in the direction of a wall 
+    // closeby. If so and the bot hasn't moved much in the last 0.2 seconds, it's stuck.
+    private IEnumerator stuckOnWall()
+    {
+        if (wander)
+        {
+            if (controller.dirX == 0 || (controller.dirX == 1 && controller.wallToTheRight) ||
+                    (controller.dirX == -1 && controller.wallToTheLeft))
+                stuckOnTheWall = getSquaredDistanceBtwnVectors(lastPos, transform.position) < 0.23f;
+        }
+
+        lastPos = transform.position;
+        yield return new WaitForSeconds(0.2f);
+        StartCoroutine(stuckOnWall());
     }
 }

@@ -5,18 +5,11 @@ using UnityEngine;
 public class LookAround : CentralLookAround
 {
     public Camera camera;
-    public Shooting playerShooting;
-
-    public override void Awake()
-    {
-        base.Awake();
-        playerShooting = transform.GetComponent<Shooting>();
-    }
 
     private void LateUpdate()
     {
         lookAndAimInRightDirection();
-        playerShooting.LateLateUpdate();
+        shooting.LateUpdateAfterWeaponRotation();
     }
 
     //handles player orientation (left/right), gun rotation, gun position, head rotation

@@ -31,7 +31,7 @@ public class TestingTrajectories : MonoBehaviour
     private float gravity;
 
     [Header("Other Settings")]
-    public Vector2 jumpBounds = new Vector2(-1f, -1f);
+    public Vector2 bounds = new Vector2(0f, 0f);
     public int considerationWeight = 1;
     public float lengthShown = 14;
     private float length;
@@ -59,6 +59,7 @@ public class TestingTrajectories : MonoBehaviour
         {
             transform.name = "Head Straight";
             drawNormalJumpParabola(0, 5, jumpForce);
+            showGizmoBounds();
         }
 
         else if (fallDown)
@@ -78,14 +79,14 @@ public class TestingTrajectories : MonoBehaviour
         {
             transform.name = "Launch Pad";
             drawJumpPadParabola(defaultGravity, lengthShown, launchPadForce);
-            showGizmoJumpBounds();
+            showGizmoBounds();
         }
 
         else if (!doubleJump)
         {
             transform.name = "Normal Jump";
             drawNormalJumpParabola(defaultGravity, lengthShown, jumpForce);
-            showGizmoJumpBounds();
+            showGizmoBounds();
         }
 
         else if (doubleJump)
@@ -93,7 +94,7 @@ public class TestingTrajectories : MonoBehaviour
             transform.name = "Double Jump";
             drawDoubleJumpParabola(timeB4Change.x);
             drawDoubleJumpParabola(timeB4Change.y);
-            showGizmoJumpBounds();
+            showGizmoBounds();
         }
 
         //yellow rec on connected decision zone
@@ -242,14 +243,14 @@ public class TestingTrajectories : MonoBehaviour
     public Transform getChainedZone() => transform.parent.parent.GetChild(chainedDecisionZone);
 
     //draw spheres on jump bounds in scene editor
-    private void showGizmoJumpBounds()
+    private void showGizmoBounds()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(transform.position + new Vector3(jumpBounds.x,
-            transform.right.y / transform.right.x * jumpBounds.x, 0), 0.3f);
+        Gizmos.DrawSphere(transform.position + new Vector3(bounds.x,
+            transform.right.y / transform.right.x * bounds.x, 0), 0.3f);
         Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(transform.position + new Vector3(jumpBounds.y,
-            transform.right.y / transform.right.x * jumpBounds.y, 0), 0.3f);
+        Gizmos.DrawSphere(transform.position + new Vector3(bounds.y,
+            transform.right.y / transform.right.x * bounds.y, 0), 0.3f);
     }
 
     //Converts trajectory info to a condensed, easy to read form (of type AI_ACTION)
@@ -275,7 +276,7 @@ public class TestingTrajectories : MonoBehaviour
 
     //helper method for converting trajectory info to a condensed readable form
     private AI_ACTION defineAction(string actionName) => new AI_ACTION(actionName, movementDirX,
-            speedRange, timeB4Change, changedSpeed, jumpBounds, transform.position);
+            speedRange, timeB4Change, changedSpeed, bounds, transform.position);
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
@@ -294,22 +295,22 @@ public struct AI_ACTION
     public Vector2 timeB4Change { get; private set; }
     public Vector2 changedSpeed { get; private set; }
     public string action { get; private set; }
-    public Vector2 jumpBounds { get; private set; }
+    public Vector2 bounds { get; private set; }
 
-    public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, Vector2 changedSpeed, Vector2 jumpBounds, Vector3 trajectoryPos)
+    public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, Vector2 changedSpeed, Vector2 bounds, Vector3 trajectoryPos)
     {
         this.action = action;
         this.dirX = direction;
         this.speed = speed;
         this.timeB4Change = timeB4Change;
         this.changedSpeed = changedSpeed;
-        this.jumpBounds = new Vector2(trajectoryPos.x + jumpBounds.x, trajectoryPos.x + jumpBounds.y);
+        this.bounds = new Vector2(trajectoryPos.x + bounds.x, trajectoryPos.x + bounds.y);
     }
 
     public override string ToString()
     {
         return $"action: {action}, dirX: {dirX}, speed: {speed}, timeB4CHange: {timeB4Change}" +
-        $"changedSpeed: {changedSpeed} + jumpBounds: {jumpBounds}";
+        $"changedSpeed: {changedSpeed} + jumpBounds: {bounds}";
     }
 }
 

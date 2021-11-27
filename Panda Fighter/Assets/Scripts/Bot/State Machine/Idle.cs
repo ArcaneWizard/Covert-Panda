@@ -6,6 +6,7 @@ public class Idle : IState
 {
     private AI_Controller controller;
     private float unfreezeTimer;
+    private int initialDirection;
 
     public bool GoodTimeToGoIdle;
     public bool StopBeingIdle;
@@ -22,11 +23,13 @@ public class Idle : IState
     public void OnEnter()
     {
         unfreezeTimer = UnityEngine.Random.Range(1f, 3.2f);
-        controller.setSpeed(0f); ;
+        initialDirection = controller.dirX;
     }
 
     public void Tick()
     {
+        controller.setDirection(0);
+
         if (unfreezeTimer > 0)
             unfreezeTimer -= Time.deltaTime;
         else
@@ -37,7 +40,9 @@ public class Idle : IState
     {
         GoodTimeToGoIdle = false;
         StopBeingIdle = false;
-        controller.setSpeed(controller.maxSpeed);
+
+        controller.setDirection(initialDirection);
+        controller.setSpeed(CentralController.maxSpeed);
     }
 
     private IEnumerator groundedDuringRandomChecks()

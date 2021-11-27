@@ -98,7 +98,7 @@ public class PathFinding : MonoBehaviour
                     if (!universalClosedSet.Contains(neighbour) && pathsFound.Count > 2)
                         neighbour.hCost = 0.02f;
 
-                    neighbour.pathID = currentNode.pathID + neighbour.transform.GetSiblingIndex();
+                    neighbour.pathID = currentNode.pathID + neighbour.transform.GetSiblingIndex() + 0.02f;
                     neighbour.parent = currentNode;
 
                     if (!openSet.Contains(neighbour))

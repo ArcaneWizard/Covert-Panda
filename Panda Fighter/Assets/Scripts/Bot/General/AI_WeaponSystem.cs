@@ -18,6 +18,7 @@ public class AI_WeaponSystem : CentralWeaponSystem
         //startWithWeapon(WeaponTags.Shielder.ToString());
     }
 
+    // 
     private void startWithWeapon(string weapon)
     {
         collectNewWeapon(weapon);

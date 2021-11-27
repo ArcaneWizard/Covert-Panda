@@ -90,7 +90,7 @@ public class CentralWeaponSystem : MonoBehaviour
         }
     }
 
-    public virtual void collectNewWeapon(string weapon) => ammo[weapon] = IWeapons[weapon].configuration.startingAmmo;
+    public virtual void collectNewWeapon(string weapon) => ammo[weapon] = weaponConfigurations[weapon].startingAmmo;
 
     public virtual void useOneAmmo()
     {

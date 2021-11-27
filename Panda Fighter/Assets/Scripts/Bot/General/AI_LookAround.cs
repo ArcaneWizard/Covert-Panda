@@ -7,10 +7,10 @@ public class AI_LookAround : CentralLookAround
     public Transform player;
     public Camera camera;
 
-    public LayerMask mapOrPlayer;
+    public LayerMask mapOrPlayer = 1 << 11 | 1 << 12;
     public bool playerIsInSight { get; private set; }
 
-    public Vector3 lookAt { get; private set; }
+    public Vector2 lookAt { get; private set; }
     private Vector3 pretendCursor = new Vector3(0, 0, 0), updatedCursorPos;
     private float cursorMovementSpeed = 0.3f, cursorVelX, cursorVelY;
     private float cursorX, cursorY;
@@ -23,19 +23,23 @@ public class AI_LookAround : CentralLookAround
         base.Awake();
 
         random = new System.Random();
-        pretendCursor = newCursorPosition();
+        //pretendCursor = newCursorPosition();
 
-        StartCoroutine(pretendCursorMovement());
+        //StartCoroutine(pretendCursorMovement());
         StartCoroutine(IsPlayerInLineOfSight());
     }
 
     private void LateUpdate()
     {
         lookAt = (playerIsInSight)
-            ? player.position - shootingArm.position
-            : new Vector3(shooting.getAim().x, shooting.getAim().y, 0);
-
+            ? shooting.getAim()
+            : new Vector2(
+                camera.ScreenToWorldPoint(Input.mousePosition).x - player.position.x,
+                camera.ScreenToWorldPoint(Input.mousePosition).y - player.position.y
+            );
+ 
         lookAndAimInRightDirection();
+        shooting.LateUpdateAfterWeaponRotation();
 
         if (pretendCursor != updatedCursorPos)
         {
@@ -84,7 +88,7 @@ public class AI_LookAround : CentralLookAround
 
     private IEnumerator IsPlayerInLineOfSight()
     {
-        RaycastHit2D hit = Physics2D.Raycast(shootingArm.position, player.position - shootingArm.position, 50, mapOrPlayer);
+        RaycastHit2D hit = Physics2D.Raycast(shootingArm.position, player.position - shootingArm.position, 31, mapOrPlayer);
         playerIsInSight = hit.collider != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player");
 
         yield return new WaitForSeconds(0.3f);

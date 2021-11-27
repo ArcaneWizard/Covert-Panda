@@ -5,15 +5,9 @@ using UnityEngine;
 public class Shooting : CentralShooting
 {
     public Camera camera;
-
-    private float countdownBtwnShots = 0f;
-
-    private WeaponConfiguration configuration;
-    private String attackProgress;
-
     public override Vector2 getAim() => (Input.mousePosition - camera.WorldToScreenPoint(lookAround.shootingArm.position)).normalized;
 
-    private void Update()
+    public override void Update()
     {
         configuration = weaponSystem.weaponConfiguration;
         attackProgress = weaponSystem.IWeapon.attackProgress;
@@ -47,7 +41,10 @@ public class Shooting : CentralShooting
             Attack();
     }
 
-    public void LateLateUpdate()
+    // For "hold-fire" weapons, firing needs to be called every frame.
+    // Called by the Late Update method of the player's LookAround script, 
+    // after the weapon rotation is updated over there 
+    public override void LateUpdateAfterWeaponRotation()
     {
         if (weaponSystem.GetAmmo <= 0 || configuration == null)
             return;
@@ -55,5 +52,4 @@ public class Shooting : CentralShooting
         if (configuration.weaponType == Type.holdFire && Input.GetMouseButton(0))
             Attack();
     }
-
 }

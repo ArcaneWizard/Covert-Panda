@@ -72,10 +72,7 @@ public class WeaponSystem : CentralWeaponSystem
             selectWeapon(inventory.GetChild(10).GetComponent<WeaponTag>().Tag);
 
         else if (Input.GetKeyDown(KeyCode.Equals))
-        {
-            Debug.Log(inventory.GetChild(11).GetComponent<WeaponTag>().Tag);
             selectWeapon(inventory.GetChild(11).GetComponent<WeaponTag>().Tag);
-        }
 
         else if (Input.GetKeyDown(KeyCode.Delete))
             selectWeapon(inventory.GetChild(12).GetComponent<WeaponTag>().Tag);
