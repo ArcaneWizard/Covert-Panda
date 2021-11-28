@@ -63,7 +63,7 @@ public class CentralController : MonoBehaviour
     public virtual void Update()
     {
         updateIfGrounded(animController.disableLimbsDuringDoubleJump);
-        tilt();
+        // tilt();
     }
 
     public void setSpeed(float speed) => this.speed = speed;
@@ -243,7 +243,6 @@ public class CentralController : MonoBehaviour
     //when the player is idle, their tilt is only set once to prevent them from spasming on uneven ground while still
     private enum IdleTilt
     {
-        set, // set tilt to the idle ground tilt angle
-        reset, // update the idle ground tilt angle in the future
+        set, reset
     }
 }

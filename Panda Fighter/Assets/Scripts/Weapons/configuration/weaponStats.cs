@@ -11,9 +11,14 @@ public class WeaponStats : MonoBehaviour
 
     public WeaponStats(CentralWeaponSystem weaponSystem)
     {
-        Transform options = weaponSystem.transform.GetChild(0).GetChild(0);
+        Transform options = weaponSystem.transform.GetChild(0).GetChild(0).GetChild(0);
         l = options.GetComponent<Limbs>();
         w = options.GetComponent<Weapons>();
+
+        Debug.Log(weaponSystem.transform);
+
+        if (l == null)
+            Debug.LogError("Entity hierarchy was altered");
 
         this.weaponSystem = weaponSystem;
 
