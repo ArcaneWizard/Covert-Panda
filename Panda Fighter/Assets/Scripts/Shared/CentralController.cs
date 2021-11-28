@@ -36,7 +36,7 @@ public class CentralController : MonoBehaviour
 
     // variables utilized in inherited classes
     protected GameObject leftGround, rightGround, centerGround;
-    protected Vector2 groundDir;
+    public Vector2 groundDir { get; protected set; }
 
     // cached variables, used for repeated calculations 
     private float groundAngle, zAngle, lastGroundAngle;
