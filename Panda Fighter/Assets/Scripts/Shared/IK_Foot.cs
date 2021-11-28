@@ -15,14 +15,11 @@ public class IK_Foot : MonoBehaviour
 
     [Header("Thigh and Chest Offsets")]
     [Range(0, 4)]
-    public float thighAndChestOffset;
+    public float chestYOffset;
+    [Range(0, 4)]
+    public float maxThighStretch;
     [Range(-1, 1)]
     public float frontThighXOffset, backThighXOffset;
-    [Range(-1, 1)]
-    public float frontThighYOffset, backThighYOffset;
-
-    public Vector3 upperBodyOffset = new Vector2(0.1f, 0.2f);
-
 
     [Range(-5, 10)]
     public float frontFootOffset;
@@ -36,6 +33,7 @@ public class IK_Foot : MonoBehaviour
     //cached variables
     private Vector2 groundDir;
     private float groundSlope, zAngle;
+    private float weightedXCoordinate;
 
     private void Awake()
     {
@@ -63,23 +61,17 @@ public class IK_Foot : MonoBehaviour
 
         DebugGUI.debugText10 = $"front weight: {frontSideWeight} and back weight: {backSideWeight}";
 
+        weightedXCoordinate = (frontLeg.position.x * backSideWeight + backLeg.position.x * frontSideWeight)
+            / (frontSideWeight + backSideWeight);
 
-        frontThigh.position = new Vector3(
-            transform.position.x - frontThighXOffset * directionFacing,
-            frontLeg.position.y + thighAndChestOffset + frontThighYOffset,
-            frontThigh.position.z
-        );
+        float frontThighX = weightedXCoordinate - frontThighXOffset * directionFacing;
+        float backThighX = weightedXCoordinate + frontThighXOffset * directionFacing;
 
-        backThigh.position = new Vector3(
-            transform.position.x + backThighXOffset * directionFacing,
-            backLeg.position.y + thighAndChestOffset + backThighYOffset,
-            backThigh.position.z
-        );
+        float frontThighRaise = Mathf.Sqrt(maxThighStretch * maxThighStretch - Mathf.Pow(frontThighX - frontLeg.position.x, 2));
+        frontThigh.position = new Vector3(frontThighX, frontLeg.position.y + frontThighRaise, frontThigh.position.z);
+        backThigh.position = new Vector3(backThighX, frontThigh.position.y, backThigh.position.z);
 
-        float lowerChestPosition = (frontThigh.position.y + backThigh.position.y) / 2f;
-
-        upperBody.position = new Vector3(transform.position.x, lowerChestPosition, upperBody.position.z)
-            + new Vector3(upperBodyOffset.x * directionFacing, upperBodyOffset.y);
+        upperBody.position = new Vector3(weightedXCoordinate, frontThigh.position.y + chestYOffset, upperBody.position.z);
     }
 
     // updates position of leg and foot based on the ground elevation
@@ -106,21 +98,18 @@ public class IK_Foot : MonoBehaviour
                 frontGroundAngle = zAngle;
             }
 
-
             zAngle += (foot == frontFoot ? frontFootOffset : backFootOffset) + directionAngle;
-
             foot.transform.eulerAngles = new Vector3(directionAngle, 0f, zAngle * directionFacing
                 * Mathf.Sign(groundSlope));
-
-
 
             debugstuff(leg, foot);
         }
     }
 
-    private float getWeightFromAngle(float angle) => 2.4f * angle / 90f;
+    private float getWeightFromAngle(float angle) => 9f * angle / 90f;
     private int directionFacing => transform.localEulerAngles.y == 0 ? 1 : -1;
     private int directionAngle => transform.localEulerAngles.y == 0 ? 0 : 180;
+    private bool facingRight => transform.localEulerAngles.y == 0;
 
     private void debugstuff(Transform leg, Transform foot)
     {
