@@ -16,9 +16,8 @@ public class AI_Controller : CentralController
     private float randomSpeed;
 
     //action progress starts off finished
-    public override void Start()
+    private void Start()
     {
-        base.Start();
         actionDecider = new ActionExecuter(this, animController, animator, rig);
 
         dirX = 0;

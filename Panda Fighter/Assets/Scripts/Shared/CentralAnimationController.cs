@@ -8,23 +8,30 @@ public class CentralAnimationController : MonoBehaviour
     protected Animator animator;
     protected CentralController controller;
     protected Transform body;
+    public BoxCollider2D boxCollider;
+    private CapsuleCollider2D capsuleCollider;
 
     protected bool stopSpinning = true;
     [HideInInspector]
     public bool disableLimbsDuringDoubleJump = false;
     protected int spinDirection = 0;
 
+    private float colliderSize;
+
     private void Awake()
     {
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         body = transform.GetChild(0).transform;
         controller = transform.GetComponent<CentralController>();
+
+        boxCollider = transform.GetChild(0).GetComponent<BoxCollider2D>();
+        capsuleCollider = transform.GetChild(0).GetComponent<CapsuleCollider2D>();
     }
 
     private void Update()
     {
         setAnimationState();
-        StartCoroutine(adjustCollidersBasedOnState(controller.footCollider, controller.rightFoot, controller.leftFoot, controller.mainCollider));
+        StartCoroutine(adjustCollidersBasedOnState(controller.rightFoot, controller.leftFoot));
     }
 
     private void FixedUpdate()
@@ -113,27 +120,29 @@ public class CentralAnimationController : MonoBehaviour
     }
 
     //foot collider becomes smaller when jumping
-    protected IEnumerator adjustCollidersBasedOnState(BoxCollider2D footCollider, Transform rightFoot, Transform leftFoot, BoxCollider2D mainCollider)
+    protected IEnumerator adjustCollidersBasedOnState(Transform rightFoot, Transform leftFoot)
     {
         yield return new WaitForSeconds(0.03f);
 
         //disable main foot's collider when not walking
-        footCollider.gameObject.SetActive(animator.GetInteger("Phase") == 1);
+        //footCollider.gameObject.SetActive(animator.GetInteger("Phase") == 1);
 
-        //tuck the feet ground raycasters in when jumping
+        /*//tuck the feet ground raycasters in when jumping
         rightFoot.localPosition = animator.GetInteger("Phase") != 2
         ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
         : new Vector3(0.332f, rightFoot.localPosition.y, 0);
 
         leftFoot.localPosition = animator.GetInteger("Phase") != 2
         ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
-        : new Vector3(-0.157f, leftFoot.localPosition.y, 0);
+        : new Vector3(-0.157f, leftFoot.localPosition.y, 0);*/
 
         //thin collider when jumping
-        mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.68f : 1f, mainCollider.size.y);
+        boxCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.6f : 0.68f, boxCollider.size.y);
+        capsuleCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.6f : 0.7f, capsuleCollider.size.y);
 
         //shorten collider when double jumping
-        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 3.14f);
+        boxCollider.size = new Vector2(boxCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 2.55f);
+        capsuleCollider.size = new Vector2(capsuleCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 0.1f : 1.46f);
     }
 }
 
