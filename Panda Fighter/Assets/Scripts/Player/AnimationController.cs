@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AnimationController : CentralAnimationController
 {
-    protected override void setAnimationState()
+    /*protected override void setAnimationState()
     {
         base.setAnimationState();
         bool facingRight = Input.mousePosition.x >= controller.camera.WorldToScreenPoint(controller.shootingArm.parent.position).x;
@@ -17,5 +17,5 @@ public class AnimationController : CentralAnimationController
             else if (controller.dirX != 0)
                 animator.SetFloat("walking speed", -1);
         }
-    }
+    }*/
 }

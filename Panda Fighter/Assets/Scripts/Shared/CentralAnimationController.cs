@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CentralAnimationController : MonoBehaviour
 {
@@ -8,8 +9,12 @@ public class CentralAnimationController : MonoBehaviour
     protected Animator animator;
     protected CentralController controller;
     protected Transform body;
-    public BoxCollider2D boxCollider;
-    private CapsuleCollider2D capsuleCollider;
+
+    public AnimatorHandler AnimatorHandler { private set; get; }
+    protected ProceduralAnimator proceduralAnimator;
+    public Still still;
+    public Walking walking;
+    public NotProcedural notProcedural;
 
     protected bool stopSpinning = true;
     [HideInInspector]
@@ -24,14 +29,48 @@ public class CentralAnimationController : MonoBehaviour
         body = transform.GetChild(0).transform;
         controller = transform.GetComponent<CentralController>();
 
-        boxCollider = transform.GetChild(0).GetComponent<BoxCollider2D>();
-        capsuleCollider = transform.GetChild(0).GetComponent<CapsuleCollider2D>();
+        AnimatorHandler = new AnimatorHandler(animator);
+
+        proceduralAnimator = gameObject.AddComponent<ProceduralAnimator>();
+        proceduralAnimator.PretendConstructor(AnimatorHandler);
+        notProcedural = gameObject.AddComponent<NotProcedural>();
+    }
+
+    void Start()
+    {
+        alwaysTransition(null, Animation.jumping, () => !controller.isGrounded);
+        alwaysTransition(walking, null, () => controller.dirX != 0);
+        alwaysTransition(still, null, () => controller.dirX == 0);
+
+        proceduralAnimator.SetAnimation(still, null);
+
+        void alwaysTransition(ProceduralAnimation p, string m, Func<bool> condition)
+        {
+            if (p == null) p = notProcedural;
+            proceduralAnimator.AddAlwaysCalledTransition(p, m, condition);
+        }
     }
 
     private void Update()
     {
-        setAnimationState();
-        StartCoroutine(adjustCollidersBasedOnState(controller.rightFoot, controller.leftFoot));
+        updateAnimatorLogic();
+        proceduralAnimator.Tick();
+    }
+
+    //states when to transition btwn diff player animation states 
+    private void updateAnimatorLogic()
+    {
+
+        //if you are grounded, exit out of jump animation
+        if (AnimatorHandler.IsPlaying(Animation.jumping) && controller.isGrounded)
+            StartCoroutine(delayedJumpReset());
+    }
+
+    private IEnumerator delayedJumpReset()
+    {
+        yield return new WaitForSeconds(0.3f);
+        animator.SetBool("jumped", false);
+        animator.SetBool("double jump", false);
     }
 
     private void FixedUpdate()
@@ -65,47 +104,6 @@ public class CentralAnimationController : MonoBehaviour
         animator.SetBool("double jump", true);
     }
 
-    //states when to transition btwn diff player animation states 
-    protected virtual void setAnimationState()
-    {
-        //if the player isn't currently in the jump state 
-        if (animator.GetInteger("Phase") != 2)
-        {
-            if (!controller.isGrounded)
-                setAnimation("jumping");
-            else if (controller.dirX != 0)
-                setAnimation("walking");
-            else
-                setAnimation("idle");
-        }
-
-        //if you are grounded, exit out of jump animation
-        if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
-        {
-            animator.SetBool("jumped", false);
-            animator.SetBool("double jump", false);
-            setAnimation("idle");
-        }
-    }
-
-    //set new animation state for the player
-    private void setAnimation(string mode)
-    {
-        int newMode = 0;
-
-        if (mode == "idle")
-            newMode = 0;
-        else if (mode == "walking")
-            newMode = 1;
-        else if (mode == "jumping")
-            newMode = 2;
-        else
-            Debug.LogError("mode not defined");
-
-        animator.SetInteger("Phase", newMode);
-    }
-
-
     private IEnumerator timeDoubleSpin(GameObject leftFoot, GameObject rightFoot)
     {
         leftFoot.SetActive(false);
@@ -119,30 +117,21 @@ public class CentralAnimationController : MonoBehaviour
         disableLimbsDuringDoubleJump = false;
     }
 
-    //foot collider becomes smaller when jumping
-    protected IEnumerator adjustCollidersBasedOnState(Transform rightFoot, Transform leftFoot)
+    //set new physical animation to play in the animator 
+    private void setPhysicalAnimation(string mode)
     {
-        yield return new WaitForSeconds(0.03f);
+        int newMode = 0;
 
-        //disable main foot's collider when not walking
-        //footCollider.gameObject.SetActive(animator.GetInteger("Phase") == 1);
+        if (mode == "idle")
+            newMode = 0;
+        else if (mode == "walking")
+            newMode = 1;
+        else if (mode == "jumping")
+            newMode = 2;
+        else
+            Debug.LogError("mode not defined");
 
-        /*//tuck the feet ground raycasters in when jumping
-        rightFoot.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
-        : new Vector3(0.332f, rightFoot.localPosition.y, 0);
-
-        leftFoot.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
-        : new Vector3(-0.157f, leftFoot.localPosition.y, 0);*/
-
-        //thin collider when jumping
-        boxCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.6f : 0.68f, boxCollider.size.y);
-        capsuleCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.6f : 0.7f, capsuleCollider.size.y);
-
-        //shorten collider when double jumping
-        boxCollider.size = new Vector2(boxCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 2.55f);
-        capsuleCollider.size = new Vector2(capsuleCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 0.1f : 1.46f);
+        animator.SetInteger("Phase", newMode);
     }
 }
 

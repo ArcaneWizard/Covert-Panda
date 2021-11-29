@@ -31,6 +31,7 @@ public class Sideview_Controller : CentralController
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, doubleJumpForce));
             animController.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
+            return;
         }
 
         //W to jump if you're grounded or literally are just going off the edge of a platform
@@ -58,10 +59,7 @@ public class Sideview_Controller : CentralController
 
         // when player goes idle and hasn't jumped, kill y velocity -> stop bounce glitch
         if (!animator.GetBool("jumped") && rig.velocity.y > 0 && dirX == 0)
-        {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            Debug.Log("1");
-        }
 
         // when player is on the ground, their velocity is parallel to the slanted ground
         if (!animator.GetBool("jumped") && isGrounded && isTouchingMap && Mathf.Abs(groundAngle) < maxSlopeAngle)
@@ -71,7 +69,6 @@ public class Sideview_Controller : CentralController
             {
                 rig.velocity = new Vector2(0, 0);
                 rig.gravityScale = 0;
-                Debug.Log("2");
                 return;
             }
 
@@ -80,16 +77,12 @@ public class Sideview_Controller : CentralController
             {
                 rig.velocity = new Vector2(0, 0);
                 rig.gravityScale = 0;
-                Debug.Log("3");
                 return;
             }
 
             //player velocity is parallel to the slanted ground
             else
-            {
                 rig.velocity = groundDir * speed * dirX;
-                Debug.Log("4");
-            }
         }
 
         //when player is not on the ground, their velocity is just left/right with gravity applied
@@ -97,26 +90,26 @@ public class Sideview_Controller : CentralController
         {
             //lower x velocity when running into a wall mid-air to avoid severe clipping glitch
             if (dirX == 1 && wallToTheRight)
-            {
                 rig.velocity = new Vector2(3f, rig.velocity.y);
-            }
 
             //lower x velocity when running into a wall mid-air to avoid severe clipping glitch
             else if (dirX == -1 && wallToTheLeft)
-            {
                 rig.velocity = new Vector2(-3f, rig.velocity.y);
-            }
 
             //player velocity is just left or right (with gravity pulling the player down)
             else
                 rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
         }
 
-        //don't apply gravity when you are both idle and directly touching the ground below you
+        //don't apply gravity when you are not moving on the ground (don't want to slide)
         if (dirX == 0 && isTouchingMap && isGrounded && Mathf.Abs(groundAngle) < maxSlopeAngle)
             rig.gravityScale = 0;
+
+        //otherwise, you happened to be on a super steep slope or walking on ground, so apply heavy gravity
         else if (!animator.GetBool("jumped") && isGrounded && isTouchingMap)
             rig.gravityScale = gravityCounter;
+
+        //otherwise, you jumped up or are falling down so apply normal gravity
         else
             rig.gravityScale = 2.5f;
     }

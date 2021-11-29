@@ -46,6 +46,10 @@ public class CentralController : MonoBehaviour
     public Vector2 groundDir { get; protected set; }
     public float groundAngle { get; protected set; }
 
+    //colliders
+    private BoxCollider2D boxCollider;
+    private CapsuleCollider2D capsuleCollider;
+
     // cached variables, used for repeated calculations 
     private float zAngle;
     private RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
@@ -58,6 +62,8 @@ public class CentralController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         iK_Foot = transform.GetChild(0).transform.GetComponent<IK_Foot>();
         animController = transform.GetComponent<CentralAnimationController>();
+        boxCollider = transform.GetChild(0).GetComponent<BoxCollider2D>();
+        capsuleCollider = transform.GetChild(0).GetComponent<CapsuleCollider2D>();
 
         speed = maxSpeed;
         maxSlope_Y = Mathf.Cos(maxSlopeAngle);
@@ -69,6 +75,8 @@ public class CentralController : MonoBehaviour
         isTouchingMap = touchingMap.detected;
         wallToTheLeft = facingRight ? leftWall.detected : rightWall.detected;
         wallToTheRight = facingRight ? rightWall.detected : leftWall.detected;
+
+        StartCoroutine(adjustCollidersBasedOnState());
     }
 
     public void setSpeed(float speed) => this.speed = speed;
@@ -139,4 +147,27 @@ public class CentralController : MonoBehaviour
     }
 
     private bool facingRight => body.localEulerAngles.y == 0;
+
+    //foot collider becomes smaller when jumping
+    protected IEnumerator adjustCollidersBasedOnState()
+    {
+        yield return new WaitForSeconds(0.03f);
+        /*//tuck the feet ground raycasters in when jumping
+        rightFoot.localPosition = animator.GetInteger("Phase") != 2
+        ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
+        : new Vector3(0.332f, rightFoot.localPosition.y, 0);
+
+        leftFoot.localPosition = animator.GetInteger("Phase") != 2
+        ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
+        : new Vector3(-0.157f, leftFoot.localPosition.y, 0);*/
+
+        //thin collider when jumping
+        bool jumping = animController.AnimatorHandler.IsPlaying(Animation.jumping);
+        boxCollider.size = new Vector2(jumping ? 0.6f : 0.68f, boxCollider.size.y);
+        capsuleCollider.size = new Vector2(jumping ? 0.6f : 0.7f, capsuleCollider.size.y);
+
+        //shorten collider when double jumping
+        boxCollider.size = new Vector2(boxCollider.size.x, animator.GetBool("double jump") ? 2f : 2.55f);
+        capsuleCollider.size = new Vector2(capsuleCollider.size.x, animator.GetBool("double jump") ? 0.1f : 1.46f);
+    }
 }

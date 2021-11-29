@@ -152,7 +152,7 @@ public class ActionExecuter
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.gravityScale = CentralController.maxGravity;
             rig.AddForce(new Vector2(0, CentralController.doubleJumpForce));
-            animControls.startDoubleJumpAnimation(controls.dirX, controls.leftFoot.gameObject, controls.rightFoot.gameObject);
+            //animControls.startDoubleJumpAnimation(controls.dirX, controls.leftFoot.gameObject, controls.rightFoot.gameObject);
         }
     }
 
