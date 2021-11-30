@@ -11,7 +11,7 @@ public class CentralAnimationController : MonoBehaviour
     protected Transform body;
 
     public AnimatorHandler AnimatorHandler { private set; get; }
-    protected ProceduralAnimator proceduralAnimator;
+    public ProceduralAnimator proceduralAnimator { protected set; get; }
     public Still still;
     public Walking walking;
     public NotProcedural notProcedural;
@@ -38,13 +38,14 @@ public class CentralAnimationController : MonoBehaviour
 
     void Start()
     {
-        alwaysTransition(null, Animation.jumping, () => !controller.isGrounded);
-        alwaysTransition(walking, null, () => controller.dirX != 0);
-        alwaysTransition(still, null, () => controller.dirX == 0);
+        To(null, Animation.doubleJumping, () => animator.GetBool("double jump"));
+        To(null, Animation.jumping, () => animator.GetBool("jumped"));
+        To(walking, null, () => controller.dirX != 0 && controller.isGrounded);
+        To(still, null, () => controller.dirX == 0 && controller.isGrounded);
 
         proceduralAnimator.SetAnimation(still, null);
 
-        void alwaysTransition(ProceduralAnimation p, string m, Func<bool> condition)
+        void To(ProceduralAnimation p, string m, Func<bool> condition)
         {
             if (p == null) p = notProcedural;
             proceduralAnimator.AddAlwaysCalledTransition(p, m, condition);
@@ -57,25 +58,27 @@ public class CentralAnimationController : MonoBehaviour
         proceduralAnimator.Tick();
     }
 
-    //states when to transition btwn diff player animation states 
     private void updateAnimatorLogic()
     {
-
-        //if you are grounded, exit out of jump animation
-        if (AnimatorHandler.IsPlaying(Animation.jumping) && controller.isGrounded)
+        //if you've jumped or double jumped, wait 0.3 seconds before starting checks if you're grounded again
+        if ((animator.GetBool("jumped") || animator.GetBool("double jump")))
             StartCoroutine(delayedJumpReset());
     }
 
     private IEnumerator delayedJumpReset()
     {
         yield return new WaitForSeconds(0.3f);
-        animator.SetBool("jumped", false);
-        animator.SetBool("double jump", false);
+
+        if (controller.isGrounded)
+        {
+            animator.SetBool("jumped", false);
+            animator.SetBool("double jump", false);
+        }
     }
 
     private void FixedUpdate()
     {
-        if (animator.GetBool("double jump"))
+        /*if (animator.GetBool("double jump"))
         {
             float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
             if (t > 0.9f)
@@ -91,20 +94,20 @@ public class CentralAnimationController : MonoBehaviour
             }
             else
                 animator.SetBool("double jump", false);
-        }
+        }*/
     }
 
     public void startDoubleJumpAnimation(int movementDirX, GameObject leftFoot, GameObject rightFoot)
     {
-        spinDirection = movementDirX != 0 ? -movementDirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
+        /*spinDirection = movementDirX != 0 ? -movementDirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
         stopSpinning = false;
         disableLimbsDuringDoubleJump = true;
 
-        StartCoroutine(timeDoubleSpin(leftFoot, rightFoot));
+        StartCoroutine(timeDoubleSpin(leftFoot, rightFoot));*/
         animator.SetBool("double jump", true);
     }
 
-    private IEnumerator timeDoubleSpin(GameObject leftFoot, GameObject rightFoot)
+    /*private IEnumerator timeDoubleSpin(GameObject leftFoot, GameObject rightFoot)
     {
         leftFoot.SetActive(false);
         rightFoot.SetActive(false);
@@ -115,23 +118,6 @@ public class CentralAnimationController : MonoBehaviour
 
         yield return new WaitForSeconds(0.12f);
         disableLimbsDuringDoubleJump = false;
-    }
-
-    //set new physical animation to play in the animator 
-    private void setPhysicalAnimation(string mode)
-    {
-        int newMode = 0;
-
-        if (mode == "idle")
-            newMode = 0;
-        else if (mode == "walking")
-            newMode = 1;
-        else if (mode == "jumping")
-            newMode = 2;
-        else
-            Debug.LogError("mode not defined");
-
-        animator.SetInteger("Phase", newMode);
-    }
+    }*/
 }
 

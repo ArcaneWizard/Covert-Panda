@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProceduralAnimator : MonoBehaviour
 {
-    private ProceduralAnimation currentProceduralAnimation;
+    public ProceduralAnimation currentProceduralAnimation { get; private set; }
     private AnimatorHandler animatorHandler;
 
     //all transitions
@@ -38,15 +38,16 @@ public class ProceduralAnimator : MonoBehaviour
                 : transition.proceduralAnimation.GetType().ToString();
 
             DebugGUI.debugText7 = "Transitioned to " + b + " from " + a;
+            DebugGUI.debugText8 = $"p: {transition.proceduralAnimation} and a: {transition.animation}";
             SetAnimation(transition.proceduralAnimation, transition.animation);
         }
 
         currentProceduralAnimation?.Tick();
-        DebugGUI.debugText8 = "ANIMATION: " + currentProceduralAnimation;
     }
 
     public void SetAnimation(ProceduralAnimation proceduralAnimation, String animation)
     {
+        animatorHandler.SetAnimation(animation);
         if (proceduralAnimation == currentProceduralAnimation)
             return;
 
@@ -57,7 +58,6 @@ public class ProceduralAnimator : MonoBehaviour
             currentAnimationTransitions = EmptyTransitions;
 
         currentProceduralAnimation?.OnEnter();
-        animatorHandler.SetAnimation(animation);
     }
 
     public void AddTransition(ProceduralAnimation start, ProceduralAnimation end, String animationEnd,

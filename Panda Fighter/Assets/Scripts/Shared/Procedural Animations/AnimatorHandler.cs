@@ -16,6 +16,7 @@ public class AnimatorHandler
     {
         currentAnimation = animation;
         animator.SetInteger("Phase", getAnimation(animation));
+        Debug.Log(currentAnimation + ", " + getAnimation(animation));
     }
 
     public bool IsPlaying(string animation)
@@ -23,20 +24,19 @@ public class AnimatorHandler
         return animator.GetInteger("Phase") == getAnimation(animation);
     }
 
-    public void ResetJumping()
-    {
-        animator.SetBool("jumped", false);
-        animator.SetBool("double jump", false);
-    }
-
     private int getAnimation(string animation)
     {
-        if (animation == null)
-            return 0;
-        else if (animation == Animation.jumping)
-            return 2;
+        switch (animation)
+        {
+            case null:
+                return 0;
+            case Animation.jumping:
+                return 1;
+            case Animation.doubleJumping:
+                return 2;
+        }
 
-        Debug.LogError("mode not defined");
+        Debug.LogError("animation not defined");
         return -1;
     }
 
@@ -44,5 +44,6 @@ public class AnimatorHandler
 
 public static class Animation
 {
-    public static string jumping = "jumping";
+    public const string jumping = "jumping";
+    public const string doubleJumping = "double jumping";
 }

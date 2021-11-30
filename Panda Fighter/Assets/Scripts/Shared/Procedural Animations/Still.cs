@@ -5,7 +5,6 @@ using UnityEngine;
 public class Still : ProceduralAnimation
 {
     public bool unstickToGround { get; private set; }
-    public bool slipped { get; private set; }
     private float slipTimer;
 
     private Animator animator;
@@ -59,7 +58,6 @@ public class Still : ProceduralAnimation
         controller = transform.parent.GetComponent<CentralController>();
         rig = transform.parent.GetComponent<Rigidbody2D>();
     }
-
 
     public override void Tick()
     {

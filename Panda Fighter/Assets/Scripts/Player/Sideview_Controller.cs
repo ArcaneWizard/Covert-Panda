@@ -10,7 +10,6 @@ public class Sideview_Controller : CentralController
     private int frames;
     private float time;
 
-
     [Range(0, 10)]
     public float gravityCounter;
 
@@ -35,7 +34,8 @@ public class Sideview_Controller : CentralController
         }
 
         //W to jump if you're grounded or literally are just going off the edge of a platform
-        if (Input.GetKeyDown(KeyCode.W) && !animator.GetBool("double jump") && (isGrounded || iK_Foot.slipped))
+        if (Input.GetKeyDown(KeyCode.W) && !animator.GetBool("double jump")
+            && (isGrounded || proceduralAnimator.currentProceduralAnimation.slipped))
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.gravityScale = maxGravity;

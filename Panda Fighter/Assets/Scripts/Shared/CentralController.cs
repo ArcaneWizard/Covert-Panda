@@ -8,7 +8,7 @@ public class CentralController : MonoBehaviour
     protected Transform body;
     protected Animator animator;
     protected CentralAnimationController animController;
-    protected IK_Foot iK_Foot;
+    protected ProceduralAnimator proceduralAnimator;
 
     [Header("Limbs & Colliders")]
     public Transform shootingArm;
@@ -60,13 +60,18 @@ public class CentralController : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
         body = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        iK_Foot = transform.GetChild(0).transform.GetComponent<IK_Foot>();
         animController = transform.GetComponent<CentralAnimationController>();
+
         boxCollider = transform.GetChild(0).GetComponent<BoxCollider2D>();
         capsuleCollider = transform.GetChild(0).GetComponent<CapsuleCollider2D>();
 
         speed = maxSpeed;
         maxSlope_Y = Mathf.Cos(maxSlopeAngle);
+    }
+
+    public void Start()
+    {
+        proceduralAnimator = animController.proceduralAnimator;
     }
 
     public virtual void Update()
