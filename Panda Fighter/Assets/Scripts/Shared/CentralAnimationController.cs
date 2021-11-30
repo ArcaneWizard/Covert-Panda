@@ -9,12 +9,15 @@ public class CentralAnimationController : MonoBehaviour
     protected Animator animator;
     protected CentralController controller;
     protected Transform body;
+    protected Transform proceduralAnimations;
 
     public AnimatorHandler AnimatorHandler { private set; get; }
     public ProceduralAnimator proceduralAnimator { protected set; get; }
-    public Still still;
-    public Walking walking;
-    public NotProcedural notProcedural;
+
+    private Bones bones;
+    private Still still;
+    private Walking walking;
+    private NotProcedural notProcedural;
 
     protected bool stopSpinning = true;
     [HideInInspector]
@@ -27,23 +30,33 @@ public class CentralAnimationController : MonoBehaviour
 
     private void Awake()
     {
-        animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        body = transform.GetChild(0).transform;
+        body = transform.GetChild(0);
+        proceduralAnimations = transform.GetChild(0).GetChild(0);
+
+        animator = body.GetComponent<Animator>();
+        bones = body.GetComponent<Bones>();
         controller = transform.GetComponent<CentralController>();
 
         AnimatorHandler = new AnimatorHandler(animator);
-
         proceduralAnimator = gameObject.AddComponent<ProceduralAnimator>();
         proceduralAnimator.PretendConstructor(AnimatorHandler, animator);
-        notProcedural = gameObject.AddComponent<NotProcedural>();
+
+        still = proceduralAnimations.GetComponent<Still>();
+        walking = proceduralAnimations.GetComponent<Walking>();
+        notProcedural = proceduralAnimations.GetComponent<NotProcedural>();
+
+        still.PretendConstructor(bones);
+        walking.PretendConstructor(bones);
+        notProcedural.PretendConstructor(bones);
     }
 
     void Start()
     {
         To(null, Animation.doubleJumping, () => animator.GetBool("double jump"));
         To(null, Animation.jumping, () => animator.GetBool("jumped"));
-        To(walking, null, () => controller.dirX != 0 && controller.isGrounded);
-        To(still, null, () => controller.dirX == 0 && controller.isGrounded);
+        //To(walking, null, () => controller.dirX != 0 && controller.isGrounded);
+        //To(still, null, () => controller.dirX == 0 && controller.isGrounded);
+        To(walking, null, () => controller.isGrounded);
 
         proceduralAnimator.SetAnimation(still, null);
 

@@ -4,18 +4,7 @@ using UnityEngine;
 
 public class Still : ProceduralAnimation
 {
-    public bool unstickToGround { get; private set; }
     private float slipTimer;
-
-    private Animator animator;
-    private Rigidbody2D rig;
-    private CentralController controller;
-    private LayerMask map = 1 << 11;
-
-    public Transform frontLeg, backLeg;
-    public Transform frontThigh, backThigh;
-    public Transform frontFoot, backFoot;
-    public Transform upperBody;
 
     [Header("Offsets")]
     [Range(0, 4)]
@@ -33,30 +22,35 @@ public class Still : ProceduralAnimation
     [Range(0, 3)]
     public float midAirFrontWeight, midAirBackWeight;
 
-    [Range(-5, 10)]
+    [Range(-10, 10)]
     public float frontFootOffset;
-    [Range(-5, 10)]
+    [Range(-10, 10)]
     public float backFootOffset;
-    [Range(-4, 4)]
-    public float bend;
+    [Range(0, 2)]
+    public float groundYOffset;
     [Range(0, 100)]
     public float slipForce;
 
     private float frontGroundSlope, backGroundSlope;
     private float frontGroundAngle, backGroundAngle;
     private float frontSideWeight, backSideWeight;
+    private Vector2 frontLegStartingPos, backLegStartPos;
 
     //cached variables
     private Vector2 groundDir;
     private float groundSlope, zAngle;
     private float weightedXCoordinate;
-    private float frontLegHangOffset, backLegHangOffset;
 
     private void Awake()
     {
-        animator = transform.GetComponent<Animator>();
-        controller = transform.parent.GetComponent<CentralController>();
-        rig = transform.parent.GetComponent<Rigidbody2D>();
+        frontLegStartingPos = new Vector2(-0.26f, -0.45f);
+        backLegStartPos = new Vector2(-0.006f, -0.451f);
+    }
+
+    public override void OnEnter()
+    {
+        frontLeg.localPosition = frontLegStartingPos;
+        backLeg.localPosition = backLegStartPos;
     }
 
     public override void Tick()
@@ -89,8 +83,7 @@ public class Still : ProceduralAnimation
         }
 
         // get the weighted average x position btwn the two legs 
-        weightedXCoordinate = ((frontLeg.position.x + bend * directionFacing) * backSideWeight
-                + (backLeg.position.x + bend * directionFacing) * frontSideWeight)
+        weightedXCoordinate = (frontLeg.position.x * backSideWeight + backLeg.position.x * frontSideWeight)
                 / (frontSideWeight + backSideWeight);
 
         // set the thighs to the weighted average x position. slight offset so they don't overlap
@@ -143,10 +136,10 @@ public class Still : ProceduralAnimation
             if (Mathf.Abs(groundSlope) < 1.88f)
             {
                 // update the leg to be on the ground
-                leg.position = new Vector2(leg.position.x, hit2D.point.y);
+                leg.position = new Vector2(leg.position.x, hit2D.point.y + groundYOffset);
 
                 // rotate the feet to be parallel with the ground 
-                zAngle += (foot == frontFoot ? frontFootOffset : backFootOffset) + directionAngle;
+                zAngle += (foot == frontFoot ? frontFootOffset : backFootOffset) * directionFacing + directionAngle;
                 foot.transform.eulerAngles = new Vector3(directionAngle, 0f, zAngle * directionFacing
                     * Mathf.Sign(groundSlope));
 
@@ -156,7 +149,7 @@ public class Still : ProceduralAnimation
         }
 
         // when no ground was found, or the ground was too steep, rotate the feet horizontally 
-        zAngle = (foot == frontFoot ? frontFootOffset : backFootOffset) + directionAngle;
+        zAngle = (foot == frontFoot ? frontFootOffset : backFootOffset) * directionFacing + directionAngle;
         foot.transform.eulerAngles = new Vector3(directionAngle, 0f, zAngle * directionFacing
             * Mathf.Sign(groundSlope));
 
@@ -189,8 +182,8 @@ public class Still : ProceduralAnimation
     private void updateLegsWhileInMidAir()
     {
         //reset leg positions
-        frontLeg.position = new Vector2(frontLeg.position.x, transform.parent.position.y - hangOffsetY);
-        backLeg.position = new Vector2(backLeg.position.x, transform.parent.position.y - hangOffsetY);
+        frontLeg.position = new Vector2(frontLeg.position.x, entity.position.y - hangOffsetY);
+        backLeg.position = new Vector2(backLeg.position.x, entity.position.y - hangOffsetY);
 
         //if not grounded, set weights so that both legs are relatively straight
         frontSideWeight = midAirFrontWeight;

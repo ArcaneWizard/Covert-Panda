@@ -43,7 +43,7 @@ public class WeaponConfiguration : MonoBehaviour
         shooting = entity.GetComponent<CentralShooting>();
         animator = entity.GetComponent<Animator>();
 
-        Limbs = entity.transform.GetChild(0).GetChild(0).GetChild(0).transform.GetComponent<Limbs>();
+        Limbs = weaponSystem.armBones.GetComponent<Limbs>();
         aimTarget = Limbs.getAimTarget(limbs);
         IK_Coordinates = Limbs.getIKCoordinates(limbs);
 

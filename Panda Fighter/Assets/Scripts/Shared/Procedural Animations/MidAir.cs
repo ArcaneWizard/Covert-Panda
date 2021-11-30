@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MidAir : MonoBehaviour
+public class MidAir : ProceduralAnimation
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void OnEnter()
     {
-
+        
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Tick()
     {
 
     }

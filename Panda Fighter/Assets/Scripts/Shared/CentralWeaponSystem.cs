@@ -17,6 +17,7 @@ public class CentralWeaponSystem : MonoBehaviour
 
     protected CentralShooting shooting;
     protected CentralLookAround lookAround;
+    public Transform armBones;
     private List<GameObject> Limbs_And_Weapons;
 
     public virtual void Awake()
@@ -50,7 +51,7 @@ public class CentralWeaponSystem : MonoBehaviour
             ammo.Add(tag, 0);
         }
 
-        WeaponStats weaponStats = new WeaponStats(this);
+        WeaponStats weaponStats = new WeaponStats(this, armBones);
     }
 
     public virtual void selectWeapon(string weapon)
