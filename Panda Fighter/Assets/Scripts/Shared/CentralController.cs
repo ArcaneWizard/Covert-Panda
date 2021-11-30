@@ -7,8 +7,9 @@ public class CentralController : MonoBehaviour
     protected Rigidbody2D rig;
     protected Transform body;
     protected Animator animator;
-    protected CentralAnimationController animController;
+    protected CentralAnimationController animControls;
     protected ProceduralAnimator proceduralAnimator;
+    protected AnimatorHandler animatorHandler;
 
     [Header("Limbs & Colliders")]
     public Transform shootingArm;
@@ -60,7 +61,7 @@ public class CentralController : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
         body = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        animController = transform.GetComponent<CentralAnimationController>();
+        animControls = transform.GetComponent<CentralAnimationController>();
 
         boxCollider = transform.GetChild(0).GetComponent<BoxCollider2D>();
         capsuleCollider = transform.GetChild(0).GetComponent<CapsuleCollider2D>();
@@ -71,12 +72,13 @@ public class CentralController : MonoBehaviour
 
     public void Start()
     {
-        proceduralAnimator = animController.proceduralAnimator;
+        proceduralAnimator = animControls.proceduralAnimator;
+        animatorHandler = animControls.AnimatorHandler;
     }
 
     public virtual void Update()
     {
-        updateIfGrounded(animController.disableLimbsDuringDoubleJump);
+        updateIfGrounded(animControls.disableLimbsDuringDoubleJump);
         isTouchingMap = touchingMap.detected;
         wallToTheLeft = facingRight ? leftWall.detected : rightWall.detected;
         wallToTheRight = facingRight ? rightWall.detected : leftWall.detected;
@@ -93,7 +95,7 @@ public class CentralController : MonoBehaviour
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
         rig.AddForce(new Vector2(0, launchBoostForce));
-        animator.SetBool("jumped", true);
+        animControls.startJumpAnimation();
     }
 
     // update whether or not the creature is on the ground (bool) and the ground angle
@@ -157,22 +159,9 @@ public class CentralController : MonoBehaviour
     protected IEnumerator adjustCollidersBasedOnState()
     {
         yield return new WaitForSeconds(0.03f);
-        /*//tuck the feet ground raycasters in when jumping
-        rightFoot.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
-        : new Vector3(0.332f, rightFoot.localPosition.y, 0);
-
-        leftFoot.localPosition = animator.GetInteger("Phase") != 2
-        ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
-        : new Vector3(-0.157f, leftFoot.localPosition.y, 0);*/
 
         //thin collider when jumping
-        bool jumping = animController.AnimatorHandler.IsPlaying(Animation.jumping);
-        boxCollider.size = new Vector2(jumping ? 0.6f : 0.68f, boxCollider.size.y);
-        capsuleCollider.size = new Vector2(jumping ? 0.6f : 0.7f, capsuleCollider.size.y);
-
-        //shorten collider when double jumping
-        boxCollider.size = new Vector2(boxCollider.size.x, animator.GetBool("double jump") ? 2f : 2.55f);
-        capsuleCollider.size = new Vector2(capsuleCollider.size.x, animator.GetBool("double jump") ? 0.1f : 1.46f);
+        boxCollider.size = new Vector2(animator.GetBool("jumped") ? 0.6f : 0.68f, boxCollider.size.y);
+        capsuleCollider.size = new Vector2(animator.GetBool("jumped") ? 0.6f : 0.7f, capsuleCollider.size.y);
     }
 }

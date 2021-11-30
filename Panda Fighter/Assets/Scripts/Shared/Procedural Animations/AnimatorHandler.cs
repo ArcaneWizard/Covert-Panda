@@ -15,16 +15,13 @@ public class AnimatorHandler
     public void SetAnimation(string animation)
     {
         currentAnimation = animation;
-        animator.SetInteger("Phase", getAnimation(animation));
-        Debug.Log(currentAnimation + ", " + getAnimation(animation));
+        animator.SetInteger("Phase", phaseOf(animation));
     }
 
     public bool IsPlaying(string animation)
-    {
-        return animator.GetInteger("Phase") == getAnimation(animation);
-    }
+        => animator.GetInteger("Phase") == phaseOf(animation);
 
-    private int getAnimation(string animation)
+    private int phaseOf(string animation)
     {
         switch (animation)
         {

@@ -6,6 +6,7 @@ public class ProceduralAnimator : MonoBehaviour
 {
     public ProceduralAnimation currentProceduralAnimation { get; private set; }
     private AnimatorHandler animatorHandler;
+    private Animator animator;
 
     //all transitions
     private Dictionary<System.Type, List<Transition>> transitions = new Dictionary<System.Type, List<Transition>>();
@@ -17,9 +18,10 @@ public class ProceduralAnimator : MonoBehaviour
     //empty list of transitions 
     private static List<Transition> EmptyTransitions = new List<Transition>();
 
-    public void PretendConstructor(AnimatorHandler animatorHandler)
+    public void PretendConstructor(AnimatorHandler animatorHandler, Animator animator)
     {
         this.animatorHandler = animatorHandler;
+        this.animator = animator;
     }
 
     public void Tick()
@@ -38,7 +40,6 @@ public class ProceduralAnimator : MonoBehaviour
                 : transition.proceduralAnimation.GetType().ToString();
 
             DebugGUI.debugText7 = "Transitioned to " + b + " from " + a;
-            DebugGUI.debugText8 = $"p: {transition.proceduralAnimation} and a: {transition.animation}";
             SetAnimation(transition.proceduralAnimation, transition.animation);
         }
 
@@ -48,6 +49,8 @@ public class ProceduralAnimator : MonoBehaviour
     public void SetAnimation(ProceduralAnimation proceduralAnimation, String animation)
     {
         animatorHandler.SetAnimation(animation);
+        animator.enabled = (animatorHandler.currentAnimation != null);
+
         if (proceduralAnimation == currentProceduralAnimation)
             return;
 

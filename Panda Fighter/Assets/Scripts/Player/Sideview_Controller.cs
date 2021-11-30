@@ -29,10 +29,13 @@ public class Sideview_Controller : CentralController
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, doubleJumpForce));
-            animController.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
+            animControls.startDoubleJumpAnimation();
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.W))
+            DebugGUI.debugText9 = $"pressed w: {Input.GetKeyDown(KeyCode.W)} + not in dJ: {!animator.GetBool("double jump")} "
+            + $"grounded: {isGrounded} or slipped: {proceduralAnimator.currentProceduralAnimation.slipped}";
         //W to jump if you're grounded or literally are just going off the edge of a platform
         if (Input.GetKeyDown(KeyCode.W) && !animator.GetBool("double jump")
             && (isGrounded || proceduralAnimator.currentProceduralAnimation.slipped))
@@ -40,7 +43,7 @@ public class Sideview_Controller : CentralController
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.gravityScale = maxGravity;
             rig.AddForce(new Vector2(0, jumpForce));
-            animator.SetBool("jumped", true);
+            animControls.startJumpAnimation();
         }
 
         if (Input.GetKeyDown(KeyCode.S))
@@ -81,7 +84,7 @@ public class Sideview_Controller : CentralController
             }
 
             //player velocity is parallel to the slanted ground
-            else
+            else if (!proceduralAnimator.currentProceduralAnimation.slipped)
                 rig.velocity = groundDir * speed * dirX;
         }
 

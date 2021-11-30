@@ -18,7 +18,7 @@ public class AI_Controller : CentralController
     //action progress starts off finished
     private void Start()
     {
-        actionDecider = new ActionExecuter(this, animController, animator, rig);
+        actionDecider = new ActionExecuter(this, animControls, animator, rig);
 
         dirX = 0;
         actionProgress = "finished";

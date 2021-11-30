@@ -8,4 +8,8 @@ public abstract class ProceduralAnimation : MonoBehaviour
 
     public virtual void OnEnter() { }
     public abstract void Tick();
+
+    protected int directionFacing => transform.localEulerAngles.y == 0 ? 1 : -1;
+    protected int directionAngle => transform.localEulerAngles.y == 0 ? 0 : 180;
+    protected bool facingRight => transform.localEulerAngles.y == 0;
 }

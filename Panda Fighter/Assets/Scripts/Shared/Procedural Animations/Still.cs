@@ -61,47 +61,37 @@ public class Still : ProceduralAnimation
 
     public override void Tick()
     {
-        unstickToGround = animator.GetBool("jumped") || !controller.isGrounded || !controller.isTouchingMap;
+        // update leg bones so that both foot end up on the ground looking natural. Store whether or not
+        // either foot was able to ultimately make contact with the ground  
+        bool frontLegMadeContact = legSticksToGround(frontLeg, frontFoot, frontThigh);
+        bool backLegMadeContact = legSticksToGround(backLeg, backFoot, backThigh);
 
-        // when entity is in mid air, its legs should straighten out 
-        if (unstickToGround)
-            updateLegsWhileInMidAir();
+        DebugGUI.debugText8 = $"front contact: {frontLegMadeContact} and back contact: {backLegMadeContact}";
 
-        // when entity is on the ground
-        else
+        // give each leg a weight based off the ground's steepness (higher weight will mean straighter leg)
+        if (frontLegMadeContact && backLegMadeContact)
+            initializeLegWeights(frontLegMadeContact, backLegMadeContact);
+
+        // if one of the legs doesn't have ground contact, ie. is off a platform's edge, 
+        // the entity should slip "off" the edge
+        if (!frontLegMadeContact || !backLegMadeContact)
         {
-            // update leg bones so that both foot end up on the ground looking natural. Store whether or not
-            // either foot was able to ultimately make contact with the ground  
-            bool frontLegMadeContact = legSticksToGround(frontLeg, frontFoot, frontThigh);
-            bool backLegMadeContact = legSticksToGround(backLeg, backFoot, backThigh);
+            //push the entity to the left/right so it slides or falls off the ledge
+            if ((controller.leftGround == null && facingRight) || (controller.rightGround == null && !facingRight))
+                rig.AddForce(new Vector2(-slipForce, 0));
+            else
+                rig.AddForce(new Vector2(slipForce, 0));
 
-            DebugGUI.debugText8 = $"front contact: {frontLegMadeContact} and back contact: {backLegMadeContact}";
+            slipped = true;
+            slipTimer = 0.3f;
 
-            // give each leg a weight based off the ground's steepness (higher weight will mean straighter leg)
-            if (frontLegMadeContact && backLegMadeContact)
-                initializeLegWeights(frontLegMadeContact, backLegMadeContact);
-
-            // if one of the legs doesn't have ground contact, ie. is off a platform's edge, 
-            // the entity should slip "off" the edge
-            if (!frontLegMadeContact || !backLegMadeContact)
-            {
-                //push the entity to the left/right so it slides or falls off the ledge
-                if ((controller.leftGround == null && facingRight) || (controller.rightGround == null && !facingRight))
-                    rig.AddForce(new Vector2(-slipForce, 0));
-                else
-                    rig.AddForce(new Vector2(slipForce, 0));
-
-                slipped = true;
-                slipTimer = 0.3f;
-
-                updateLegsWhileInMidAir();
-            }
+            updateLegsWhileInMidAir();
         }
 
         // get the weighted average x position btwn the two legs 
         weightedXCoordinate = ((frontLeg.position.x + bend * directionFacing) * backSideWeight
-            + (backLeg.position.x + bend * directionFacing) * frontSideWeight)
-            / (frontSideWeight + backSideWeight);
+                + (backLeg.position.x + bend * directionFacing) * frontSideWeight)
+                / (frontSideWeight + backSideWeight);
 
         // set the thighs to the weighted average x position. slight offset so they don't overlap
         float frontThighX = weightedXCoordinate - frontThighXOffset * directionFacing;
@@ -163,7 +153,6 @@ public class Still : ProceduralAnimation
                 //return that the leg was aligned to the ground successfuly
                 return true;
             }
-            //debugstuff(leg, foot);
         }
 
         // when no ground was found, or the ground was too steep, rotate the feet horizontally 
@@ -173,7 +162,6 @@ public class Still : ProceduralAnimation
 
         // return that the leg wasn't aligned to the ground 
         return false;
-
     }
 
     //initialize leg weights (higher weight = straighter, lower weight = bends more)
@@ -210,8 +198,4 @@ public class Still : ProceduralAnimation
     }
 
     private float getWeightFromAngle(float angle) => 5f * angle / 90f;
-    private int directionFacing => transform.localEulerAngles.y == 0 ? 1 : -1;
-    private int directionAngle => transform.localEulerAngles.y == 0 ? 0 : 180;
-    private bool facingRight => transform.localEulerAngles.y == 0;
-
 }
