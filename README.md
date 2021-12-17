@@ -1,4 +1,2 @@
 # Covert Panda
- Game where you're a panda breaking into Area 51. What could go wrong?
-
-[quick access Bot AI script](Panda%20Fighter/Assets/Scripts/AI/BotAI.cs)
+ Game where you're an Amphibow at war with a sibling species, the Reptidons. Having a common ancestor, you each share some key genetic abilities and traits, but have your differences. Long ago, Reptidons in their blood-filled wrath wipedo out the Caelimanders, another one of your sibling speices. They've grown increasingly aggressive, and that's why you joined the fight. But soon you'd find out, everything you'd ever been told, was a lie.
