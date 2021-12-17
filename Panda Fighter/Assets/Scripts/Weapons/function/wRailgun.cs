@@ -9,7 +9,7 @@ public class wRailgun : IWeapon
 
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        timer = 0f;
+        /*timer = 0f;
         showVisualChargingUp();
 
         while (timer < configuration.fireRateInfo)
@@ -23,9 +23,10 @@ public class wRailgun : IWeapon
 
             yield return new WaitForSeconds(Time.deltaTime);
             timer += Time.deltaTime;
-        }
+        }*/
 
         DoAttack(shooting.getAim(), bullet, rig);
+        yield return null;
     }
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)

@@ -13,7 +13,6 @@ public class CentralController : MonoBehaviour
     [Header("Limbs and colliders")]
     public Transform shootingArm;
     public BoxCollider2D mainCollider;
-    public BoxCollider2D footCollider;
 
     [Header("Camera stuff")]
     public Camera camera;
@@ -22,7 +21,8 @@ public class CentralController : MonoBehaviour
 
     public Transform leftFoot;
     public Transform rightFoot;
-    public Transform groundColliders;
+    public Transform physicalLeftFoot;
+    public Transform physicalRightFoot;
 
     public float maxSpeed { get; private set; }
     protected float speed;
@@ -81,17 +81,19 @@ public class CentralController : MonoBehaviour
         if (zAngle > 180)
             zAngle = zAngle - 360;
 
+        float newGroundAngle = groundAngle <= 180 ? groundAngle / 2.2f : ((groundAngle - 360) / 2.2f);
         if (isGrounded && (dirX != 0 || (dirX == 0 && groundAngle == lastGroundAngle)))
         {
-            float newGroundAngle = ((groundAngle - 360) / 1.4f);
-
-            if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f && groundAngle <= 180)
-                transform.eulerAngles = new Vector3(0, 0, zAngle + (groundAngle / 1.4f - zAngle) * 20 * Time.deltaTime);
-            else if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
-                transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20f * Time.deltaTime);
+            if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
+                transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20 * Time.deltaTime);
         }
+
         else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
+
+        float tempGroundAngle = (groundAngle <= 180f) ? groundAngle : groundAngle - 360;
+        physicalLeftFoot.transform.localEulerAngles = new Vector3(0, 0, 90 + tempGroundAngle);
+        physicalRightFoot.transform.localEulerAngles = new Vector3(0, 0, 90 + tempGroundAngle);
     }
 
     //check if the creature is on the ground + update the groundAngle

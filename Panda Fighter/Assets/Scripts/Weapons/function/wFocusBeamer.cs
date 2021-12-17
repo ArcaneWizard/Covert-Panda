@@ -14,7 +14,9 @@ public class wFocusBeamer : IWeapon
     {
         reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint);
         bullet.transform.right = aim;
-        bullet.transform.GetComponent<FocusBeam>().Beam(configuration.bulletSpawnPoint);
+
+        bullet.transform.GetComponent<FocusBeam>().Beam(configuration.bulletSpawnPoint,
+            configuration.weapon.transform, animController.disableLimbsDuringDoubleJump);
     }
 
 }

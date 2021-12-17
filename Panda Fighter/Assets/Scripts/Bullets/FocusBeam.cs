@@ -29,12 +29,16 @@ public class FocusBeam : MonoBehaviour
             gameObject.SetActive(false);
     }
 
-    public void Beam(Transform bulletSpawnPoint)
+    public void Beam(Transform bulletSpawnPoint, Transform weapon, bool inDoubleJump)
     {
         timerStayAlive = Time.deltaTime;
 
         beam.SetPosition(0, bulletSpawnPoint.position);
-        RaycastHit2D hit = Physics2D.Raycast(bulletSpawnPoint.position, transform.right, 100f, map);
+        RaycastHit2D hit = Physics2D.Raycast(
+            bulletSpawnPoint.position,
+            inDoubleJump ? weapon.right : weapon.right,
+            100f, map
+        );
 
         if (hit.collider != null)
         {

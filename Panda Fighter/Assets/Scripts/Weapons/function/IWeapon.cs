@@ -14,6 +14,7 @@ public abstract class IWeapon : MonoBehaviour
     [HideInInspector] public string bonusAttackProgress { get; protected set; }
     [HideInInspector] public WeaponConfiguration configuration;
     [HideInInspector] public CentralShooting shooting;
+    [HideInInspector] public CentralAnimationController animController;
 
     public void DoSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
@@ -43,6 +44,7 @@ public abstract class IWeapon : MonoBehaviour
     public virtual void Awake()
     {
         shooting = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralShooting>();
+        animController = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralAnimationController>();
 
         attackProgress = "finished";
         bonusAttackProgress = "finished";

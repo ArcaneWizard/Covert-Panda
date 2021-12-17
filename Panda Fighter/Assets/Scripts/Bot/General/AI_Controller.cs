@@ -203,7 +203,7 @@ public class AI_Controller : CentralController
             rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.gravityScale = maxGravity;
             rig.AddForce(new Vector2(0, doubleJumpForce));
-            controller.startDoubleJumpAnimation(dirX, leftFoot.gameObject, rightFoot.gameObject);
+            StartCoroutine(controller.startDoubleJumpAnimation());
         }
     }
 
