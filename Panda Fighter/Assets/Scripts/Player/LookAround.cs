@@ -26,7 +26,7 @@ public class LookAround : CentralLookAround
         if (!animController.disableLimbsDuringDoubleJump)
         {
             //player faces left or right depending on mouse cursor
-            if (Input.mousePosition.x >= camera.WorldToScreenPoint(shootingArm.parent.position).x)
+            if (Input.mousePosition.x >= camera.WorldToScreenPoint(transform.position).x)
                 body.localRotation = Quaternion.Euler(0, 0, 0);
             else
                 body.localRotation = Quaternion.Euler(0, 180, 0);

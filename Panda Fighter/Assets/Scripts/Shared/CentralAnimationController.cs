@@ -56,7 +56,9 @@ public class CentralAnimationController : MonoBehaviour
         else
             animatorOverrideController["backwards double jump"] = doubleJumpForwards;
 
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.65f);
+
+
         Debug.Log(animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1);
         disableLimbsDuringDoubleJump = false;
     }
