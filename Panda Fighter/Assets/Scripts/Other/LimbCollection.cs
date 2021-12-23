@@ -31,6 +31,8 @@ public class LimbCollection : MonoBehaviour
     }
 #endif
 
+    void Awake() => updateSprites();
+
     private void updateSprites()
     {
         sprites.Clear();

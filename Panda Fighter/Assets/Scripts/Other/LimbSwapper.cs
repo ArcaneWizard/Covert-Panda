@@ -9,10 +9,16 @@ public class LimbSwapper : MonoBehaviour
     public limbTypes limbType;
 
     private Transform armBones;
-    private LimbCollection spriteCollection;
+    public LimbCollection spriteCollection;
 
     private SpriteRenderer sR;
     private UnityEngine.U2D.Animation.SpriteSkin spriteSkin;
+
+    void Start()
+    {
+        initializeVariables();
+        updateSpriteAndBoneTransforms();
+    }
 
 #if (UNITY_EDITOR)
     void OnValidate()
@@ -66,9 +72,6 @@ public class LimbSwapper : MonoBehaviour
     {
         if (!sR)
             sR = transform.GetComponent<SpriteRenderer>();
-
-        if (!spriteCollection)
-            findSpriteCollection();
 
         if (!spriteSkin)
             spriteSkin = transform.GetComponent<UnityEngine.U2D.Animation.SpriteSkin>();
