@@ -12,7 +12,7 @@ public class CentralWeaponSystem : MonoBehaviour
     protected Dictionary<string, WeaponConfiguration> weaponConfigurations = new Dictionary<string, WeaponConfiguration>();
     protected Transform allBulletPools;
 
-    public string weaponSelected;
+    public string weaponSelected { private set; get; }
     protected int bulletNumber = 0;
 
     protected CentralShooting shooting;
@@ -26,6 +26,7 @@ public class CentralWeaponSystem : MonoBehaviour
 
         Limbs_And_Weapons = new List<GameObject>();
         allBulletPools = transform.parent.GetChild(1).transform.GetChild(0);
+        weaponSelected = "";
 
         foreach (Transform bulletPool in allBulletPools)
         {
@@ -65,7 +66,7 @@ public class CentralWeaponSystem : MonoBehaviour
         weaponSelected = weapon;
         IWeapons[weaponSelected].SetDefaultAnimation();
         IWeapons[weaponSelected].resetAttackProgress();
-        shooting.combatMode = weaponConfiguration.combatMode;
+        shooting.updateCombatMode(weaponConfiguration.combatMode);
         lookAround.setAimTarget(weaponConfiguration.aimTarget);
         lookAround.calculateShoulderAngles(weaponConfiguration.IK_Coordinates);
 
@@ -73,7 +74,7 @@ public class CentralWeaponSystem : MonoBehaviour
             bulletNumber = ++bulletNumber % bulletPools[weaponSelected].Count;
 
         if (weaponConfiguration.combatMode == "handheld")
-            shooting.weaponHeld = GetBullet;
+            shooting.updateWeaponHeldForHandheldWeapons();
 
         //deactivate the previous animated arm limbs + enable new ones
         foreach (GameObject limb_or_weapon in Limbs_And_Weapons)

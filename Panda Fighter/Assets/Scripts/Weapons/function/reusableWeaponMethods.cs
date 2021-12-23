@@ -19,6 +19,9 @@ public static class reusableWeaponMethods
         bulletRig.velocity = new Vector2(0, 0);
         bulletRig.angularVelocity = 0;
 
+        //reenable collider
+        bullet.transform.GetComponent<Collider2D>().enabled = true;
+
         //reset the bullet sprite to be opaque (ie. alpha = 1)
         if (bullet.GetComponent<SpriteRenderer>())
         {

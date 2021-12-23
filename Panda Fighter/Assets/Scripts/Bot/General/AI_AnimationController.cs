@@ -7,7 +7,7 @@ public class AI_AnimationController : CentralAnimationController
     protected override void setAnimationState()
     {
         base.setAnimationState();
-        bool facingRight = (controller.dirX == 1);
+        bool facingRight = body.localEulerAngles.y == 0;
 
         //if you're looking in the opposite direction as you're running, set walking speed to -1 (which auto triggers backwards walking animation)
         if (animator.GetInteger("Phase") == 1)

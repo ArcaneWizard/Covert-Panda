@@ -4,9 +4,8 @@ using UnityEngine;
 
 public abstract class CentralShooting : MonoBehaviour
 {
-    [HideInInspector]
-    public GameObject weaponHeld = null;
-    public string combatMode = "gun";
+    public GameObject weaponHeld { get; private set; }
+    public string combatMode { get; private set; }
 
     protected CentralWeaponSystem weaponSystem;
     protected CentralLookAround lookAround;
@@ -19,6 +18,7 @@ public abstract class CentralShooting : MonoBehaviour
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         lookAround = transform.GetComponent<CentralLookAround>();
+        weaponHeld = null;
     }
 
     private void LateUpdate()
@@ -38,6 +38,7 @@ public abstract class CentralShooting : MonoBehaviour
     }
 
     public void updateWeaponHeldForHandheldWeapons() => weaponHeld = weaponSystem.GetBullet;
+    public void updateCombatMode(string combatMode) => this.combatMode = combatMode;
 
     //specify which limbs, weapon and aim target to activate (the latter helps a weapon track while aiming) 
     public void configureWeaponAndArms()

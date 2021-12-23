@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5768351909329663902
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3705327250749769041}
+  - component: {fileID: 531144567586894041}
+  m_Layer: 0
+  m_Name: Angelfish
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3705327250749769041
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5768351909329663902}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -49.978966, y: -54.635006, z: -10.46429}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &531144567586894041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5768351909329663902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec6a9a0b62e5a4ce4abfdebf6d316fda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chest: {fileID: 1511761087375339853, guid: dd644eb141e1f43909e03bf4bb0289d6, type: 3}
+  mainArmPad: {fileID: -4269971393152302750, guid: 82400feb07d464da4b77781e6f3cf9c0,
+    type: 3}
+  mainArm: {fileID: -7899334835763382804, guid: 82400feb07d464da4b77781e6f3cf9c0,
+    type: 3}
+  mainHand: {fileID: -5208588627660711946, guid: 82400feb07d464da4b77781e6f3cf9c0,
+    type: 3}
+  backArmPad: {fileID: -4269971393152302750, guid: 82400feb07d464da4b77781e6f3cf9c0,
+    type: 3}
+  backArm: {fileID: -7899334835763382804, guid: 82400feb07d464da4b77781e6f3cf9c0,
+    type: 3}
+  backHand: {fileID: -5208588627660711946, guid: 82400feb07d464da4b77781e6f3cf9c0,
+    type: 3}
+  leftThigh: {fileID: 8490086132672433910, guid: dd644eb141e1f43909e03bf4bb0289d6,
+    type: 3}
+  leftLeg: {fileID: 5889933518502121071, guid: dd644eb141e1f43909e03bf4bb0289d6, type: 3}
+  leftFoot: {fileID: 2367864969382540655, guid: dd644eb141e1f43909e03bf4bb0289d6,
+    type: 3}
+  rightThigh: {fileID: 8490086132672433910, guid: dd644eb141e1f43909e03bf4bb0289d6,
+    type: 3}
+  rightLeg: {fileID: 5889933518502121071, guid: dd644eb141e1f43909e03bf4bb0289d6,
+    type: 3}
+  rightFoot: {fileID: 2367864969382540655, guid: dd644eb141e1f43909e03bf4bb0289d6,
+    type: 3}
+  head: {fileID: 6003309644955928120, guid: dd644eb141e1f43909e03bf4bb0289d6, type: 3}

@@ -21,7 +21,7 @@ public class AI_Controller : CentralController
     {
         base.Start();
 
-        dirX = 0;
+        dirX = UnityEngine.Random.Range(0, 2) * 2 - 1;
         actionProgress = "finished";
     }
 

@@ -10,10 +10,12 @@ public class CentralLookAround : MonoBehaviour
     private float upVector, downVector, rightVector;
     private float up, right, down;
 
-    private Transform aimTarget;
     public Transform head;
     public Transform shootingArm;
-    public Transform body;
+    public Camera camera;
+
+    protected Transform body;
+    private Transform aimTarget;
 
     protected CentralAnimationController animController;
     protected CentralShooting shooting;
@@ -22,6 +24,7 @@ public class CentralLookAround : MonoBehaviour
     {
         animController = transform.GetComponent<CentralAnimationController>();
         shooting = transform.GetComponent<CentralShooting>();
+        body = transform.GetChild(0);
     }
 
     protected void rotateHeadAndWeapon(Vector2 shootDirection, float shootAngle)

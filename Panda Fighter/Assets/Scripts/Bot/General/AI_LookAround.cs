@@ -5,8 +5,6 @@ using UnityEngine;
 public class AI_LookAround : CentralLookAround
 {
     public Transform player;
-    public Camera camera;
-
     public LayerMask mapOrPlayer;
     public bool playerIsInSight { get; private set; }
 

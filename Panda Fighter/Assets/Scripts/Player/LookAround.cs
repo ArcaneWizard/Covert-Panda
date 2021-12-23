@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LookAround : CentralLookAround
 {
-    public Camera camera;
     private Shooting playerShooting;
 
     public override void Awake()

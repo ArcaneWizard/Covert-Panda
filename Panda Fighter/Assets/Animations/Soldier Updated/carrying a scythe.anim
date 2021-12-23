@@ -47,7 +47,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Soldier/arm bones/scythe/front shoulder bone
+    path: Body/arm bones/scythe/front shoulder bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -81,7 +81,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -115,7 +115,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone/back wrist bone
   - curve:
       serializedVersion: 2
@@ -150,7 +150,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
       wrist bone
   m_PositionCurves:
   - curve:
@@ -186,7 +186,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone
   m_ScaleCurves: []
   m_FloatCurves: []
@@ -199,35 +199,35 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 3804691967
+      path: 3862321242
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 1692627948
+      path: 771036314
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 1832567463
+      path: 804563129
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3585511362
+      path: 1543094343
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 246386756
+      path: 564321223
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -289,7 +289,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Soldier/arm bones/scythe/front shoulder bone
+    path: Body/arm bones/scythe/front shoulder bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -326,7 +326,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Soldier/arm bones/scythe/front shoulder bone
+    path: Body/arm bones/scythe/front shoulder bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -363,7 +363,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Soldier/arm bones/scythe/front shoulder bone
+    path: Body/arm bones/scythe/front shoulder bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -400,7 +400,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -437,7 +437,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -474,7 +474,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -511,7 +511,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone
     classID: 4
     script: {fileID: 0}
@@ -549,7 +549,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone
     classID: 4
     script: {fileID: 0}
@@ -587,7 +587,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone
     classID: 4
     script: {fileID: 0}
@@ -625,7 +625,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone/back wrist bone
     classID: 4
     script: {fileID: 0}
@@ -663,7 +663,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone/back wrist bone
     classID: 4
     script: {fileID: 0}
@@ -701,7 +701,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone/back wrist bone
     classID: 4
     script: {fileID: 0}
@@ -739,7 +739,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
       wrist bone
     classID: 4
     script: {fileID: 0}
@@ -777,7 +777,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
       wrist bone
     classID: 4
     script: {fileID: 0}
@@ -815,7 +815,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
       wrist bone
     classID: 4
     script: {fileID: 0}
@@ -827,7 +827,67 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Body/arm bones/scythe/front shoulder bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Body/arm bones/scythe/front shoulder bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone/back wrist bone
     classID: 4
     script: {fileID: 0}
@@ -838,7 +898,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone/back wrist bone
     classID: 4
     script: {fileID: 0}
@@ -849,7 +909,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/back
       arm bone/back wrist bone
     classID: 4
     script: {fileID: 0}
@@ -859,8 +919,8 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
+    attribute: m_LocalEulerAngles.x
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
       wrist bone
     classID: 4
     script: {fileID: 0}
@@ -871,18 +931,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
-      wrist bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
       wrist bone
     classID: 4
     script: {fileID: 0}
@@ -893,57 +942,8 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Soldier/arm bones/scythe/front shoulder bone/front arm/front arm bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Soldier/arm bones/scythe/front shoulder bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Soldier/arm bones/scythe/front shoulder bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Soldier/arm bones/scythe/front shoulder bone
+    path: Body/arm bones/scythe/front shoulder bone/front arm/front arm bone/front
+      wrist bone
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0

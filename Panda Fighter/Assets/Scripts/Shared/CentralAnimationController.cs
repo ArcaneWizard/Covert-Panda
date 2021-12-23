@@ -7,7 +7,7 @@ public class CentralAnimationController : MonoBehaviour
     protected CentralController controller;
     protected Animator animator;
     protected AnimatorOverrideController animatorOverrideController;
-    private Transform body;
+    protected Transform body;
 
     public AnimationClip doubleJumpForwards;
     public AnimationClip doubleJumpBackwards;
@@ -15,25 +15,28 @@ public class CentralAnimationController : MonoBehaviour
     public bool disableLimbsDuringDoubleJump { get; private set; }
     protected bool stopSpinning = true;
     protected int spinDirection = 0;
-
     private float initialSpinSpeed = 350f;
     private float endSpinSpeed = 11f;
     private float durationSpinningFast = 0.35f;
 
+    private Vector2 initialColliderSize;
+
     private void Awake()
     {
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        body = transform.GetChild(0).transform;
+        body = transform.GetChild(0);
         controller = transform.GetComponent<CentralController>();
 
         animatorOverrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
         animator.runtimeAnimatorController = animatorOverrideController;
+
+        initialColliderSize = controller.mainCollider.size;
     }
 
     private void Update()
     {
         setAnimationState();
-        StartCoroutine(adjustFeetAndColliders(controller.rightFoot, controller.leftFoot, controller.mainCollider));
+        StartCoroutine(adjustFeetAndColliders(controller.rightGroundChecker, controller.leftGroundChecker, controller.mainCollider));
     }
 
     private void FixedUpdate() => carryOutDoubleJump();
@@ -121,7 +124,7 @@ public class CentralAnimationController : MonoBehaviour
         : new Vector3(-0.157f, leftFoot.localPosition.y, 0);
 
         mainCollider.size = new Vector2(animator.GetInteger("Phase") == 2 ? 0.68f : 1f, mainCollider.size.y);
-        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? 2f : 3.14f);
+        mainCollider.size = new Vector2(mainCollider.size.x, animator.GetBool("double jump") && !stopSpinning ? initialColliderSize.y * 2f / 3f : initialColliderSize.y);
     }
 }
 
