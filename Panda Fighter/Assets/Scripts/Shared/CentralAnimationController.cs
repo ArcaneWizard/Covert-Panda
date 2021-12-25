@@ -6,13 +6,13 @@ public class CentralAnimationController : MonoBehaviour
 {
     protected CentralController controller;
     protected Animator animator;
-    protected AnimatorOverrideController animatorOverrideController;
     protected Transform body;
 
     public AnimationClip doubleJumpForwards;
     public AnimationClip doubleJumpBackwards;
 
     public bool disableLimbsDuringDoubleJump { get; private set; }
+    private bool completedDoubleJump;
     protected bool stopSpinning = true;
     protected int spinDirection = 0;
     private float initialSpinSpeed = 350f;
@@ -26,9 +26,6 @@ public class CentralAnimationController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         body = transform.GetChild(0);
         controller = transform.GetComponent<CentralController>();
-
-        animatorOverrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
-        animator.runtimeAnimatorController = animatorOverrideController;
 
         initialColliderSize = controller.mainCollider.size;
     }
@@ -50,19 +47,19 @@ public class CentralAnimationController : MonoBehaviour
         spinDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
         stopSpinning = false;
         disableLimbsDuringDoubleJump = true;
-        animator.SetBool("double jump", true);
 
         if (controller.dirX == -1 && body.localEulerAngles.y == 0)
-            animatorOverrideController["backwards double jump"] = doubleJumpBackwards;
+            animator.SetBool("forward double jump", false);
         else if (controller.dirX == 1 && body.localEulerAngles.y == 180)
-            animatorOverrideController["backwards double jump"] = doubleJumpBackwards;
+            animator.SetBool("forward double jump", false);
         else
-            animatorOverrideController["backwards double jump"] = doubleJumpForwards;
+            animator.SetBool("forward double jump", true);
+
+        animator.SetInteger("jump version", 1);
+        animator.SetBool("double jump", true);
+        completedDoubleJump = false;
 
         yield return new WaitForSeconds(0.65f);
-
-
-        Debug.Log(animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1);
         disableLimbsDuringDoubleJump = false;
     }
 
@@ -82,6 +79,7 @@ public class CentralAnimationController : MonoBehaviour
         if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
         {
             animator.SetBool("jumped", false);
+            animator.SetInteger("jump version", 1);
             animator.SetBool("double jump", false);
             animator.SetInteger("Phase", 0);
         }
@@ -92,7 +90,7 @@ public class CentralAnimationController : MonoBehaviour
     // Note: entity's rotation is synced to the progress of the double jump spin animation
     private void carryOutDoubleJump()
     {
-        if (animator.GetBool("double jump"))
+        if (!completedDoubleJump)
         {
             float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
             if (t > 0.9f) stopSpinning = true;
@@ -105,7 +103,7 @@ public class CentralAnimationController : MonoBehaviour
                     transform.eulerAngles = new Vector3(0, 0, (initialSpinSpeed + (t - durationSpinningFast) * endSpinSpeed)) * spinDirection;
             }
             else
-                animator.SetBool("double jump", false);
+                completedDoubleJump = true;
         }
     }
 

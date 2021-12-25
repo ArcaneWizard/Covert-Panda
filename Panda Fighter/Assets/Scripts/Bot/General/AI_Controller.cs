@@ -9,9 +9,11 @@ public class AI_Controller : CentralController
 {
     public Transform decisionZone { get; private set; }
     public AI_ACTION AI_action { get; private set; }
+    private string action;
     public string actionProgress { get; private set; }
 
     private bool needsToFall;
+    private bool leftPlatform;
     private int lastMovementDirX;
     private float randomXPos;
     private float randomSpeed;
@@ -25,31 +27,38 @@ public class AI_Controller : CentralController
         actionProgress = "finished";
     }
 
-    //Define an action/decision, and set action progress to "pending start" 
-    public void BeginAction(AI_ACTION action, Transform zone)
+    // Return the coordinates of a point in space in front of the AI's upper body
+    public Vector3 InFrontOfAI() => shootingArm.position + new Vector3(dirX, 0, 0);
+
+    // Update the action to be carried out and set action progress to "pending start" 
+    public void BeginAction(AI_ACTION AI_action, Transform zone)
     {
-        AI_action = action;
+        this.AI_action = AI_action;
         decisionZone = zone;
         actionProgress = "pending start";
     }
 
-    //The point in space in front of the AI 
-    public Vector3 InFrontOfAI() => shootingArm.position + new Vector3(dirX, 0, 0);
-
-    //excute the given action and set action progress to "in progress"
+    // set action progress to "in progress", update the entity's speed and direction, then 
+    // execute the initialized action
     private void executeAction()
     {
         actionProgress = "in progress";
-        String action = AI_action.action;
+
+        speed = maxSpeed;
+        dirX = AI_action.dirX;
+        action = AI_action.action;
 
         if (action == "fallDown" || action == "fallDownCurve")
             needsToFall = true;
 
         else if (action == "headStraight")
-            dirX = AI_action.dirX;
+            actionProgress = "finished";
 
         else if (action == "normalJump" || action == "doubleJump" || action == "launchPad")
+        {
+            leftPlatform = false;
             StartCoroutine(executeVerticalMotionAction());
+        }
 
         else
             Debug.LogError($"Action {action} has no hard coded AI logic.");
@@ -69,16 +78,17 @@ public class AI_Controller : CentralController
         {
             //execute any pending action 
             if (actionProgress == "pending start")
+                executeAction();
+
+            // if the action has landed on a platform after falling, reset its speed 
+            if (actionProgress == "in progress" && !needsToFall && (action == "fallDown" || action == "fallDownCurve"))
             {
                 speed = maxSpeed;
-                dirX = AI_action.dirX;
-                actionProgress = "started";
-                executeAction();
+                actionProgress = "finished";
             }
 
-            //if an action has been executed, set action progress to 
-            //"finished" once the AI lands back on a platform
-            if (actionProgress == "in progress" && !needsToFall)
+            // if the action has landed on a platform after jumping, reset its speed 
+            else if (actionProgress == "in progress" && leftPlatform && (action == "normalJump" || action == "doubleJump" || action == "launchPad"))
             {
                 speed = maxSpeed;
                 actionProgress = "finished";
@@ -88,6 +98,9 @@ public class AI_Controller : CentralController
             if (actionProgress == "finished")
                 speed = maxSpeed;
         }
+
+        if ((action == "normalJump" || action == "doubleJump" || action == "launchPad") && !isGrounded && !leftPlatform)
+            leftPlatform = true;
     }
 
     //------------------------------------------------------------------
@@ -97,21 +110,21 @@ public class AI_Controller : CentralController
     private void executeFall()
     {
         //set fall speed only when actually falling
-        if (!isGrounded && !isTouchingMap && AI_action.action == "fallDown")
+        if (!isGrounded && AI_action.action == "fallDown")
         {
             speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
             needsToFall = false;
         }
 
         //set initial fall speed only when actually falling (+ will change dir midway during fall)
-        else if (!isGrounded && !isTouchingMap && AI_action.action == "fallDownCurve")
+        else if (!isGrounded && AI_action.action == "fallDownCurve")
         {
             StartCoroutine(executeFallingDownCurveMotion());
             needsToFall = false;
         }
 
         //slow down right as the bot is about to fall (one foot off the ledge)
-        if ((AI_action.action == "fallDownCurve" || AI_action.action == "fallDown") && (!leftFootGround || !rightFootGround) && isGrounded)
+        if ((AI_action.action == "fallDownCurve" || AI_action.action == "fallDown") && (!leftFootGround || !rightFootGround) && isGrounded && isTouchingMap)
             speed = 7f;
     }
 
@@ -231,7 +244,18 @@ public class AI_Controller : CentralController
         //when alien is not on the ground, alien velocity is just left/right with gravity applied
         else
         {
-            rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
+            //no x velocity when running into a wall mid-air to avoid clipping glitch
+            if (dirX == 1 && wallToTheRight)
+                rig.velocity = new Vector2(0, rig.velocity.y);
+
+            //no x velocity when running into a wall mid-air to avoid clipping glitch
+            else if (dirX == -1 && wallToTheLeft)
+                rig.velocity = new Vector2(0, rig.velocity.y);
+
+            //player velocity is just left or right (with gravity pulling the player down)
+            else
+                rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
+
             rig.gravityScale = maxGravity;
         }
     }

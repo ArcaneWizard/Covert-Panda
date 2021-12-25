@@ -9,7 +9,8 @@ public class AI_AnimationController : CentralAnimationController
         base.setAnimationState();
         bool facingRight = body.localEulerAngles.y == 0;
 
-        //if you're looking in the opposite direction as you're running, set walking speed to -1 (which auto triggers backwards walking animation)
+        // if you're looking in the same direction as you're running, play the 
+        // the normal running animation. Otherwise play the backwards walking animation. 
         if (animator.GetInteger("Phase") == 1)
         {
             if ((controller.dirX == 1 && facingRight) || controller.dirX == -1 && !facingRight)

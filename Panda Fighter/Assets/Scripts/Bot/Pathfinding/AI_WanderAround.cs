@@ -10,6 +10,10 @@ public class AI_WanderAround : MonoBehaviour
 {
     public AI_Controller controller { get; private set; }
     private List<AI_ACTION> AI_ACTIONS = new List<AI_ACTION>();
+
+    // percent chance of considering actions that reverse direction
+    private float switchDirectionOdds = 20f;
+
     private AI_ACTION action;
     private TestingTrajectories trajectory;
 
@@ -45,7 +49,6 @@ public class AI_WanderAround : MonoBehaviour
         if (!wander || decisionZones.Count == 0)
             return;
 
-
         //In scene view, display the action done and decision zone used
         DebugGUI.debugText3 = controller.AI_action.action + (controller.decisionZone ? ", " +
                 controller.decisionZone.name : "none");
@@ -53,12 +56,13 @@ public class AI_WanderAround : MonoBehaviour
         String a = "hello + \n";
 
         foreach (Transform zone in decisionZones)
-            a += zone.name + " " + zone.position + ", " + transform.position + " \n";
+            a += zone.name + " \n";
         DebugGUI.debugText1 = a;
 
 
         //discard the next pending decision zone if the bot has gotten too far from it
-        if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900)
+        if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900
+        || Mathf.Abs(decisionZones.Peek().position.y - transform.position.y) > 9f)
         {
             DebugGUI.debugText5 = ("Discarded " + decisionZones.Peek() + " " +
              getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
@@ -66,7 +70,9 @@ public class AI_WanderAround : MonoBehaviour
             return;
         }
 
-        //analyze the next pending decision if the bot isn't performing an action rn
+        // retrive the next pending decision zone once the bot finishes performing it's last action.
+        // pick a random action to perform within the decision zone (with a preference to moving in the 
+        // same direction - left or right - as opposed to switching directions)
         if (controller.actionProgress == "finished")
         {
             currentDecisionZone = decisionZones.Dequeue();
@@ -75,18 +81,33 @@ public class AI_WanderAround : MonoBehaviour
             if (currentDecisionZone.childCount == 0)
                 Debug.LogError("Empty Decision Zone");
 
-            foreach (Transform decision in currentDecisionZone)
+            if (UnityEngine.Random.Range(0, 100) > switchDirectionOdds)
             {
-                trajectory = decision.transform.GetComponent<TestingTrajectories>();
-                for (int i = 0; i < trajectory.considerationWeight; i++)
+                foreach (Transform decision in currentDecisionZone)
                 {
-                    AI_ACTIONS.Add(trajectory.convertToAction());
+                    trajectory = decision.transform.GetComponent<TestingTrajectories>();
+
+                    if (trajectory.convertToAction().dirX == controller.dirX)
+                    {
+                        for (int i = 0; i < trajectory.considerationWeight; i++)
+                            AI_ACTIONS.Add(trajectory.convertToAction());
+                    }
                 }
             }
 
-            int r = random.Next(0, AI_ACTIONS.Count);
-            Debug.Log(AI_ACTIONS[r].ToString());
-            controller.BeginAction(AI_ACTIONS[r], currentDecisionZone);
+            if (AI_ACTIONS.Count == 0)
+            {
+                foreach (Transform decision in currentDecisionZone)
+                {
+                    trajectory = decision.transform.GetComponent<TestingTrajectories>();
+                    for (int i = 0; i < trajectory.considerationWeight; i++)
+                        AI_ACTIONS.Add(trajectory.convertToAction());
+                }
+            }
+
+            int actionIndex = random.Next(0, AI_ACTIONS.Count);
+            DebugGUI.debugText4 = (AI_ACTIONS[actionIndex].ToString());
+            controller.BeginAction(AI_ACTIONS[actionIndex], currentDecisionZone);
         }
     }
 
@@ -99,7 +120,7 @@ public class AI_WanderAround : MonoBehaviour
         if (decisionZones.Count > 0 && col.transform == decisionZones.Peek())
             return;
 
-        if (col.gameObject.layer == 8 && col.transform != controller.decisionZone)
+        if (col.gameObject.layer == 8)
             decisionZones.Enqueue(col.transform);
     }
 

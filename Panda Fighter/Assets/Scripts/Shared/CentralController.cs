@@ -6,6 +6,8 @@ public class CentralController : MonoBehaviour
 {
     protected Rigidbody2D rig;
     protected Transform body;
+    public float a;
+    public float b;
 
     [HideInInspector]
     public Animator animator { get; private set; }
@@ -101,14 +103,15 @@ public class CentralController : MonoBehaviour
     {
         //use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
         leftGroundHit = Physics2D.Raycast(leftGroundChecker.position, Vector2.down, 2f, Constants.map);
-        leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
-        //Vector2 leftGround = (leftGroundHit.collider != null) ? leftGroundHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) + Vector2.down * 2;
-        //Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), leftGround, Color.green, 2f);
+        if (leftGroundHit.collider != null)
+            leftGroundHit = Physics2D.Raycast(leftGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, Constants.map);
 
         rightGroundHit = Physics2D.Raycast(rightGroundChecker.position, Vector2.down, 2f, Constants.map);
+        if (rightGroundHit.collider != null)
+            rightGroundHit = Physics2D.Raycast(rightGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, Constants.map);
+
+        leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
         rightFootGround = (rightGroundHit.collider != null && rightGroundHit.normal.y >= 0.3f) ? rightGroundHit.collider.gameObject : null;
-        //Vector2 rightGround = (rightGroundHit.collider != null) ? rightGroundHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + Vector2.down * 2;
-        //Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), rightGround, Color.cyan, 2f);
 
         //if the creature was just grounded after falling OR the player been moving on the ground, enable this bool (used later to prevent bug)
         if ((!isGrounded || dirX != 0) && (leftFootGround || rightFootGround))
@@ -116,7 +119,7 @@ public class CentralController : MonoBehaviour
 
         //determine if creature is grounded if either foot raycast hit the ground
         if (!disableLimbsDuringDoubleJump)
-            isGrounded = (leftFootGround || rightFootGround) ? true : false;
+            isGrounded = leftFootGround || rightFootGround;
 
         //register the angle of the ground
         if (isGrounded)
@@ -186,25 +189,21 @@ public class CentralController : MonoBehaviour
         {
             RaycastHit2D leftWallHit = Physics2D.Raycast(leftGroundChecker.position, -groundDir, 2f, Constants.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
-            //obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) - groundDir * 2;
-            //Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), obstacleToTheLeft, Color.blue, 2f);
+            //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
             RaycastHit2D rightWallHit = Physics2D.Raycast(rightGroundChecker.position, groundDir, 2f, Constants.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
-            //obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) + groundDir * 2;
-            //Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), obstacleToTheRight, Color.red, 2f);
+            //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
         else
         {
             RaycastHit2D leftWallHit = Physics2D.Raycast(rightGroundChecker.position, -groundDir, 2f, Constants.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
-            //obstacleToTheLeft = (leftWallHit.collider != null) ? leftWallHit.point : new Vector2(rightFoot.position.x, rightFoot.position.y) - groundDir * 2;
-            //Debug.DrawLine(new Vector2(rightFoot.position.x, rightFoot.position.y), obstacleToTheLeft, Color.blue, 2f);
+            //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
             RaycastHit2D rightWallHit = Physics2D.Raycast(leftGroundChecker.position, groundDir, 2f, Constants.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
-            //obstacleToTheRight = (rightWallHit.collider != null) ? rightWallHit.point : new Vector2(leftFoot.position.x, leftFoot.position.y) + groundDir * 2;
-            //Debug.DrawLine(new Vector2(leftFoot.position.x, leftFoot.position.y), obstacleToTheRight, Color.red, 2f);
+            //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
 
         yield return new WaitForSeconds(0.33f);
