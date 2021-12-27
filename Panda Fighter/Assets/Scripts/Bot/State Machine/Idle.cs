@@ -7,6 +7,12 @@ public class Idle : IState
     private AI_Controller controller;
     private float unfreezeTimer;
 
+    // how long (in seconds) the AI goes idle for. provided as a range
+    private Vector2 freezeTime = new Vector2(0.2f, 2f);
+
+    // how often (in seconds) the AI goes idle. provided as a range
+    private Vector2 delayGoingIdle = new Vector2(2f, 6.7f);
+
     public bool GoodTimeToGoIdle;
     public bool StopBeingIdle;
 
@@ -16,13 +22,13 @@ public class Idle : IState
 
         GoodTimeToGoIdle = false;
         StopBeingIdle = false;
-        controller.StartCoroutine(groundedDuringRandomChecks());
+        controller.StartCoroutine(updateWhenAiShouldGoIdle());
     }
 
     public void OnEnter()
     {
-        unfreezeTimer = UnityEngine.Random.Range(1f, 3.2f);
-        controller.setSpeed(0f); ;
+        unfreezeTimer = UnityEngine.Random.Range(freezeTime.x, freezeTime.y);
+        controller.setDirection(0);
     }
 
     public void Tick()
@@ -37,14 +43,14 @@ public class Idle : IState
     {
         GoodTimeToGoIdle = false;
         StopBeingIdle = false;
-        controller.setSpeed(controller.maxSpeed);
+        controller.setDirection(UnityEngine.Random.Range(0, 2) * 2 - 1);
     }
 
-    private IEnumerator groundedDuringRandomChecks()
+    private IEnumerator updateWhenAiShouldGoIdle()
     {
-        float delay = UnityEngine.Random.Range(0, 6f);
+        float delay = UnityEngine.Random.Range(delayGoingIdle.x, delayGoingIdle.y);
         yield return new WaitForSeconds(delay);
         GoodTimeToGoIdle = controller.isGrounded && controller.isTouchingMap;
-        controller.StartCoroutine(groundedDuringRandomChecks());
+        controller.StartCoroutine(updateWhenAiShouldGoIdle());
     }
 }

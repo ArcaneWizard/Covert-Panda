@@ -44,8 +44,8 @@ public class AI : MonoBehaviour
         IState a = attack;
         transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.journey == "ended");
         transition(wander, seekDestination, () => Input.GetKeyDown(KeyCode.O));
-        //transition(wander, idle, () => idle.GoodTimeToGoIdle);
-        //transition(idle, wander, () => idle.StopBeingIdle);
+        transition(wander, idle, () => idle.GoodTimeToGoIdle);
+        transition(idle, wander, () => idle.StopBeingIdle);
 
         stateMachine.SetState(wander);
 

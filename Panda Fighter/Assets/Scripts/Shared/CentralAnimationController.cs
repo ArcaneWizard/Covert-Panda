@@ -38,10 +38,11 @@ public class CentralAnimationController : MonoBehaviour
 
     private void FixedUpdate() => carryOutDoubleJump();
 
-    // Set up the double jump animation. Specify the direction to spin in, reset any temporary settings,
-    // disable concurrent limb updates (ex. head movement while looking around), and start the actual 
-    // double jump animation. When the entity is moving left but facing right (or moving right but
-    // facing left), play the backwards spin animation. Otherwise play the forwards spin animation
+    // Sets up the double jump animation. Specifies the direction to spin in, resets temporary spin settings,
+    // disables concurrent limb updates (ex. can't control head movement while moving cursor) temporarily, 
+    // and plays the actual double jump animation. 
+    // Plays the forwards spin animation if the entity is facing the direction it's moving in.
+    // Plays the backward spin animation if the entity is moving left but facing right or moving right but facing left. 
     public IEnumerator startDoubleJumpAnimation()
     {
         spinDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
@@ -63,8 +64,12 @@ public class CentralAnimationController : MonoBehaviour
         disableLimbsDuringDoubleJump = false;
     }
 
-    // Specify which animation to play (2 = jumping, 1 = walking, 0 = idle) and when
-    protected virtual void setAnimationState()
+    // Specify which animation to play (2 = jumping, 1 = walking, 0 = idle) and when.
+    // Will enter jump animation (Phase 2) when no longer grounded. 
+    // Will enter running/backwards walking animation (Phase 1) when moving 
+    // Will enter idle animation (Phase 0) when not moving and not in jump animation
+    // Will enter idle animation once grounded and last in jump animation
+    /*protected virtual void setAnimationState()
     {
         if (animator.GetInteger("Phase") != 2)
         {
@@ -83,11 +88,38 @@ public class CentralAnimationController : MonoBehaviour
             animator.SetBool("double jump", false);
             animator.SetInteger("Phase", 0);
         }
+    }*/
+
+    // Specify which animation to play and when
+    // Will enter running/walking animation once grounded and moving 
+    // Will enter idle animation once grounded and not moving
+    // Will enter jump animation when no longer grounded. 
+    // Will enter the idle animation + reset jump for next time, once grounded after a jump
+    // Note about PHASES below: 2 = jumping, 1 = walking, 0 = idle
+    protected virtual void setAnimationState()
+    {
+        if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
+        {
+            animator.SetBool("jumped", false);
+            animator.SetInteger("jump version", 1);
+            animator.SetBool("double jump", false);
+            completedDoubleJump = true;
+            animator.SetInteger("Phase", 0);
+        }
+
+        if (controller.isGrounded && controller.dirX != 0)
+            animator.SetInteger("Phase", 1);
+
+        else if (controller.isGrounded && controller.dirX == 0)
+            animator.SetInteger("Phase", 0);
+
+        else if (!controller.isGrounded)
+            animator.SetInteger("Phase", 2);
     }
 
-    // When double jumping, entity spins
-    // at a given initialSpinSpeed for a specified duration, then slows down to an endSpinSpeed.
-    // Note: entity's rotation is synced to the progress of the double jump spin animation
+    // When double jumping, entity spins at a given initialSpinSpeed for a specified duration, 
+    // then slows down to an endSpinSpeed. Note: entity's rotation is synced to the progress of 
+    // the double jump spin animation. Updates when it's completed the double jump 
     private void carryOutDoubleJump()
     {
         if (!completedDoubleJump)

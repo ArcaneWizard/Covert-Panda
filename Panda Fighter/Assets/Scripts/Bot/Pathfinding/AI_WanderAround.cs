@@ -12,7 +12,7 @@ public class AI_WanderAround : MonoBehaviour
     private List<AI_ACTION> AI_ACTIONS = new List<AI_ACTION>();
 
     // percent chance of considering actions that reverse direction
-    private float switchDirectionOdds = 20f;
+    private float switchDirectionOdds = 30f;
 
     private AI_ACTION action;
     private TestingTrajectories trajectory;
@@ -24,7 +24,8 @@ public class AI_WanderAround : MonoBehaviour
     private float distance;
     private System.Random random;
 
-    private bool wander;
+    private bool shouldWander;
+    private bool justEnteredWanderingState;
 
     void Awake()
     {
@@ -32,35 +33,37 @@ public class AI_WanderAround : MonoBehaviour
         random = new System.Random();
     }
 
-    //start wandering around
+    // start wandering around. Resets settings, updates that the AI should resume
+    // wandering and that it just entered the wandering state 
     public void startWandering()
     {
         decisionZones.Clear();
         AI_ACTIONS.Clear();
-        wander = true;
+
+        shouldWander = true;
+        justEnteredWanderingState = true;
     }
 
-    //stop wandering around
-    public void stopWandering() => wander = false;
+    // stop wandering around. Updates that the AI should stop wandering
+    public void stopWandering() => shouldWander = false;
 
-    //to be called every frame whlie wandering
+    // called every frame. Returns early if the AI isn't in the wander state or if there
+    // are no queued decision zones to analyze
     public void tick()
     {
-        if (!wander || decisionZones.Count == 0)
+        if (!shouldWander || decisionZones.Count == 0)
             return;
 
-        //In scene view, display the action done and decision zone used
+        // JUST FOR DEBUGGING, IGNORE
         DebugGUI.debugText3 = controller.AI_action.action + (controller.decisionZone ? ", " +
-                controller.decisionZone.name : "none");
-
-        String a = "hello + \n";
-
+            controller.decisionZone.name : "none");
+        String a = "zones: \n";
         foreach (Transform zone in decisionZones)
             a += zone.name + " \n";
         DebugGUI.debugText1 = a;
 
-
-        //discard the next pending decision zone if the bot has gotten too far from it
+        // discards the next queued up decision zone if the bot has gotten too far from it distance
+        // wise or elevation wise 
         if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900
         || Mathf.Abs(decisionZones.Peek().position.y - transform.position.y) > 9f)
         {
@@ -72,7 +75,8 @@ public class AI_WanderAround : MonoBehaviour
 
         // retrive the next pending decision zone once the bot finishes performing it's last action.
         // pick a random action to perform within the decision zone (with a preference to moving in the 
-        // same direction - left or right - as opposed to switching directions)
+        // same direction - left or right - as opposed to switching directions). Send a call to the
+        // AI controller to handle the logic of executing the chosen action 
         if (controller.actionProgress == "finished")
         {
             currentDecisionZone = decisionZones.Dequeue();
@@ -111,20 +115,40 @@ public class AI_WanderAround : MonoBehaviour
         }
     }
 
-    //if the AI bot passes a new decision zone, add it to the list
+    // if the AI bot enters a decision zone, add it to the queue of decisions
+    // to execute. Howwever, only check for decision zones when the AI is in the wander state,
+    // and never queue the same decision zone to be aexecuted back to back
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (!wander)
+        if (!shouldWander)
             return;
 
         if (decisionZones.Count > 0 && col.transform == decisionZones.Peek())
             return;
 
         if (col.gameObject.layer == 8)
+        {
             decisionZones.Enqueue(col.transform);
+            justEnteredWanderingState = false;
+        }
     }
 
-    //Helper method that returns squared distance btwn 2 vectors
+    // if the AI bot is in the wander state and just entered the wander state (from another state),
+    // check if the bot is already INSIDE a decision zone. If so, add it to the queue of decisions
+    // to execute 
+    private void OnTriggerStay2D(Collider2D col)
+    {
+        if (!shouldWander || !justEnteredWanderingState)
+            return;
+
+        if (col.gameObject.layer == 8)
+        {
+            decisionZones.Enqueue(col.transform);
+            justEnteredWanderingState = false;
+        }
+    }
+
+    // helper method that returns squared distance btwn 2 vectors
     private float getSquaredDistanceBtwnVectors(Vector2 a, Vector2 b)
     {
         Vector2 distanceBtwnVectors = a - b;

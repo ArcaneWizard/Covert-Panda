@@ -124,8 +124,8 @@ public class AI_Controller : CentralController
         }
 
         //slow down right as the bot is about to fall (one foot off the ledge)
-        if ((AI_action.action == "fallDownCurve" || AI_action.action == "fallDown") && (!leftFootGround || !rightFootGround) && isGrounded && isTouchingMap)
-            speed = 7f;
+        /*if ((AI_action.action == "fallDownCurve" || AI_action.action == "fallDown") && (!leftFootGround || !rightFootGround) && isGrounded && isTouchingMap)
+            speed = 7f;*/
     }
 
     private IEnumerator executeFallingDownCurveMotion()
