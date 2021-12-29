@@ -6,7 +6,6 @@ using UnityEngine.Animations;
 public class ArcticStream : Bullet
 {
     private float explosionTimer = 0;
-    private LayerMask surfaces = 1 << 11 | 1 << 14;
 
     private Rigidbody2D rig;
     private GameObject explosion;
@@ -32,21 +31,15 @@ public class ArcticStream : Bullet
 
     private void startExplosion()
     {
-        rig.constraints = RigidbodyConstraints2D.FreezeAll;
-        transform.localEulerAngles = new Vector3(0, 0, 0);
-        explosion.SetActive(true);
-        explosionTimer = 1.4f;
+        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
+        {
+            rig.constraints = RigidbodyConstraints2D.FreezeAll;
+            transform.localEulerAngles = new Vector3(0, 0, 0);
+            explosion.SetActive(true);
+            explosionTimer = 1.4f;
+        }
     }
 
-    public override void OnMapEnter(Transform map)
-    {
-        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
-            startExplosion();
-    }
-
-    public override void OnEntityEnter(Transform entity)
-    {
-        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
-            startExplosion();
-    }
+    public override void OnMapEnter(Transform map) => startExplosion();
+    public override void OnEntityEnter(Transform entity) => startExplosion();
 }

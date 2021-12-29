@@ -11,7 +11,6 @@ public class FocusBeam : Bullet
     private float beamLength;
 
     private float beamDistance = 60f;
-    private LayerMask map = 1 << 11 | 1 << 6;
 
     private float timerStayAlive;
 
@@ -38,7 +37,7 @@ public class FocusBeam : Bullet
         RaycastHit2D hit = Physics2D.Raycast(
             bulletSpawnPoint.position,
             inDoubleJump ? weapon.right : weapon.right,
-            100f, map
+            100f, mapOrTarget()
         );
 
         if (hit.collider != null)

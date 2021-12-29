@@ -102,13 +102,13 @@ public class CentralController : MonoBehaviour
     public IEnumerator determineIfGrounded(bool disableLimbsDuringDoubleJump)
     {
         //use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
-        leftGroundHit = Physics2D.Raycast(leftGroundChecker.position, Vector2.down, 2f, Constants.map);
+        leftGroundHit = Physics2D.Raycast(leftGroundChecker.position, Vector2.down, 2f, Layers.map);
         if (leftGroundHit.collider != null)
-            leftGroundHit = Physics2D.Raycast(leftGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, Constants.map);
+            leftGroundHit = Physics2D.Raycast(leftGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, Layers.map);
 
-        rightGroundHit = Physics2D.Raycast(rightGroundChecker.position, Vector2.down, 2f, Constants.map);
+        rightGroundHit = Physics2D.Raycast(rightGroundChecker.position, Vector2.down, 2f, Layers.map);
         if (rightGroundHit.collider != null)
-            rightGroundHit = Physics2D.Raycast(rightGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, Constants.map);
+            rightGroundHit = Physics2D.Raycast(rightGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, Layers.map);
 
         leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
         rightFootGround = (rightGroundHit.collider != null && rightGroundHit.normal.y >= 0.3f) ? rightGroundHit.collider.gameObject : null;
@@ -187,21 +187,21 @@ public class CentralController : MonoBehaviour
     {
         if (body.localEulerAngles.y == 0)
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(leftGroundChecker.position, -groundDir, 2f, Constants.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(leftGroundChecker.position, -groundDir, 2f, Layers.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(rightGroundChecker.position, groundDir, 2f, Constants.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(rightGroundChecker.position, groundDir, 2f, Layers.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
         else
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(rightGroundChecker.position, -groundDir, 2f, Constants.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(rightGroundChecker.position, -groundDir, 2f, Layers.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(leftGroundChecker.position, groundDir, 2f, Constants.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(leftGroundChecker.position, groundDir, 2f, Layers.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }

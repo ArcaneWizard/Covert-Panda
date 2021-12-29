@@ -11,7 +11,7 @@ public class AI_Health : Health
 
         maxHP = 200;
         currentHP = maxHP;
-        bulletLayer = enemyBulletLayer;
-        explosionLayer = enemyExplosionLayer;
+        bulletLayer = Layers.friendlyBullet;
+        explosionLayer = Layers.friendlyExplosion;
     }
 }

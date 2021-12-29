@@ -10,8 +10,8 @@ public class PlayerHealth : Health
 
         maxHP = 200;
         currentHP = maxHP;
-        bulletLayer = friendlyBulletLayer;
-        explosionLayer = friendlyExplosionLayer;
+        bulletLayer = Layers.enemyBullet;
+        explosionLayer = Layers.enemyExplosion;
     }
 
     void Update()

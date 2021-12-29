@@ -15,7 +15,7 @@ public class SniperBeam : Bullet
     private float beamLength;
 
     private float beamDistance = 60f;
-    private LayerMask map = 1 << 11 | 1 << 6;
+    private LayerMask map;
 
     void Awake()
     {
@@ -38,7 +38,8 @@ public class SniperBeam : Bullet
     public void ShowBeam()
     {
         beam.SetPosition(0, transform.position);
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 100f, map);
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 100f, mapOrTarget());
 
         if (hit.collider != null)
         {

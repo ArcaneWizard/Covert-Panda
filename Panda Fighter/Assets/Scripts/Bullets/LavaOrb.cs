@@ -30,6 +30,7 @@ public class LavaOrb : Bullet
 
     private void OnEnable() => impactExplosion.Stop();
     public override void OnEntityEnter(Transform entity) => StartCoroutine(initiateExplosion());
+    public override void OnMapEnter(Transform entity) => StartCoroutine(initiateExplosion());
 
     private IEnumerator initiateExplosion()
     {
