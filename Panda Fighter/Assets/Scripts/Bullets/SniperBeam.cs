@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SniperBeam : MonoBehaviour
+public class SniperBeam : Bullet
 {
     private LineRenderer beam;
     private BoxCollider2D collider;
@@ -89,11 +89,8 @@ public class SniperBeam : MonoBehaviour
         );
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.layer == 6 || col.gameObject.layer == 11)
-            initiateExplosionAt(col.transform.position);
-    }
+    public override void OnMapEnter(Transform map) => initiateExplosionAt(transform.position);
+    public override void OnEntityEnter(Transform entity) => initiateExplosionAt(transform.position);
 
     private void initiateExplosionAt(Vector3 location)
     {

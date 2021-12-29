@@ -6,8 +6,10 @@ public class WeaponConfiguration : MonoBehaviour
 {
     public string combatMode { get; private set; }
     public string weaponType { get; private set; }
+    public int bulletDmg { get; private set; }
     public int startingAmmo { get; private set; }
     public int bulletSpeed { get; private set; }
+    public float weaponRange { get; private set; }
     public List<GameObject> limbs { get; private set; }
     public Transform bulletSpawnPoint { get; private set; }
     public GameObject weapon { get; private set; }
@@ -22,16 +24,18 @@ public class WeaponConfiguration : MonoBehaviour
     private Transform entity;
     private Limbs Limbs;
 
-    public void update(string combatMode, string weaponType, float fireRateInfo, int bulletSpeed,
-        int startingAmmo, List<GameObject> limbs, GameObject weapon)
+    public void update(float fireRateInfo, string combatMode, string weaponType, float weaponRange, int bulletSpeed, int startingAmmo,
+        int bulletDmg, List<GameObject> limbs, GameObject weapon)
     {
+        this.fireRateInfo = fireRateInfo;
         this.combatMode = combatMode;
         this.weaponType = weaponType;
-        this.startingAmmo = startingAmmo;
+        this.weaponRange = weaponRange;
         this.bulletSpeed = bulletSpeed;
+        this.startingAmmo = startingAmmo;
+        this.bulletDmg = bulletDmg;
         this.limbs = limbs;
         this.weapon = weapon;
-        this.fireRateInfo = fireRateInfo;
 
         setup();
     }

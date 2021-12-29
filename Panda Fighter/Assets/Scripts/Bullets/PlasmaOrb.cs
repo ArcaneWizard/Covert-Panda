@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 
-public class PlasmaOrb : MonoBehaviour
+public class PlasmaOrb : Bullet
 {
     private float explosionTimer = 0;
     private LayerMask surfaces = 1 << 11 | 1 << 14;
@@ -46,22 +46,22 @@ public class PlasmaOrb : MonoBehaviour
 
     public IEnumerator startTimedPlasmaExplosion(Transform surface)
     {
-        rig.constraints = RigidbodyConstraints2D.FreezeAll;
-        contactLocation = transform.position;
-        trackingSurface = surface;
-        surfaceContactLocation = new Vector3(trackingSurface.position.x, trackingSurface.position.y, 0);
+        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
+        {
+            rig.constraints = RigidbodyConstraints2D.FreezeAll;
+            contactLocation = transform.position;
+            trackingSurface = surface;
+            surfaceContactLocation = new Vector3(trackingSurface.position.x, trackingSurface.position.y, 0);
 
-        yield return new WaitForSeconds(delayTillExplosion);
+            yield return new WaitForSeconds(delayTillExplosion);
 
-        transform.localEulerAngles = new Vector3(0, 0, 0);
-        explosion.SetActive(true);
-        explosionTimer = 1.4f;
-        sR.enabled = false;
+            transform.localEulerAngles = new Vector3(0, 0, 0);
+            explosion.SetActive(true);
+            explosionTimer = 1.4f;
+            sR.enabled = false;
+        }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if ((col.gameObject.layer == 11 || col.gameObject.layer == 14) && explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
-            StartCoroutine(startTimedPlasmaExplosion(col.transform));
-    }
+    public override void OnMapEnter(Transform map) => StartCoroutine(startTimedPlasmaExplosion(map));
+    public override void OnEntityEnter(Transform map) => StartCoroutine(startTimedPlasmaExplosion(map));
 }

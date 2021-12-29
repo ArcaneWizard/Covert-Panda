@@ -10,8 +10,8 @@ public class InvisibilityEffect : MonoBehaviour
 
     private Color color;
 
-    /*private Transform bob;
-    private float counter;*/
+    private Transform bob;
+    private float counter;
 
     void Awake()
     {
@@ -23,7 +23,7 @@ public class InvisibilityEffect : MonoBehaviour
     {
         counter = 0;
         bob = transform;
-        while (!centralAbilityHandler && counter < 5f)
+        while (!centralAbilityHandler && counter < 7f)
         {
             counter++;
 

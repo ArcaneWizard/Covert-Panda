@@ -15,12 +15,12 @@ public static class reusableWeaponMethods
     {
         //spawn bullet at the right place + default velocity and rotation
         bullet.position = bulletSpawnPoint.position;
-        bullet.localEulerAngles = new Vector3(0, 0, bullet.transform.localEulerAngles.z);
+        bullet.localEulerAngles = new Vector3(0, 0, bullet.localEulerAngles.z);
         bulletRig.velocity = new Vector2(0, 0);
         bulletRig.angularVelocity = 0;
 
         //reenable collider
-        bullet.transform.GetComponent<Collider2D>().enabled = true;
+        bullet.GetComponent<Collider2D>().enabled = true;
 
         //reset the bullet sprite to be opaque (ie. alpha = 1)
         if (bullet.GetComponent<SpriteRenderer>())
@@ -34,11 +34,14 @@ public static class reusableWeaponMethods
         bullet.gameObject.SetActive(true);
 
         //reset the trail renderer and particle effect, if any
-        if (bullet.transform.GetComponent<TrailRenderer>())
-            bullet.transform.GetComponent<TrailRenderer>().Clear();
+        if (bullet.GetComponent<TrailRenderer>())
+            bullet.GetComponent<TrailRenderer>().Clear();
 
-        if (bullet.transform.GetComponent<ParticleSystem>())
-            bullet.transform.GetComponent<ParticleSystem>().Clear();
+        if (bullet.GetComponent<ParticleSystem>())
+            bullet.GetComponent<ParticleSystem>().Clear();
+
+        //reset that the bullet can do damage
+        bullet.GetComponent<Bullet>().madeContact = false;
     }
 
     public static Transform retrieveNextBullet(CentralWeaponSystem weaponSystem)

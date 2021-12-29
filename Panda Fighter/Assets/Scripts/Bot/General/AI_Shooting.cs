@@ -7,6 +7,8 @@ public class AI_Shooting : CentralShooting
     private float countdownBtwnShots = 0f;
     private WeaponConfiguration configuration;
 
+    private Vector2 reactionTime = new Vector2(0.03f, 0.1f);
+
     public override Vector2 getAim() => AI_lookAround.lookAt.normalized;
 
     public override void Awake()
@@ -31,27 +33,38 @@ public class AI_Shooting : CentralShooting
         {
             if (combatMode == "gun")
             {
-                countdownBtwnShots = UnityEngine.Random.Range(0.25f, 0.33f);
+                countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
                 Attack();
             }
 
             else if (combatMode == "handheld" && weaponSystem.IWeapon.attackProgress == "finished")
             {
-                countdownBtwnShots = UnityEngine.Random.Range(0.25f, 0.33f);
+                countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
                 Attack();
             }
 
             else if (combatMode == "meelee" && weaponSystem.IWeapon.attackProgress == "finished")
             {
-                countdownBtwnShots = UnityEngine.Random.Range(0.25f, 0.33f);
+                countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
                 NonAmmoAttack();
             }
         }
 
         if (weaponSystem.GetAmmo > 0 && combatMode == "gun" && configuration.weaponType == Type.spamFire)
         {
-            countdownBtwnShots = 1f / weaponSystem.IWeapon.configuration.fireRateInfo;
+            countdownBtwnShots = configuration.fireRateInfo;
             Attack();
         }
     }
+
+    public void LateLateUpdate()
+    {
+        if (!AI_lookAround.playerIsInSight || weaponSystem.GetAmmo <= 0 || configuration == null)
+            return;
+
+        if (configuration.weaponType == Type.holdFire)
+            Attack();
+    }
+
+    private float reactionDelay => UnityEngine.Random.Range(reactionTime.x, reactionTime.y);
 }

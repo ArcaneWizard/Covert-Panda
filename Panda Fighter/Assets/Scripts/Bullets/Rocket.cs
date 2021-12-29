@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rocket : MonoBehaviour
+public class Rocket : Bullet
 {
     private SpriteRenderer rocketRenderer;
     private SpriteRenderer rocketGlareRenderer;
@@ -36,17 +36,17 @@ public class Rocket : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.layer == 11)
-        {
-            rig.constraints = RigidbodyConstraints2D.FreezeAll;
-            transform.localEulerAngles = new Vector3(0, 0, 0);
+    public override void OnMapEnter(Transform map) => setupExplosion();
+    public override void OnEntityEnter(Transform entity) => setupExplosion();
 
-            explosion.SetActive(true);
-            changeRocketVisibility(false);
-            explosionTimer = 1.4f;
-        }
+    private void setupExplosion()
+    {
+        rig.constraints = RigidbodyConstraints2D.FreezeAll;
+        transform.localEulerAngles = new Vector3(0, 0, 0);
+
+        explosion.SetActive(true);
+        changeRocketVisibility(false);
+        explosionTimer = 1.4f;
     }
 
     private void changeRocketVisibility(bool visibility)

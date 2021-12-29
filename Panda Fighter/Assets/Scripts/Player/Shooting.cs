@@ -25,11 +25,12 @@ public class Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (weaponSystem.GetAmmo <= 0 || attackProgress != "finished")
+        if (weaponSystem.GetAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f)
             return;
 
         if (configuration.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))
         {
+            countdownBtwnShots = configuration.fireRateInfo;
             if (combatMode == "gun" || combatMode == "handheld")
                 Attack();
 
@@ -37,14 +38,17 @@ public class Shooting : CentralShooting
                 NonAmmoAttack();
         }
 
-        else if (configuration.weaponType == Type.spamFire && Input.GetMouseButton(0) && countdownBtwnShots <= 0f)
+        else if (configuration.weaponType == Type.spamFire && Input.GetMouseButton(0))
         {
-            countdownBtwnShots = 1f / configuration.fireRateInfo;
+            countdownBtwnShots = configuration.fireRateInfo;
             Attack();
         }
 
-        else if (configuration.weaponType == Type.chargeUpFire && Input.GetMouseButton(0))
+        /*else if (configuration.weaponType == Type.chargeUpFire && Input.GetMouseButton(0))
+        {
+            countdownBtwnShots = configuration.fireRateInfo;
             Attack();
+        }*/
     }
 
     public void LateLateUpdate()
@@ -55,5 +59,4 @@ public class Shooting : CentralShooting
         if (configuration.weaponType == Type.holdFire && Input.GetMouseButton(0))
             Attack();
     }
-
 }

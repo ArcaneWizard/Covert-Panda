@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FocusBeam : MonoBehaviour
+public class FocusBeam : Bullet
 {
     private LineRenderer beam;
     private BoxCollider2D collider;
@@ -15,7 +15,7 @@ public class FocusBeam : MonoBehaviour
 
     private float timerStayAlive;
 
-    void Awake()
+    private void Awake()
     {
         beam = transform.GetComponent<LineRenderer>();
         collider = transform.GetComponent<BoxCollider2D>();
@@ -34,6 +34,7 @@ public class FocusBeam : MonoBehaviour
         timerStayAlive = Time.deltaTime;
 
         beam.SetPosition(0, bulletSpawnPoint.position);
+
         RaycastHit2D hit = Physics2D.Raycast(
             bulletSpawnPoint.position,
             inDoubleJump ? weapon.right : weapon.right,
@@ -54,4 +55,6 @@ public class FocusBeam : MonoBehaviour
         collider.size = initialColliderSize + new Vector2(beamLength, 0);
         collider.offset = new Vector2(beamLength / 2, 0);
     }
+
+    public override void OnEntityEnter(Transform entity) => madeContact = false;
 }

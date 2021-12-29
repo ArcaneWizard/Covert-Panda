@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Railgun : MonoBehaviour
+public class Railgun : Bullet
 {
     private ParticleSystem impactExplosion;
     private SpriteRenderer sR;
@@ -15,16 +15,10 @@ public class Railgun : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
     }
 
-    private void OnEnable()
-    {
-        transform.GetComponent<ParticleSystem>().Stop();
-    }
+    private void OnEnable() => transform.GetComponent<ParticleSystem>().Stop();
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.layer == 11)
-            StartCoroutine(initiateExplosion());
-    }
+    public override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
+    public override void OnEntityEnter(Transform entity) => StartCoroutine(initiateExplosion());
 
     private IEnumerator initiateExplosion()
     {
@@ -32,7 +26,7 @@ public class Railgun : MonoBehaviour
         rig.velocity = Vector2.zero;
         impactExplosion.Play();
 
-        yield return new WaitForSeconds(impactExplosion.main.duration + 0.1f);
+        yield return new WaitForSeconds(impactExplosion.main.startLifetime.constant + 0.1f);
 
         sR.enabled = true;
         gameObject.SetActive(false);

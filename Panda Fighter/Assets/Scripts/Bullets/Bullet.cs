@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    [HideInInspector]
+    public bool madeContact;
+
+    public virtual void OnEntityEnter(Transform entity) { }
+    public virtual void OnMapEnter(Transform map) => gameObject.SetActive(false);
+
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.layer == 11)
-            gameObject.SetActive(false);
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.layer == 11)
-            gameObject.SetActive(false);
+            OnMapEnter(col.transform);
     }
 }

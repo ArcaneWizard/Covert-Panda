@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - spamFire
+  - Plasma Orb
+  - Grenade
+  - Boomerang
+  - Lava Pistol
+  - singleFire
   layers:
   - Default
   - TransparentFX
@@ -15,12 +21,12 @@ TagManager:
   - Weapon Pickup
   - Decision Zone
   - Alien
-  - 
+  - Explosion
   - Ground
   - Player
   - Bullet
   - Player Armor
-  - 
+  - Enemy Explosion
   - Path Collider
   - Enemy Bullet
   - Target

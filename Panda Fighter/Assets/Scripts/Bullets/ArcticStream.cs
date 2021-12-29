@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 
-public class ArcticStream : MonoBehaviour
+public class ArcticStream : Bullet
 {
     private float explosionTimer = 0;
     private LayerMask surfaces = 1 << 11 | 1 << 14;
@@ -30,7 +30,7 @@ public class ArcticStream : MonoBehaviour
         }
     }
 
-    private void startExplosion(Transform surface)
+    private void startExplosion()
     {
         rig.constraints = RigidbodyConstraints2D.FreezeAll;
         transform.localEulerAngles = new Vector3(0, 0, 0);
@@ -38,9 +38,15 @@ public class ArcticStream : MonoBehaviour
         explosionTimer = 1.4f;
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    public override void OnMapEnter(Transform map)
     {
-        if ((col.gameObject.layer == 11 || col.gameObject.layer == 14) && explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
-            startExplosion(col.transform);
+        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
+            startExplosion();
+    }
+
+    public override void OnEntityEnter(Transform entity)
+    {
+        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
+            startExplosion();
     }
 }

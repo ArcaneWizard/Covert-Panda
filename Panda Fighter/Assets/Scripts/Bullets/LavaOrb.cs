@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LavaOrb : MonoBehaviour
+public class LavaOrb : Bullet
 {
     private ParticleSystem impactExplosion;
     private SpriteRenderer sR;
@@ -29,12 +29,7 @@ public class LavaOrb : MonoBehaviour
     }
 
     private void OnEnable() => impactExplosion.Stop();
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.layer == 11)
-            StartCoroutine(initiateExplosion());
-    }
+    public override void OnEntityEnter(Transform entity) => StartCoroutine(initiateExplosion());
 
     private IEnumerator initiateExplosion()
     {

@@ -39,7 +39,7 @@ public class AI : MonoBehaviour
         var seekDestination = new SeekDestination(this, pathFollower, possibleDestinations, manualDestination, lookAround);
         var attack = new AttackAggressively();
         var flee = new Flee();
-        var idle = new Idle(controller);
+        var idle = new Idle(controller, Player);
 
         IState a = attack;
         transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.journey == "ended");
