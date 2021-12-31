@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 public class wLavaPistol : IWeapon
 {
-    private LayerMask map = 1 << 11;
-
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         DoAttack(aim, bullet, rig);
@@ -18,7 +16,7 @@ public class wLavaPistol : IWeapon
         reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, configuration.bulletSpeed);
 
         bullet.localEulerAngles = new Vector3(0, 0, 0);
-        RaycastHit2D hit = Physics2D.Raycast(configuration.bulletSpawnPoint.position, aim, 80f, map);
+        RaycastHit2D hit = Physics2D.Raycast(configuration.bulletSpawnPoint.position, aim, 80f, LayerMasks.mapOrTarget(bullet));
         bullet.transform.GetComponent<LavaOrb>().OrientExplosion(hit.normal);
     }
 }

@@ -13,6 +13,7 @@ public class SniperBeam : Bullet
 
     private Vector2 initialColliderSize;
     private float beamLength;
+    private Vector2 hitPoint;
 
     private float beamDistance = 60f;
     private LayerMask map;
@@ -39,7 +40,7 @@ public class SniperBeam : Bullet
     {
         beam.SetPosition(0, transform.position);
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 100f, mapOrTarget());
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 100f, LayerMasks.mapOrTarget(transform));
 
         if (hit.collider != null)
         {
@@ -90,8 +91,7 @@ public class SniperBeam : Bullet
         );
     }
 
-    public override void OnMapEnter(Transform map) => initiateExplosionAt(transform.position);
-    public override void OnEntityEnter(Transform entity) => initiateExplosionAt(transform.position);
+    public override void OnMapEnter(Transform map) { }
 
     private void initiateExplosionAt(Vector3 location)
     {

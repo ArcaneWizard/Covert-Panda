@@ -37,7 +37,7 @@ public class FocusBeam : Bullet
         RaycastHit2D hit = Physics2D.Raycast(
             bulletSpawnPoint.position,
             inDoubleJump ? weapon.right : weapon.right,
-            100f, mapOrTarget()
+            100f, LayerMasks.mapOrTarget(transform)
         );
 
         if (hit.collider != null)
