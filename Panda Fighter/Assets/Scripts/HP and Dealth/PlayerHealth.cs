@@ -1,21 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHealth : Health
 {
+    public Image hpBar;
+    private Vector2 positionOffset;
+    private Vector2 playerPosition;
+
     public override void Awake()
     {
         base.Awake();
 
-        maxHP = 200;
+        maxHP = 400;
         currentHP = maxHP;
         bulletLayer = Layers.enemyBullet;
         explosionLayer = Layers.enemyExplosion;
     }
 
-    void Update()
+    public override void Update() 
     {
-        DebugGUI.debugText6 = currentHP.ToString() + "/" + maxHP.ToString();
+        base.Update();
+        hpBar.fillAmount = (float) currentHP / (float) maxHP;
+        hpBar.transform.parent.GetComponent<RectTransform>().position = positionOffset + new Vector2(transform.position.x, transform.position.y);
     }
 }

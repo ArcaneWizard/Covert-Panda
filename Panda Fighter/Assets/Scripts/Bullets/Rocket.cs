@@ -7,18 +7,21 @@ public class Rocket : Bullet
     private SpriteRenderer rocketRenderer;
     private SpriteRenderer rocketGlareRenderer;
     private Rigidbody2D rig;
-    private GameObject explosion;
+    private GameObject physicalExplosion;
+    private Explosion explosion;
 
-    private float explosionTimer = 0;
+    private float explosionTimer = 0; 
 
 
     void Awake()
     {
         rocketRenderer = transform.GetComponent<SpriteRenderer>();
         rig = transform.GetComponent<Rigidbody2D>();
-
-        explosion = transform.GetChild(0).gameObject;
         rocketGlareRenderer = transform.GetChild(1).GetComponent<SpriteRenderer>();
+
+        physicalExplosion = transform.GetChild(0).gameObject;
+        explosion = transform.GetComponent<Explosion>();
+        explosion.radius = 12f;
     }
 
     void Update()
@@ -26,11 +29,11 @@ public class Rocket : Bullet
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
-        else if (explosion.activeSelf)
+        else if (physicalExplosion.activeSelf)
         {
             rig.constraints = RigidbodyConstraints2D.None;
 
-            explosion.SetActive(false);
+            physicalExplosion.SetActive(false);
             changeRocketVisibility(true);
             gameObject.SetActive(false);
         }
@@ -44,9 +47,11 @@ public class Rocket : Bullet
         rig.constraints = RigidbodyConstraints2D.FreezeAll;
         transform.localEulerAngles = new Vector3(0, 0, 0);
 
-        explosion.SetActive(true);
+        physicalExplosion.SetActive(true);
         changeRocketVisibility(false);
         explosionTimer = 1.4f;
+
+        StartCoroutine(explosion.damageSurroundingEntities());
     }
 
     private void changeRocketVisibility(bool visibility)

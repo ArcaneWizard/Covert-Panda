@@ -6,14 +6,19 @@ using UnityEngine;
 
 public static class LayerMasks
 {
-    // returns a layermask allowing collisions with the map and the hit box of the opposite entity 
-    // (player's/friendly AI's hit boxes for enemies and enemies' hit box for the player/friendly bots)
-    public static LayerMask mapOrTarget(Transform bullet)
+    // returns a layermask allowing collisions with the hit box of the opposite entity 
+    // (player/friendly AI hit boxes for enemies and enemiy hit boxes for the player/friendly bots)
+    public static LayerMask target (Transform bullet)
     {
         return (bullet.gameObject.layer == Layers.friendlyBullet)
-            ? (1 << Layers.map | 1 << Layers.enemyHitBox)
-            : (1 << Layers.map | 1 << Layers.friendlyHitBox);
-    }
+            ? (1 << Layers.enemyHitBox)
+            : (1 << Layers.friendlyHitBox);
+    } 
 
+    // returns a layermask allowing collisions with the map
     public static LayerMask map => 1 << Layers.map;
+
+    // returns a layermask allowing collisions with the map and the hit box of the opposite entity 
+    // (player/friendly AI hit boxes for enemies and enemy hit boxes for the player/friendly bots)
+    public static LayerMask mapOrTarget(Transform bullet) => map | target(bullet);
 }

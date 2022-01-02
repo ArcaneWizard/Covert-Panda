@@ -61,7 +61,7 @@ public class SniperBeam : Bullet
 
     private IEnumerator fadeBeam()
     {
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.21f);
         impactExplosion.SetBool("impactExplosion", false);
 
         while (beam.startColor.r > 0.6f)

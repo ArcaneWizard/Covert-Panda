@@ -7,7 +7,7 @@ public class AI_Shooting : CentralShooting
     private float countdownBtwnShots = 0f;
     private WeaponConfiguration configuration;
 
-    private Vector2 reactionTime = new Vector2(0.03f, 0.1f);
+    private Vector2 reactionTime = new Vector2(0.2f, 0.35f);
 
     public override Vector2 getAim() => AI_lookAround.lookAt.normalized;
 

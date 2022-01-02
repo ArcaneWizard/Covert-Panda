@@ -7,6 +7,7 @@ public class WeaponConfiguration : MonoBehaviour
     public string combatMode { get; private set; }
     public string weaponType { get; private set; }
     public int bulletDmg { get; private set; }
+    public int explosionDmg { get; private set; }
     public int startingAmmo { get; private set; }
     public int bulletSpeed { get; private set; }
     public float weaponRange { get; private set; }
@@ -25,7 +26,7 @@ public class WeaponConfiguration : MonoBehaviour
     private Limbs Limbs;
 
     public void update(float fireRateInfo, string combatMode, string weaponType, float weaponRange, int bulletSpeed, int startingAmmo,
-        int bulletDmg, List<GameObject> limbs, GameObject weapon)
+        int bulletDmg, int explosionDmg, List<GameObject> limbs, GameObject weapon)
     {
         this.fireRateInfo = fireRateInfo;
         this.combatMode = combatMode;
@@ -34,6 +35,7 @@ public class WeaponConfiguration : MonoBehaviour
         this.bulletSpeed = bulletSpeed;
         this.startingAmmo = startingAmmo;
         this.bulletDmg = bulletDmg;
+        this.explosionDmg = explosionDmg;
         this.limbs = limbs;
         this.weapon = weapon;
 
