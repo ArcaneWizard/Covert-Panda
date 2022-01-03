@@ -1,21 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class Health : MonoBehaviour
 {
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
 
-    protected Transform healthBar;
-    protected Color normal;
-    protected Color injured;
-
-    private SpriteRenderer healthUnit;
-    private Queue<GameObject> injuredHealthUnits;
-    private float delayTimer;
-    private float delayTillFade = 0.6f;
-    private float disappearRate = 0.05f;
+    private Image hpBar;
+    private Vector2 hpBarOffset;
 
     protected int bulletLayer;
     protected int explosionLayer;
@@ -25,28 +19,21 @@ public abstract class Health : MonoBehaviour
     public virtual void Awake() 
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
-        healthBar = transform.GetChild(1); 
-
-        injuredHealthUnits = new Queue<GameObject>();
-        normal = healthBar.GetChild(1).GetComponent<SpriteRenderer>().color;
-        injured = new Color32(255, 0, 0, 199);
+        hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(0).GetComponent<Image>();
+        hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
     }
 
-    private void Start() => updateHealthBar();
+    private void Start() => currentHP = maxHP;
 
     // checks for when the entity collides with a bullet or explosion. apply dmg
     // and update health bar correspondingly
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == bulletLayer) {
+        if (col.gameObject.layer == bulletLayer) 
             bulletCollision(col.transform);
-            updateHealthBar();
-        }
 
-        else if (col.gameObject.layer == explosionLayer) {
+        else if (col.gameObject.layer == explosionLayer) 
             explosionCollision(col.transform);
-            updateHealthBar();
-        }
     }
 
     // Helper method. If this entity collides with a bullet and that bullet hasn't made contact with 
@@ -81,39 +68,14 @@ public abstract class Health : MonoBehaviour
         }
     }
 
-    private void updateHealthBar() 
+    // every frame, update the hp bar to reflect the entity's current hp. also, fix the hp
+    // bar position above the entity's head as it moves
+    private void Update() 
     {
         if (currentHP < 0)
             currentHP = 0;
 
-        int hp = (int) Mathf.Ceil((float) currentHP / maxHP * 11f);
-        
-        for (int i = hp; i >= 1; i--) 
-            healthBar.GetChild(i).gameObject.SetActive(true);
-
-        for (int j = 11; j >= hp + 1; j--) 
-        {
-            healthUnit = healthBar.GetChild(j).GetComponent<SpriteRenderer>();
-            if (healthUnit.color == normal)
-            {
-                if (injuredHealthUnits.Count == 0)
-                    delayTimer = delayTillFade;
-
-                healthUnit.color = injured;
-                injuredHealthUnits.Enqueue(healthUnit.gameObject);
-            }
-        }
-    }
-
-    public virtual void Update() 
-    {
-        if (injuredHealthUnits.Count > 0 && delayTimer <= 0) 
-        {
-            injuredHealthUnits.Dequeue().SetActive(false);
-            delayTimer = disappearRate;
-        }
-
-        if (delayTimer > 0)
-            delayTimer -= Time.deltaTime;
+        hpBar.fillAmount = (float) currentHP / (float) maxHP;
+        hpBar.transform.parent.GetComponent<RectTransform>().position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);
     }
 }

@@ -25,7 +25,7 @@ public class WeaponStats : MonoBehaviour
         set(0.33f, 10, 60, 300, 200, 0, WeaponTags.LeafScythe, Mode.meelee, Type.singleFire, l.Meelee_grip, w.LeafScythe);
         set(0.6f, 10, 52, 300, 200, 0, WeaponTags.Shotgun, Mode.gun, Type.singleFire, l.Short_barrel, w.GoldenShotgun);
 
-        set(0.27f, 32, 72, 300, 25, 0, WeaponTags.ArcticPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.ArcticCannon);
+        set(0.11f, 32, 150, 300, 25, 0, WeaponTags.ArcticPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.ArcticCannon);
         set(0.8f, 38, 99, 300, 80, 0, WeaponTags.PlasmaSniper, Mode.gun, Type.singleFire, l.Long_barrel, w.Sniper);
         set(0.12f, 32, 99, 300, 14, 0, WeaponTags.Needler, Mode.gun, Type.spamFire, l.Middle_barrel, w.Needler);
 

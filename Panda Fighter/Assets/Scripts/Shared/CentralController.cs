@@ -28,9 +28,9 @@ public class CentralController : MonoBehaviour
 
     public float maxSpeed { get; private set; }
     protected float speed;
-    public static float jumpForce = 1300f;
-    public static float doubleJumpForce = 1200f;
-    public static float launchBoostForce = 2500f;
+    public static float jumpForce = 1450f;
+    public static float doubleJumpForce = 1350f;
+    public static float jumpPadForce = 2500f;
     protected float maxGravity = 2.5f;
 
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
@@ -57,7 +57,7 @@ public class CentralController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         controller = transform.GetComponent<CentralAnimationController>();
 
-        maxSpeed = 14.5f;
+        maxSpeed = 17f;
         speed = maxSpeed;
     }
 
@@ -214,7 +214,7 @@ public class CentralController : MonoBehaviour
     {
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
-        rig.AddForce(new Vector2(0, launchBoostForce));
+        rig.AddForce(new Vector2(0, jumpPadForce));
         animator.SetBool("jumped", true);
     }
 

@@ -31,7 +31,7 @@ public class AI_WanderAround : MonoBehaviour
     {
         controller = transform.GetComponent<AI_Controller>();
         random = new System.Random();
-    }
+    } 
 
     // start wandering around. Resets settings, updates that the AI should resume
     // wandering and that it just entered the wandering state 
@@ -45,7 +45,11 @@ public class AI_WanderAround : MonoBehaviour
     }
 
     // stop wandering around. Updates that the AI should stop wandering
-    public void stopWandering() => shouldWander = false;
+    public void stopWandering() 
+    { 
+        shouldWander = false;
+        controller.ForcefullyEndCurrentAction();
+    }
 
     // called every frame. Returns early if the AI isn't in the wander state or if there
     // are no queued decision zones to analyze
@@ -143,6 +147,7 @@ public class AI_WanderAround : MonoBehaviour
 
         if (col.gameObject.layer == 8)
         {
+            Debug.Log("yeet ah");
             decisionZones.Enqueue(col.transform);
             justEnteredWanderingState = false;
         }
