@@ -10,13 +10,17 @@ public class Grenade : Bullet
 
     private SpriteRenderer sR;
     private Rigidbody2D rig;
-    private GameObject explosion;
+    private GameObject animatedExplosion;
+    private Explosion explosion;
 
     void Awake()
     {
         sR = transform.GetComponent<SpriteRenderer>();
         rig = transform.GetComponent<Rigidbody2D>();
-        explosion = transform.GetChild(0).gameObject;
+        animatedExplosion = transform.GetChild(0).gameObject;
+        explosion = transform.GetComponent<Explosion>();
+
+        explosion.radius = 12;
     }
 
     public void startExplosionTimer() => StartCoroutine(eStartExplosionTimer());
@@ -29,8 +33,10 @@ public class Grenade : Bullet
         transform.localEulerAngles = new Vector3(0, 0, 0);
 
         sR.enabled = false;
-        explosion.SetActive(true);
+        animatedExplosion.SetActive(true);
         explosionTimer = 1.4f;
+
+        StartCoroutine(explosion.damageSurroundingEntities());
     }
 
     void Update()
@@ -38,12 +44,12 @@ public class Grenade : Bullet
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
-        else if (explosion.activeSelf)
+        else if (animatedExplosion.activeSelf)
         {
             rig.constraints = RigidbodyConstraints2D.None;
 
             sR.enabled = true;
-            explosion.SetActive(false);
+            animatedExplosion.SetActive(false);
             gameObject.SetActive(false);
         }
     }

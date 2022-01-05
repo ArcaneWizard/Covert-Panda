@@ -31,7 +31,7 @@ public class AI_WanderAround : MonoBehaviour
     {
         controller = transform.GetComponent<AI_Controller>();
         random = new System.Random();
-    } 
+    }
 
     // start wandering around. Resets settings, updates that the AI should resume
     // wandering and that it just entered the wandering state 
@@ -45,8 +45,8 @@ public class AI_WanderAround : MonoBehaviour
     }
 
     // stop wandering around. Updates that the AI should stop wandering
-    public void stopWandering() 
-    { 
+    public void stopWandering()
+    {
         shouldWander = false;
         controller.ForcefullyEndCurrentAction();
     }
@@ -59,21 +59,21 @@ public class AI_WanderAround : MonoBehaviour
             return;
 
         // JUST FOR DEBUGGING, IGNORE
-        DebugGUI.debugText3 = controller.AI_action.action + (controller.decisionZone ? ", " +
-            controller.decisionZone.name : "none");
-        String a = "zones: \n";
-        foreach (Transform zone in decisionZones)
-            a += zone.name + " \n";
-        DebugGUI.debugText1 = a;
+        //DebugGUI.debugText3 = controller.AI_action.action + (controller.decisionZone ? ", " +
+        //controller.decisionZone.name : "none");
+        //String a = "zones: \n";
+        //foreach (Transform zone in decisionZones)
+        //    a += zone.name + " \n";
+        //DebugGUI.debugText1 = a;
 
         // discards the next queued up decision zone if the bot has gotten too far from it distance
         // wise or elevation wise 
         if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900
         || Mathf.Abs(decisionZones.Peek().position.y - transform.position.y) > 9f)
         {
-            DebugGUI.debugText5 = ("Discarded " + decisionZones.Peek() + " " +
-             getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
-            decisionZones.Dequeue();
+            //DebugGUI.debugText5 = ("Discarded " + decisionZones.Peek() + " " +
+            //getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
+            //decisionZones.Dequeue();
             return;
         }
 
@@ -114,7 +114,7 @@ public class AI_WanderAround : MonoBehaviour
             }
 
             int actionIndex = random.Next(0, AI_ACTIONS.Count);
-            DebugGUI.debugText4 = (AI_ACTIONS[actionIndex].ToString());
+            //DebugGUI.debugText4 = (AI_ACTIONS[actionIndex].ToString());
             controller.BeginAction(AI_ACTIONS[actionIndex], currentDecisionZone);
         }
     }

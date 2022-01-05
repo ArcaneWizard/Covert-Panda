@@ -10,7 +10,7 @@ public class Rocket : Bullet
     private GameObject physicalExplosion;
     private Explosion explosion;
 
-    private float explosionTimer = 0; 
+    private float explosionTimer = 0;
 
 
     void Awake()
@@ -21,7 +21,7 @@ public class Rocket : Bullet
 
         physicalExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
-        explosion.radius = 12f;
+        explosion.radius = 7f;
     }
 
     void Update()

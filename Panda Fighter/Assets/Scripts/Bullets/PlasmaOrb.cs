@@ -12,7 +12,8 @@ public class PlasmaOrb : Bullet
 
     private SpriteRenderer sR;
     private Rigidbody2D rig;
-    private GameObject explosion;
+    private GameObject physicalExplosion;
+    private Explosion explosion;
 
     private Vector3 contactLocation, surfaceContactLocation;
     private Transform trackingSurface;
@@ -22,7 +23,10 @@ public class PlasmaOrb : Bullet
     {
         sR = transform.GetComponent<SpriteRenderer>();
         rig = transform.GetComponent<Rigidbody2D>();
-        explosion = transform.GetChild(0).gameObject;
+
+        physicalExplosion = transform.GetChild(0).gameObject;
+        explosion = transform.GetComponent<Explosion>();
+        explosion.radius = 12f;
     }
 
     void Update()
@@ -34,7 +38,7 @@ public class PlasmaOrb : Bullet
         {
             rig.constraints = RigidbodyConstraints2D.None;
             sR.enabled = true;
-            explosion.SetActive(false);
+            physicalExplosion.SetActive(false);
             trackingSurface = null;
 
             gameObject.SetActive(false);
@@ -56,9 +60,11 @@ public class PlasmaOrb : Bullet
             yield return new WaitForSeconds(delayTillExplosion);
 
             transform.localEulerAngles = new Vector3(0, 0, 0);
-            explosion.SetActive(true);
+            physicalExplosion.SetActive(true);
             explosionTimer = 1.4f;
             sR.enabled = false;
+
+            StartCoroutine(explosion.damageSurroundingEntities());
         }
     }
 

@@ -27,6 +27,7 @@ public class Ragdolling : MonoBehaviour
     // and makes all limbs no longer subject to physic forces and no longer able to collide with platforms.
     public void Disable()
     {
+        animator.SetInteger("ragdolling", 0);
         animator.enabled = true;
         ragdollArms.SetActive(false);
 
@@ -43,7 +44,7 @@ public class Ragdolling : MonoBehaviour
     // Sets the velocity of the ragdoll hip equal to the player's velocity b4 they died
     public IEnumerator Enable()
     {
-        animator.SetBool("ragdolling", true);
+        animator.SetInteger("ragdolling", 1);
         yield return new WaitForSeconds(2 * Time.deltaTime);
         
         animator.enabled = false;

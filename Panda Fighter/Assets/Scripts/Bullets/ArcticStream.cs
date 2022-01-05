@@ -8,12 +8,16 @@ public class ArcticStream : Bullet
     private float explosionTimer = 0;
 
     private Rigidbody2D rig;
-    private GameObject explosion;
+    private GameObject animatedExplosion;
+    private Explosion explosion;
 
     void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
-        explosion = transform.GetChild(0).gameObject;
+
+        animatedExplosion = transform.GetChild(0).gameObject;
+        explosion = transform.GetComponent<Explosion>();
+        explosion.radius = 13;
     }
 
     void Update()
@@ -21,10 +25,10 @@ public class ArcticStream : Bullet
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
-        else if (explosion.activeSelf)
+        else if (animatedExplosion.activeSelf)
         {
             rig.constraints = RigidbodyConstraints2D.None;
-            explosion.SetActive(false);
+            animatedExplosion.SetActive(false);
             gameObject.SetActive(false);
         }
     }
@@ -35,8 +39,10 @@ public class ArcticStream : Bullet
         {
             rig.constraints = RigidbodyConstraints2D.FreezeAll;
             transform.localEulerAngles = new Vector3(0, 0, 0);
-            explosion.SetActive(true);
+            animatedExplosion.SetActive(true);
             explosionTimer = 1.4f;
+
+            StartCoroutine(explosion.damageSurroundingEntities());
         }
     }
 

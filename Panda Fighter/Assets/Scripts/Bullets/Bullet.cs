@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public bool madeContact;
+    [HideInInspector] public bool madeContact;
 
     public virtual void OnEntityEnter(Transform entity) { }
     public virtual void OnMapEnter(Transform map) => gameObject.SetActive(false);
@@ -14,4 +14,6 @@ public class Bullet : MonoBehaviour
         if (col.gameObject.layer == Layers.map)
             OnMapEnter(col.transform);
     }
+
+    public virtual int Damage() => transform.parent.GetComponent<WeaponConfiguration>().bulletDmg;
 }

@@ -41,6 +41,8 @@ public class CentralController : MonoBehaviour
 
     public bool isGrounded { get; private set; }
     public bool isTouchingMap { get; private set; }
+    
+    public bool forceUpdateTilt;
     protected float groundAngle;
     protected Vector2 groundDir;
     protected bool checkForAngle;
@@ -83,6 +85,7 @@ public class CentralController : MonoBehaviour
             zAngle = zAngle - 360;
 
         float newGroundAngle = groundAngle <= 180 ? groundAngle / 2.2f : ((groundAngle - 360) / 2.2f);
+
         if (isGrounded && (dirX != 0 || (dirX == 0 && groundAngle == lastGroundAngle)))
         {
             if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
@@ -92,13 +95,26 @@ public class CentralController : MonoBehaviour
         else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
 
+        if (forceUpdateTilt) 
+        {
+            transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
+            forceUpdateTilt = false;
+        }
+
         float tempGroundAngle = (groundAngle <= 180f) ? groundAngle : groundAngle - 360;
         physicalLeftFoot.transform.localEulerAngles = new Vector3(0, 0, 90 + tempGroundAngle);
         physicalRightFoot.transform.localEulerAngles = new Vector3(0, 0, 90 + tempGroundAngle);
     }
-
+    
     //check if the creature is on the ground + update the groundAngle
     public IEnumerator determineIfGrounded(bool disableLimbsDuringDoubleJump)
+    {
+        updateGroundAngle(disableLimbsDuringDoubleJump);
+        yield return new WaitForSeconds(0.14f);
+        StartCoroutine(determineIfGrounded(disableLimbsDuringDoubleJump));
+    }
+
+    public void updateGroundAngle(bool disableLimbsDuringDoubleJump) 
     {
         //use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
         leftGroundHit = Physics2D.Raycast(leftGroundChecker.position, Vector2.down, 2f, LayerMasks.map);
@@ -176,10 +192,6 @@ public class CentralController : MonoBehaviour
             lastGroundAngle = groundAngle;
             checkForAngle = false;
         }
-
-        //reupdate the ground angle after 0.14 seconds
-        yield return new WaitForSeconds(0.14f);
-        StartCoroutine(determineIfGrounded(disableLimbsDuringDoubleJump));
     }
 
     protected IEnumerator findWalls()

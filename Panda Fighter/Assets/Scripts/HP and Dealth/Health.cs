@@ -7,21 +7,23 @@ public abstract class Health : MonoBehaviour
 {
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
-    public bool isDead { get; private set; }
+    public bool isDead { get; protected set; }
 
-    private Image hpBar;
-    private Vector2 hpBarOffset;
+    protected Image hpBar;
+    protected Vector2 hpBarOffset;
 
     protected int bulletLayer;
 
-    private CentralWeaponSystem weaponSystem;
-    private Ragdolling ragdolling;
-    private Rigidbody2D rig;
-    private Collider2D hitBox;
+    protected CentralWeaponSystem weaponSystem;
+    protected CentralController controller;
+    protected Ragdolling ragdolling;
+    protected Rigidbody2D rig;
+    protected Collider2D hitBox;
 
     public virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
+        controller = transform.GetComponent<CentralController>();
         ragdolling = transform.GetComponent<Ragdolling>();
         rig = transform.GetComponent<Rigidbody2D>();
         hitBox = transform.GetChild(1).GetComponent<Collider2D>();
@@ -63,7 +65,7 @@ public abstract class Health : MonoBehaviour
         if (!bullet.madeContact)
         {
             string weaponType = physicalBullet.parent.GetComponent<WeaponTag>().Tag;
-            currentHP -= weaponSystem.getWeaponConfiguration(weaponType).bulletDmg;
+            currentHP -= bullet.Damage();
 
             bullet.madeContact = true;
             bullet.OnEntityEnter(transform);
@@ -75,6 +77,7 @@ public abstract class Health : MonoBehaviour
     // and that too based off the distance from the center of the explosion
     private void explosionCollision(Transform explosionCollider)
     {
+        Debug.Log(explosionCollider.transform.parent);
         Explosion explosion = explosionCollider.parent.transform.GetComponent<Explosion>();
         int id = gameObject.GetHashCode();
 
@@ -103,9 +106,13 @@ public abstract class Health : MonoBehaviour
             currentHP = 0;
             hpBar.transform.parent.gameObject.SetActive(false);
             hitBox.enabled = false;
+
+            StartCoroutine(CallUponDying());
         }
 
         hpBar.fillAmount = (float)currentHP / (float)maxHP;
         hpBar.transform.parent.GetComponent<RectTransform>().position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);
     }
+
+    public virtual IEnumerator CallUponDying() => null;
 }

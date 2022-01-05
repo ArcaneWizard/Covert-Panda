@@ -7,12 +7,16 @@ public class Railgun : Bullet
     private ParticleSystem impactExplosion;
     private SpriteRenderer sR;
     private Rigidbody2D rig;
+    private Explosion explosion;
 
     private void Awake()
     {
         sR = transform.GetComponent<SpriteRenderer>();
-        impactExplosion = transform.GetComponent<ParticleSystem>();
         rig = transform.GetComponent<Rigidbody2D>();
+
+        impactExplosion = transform.GetComponent<ParticleSystem>();
+        explosion = transform.GetComponent<Explosion>();
+        explosion.radius = 1.1f;
     }
 
     private void OnEnable() => transform.GetComponent<ParticleSystem>().Stop();
@@ -25,6 +29,7 @@ public class Railgun : Bullet
         sR.enabled = false;
         rig.velocity = Vector2.zero;
         impactExplosion.Play();
+        StartCoroutine(explosion.damageSurroundingEntities());
 
         yield return new WaitForSeconds(impactExplosion.main.startLifetime.constant + 0.1f);
 

@@ -73,7 +73,7 @@ public class AI_FollowPath : MonoBehaviour
     public void endJourney()
     {
         journey = "ended";
-        DebugGUI.debugText8 = "journey ended";
+        //DebugGUI.debugText8 = "journey ended";
     }
 
     public bool gotLost() => journey == "got lost";

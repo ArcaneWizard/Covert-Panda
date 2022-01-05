@@ -7,6 +7,19 @@ public class LavaOrb : Bullet
     private ParticleSystem impactExplosion;
     private SpriteRenderer sR;
     private Rigidbody2D rig;
+    private Explosion explosion;
+
+    private void Awake()
+    {
+        sR = transform.GetComponent<SpriteRenderer>();
+        rig = transform.GetComponent<Rigidbody2D>();
+
+        impactExplosion = transform.GetChild(0).GetComponent<ParticleSystem>();
+        explosion = transform.GetComponent<Explosion>();
+        explosion.radius = 1.3f;
+    }
+
+    private void OnEnable() => impactExplosion.Stop();
 
     public void OrientExplosion(Vector2 normal)
     {
@@ -21,14 +34,6 @@ public class LavaOrb : Bullet
         fo.xMultiplier = (normal.y - 1) / -0.04f + 50f;
     }
 
-    private void Awake()
-    {
-        sR = transform.GetComponent<SpriteRenderer>();
-        impactExplosion = transform.GetChild(0).GetComponent<ParticleSystem>();
-        rig = transform.GetComponent<Rigidbody2D>();
-    }
-
-    private void OnEnable() => impactExplosion.Stop();
     public override void OnEntityEnter(Transform entity) => StartCoroutine(initiateExplosion());
     public override void OnMapEnter(Transform entity) => StartCoroutine(initiateExplosion());
 
@@ -37,6 +42,7 @@ public class LavaOrb : Bullet
         sR.enabled = false;
         rig.velocity = Vector2.zero;
         impactExplosion.Play();
+        StartCoroutine(explosion.damageSurroundingEntities());
 
         yield return new WaitForSeconds(impactExplosion.main.startLifetime.constant + 0.1f);
 
