@@ -12,7 +12,7 @@ public class wPlasmaOrb : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint, side);
 
         bullet.transform.right = aim;
         Vector2 unadjustedForce = configuration.bulletSpeed * 40 * aim * new Vector2(1.4f, 1);

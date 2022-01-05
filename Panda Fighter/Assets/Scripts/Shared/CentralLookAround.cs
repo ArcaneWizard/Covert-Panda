@@ -21,6 +21,7 @@ public class CentralLookAround : MonoBehaviour
     protected CentralController controller;
     protected CentralShooting shooting;
     protected CentralWeaponSystem weaponSystem;
+    protected Health health;
 
     public virtual void Awake()
     {
@@ -28,6 +29,7 @@ public class CentralLookAround : MonoBehaviour
         animController = transform.GetComponent<CentralAnimationController>();
         shooting = transform.GetComponent<CentralShooting>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
+        health = transform.GetComponent<Health>();
         body = transform.GetChild(0);
     }
 

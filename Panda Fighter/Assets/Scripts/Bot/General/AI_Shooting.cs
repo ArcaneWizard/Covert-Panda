@@ -22,7 +22,7 @@ public class AI_Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (!AI_lookAround.playerIsInSight || countdownBtwnShots > 0f)
+        if (!AI_lookAround.playerIsInSight || countdownBtwnShots > 0f || health.isDead)
             return;
 
         if (weaponSystem.GetAmmo <= 0 || weaponSystem.weaponSelected == null)

@@ -25,7 +25,7 @@ public class Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (weaponSystem.GetAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f)
+        if (weaponSystem.GetAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f || health.isDead)
             return;
 
         if (configuration.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))

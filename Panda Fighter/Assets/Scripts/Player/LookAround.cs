@@ -14,6 +14,9 @@ public class LookAround : CentralLookAround
 
     private void LateUpdate()
     {
+        if (health.isDead)
+            return;
+
         lookAndAimInRightDirection();
         playerShooting.LateLateUpdate();
     }

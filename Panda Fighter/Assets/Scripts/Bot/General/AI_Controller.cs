@@ -69,27 +69,31 @@ public class AI_Controller : CentralController
 
     public override void Update()
     {
+        // don't do anything if dead
+        if (health.isDead)
+            return;
+
         base.Update();
 
-        // if a fall action has been initiated, execute its logic/checks 
-        if (needsToFall)
+        // if a fall action has been initiated, then execute it when the AI walks off a platform
+        if (needsToFall && !isGrounded)
             executeFall();
 
-        // if the AI is on some platform/ground 
+        // if the AI is grounded on the map
         if (isGrounded && isTouchingMap)
         {
-            //execute any pending action 
+            // execute any action that has been setup and is pending start
             if (actionProgress == "pending start")
                 executeAction();
 
-            // if the action has landed on a platform after falling, reset its speed 
+            // if the AI has landed on a platform after falling, reset its speed and mark the action as finished
             if (actionProgress == "in progress" && !needsToFall && (action == "fallDown" || action == "fallDownCurve"))
             {
                 speed = maxSpeed;
                 actionProgress = "finished";
             }
 
-            // if the action has landed on a platform after jumping, reset its speed 
+            // if the AI has landed on a platform after jumping, reset its speed and mark the action as finished
             else if (actionProgress == "in progress" && leftPlatform && (action == "normalJump" || action == "doubleJump" || action == "launchPad"))
             {
                 speed = maxSpeed;
@@ -112,14 +116,14 @@ public class AI_Controller : CentralController
     private void executeFall()
     {
         // set fall speed only when actually falling
-        if (!isGrounded && AI_action.action == "fallDown")
+        if (AI_action.action == "fallDown")
         {
             speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
             needsToFall = false;
         }
 
         // set initial fall speed only when actually falling (+ will change dir midway during fall)
-        else if (!isGrounded && AI_action.action == "fallDownCurve")
+        else if (AI_action.action == "fallDownCurve")
         {
             StartCoroutine(executeFallingDownCurveMotion());
             needsToFall = false;
@@ -181,9 +185,9 @@ public class AI_Controller : CentralController
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
 
-        doubleJump(); 
+        doubleJump();
         actionProgress = "in progress";
-        
+
         StartCoroutine(changeVelocityAfterDelay(AI_action.timeB4SecondChange, AI_action.secondChangedSpeed));
     }
 
@@ -220,7 +224,7 @@ public class AI_Controller : CentralController
             rig.AddForce(new Vector2(0, doubleJumpForce));
             StartCoroutine(controller.startDoubleJumpAnimation());
         }
-    }   
+    }
 
     private void LateUpdate() => setAlienVelocity();
 
@@ -258,11 +262,11 @@ public class AI_Controller : CentralController
     }
 
     // changes velocity after a given delay if you're still on the same action
-    private IEnumerator changeVelocityAfterDelay(Vector2 delay, Vector2 velocity) 
+    private IEnumerator changeVelocityAfterDelay(Vector2 delay, Vector2 velocity)
     {
         AI_ACTION action = AI_action;
         yield return new WaitForSeconds(UnityEngine.Random.Range(delay.x, delay.y));
-        if (action.Equals(AI_action) && actionProgress == "in progress") 
+        if (action.Equals(AI_action) && actionProgress == "in progress")
         {
             Debug.Log("yeet");
             float randomSpeed = UnityEngine.Random.Range(velocity.x, velocity.y);

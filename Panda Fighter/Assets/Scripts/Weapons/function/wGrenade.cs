@@ -21,7 +21,7 @@ public class wGrenade : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
         bullet.transform.right = -aim;
 
         bullet.GetComponent<Collider2D>().isTrigger = false;

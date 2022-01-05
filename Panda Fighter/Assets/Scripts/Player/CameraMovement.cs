@@ -5,7 +5,9 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     public Transform cameraTarget;
+    public Transform cameraTargetAfterPlayerDeath;
     public Transform centerOfMap;
+    public PlayerHealth health;
 
     [Range(0, 1)]
     public float mapLocationOffsetMultiplier;
@@ -21,16 +23,16 @@ public class CameraMovement : MonoBehaviour
     private float mouseDistanceY;
     private float locationBasedOffset;
 
-    void Start()
+    void Start() => cameraOffset = transform.position - cameraTarget.transform.position;
+    
+    void Update() 
     {
-        cameraOffset = transform.position - cameraTarget.transform.position;
+        if (health.isDead)
+            cameraTarget = cameraTargetAfterPlayerDeath;
     }
 
-    void FixedUpdate()
-    {
-        cameraMovement();
-    }
-
+    void FixedUpdate() => cameraMovement();
+    
     private void cameraMovement()
     {
         mouseDistanceX = (Input.mousePosition.x - (float)Screen.width / 2f) / (float)Screen.width;

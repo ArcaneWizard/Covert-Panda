@@ -9,16 +9,16 @@ public class Explosion : MonoBehaviour
     private int explosionDamage;
     private HashSet<int> entitiesHurt;
     private CircleCollider2D collider;
-    
-    private void Awake() 
+
+    private void Awake()
     {
         entitiesHurt = new HashSet<int>();
 
-        if (transform.childCount > 0) 
+        if (transform.childCount > 0)
             collider = transform.GetChild(0).GetComponent<CircleCollider2D>();
     }
-    
-    private void Start() 
+
+    private void Start()
     {
         if (collider)
             collider.radius = radius;
@@ -28,10 +28,13 @@ public class Explosion : MonoBehaviour
     public bool wasEntityAlreadyHurt(int id) => entitiesHurt.Contains(id);
     public void updateEntitiesHurt(int id) => entitiesHurt.Add(id);
 
-    // enables explosion collider to damage nearby entities (their health script detects the explosion collider)
-    // turns off explosion collider after one frame. clears the list of entities damaged by the explosion
-    public IEnumerator damageSurroundingEntities() 
+    // updates explosion layer and enables explosion collider to damage nearby entities (their health script 
+    // detects the explosion collider). turns off explosion collider after one frame. clears the list of entities 
+    // damaged by the explosion
+    public IEnumerator damageSurroundingEntities()
     {
+        transform.GetChild(0).gameObject.layer = Layers.explosion;
+
         collider.enabled = true;
         yield return new WaitForSeconds(Time.deltaTime);
         collider.enabled = false;
@@ -41,12 +44,12 @@ public class Explosion : MonoBehaviour
 
     // returns the dmg the explosion should do to a given entity based on how far they are from the center of 
     // the explosion
-    public int damageBasedOffDistance(Transform entity) 
+    public int damageBasedOffDistance(Transform entity)
     {
         BoxCollider2D entityCollider = entity.GetChild(0).GetComponent<BoxCollider2D>();
         Vector2 closestCollisionPoint = entityCollider.ClosestPoint(collider.transform.position);
 
-        float squareDistance = Mathf.Pow(closestCollisionPoint.x - collider.transform.position.x, 2) 
+        float squareDistance = Mathf.Pow(closestCollisionPoint.x - collider.transform.position.x, 2)
             + Mathf.Pow(closestCollisionPoint.y - collider.transform.position.y, 2);
 
         DebugGUI.debugText7 = (squareDistance).ToString();

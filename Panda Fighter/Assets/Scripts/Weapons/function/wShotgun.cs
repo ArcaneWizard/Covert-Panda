@@ -22,7 +22,7 @@ public class wShotgun : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
         reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, configuration.bulletSpeed);
         shootNewBulletAtAngle(goldenShotgunSpread, aim, bullet, bulletRig);
         shootNewBulletAtAngle(-goldenShotgunSpread, aim, bullet, bulletRig);
@@ -34,7 +34,7 @@ public class wShotgun : IWeapon
         bullet = reusableWeaponMethods.retrieveNextBullet(configuration.weaponSystem);
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
 
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
         bullet.transform.right = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
         bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * configuration.bulletSpeed;
     }

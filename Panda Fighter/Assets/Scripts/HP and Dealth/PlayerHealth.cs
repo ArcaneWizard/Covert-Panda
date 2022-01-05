@@ -10,6 +10,5 @@ public class PlayerHealth : Health
 
         maxHP = 200;
         bulletLayer = Layers.enemyBullet;
-        explosionLayer = Layers.enemyExplosion;
     }
 }

@@ -9,6 +9,7 @@ public abstract class CentralShooting : MonoBehaviour
 
     protected CentralWeaponSystem weaponSystem;
     protected CentralLookAround lookAround;
+    protected Health health;
 
     private List<GameObject> WeaponSetup = new List<GameObject>();
     private Transform bullet;
@@ -18,11 +19,15 @@ public abstract class CentralShooting : MonoBehaviour
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         lookAround = transform.GetComponent<CentralLookAround>();
+        health = transform.GetComponent<Health>();
         weaponHeld = null;
     }
 
     private void LateUpdate()
     {
+        if (health.isDead)
+            return;
+
         if (combatMode == "handheld")
         {
             if (weaponSystem.GetAmmo > 0)

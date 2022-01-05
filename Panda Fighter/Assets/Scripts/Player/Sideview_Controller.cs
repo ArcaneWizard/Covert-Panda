@@ -7,19 +7,25 @@ using UnityEngine;
 
 public class Sideview_Controller : CentralController
 {
-    private int frames;
-    private float time;
+    private int lastDirX;
+    private bool needToWalkMinimumDistance;
 
     public override void Update()
     {
+        if (health.isDead) 
+            return;
+
         base.Update();
 
-        //use A and D keys for left or right movement
+        // use A and D keys for left or right movement
         dirX = 0;
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D)) 
             dirX++;
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A)) 
             dirX--;
+        
+        // always move left/right for at least a full step instead of jittering after quick button taps
+        takeFullStep();
 
         //use W and S keys for jumping up or thrusting downwards + allow double jump
         if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") && !animator.GetBool("double jump"))
@@ -85,5 +91,33 @@ public class Sideview_Controller : CentralController
 
             rig.gravityScale = maxGravity;
         }
+    }
+
+    // always move left/right for at least a full step instead of jittering after quick button taps
+    private void takeFullStep() 
+    {
+        // when the player suddenly chooses to head left or right and this is different from their last input (idle or diff direction),
+        // update that the player needs to walk some minimum distance and set the last input to be the current input
+        if (dirX != 0 && lastDirX != dirX)  {
+            StartCoroutine(waitForStepToComplete());
+            lastDirX = dirX;
+        }
+
+        // as long as the player needs to walk some minimum distance, force the direction of movement to be to the last input they gave
+        if (needToWalkMinimumDistance) 
+            dirX = lastDirX;
+        
+        // otherwise reset the last input to be not moving
+        else if (dirX == 0)
+            lastDirX = 0;
+    }
+
+    // updates a bool to say that the player needs to walk some minimum distance, and after 0.24 seconds, updates the same bool
+    // to convey the player no longer neesd to walk some minimum distance
+    private IEnumerator waitForStepToComplete()
+    {
+        needToWalkMinimumDistance = true;
+        yield return new WaitForSeconds(0.24f);
+        needToWalkMinimumDistance = false;
     }
 }

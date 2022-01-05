@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class AI_LookAround : CentralLookAround
 {
-    public Transform player;
-    public LayerMask mapOrPlayer;
+    private Transform player;
     private AI_Shooting ai_shooting;
+    private Side side;
 
     public bool playerIsInSight { get; private set; }
     public Vector3 lookAt { get; private set; }
@@ -14,12 +14,19 @@ public class AI_LookAround : CentralLookAround
     public override void Awake()
     {
         base.Awake();
+
         ai_shooting = transform.GetComponent<AI_Shooting>();
+        player = transform.parent.GetComponent<AI>().Player;
+        side = transform.parent.GetComponent<Role>().side;
+
         StartCoroutine(updatePlayerInLineOfSight());
     }
 
     private void LateUpdate()
     {
+        if (health.isDead)
+            return;
+
         lookAt = player.position - shootingArm.position;
         lookAndAimInRightDirection();
         ai_shooting.LateLateUpdate();
@@ -57,8 +64,8 @@ public class AI_LookAround : CentralLookAround
         yield return new WaitForSeconds(0.3f);
 
         RaycastHit2D hit = Physics2D.Raycast(shootingArm.position, player.position - shootingArm.position,
-            weaponSystem.weaponConfiguration.weaponRange, mapOrPlayer);
-        playerIsInSight = hit.collider != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("Player");
+            weaponSystem.weaponConfiguration.weaponRange, LayerMasks.mapOrTarget(side));
+        playerIsInSight = hit.collider != null && hit.collider.gameObject.layer == Layers.friendlyHitBox;
 
         StartCoroutine(updatePlayerInLineOfSight());
     }

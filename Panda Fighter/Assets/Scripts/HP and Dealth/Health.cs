@@ -7,32 +7,49 @@ public abstract class Health : MonoBehaviour
 {
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
+    public bool isDead { get; private set; }
 
     private Image hpBar;
     private Vector2 hpBarOffset;
 
     protected int bulletLayer;
-    protected int explosionLayer;
 
     private CentralWeaponSystem weaponSystem;
+    private Ragdolling ragdolling;
+    private Rigidbody2D rig;
+    private Collider2D hitBox;
 
-    public virtual void Awake() 
+    public virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
+        ragdolling = transform.GetComponent<Ragdolling>();
+        rig = transform.GetComponent<Rigidbody2D>();
+        hitBox = transform.GetChild(1).GetComponent<Collider2D>();
+
+        Side side = transform.parent.GetComponent<Role>().side;
+        hitBox.gameObject.layer = (side == Side.Friendly) ? Layers.friendlyHitBox : Layers.enemyHitBox;
+
         hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(0).GetComponent<Image>();
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
     }
 
-    private void Start() => currentHP = maxHP;
+    private void Start()
+    {
+        currentHP = maxHP;
+        isDead = false;
+    }
 
     // checks for when the entity collides with a bullet or explosion. apply dmg
     // and update health bar correspondingly
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == bulletLayer) 
+        if (isDead)
+            return;
+
+        if (col.gameObject.layer == bulletLayer)
             bulletCollision(col.transform);
 
-        else if (col.gameObject.layer == explosionLayer) 
+        else if (col.gameObject.layer == Layers.explosion)
             explosionCollision(col.transform);
     }
 
@@ -51,7 +68,7 @@ public abstract class Health : MonoBehaviour
             bullet.madeContact = true;
             bullet.OnEntityEnter(transform);
         }
-    } 
+    }
 
     // Helper method for when this entity collides with an explosion. Check if 
     // this enemy has already been hurt by said explosion. If not, only then take damage
@@ -61,7 +78,7 @@ public abstract class Health : MonoBehaviour
         Explosion explosion = explosionCollider.parent.transform.GetComponent<Explosion>();
         int id = gameObject.GetHashCode();
 
-        if (!explosion.wasEntityAlreadyHurt(id)) 
+        if (!explosion.wasEntityAlreadyHurt(id))
         {
             explosion.updateEntitiesHurt(id);
             currentHP -= explosion.damageBasedOffDistance(transform);
@@ -70,12 +87,25 @@ public abstract class Health : MonoBehaviour
 
     // every frame, update the hp bar to reflect the entity's current hp. also, fix the hp
     // bar position above the entity's head as it moves
-    private void Update() 
+    private void Update()
     {
-        if (currentHP < 0)
-            currentHP = 0;
+        if (isDead)
+            return;
 
-        hpBar.fillAmount = (float) currentHP / (float) maxHP;
+        if (Input.GetKeyDown(KeyCode.X))
+            currentHP = -20;
+
+        if (currentHP <= 0)
+        {
+            isDead = true;
+            StartCoroutine(ragdolling.Enable());
+
+            currentHP = 0;
+            hpBar.transform.parent.gameObject.SetActive(false);
+            hitBox.enabled = false;
+        }
+
+        hpBar.fillAmount = (float)currentHP / (float)maxHP;
         hpBar.transform.parent.GetComponent<RectTransform>().position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);
     }
 }

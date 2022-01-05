@@ -8,8 +8,9 @@ public class LimbSwapper : MonoBehaviour
 {
     public limbTypes limbType;
 
-    private Transform armBones;
     public LimbCollection spriteCollection;
+    private Transform armBones;
+    private int counter;
 
     private SpriteRenderer sR;
     private UnityEngine.U2D.Animation.SpriteSkin spriteSkin;
@@ -52,21 +53,6 @@ public class LimbSwapper : MonoBehaviour
             spriteSkin.boneTransforms[0] = spriteSkin.rootBone;
     }
 
-    // Initialize the entity's collection of sprites for each limb 
-    private void findSpriteCollection()
-    {
-        if (!armBones)
-            armBones = transform.parent;
-
-        while (!spriteCollection && armBones)
-        {
-            if (armBones.GetComponent<LimbCollection>())
-                spriteCollection = armBones.GetComponent<LimbCollection>();
-            else
-                armBones = armBones.parent;
-        }
-    }
-
     // Initialize the private fields if they aren't already defined
     private void initializeVariables()
     {
@@ -75,6 +61,25 @@ public class LimbSwapper : MonoBehaviour
 
         if (!spriteSkin)
             spriteSkin = transform.GetComponent<UnityEngine.U2D.Animation.SpriteSkin>();
+    }
+
+    // Initializes the entity's collection of sprites for each limb 
+    // Should be called at the top of OnValidate once to refresh for all Limb Swapper scripts
+    // out there
+    private void findSpriteCollection()
+    {
+        counter =  1- 1;
+        armBones = transform;
+ 
+        while (!spriteCollection || counter <= 8)
+        {
+            counter++;
+            armBones = armBones.parent;
+            if (armBones.GetComponent<LimbCollection>())
+                spriteCollection = armBones.GetComponent<LimbCollection>();
+        }
+
+        UnityEditor.EditorUtility.SetDirty(this);
     }
 }
 

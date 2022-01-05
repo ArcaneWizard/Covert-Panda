@@ -6,8 +6,8 @@ public class CentralController : MonoBehaviour
 {
     protected Rigidbody2D rig;
     protected Transform body;
-    public float a;
-    public float b;
+    protected CentralAnimationController controller;
+    protected Health health;
 
     [HideInInspector]
     public Animator animator { get; private set; }
@@ -48,14 +48,16 @@ public class CentralController : MonoBehaviour
     public int dirX { get; protected set; }
     protected float zAngle;
 
-    protected CentralAnimationController controller;
-
     public void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
         body = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         controller = transform.GetComponent<CentralAnimationController>();
+        health = transform.GetComponent<Health>();
+
+        Side side = transform.parent.GetComponent<Role>().side;
+        mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
 
         maxSpeed = 17f;
         speed = maxSpeed;
@@ -67,10 +69,7 @@ public class CentralController : MonoBehaviour
         StartCoroutine(determineIfGrounded(controller.disableLimbsDuringDoubleJump));
     }
 
-    public virtual void Update()
-    {
-        tilt();
-    }
+    public virtual void Update() => tilt();
 
     public void setSpeed(float speed) => this.speed = speed;
     public void setDirection(int dir) => this.dirX = dir;

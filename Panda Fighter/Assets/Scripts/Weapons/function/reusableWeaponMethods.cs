@@ -11,36 +11,42 @@ public static class reusableWeaponMethods
         rig.velocity = aim * speed;
     }
 
-    public static void configureReusedBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint)
+    public static void configureReusedBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint, Side side)
     {
-        //spawn bullet at the right place + default velocity and rotation
+        // spawn bullet at the right place + default velocity and rotation
         bullet.position = bulletSpawnPoint.position;
         bullet.localEulerAngles = new Vector3(0, 0, bullet.localEulerAngles.z);
         bulletRig.velocity = new Vector2(0, 0);
         bulletRig.angularVelocity = 0;
 
-        //reenable collider
+        // set the layer of the bullet (does it damage the player/friendly creatures or enemy creatures)
+        if (side == Side.Friendly)
+            bullet.gameObject.layer = Layers.friendlyBullet;
+        else
+            bullet.gameObject.layer = Layers.enemyBullet;
+
+        // reenable collider
         bullet.GetComponent<Collider2D>().enabled = true;
 
-        //reset the bullet sprite to be opaque (ie. alpha = 1)
+        // reset the bullet sprite to be opaque (ie. alpha = 1)
         if (bullet.GetComponent<SpriteRenderer>())
         {
             Color color = bullet.GetComponent<SpriteRenderer>().color;
             bullet.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
         }
 
-        //reinitiate the OnEnable method of the bullet (where variables get reset)
+        // reinitiate the OnEnable method of the bullet (where variables get reset)
         bullet.gameObject.SetActive(false);
         bullet.gameObject.SetActive(true);
 
-        //reset the trail renderer and particle effect, if any
+        // reset the trail renderer and particle effect, if any
         if (bullet.GetComponent<TrailRenderer>())
             bullet.GetComponent<TrailRenderer>().Clear();
 
         if (bullet.GetComponent<ParticleSystem>())
             bullet.GetComponent<ParticleSystem>().Clear();
 
-        //reset that the bullet can do damage
+        // reset that the bullet can do damage
         bullet.GetComponent<Bullet>().madeContact = false;
     }
 

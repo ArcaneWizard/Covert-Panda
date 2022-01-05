@@ -48,7 +48,7 @@ public class WeaponSystem : CentralWeaponSystem
     }
 
     // Default weapon you start off with
-    private void Start()
+    public override void InitializeWeaponSystem()
     {
         foreach (String weapon in IWeapons.Keys)
             collectNewWeapon(weapon);

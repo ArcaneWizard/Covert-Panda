@@ -2,16 +2,18 @@ using UnityEngine;
 using System.Collections;
 using System.Text;
 
-public class WeaponTag : MonoBehaviour {
+public class WeaponTag : MonoBehaviour
+{
 
     public WeaponTags tag;
 
     public string Tag => tag.ToString();
-    
-    void OnValidate() 
+
+    void OnValidate()
     {
         StringBuilder newTag = new StringBuilder("");
-        foreach (char c in tag.ToString()) {
+        foreach (char c in tag.ToString())
+        {
             newTag.Append(c >= 'A' && c <= 'Z' ? " " + c : c.ToString());
         }
 

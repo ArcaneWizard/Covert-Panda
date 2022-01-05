@@ -12,11 +12,11 @@ public class wLavaPistol : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint);
+        reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint, side);
         reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, configuration.bulletSpeed);
 
         bullet.localEulerAngles = new Vector3(0, 0, 0);
-        RaycastHit2D hit = Physics2D.Raycast(configuration.bulletSpawnPoint.position, aim, 80f, LayerMasks.mapOrTarget(bullet));
+        RaycastHit2D hit = Physics2D.Raycast(configuration.bulletSpawnPoint.position, aim, 80f, LayerMasks.mapOrTarget(side));
         bullet.transform.GetComponent<LavaOrb>().OrientExplosion(hit.normal);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CentralWeaponSystem : MonoBehaviour
+public abstract class CentralWeaponSystem : MonoBehaviour
 {
     protected Dictionary<string, int> ammo = new Dictionary<string, int>();
     protected Dictionary<string, List<Transform>> bulletPools = new Dictionary<string, List<Transform>>();
@@ -53,6 +53,9 @@ public class CentralWeaponSystem : MonoBehaviour
 
         WeaponStats weaponStats = new WeaponStats(this);
     }
+
+    private void Start() => InitializeWeaponSystem();
+    public abstract void InitializeWeaponSystem();
 
     public virtual void selectWeapon(string weapon)
     {

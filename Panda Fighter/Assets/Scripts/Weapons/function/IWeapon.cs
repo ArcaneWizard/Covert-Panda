@@ -10,11 +10,13 @@ public abstract class IWeapon : MonoBehaviour
     public virtual IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) { yield return null; }
     public virtual void BonusAttack(Vector2 aim, Transform bullet, Rigidbody2D rig) { return; }
 
-    [HideInInspector] public string attackProgress { get; protected set; }
-    [HideInInspector] public string bonusAttackProgress { get; protected set; }
+    public string attackProgress { get; protected set; }
+    public string bonusAttackProgress { get; protected set; }
+    public CentralShooting shooting { get; protected set; }
+    public CentralAnimationController animController { get; protected set; }
+    public Side side { get; protected set; }
+
     [HideInInspector] public WeaponConfiguration configuration;
-    [HideInInspector] public CentralShooting shooting;
-    [HideInInspector] public CentralAnimationController animController;
 
     public void DoSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
@@ -45,6 +47,7 @@ public abstract class IWeapon : MonoBehaviour
     {
         shooting = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralShooting>();
         animController = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralAnimationController>();
+        side = transform.parent.parent.parent.GetComponent<Role>().side;
 
         attackProgress = "finished";
         bonusAttackProgress = "finished";

@@ -37,7 +37,7 @@ public class wScythe : IWeapon
         bullet.transform.localScale = configuration.weapon.transform.localScale;
         configuration.weapon.gameObject.SetActive(false);
 
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.weapon.transform);
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.weapon.transform, side);
         bulletRig.velocity = aim * configuration.bulletSpeed;
         bulletRig.angularVelocity = Random.Range(scytheSpinSpeed.x, scytheSpinSpeed.y) * Mathf.Sign(-aim.x);
     }

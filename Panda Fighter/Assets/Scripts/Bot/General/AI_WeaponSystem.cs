@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class AI_WeaponSystem : CentralWeaponSystem
 {
     // Default weapon you start with
-    private void Start()
+    public override void InitializeWeaponSystem()
     {
         int r = UnityEngine.Random.Range(0, IWeapons.Count);
         startWithWeapon(IWeapons.Keys.ToArray()[r]);
