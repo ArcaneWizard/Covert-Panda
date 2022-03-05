@@ -17,6 +17,8 @@ public class LavaOrb : Bullet
         impactExplosion = transform.GetChild(0).GetComponent<ParticleSystem>();
         explosion = transform.GetComponent<Explosion>();
         explosion.radius = 1.3f;
+
+        impactExplosion.gameObject.SetActive(true);
     }
 
     private void OnEnable() => impactExplosion.Stop();
@@ -44,7 +46,7 @@ public class LavaOrb : Bullet
         impactExplosion.Play();
         StartCoroutine(explosion.damageSurroundingEntities());
 
-        yield return new WaitForSeconds(impactExplosion.main.startLifetime.constant + 0.1f);
+        yield return new WaitForSeconds(impactExplosion.main.startLifetimeMultiplier + 0.1f);
 
         sR.enabled = true;
         gameObject.SetActive(false);

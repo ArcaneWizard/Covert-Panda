@@ -39,6 +39,8 @@ public class Grenade : Bullet
         StartCoroutine(explosion.damageSurroundingEntities());
     }
 
+    public override void OnMapEnter(Transform map) {}
+
     void Update()
     {
         if (explosionTimer > 0f)

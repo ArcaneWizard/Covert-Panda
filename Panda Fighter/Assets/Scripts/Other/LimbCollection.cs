@@ -3,63 +3,43 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[ExecuteInEditMode]
+[ExecuteAlways]
 public class LimbCollection : MonoBehaviour
 {
-    public Sprite chest;
-    public Sprite mainArmPad;
-    public Sprite mainArm;
-    public Sprite mainHand;
-    public Sprite backArmPad;
-    public Sprite backArm;
-    public Sprite backHand;
-    public Sprite leftThigh;
-    public Sprite leftLeg;
-    public Sprite leftFoot;
-    public Sprite rightThigh;
-    public Sprite rightLeg;
-    public Sprite rightFoot;
-    public Sprite head;
+    public Creatures creature;
+    public Dictionary<limbTypes, Sprite> limbs = new Dictionary<limbTypes, Sprite>();
 
-    public Dictionary<limbTypes, Sprite> sprites = new Dictionary<limbTypes, Sprite>();
-
-#if (UNITY_EDITOR)
-    void OnValidate()
+    //update the collection of limbs for this creature type, stored in a dictionary by limb name
+    public void updateLimbs()
     {
-        if (!EditorApplication.isPlayingOrWillChangePlaymode)
-            updateSprites();
-    }
-#endif
+        limbs.Clear();
 
-    void Awake() => updateSprites();
-
-    private void updateSprites()
-    {
-        sprites.Clear();
-
-        sprites.Add(limbTypes.chest, chest);
-        sprites.Add(limbTypes.leftThigh, leftThigh);
-        sprites.Add(limbTypes.rightThigh, rightThigh);
-        sprites.Add(limbTypes.leftFoot, leftFoot);
-        sprites.Add(limbTypes.rightFoot, rightFoot);
-        sprites.Add(limbTypes.leftLeg, leftLeg);
-        sprites.Add(limbTypes.rightLeg, rightLeg);
-        sprites.Add(limbTypes.mainArm, mainArm);
-        sprites.Add(limbTypes.backArm, backArm);
-        sprites.Add(limbTypes.mainArmPad, mainArmPad);
-        sprites.Add(limbTypes.backArmPad, backArmPad);
-        sprites.Add(limbTypes.mainHand, mainHand);
-        sprites.Add(limbTypes.backHand, backHand);
-        sprites.Add(limbTypes.head, head);
+        Debug.Log((creature != null) + ", " + (limbs != null));
+        limbs.Add(limbTypes.chest, creature.chest);
+        limbs.Add(limbTypes.leftThigh, creature.leftThigh);
+        limbs.Add(limbTypes.rightThigh, creature.rightThigh);
+        limbs.Add(limbTypes.leftFoot, creature.leftFoot);
+        limbs.Add(limbTypes.rightFoot, creature.rightFoot);
+        limbs.Add(limbTypes.leftLeg, creature.leftLeg);
+        limbs.Add(limbTypes.rightLeg, creature.rightLeg);
+        limbs.Add(limbTypes.mainArm, creature.mainArm);
+        limbs.Add(limbTypes.backArm, creature.backArm);
+        limbs.Add(limbTypes.mainArmPad, creature.mainArmPad);
+        limbs.Add(limbTypes.backArmPad, creature.backArmPad);
+        limbs.Add(limbTypes.mainHand, creature.mainHand);
+        limbs.Add(limbTypes.backHand, creature.backHand);
+        limbs.Add(limbTypes.head, creature.head);
     }
 
-    public Sprite returnSprite(limbTypes limbType)
+    //return a limb based off limb name
+    public Sprite returnLimb(limbTypes limbType)
     {
-        if (sprites.Count == 0)
-            updateSprites();
+        if (limbs.Count == 0)
+            updateLimbs();
 
-        return sprites[limbType];
+        return limbs[limbType];
     }
+
 }
 
 public enum limbTypes

@@ -18,6 +18,7 @@ public class Explosion : MonoBehaviour
             collider = transform.GetChild(0).GetComponent<CircleCollider2D>();
     }
 
+    // initialize explosion's radius and the explosion damage
     private void Start()
     {
         if (collider)
@@ -25,7 +26,10 @@ public class Explosion : MonoBehaviour
         explosionDamage = transform.parent.GetComponent<WeaponConfiguration>().explosionDmg;
     }
 
+    // check if an entity was already damaged by an explosion
     public bool wasEntityAlreadyHurt(int id) => entitiesHurt.Contains(id);
+
+    // update which entities were already damaged by an explosion
     public void updateEntitiesHurt(int id) => entitiesHurt.Add(id);
 
     // updates explosion layer and enables explosion collider to damage nearby entities (their health script 
@@ -52,8 +56,6 @@ public class Explosion : MonoBehaviour
         float squareDistance = Mathf.Pow(closestCollisionPoint.x - collider.transform.position.x, 2)
             + Mathf.Pow(closestCollisionPoint.y - collider.transform.position.y, 2);
 
-        //DebugGUI.debugText7 = (squareDistance).ToString();
-
         if (squareDistance <= 5.5f)
             return explosionDamage;
         else if (squareDistance < 10f)
@@ -61,17 +63,4 @@ public class Explosion : MonoBehaviour
         else
             return Mathf.RoundToInt(explosionDamage * 5.4f / squareDistance);
     }
-
-    // editor auto sets the correct explosion layers for all enemies, friendly AI and the player 
-    // enemies -> enemy explosion layer
-    // player/friendly ai -> friendly explosion layer
-    /*private void OnValidate() {
-        if (transform.childCount > 0) {
-            if (gameObject.layer == Layers.enemyBullet)
-                transform.GetChild(0).gameObject.layer = Layers.enemyExplosion;
-            else
-                transform.GetChild(0).gameObject.layer = Layers.friendlyExplosion;
-        }
-    }*/
-
 }

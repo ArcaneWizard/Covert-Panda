@@ -6,11 +6,7 @@ public class PlayerHealth : Health
 {
     public RespawningText respawnText;
     public GameObject inventory;
-    public Transform respawnLocations;
-
-    private float respawnTime = 5.22f;
-    private float respawnInvulnerabilityDuration = 0.3f;
-
+ 
     public override void Awake()
     {
         base.Awake();

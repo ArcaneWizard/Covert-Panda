@@ -55,7 +55,14 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     }
 
     private void Start() => InitializeWeaponSystem();
-    public abstract void InitializeWeaponSystem();
+
+    public virtual void InitializeWeaponSystem() 
+    {
+        foreach (KeyValuePair<string, IWeapon> weapon in IWeapons) 
+            ammo[weapon.Key] = 0;
+        
+        weaponSelected = "";
+    }
 
     public virtual void selectWeapon(string weapon)
     {
@@ -66,6 +73,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         if (shooting.weaponHeld != null)
             shooting.weaponHeld.gameObject.SetActive(false);
 
+        Debug.Log(weaponSelected);
         weaponSelected = weapon;
         IWeapons[weaponSelected].SetDefaultAnimation();
         IWeapons[weaponSelected].resetAttackProgress();

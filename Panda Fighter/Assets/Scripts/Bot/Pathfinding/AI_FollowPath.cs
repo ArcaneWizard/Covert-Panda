@@ -50,8 +50,6 @@ public class AI_FollowPath : MonoBehaviour
             yield break;
         }
 
-        Debug.Log("test error");
-
         //reset variables
         journey = "started";
         this.path = pathFinding.getChosenPath();
@@ -70,12 +68,7 @@ public class AI_FollowPath : MonoBehaviour
             controller.setDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
     }
 
-    public void endJourney()
-    {
-        journey = "ended";
-        //DebugGUI.debugText8 = "journey ended";
-    }
-
+    public void endJourney() => journey = "ended";
     public bool gotLost() => journey == "got lost";
 
     public Vector3 nextPathNode()

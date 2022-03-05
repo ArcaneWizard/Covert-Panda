@@ -9,6 +9,10 @@ public abstract class Health : MonoBehaviour
     public int currentHP { get; protected set; }
     public bool isDead { get; protected set; }
 
+    protected float respawnTime = 5.22f;
+    protected float respawnInvulnerabilityDuration = 2f;
+    public Transform respawnLocations;
+
     protected Image hpBar;
     protected Vector2 hpBarOffset;
 

@@ -50,9 +50,10 @@ public class WeaponSystem : CentralWeaponSystem
     // Default weapon you start off with
     public override void InitializeWeaponSystem()
     {
+        base.InitializeWeaponSystem();
+
         foreach (String weapon in IWeapons.Keys)
             collectNewWeapon(weapon);
-
         selectWeapon("Railgun");
     }
 
@@ -84,6 +85,7 @@ public class WeaponSystem : CentralWeaponSystem
     // Allow player to select a different weapon 
     public override void selectWeapon(string weapon)
     {
+        Debug.Log("Yo" + weapon);
         string lastWeapon = weaponSelected;
         base.selectWeapon(weapon);
 

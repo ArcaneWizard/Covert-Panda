@@ -40,6 +40,5 @@ public class InvisibilityEffect : MonoBehaviour
         sR.color = (centralAbilityHandler.isInvisible)
             ? new Color(color.r, color.g, color.b, 0.4f)
             : new Color(color.r, color.g, color.g, 1f);
-
     }
 }

@@ -12,10 +12,10 @@ public class AI_WeaponSystem : CentralWeaponSystem
     // Default weapon you start with
     public override void InitializeWeaponSystem()
     {
+        base.InitializeWeaponSystem();
+        
         int r = UnityEngine.Random.Range(0, IWeapons.Count);
         startWithWeapon(IWeapons.Keys.ToArray()[r]);
-        
-        //startWithWeapon(WeaponTags.Shielder.ToString());
     }
 
     private void startWithWeapon(string weapon)
