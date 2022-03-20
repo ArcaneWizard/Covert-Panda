@@ -24,7 +24,7 @@ public abstract class Health : MonoBehaviour
     protected Ragdolling ragdolling;
 
     protected Rigidbody2D rig;
-    protected Collider2D hitBox;
+    protected BoxCollider2D hitBox;
     
     public virtual void Awake()
     {
@@ -33,7 +33,7 @@ public abstract class Health : MonoBehaviour
         ragdolling = transform.GetComponent<Ragdolling>();
 
         rig = transform.GetComponent<Rigidbody2D>();
-        hitBox = transform.GetChild(1).GetComponent<Collider2D>();
+        hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
 
         Side side = transform.parent.GetComponent<Role>().side;
         hitBox.gameObject.layer = (side == Side.Friendly) ? Layers.friendlyHitBox : Layers.enemyHitBox;
@@ -46,6 +46,9 @@ public abstract class Health : MonoBehaviour
     {
         currentHP = maxHP;
         isDead = false;
+
+        hitBox.offset = new Vector2(0, -0.15f);
+        hitBox.size = new Vector2(0.15f, 2.48f);
     }
 
     // checks for when the entity collides with a bullet or explosion. apply dmg

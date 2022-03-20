@@ -22,6 +22,7 @@ public class LimbSwapper : MonoBehaviour
     {
         initializeComponents();
         updateSpriteAndBoneTransforms();
+        Destroy(this);
     }
 
     // Initialize components if they are null
@@ -54,7 +55,7 @@ public class LimbSwapper : MonoBehaviour
     async void OnValidate() 
     {
         await Task.Delay(1000);
-        findlimbCollection();
+        //findlimbCollection();
 
         // prefabs don't have a parent, so the editor will never update them
         if (!limbCollection || !limbCollection.transform.parent)

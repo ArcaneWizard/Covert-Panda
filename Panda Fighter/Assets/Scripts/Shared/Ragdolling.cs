@@ -10,14 +10,12 @@ public class Ragdolling : MonoBehaviour
     private Rigidbody2D playerRig;
     private Collider2D mainCollider;
     private Animator animator;
-    private Animator animator2;
     private CentralWeaponSystem weaponSystem;
     private CentralController controller;
 
     private void Awake()
     {
         animator = transform.GetChild(0).GetComponent<Animator>();
-        animator2 = transform.GetComponent<Animator>();
         mainCollider = transform.GetChild(0).GetComponent<Collider2D>();
         playerRig = transform.GetComponent<Rigidbody2D>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
@@ -32,7 +30,6 @@ public class Ragdolling : MonoBehaviour
     {
         animator.SetInteger("ragdolling", 0);
         animator.enabled = true;
-        animator2.enabled = true;
         ragdollArms.SetActive(false);
 
         foreach (Rigidbody2D rig in ragdollParts)
@@ -52,7 +49,6 @@ public class Ragdolling : MonoBehaviour
         animator.SetInteger("ragdolling", 1);
         yield return new WaitForSeconds(Time.deltaTime);
         animator.enabled = false;
-        animator2.enabled = false;
         playerRig.isKinematic = true;
 
         ragdollArms.SetActive(true);
