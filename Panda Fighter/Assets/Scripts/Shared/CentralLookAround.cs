@@ -47,8 +47,13 @@ public class CentralLookAround : MonoBehaviour
             if (aimTarget)
                 aimTarget.transform.localPosition = targetLocation;
 
-            float headSlope = (122f - 92.4f) / 90f;
-            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
+            // head rotation is calculated with a linear equation mapping shooting dir/angle to the corresponding head rotation
+            /*float headSlope = (135f - 92.4f) / 90f;
+            float headRotation = headSlope * shootAngle + 92.4f;
+
+            // offset the head rotation by the angle of the ground that the creature is standing on (ie. the angle the creature is tilted)
+            headRotation += Mathf.Sign(shootDirection.x) * transform.parent.localEulerAngles.z;
+            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headRotation);*/
         }
 
         if (shootDirection.y < 0)
@@ -63,8 +68,11 @@ public class CentralLookAround : MonoBehaviour
             if (aimTarget)
                 aimTarget.transform.localPosition = targetLocation;
 
-            float headSlope = (40f - 92.4f) / -90f;
-            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headSlope * shootAngle + 92.4f);
+            /*float headSlope = (40f - 92.4f) / -90f;
+            float headRotation = headSlope * shootAngle + 92.4f;
+
+            headRotation += Mathf.Sign(shootDirection.x) * transform.parent.localEulerAngles.z;
+            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headRotation);*/
         }
     }
 

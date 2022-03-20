@@ -61,7 +61,7 @@ public class CentralController : MonoBehaviour
         Side side = transform.parent.GetComponent<Role>().side;
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
 
-        maxSpeed = 17f;
+        maxSpeed = 20.5f;
         speed = maxSpeed;
     }
 

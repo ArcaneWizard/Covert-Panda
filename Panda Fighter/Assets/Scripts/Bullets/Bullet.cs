@@ -9,6 +9,7 @@ public class Bullet : MonoBehaviour
     public Transform predictedColliderHit {get; private set;}
     private bool executedPredictedImpact;
     private Vector2 aim;
+    private Vector2 middleOfWeapon;
     
     //  whether or not the bullet can detect physical collisions (with a creature, platform, etc.)
     public bool disabledImpactDetection;
@@ -45,9 +46,13 @@ public class Bullet : MonoBehaviour
         WeaponConfiguration weaponConfiguration = transform.parent.GetComponent<WeaponConfiguration>();
        ++raycastsUsed;
         
-        check();
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, aim, 70f, LayerMasks.mapOrTarget(transform));
-       //     if (hit.collider != null)
+        checkForPredictedCollision();
+
+        // start the predictive raycast from slightly behind where the bullet actually spawns (to detect collisions on creatures walking the gun)
+        middleOfWeapon = new Vector2(transform.position.x - aim.x * 1.2f, transform.position.y - aim.y * 1.2f);
+        RaycastHit2D hit = Physics2D.Raycast(middleOfWeapon, aim, 70f, LayerMasks.mapOrTarget(transform));
+
+       // if (hit.collider != null)
        // Debug.DrawLine(new Vector2(transform.position.x- aim.x * 1.5f, transform.position.y - aim.y * 1.5f), hit.point, Color.green, 4);
         predictedImpactLocation = (hit.collider != null) ? hit.point: new Vector2(transform.position.x + aim.x * 70f, transform.position.y + aim.y * 70f);
         predictedColliderHit = (hit.collider != null) ? hit.collider.transform : null;
@@ -60,8 +65,8 @@ public class Bullet : MonoBehaviour
     // if a fast bullet reaches the predicted collision location, damage the predicted enemy hit if applicable, and trigger
     // either onCreatureEnter() or OnMapEnter() if applicable
     private float x, y;
-    void FixedUpdate() => check();
-    void check() 
+    void FixedUpdate() => checkForPredictedCollision();
+    void checkForPredictedCollision() 
     {
          if (executedPredictedImpact || predictedImpactLocation == Vector2.zero)
             return;

@@ -19,7 +19,7 @@ public class InvisibilityEffect : MonoBehaviour
         color = sR.color;
     }
 
-    /*private void OnValidate()
+    private void OnValidate()
     {
         counter = 0;
         bob = transform;
@@ -33,7 +33,7 @@ public class InvisibilityEffect : MonoBehaviour
                 centralAbilityHandler = bob.transform.GetComponent<CentralAbilityHandler>();
         }
         UnityEditor.EditorUtility.SetDirty(this);
-    }*/
+    }
 
     void Update()
     {

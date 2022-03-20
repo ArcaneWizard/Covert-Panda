@@ -54,32 +54,30 @@ public class WeaponSystem : CentralWeaponSystem
 
         foreach (String weapon in IWeapons.Keys)
             collectNewWeapon(weapon);
+
         selectWeapon("Railgun");
     }
 
     // Associate each weapon with a different number key on the keyboard
     void Update()
     {
+        if (health.isDead)
+            return;
+
         for (int weaponCount = 1; weaponCount <= 9; weaponCount++)
         {
             if (Input.GetKeyDown(weaponCount.ToString()))
                 selectWeapon(inventory.GetChild(weaponCount - 1).GetComponent<WeaponTag>().Tag);
         }
 
-        if (Input.GetKeyDown("0"))
+        if (Input.GetKeyDown(KeyCode.Minus))
             selectWeapon(inventory.GetChild(9).GetComponent<WeaponTag>().Tag);
 
-        else if (Input.GetKeyDown(KeyCode.Minus))
+        else if (Input.GetKeyDown(KeyCode.Equals))
             selectWeapon(inventory.GetChild(10).GetComponent<WeaponTag>().Tag);
 
-        else if (Input.GetKeyDown(KeyCode.Equals))
-        {
-            Debug.Log(inventory.GetChild(11).GetComponent<WeaponTag>().Tag);
+        else if (Input.GetKeyDown(KeyCode.LeftBracket))
             selectWeapon(inventory.GetChild(11).GetComponent<WeaponTag>().Tag);
-        }
-
-        else if (Input.GetKeyDown(KeyCode.Delete))
-            selectWeapon(inventory.GetChild(12).GetComponent<WeaponTag>().Tag);
     }
 
     // Allow player to select a different weapon 

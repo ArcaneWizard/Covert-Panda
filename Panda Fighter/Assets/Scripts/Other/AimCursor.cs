@@ -10,16 +10,17 @@ public class AimCursor : MonoBehaviour
     public Transform leftArrow;
 
     public Camera camera;
-    public Transform player;
+    private Transform player;
 
     private float zoom = 0.17f;
-    public float defaultZoom = 0.17f;
+    public float defaultZoom = 0.3f;
     public float accuracyDistance = 9f;
-    public float accuracyFallRate = 1.2f;
+    public float accuracyFallRate = 0.9f;
 
-    void Start()
+    void Awake()
     {
         zoom = defaultZoom;
+        player = transform.parent.GetChild(0);
     }
 
     void Update()
@@ -32,6 +33,8 @@ public class AimCursor : MonoBehaviour
         Vector3 pos = camera.ScreenToWorldPoint(Input.mousePosition);
         transform.position = new Vector3(pos.x, pos.y, 0);
 
-        zoom = defaultZoom * Mathf.Pow((pos - player.position).magnitude / accuracyDistance, accuracyFallRate);
+        zoom = defaultZoom + Mathf.Pow(magnitude2D(pos, player.position) / accuracyDistance, accuracyFallRate);
     }
+
+    private float magnitude2D(Vector3 a, Vector3 b) => new Vector2(a.x - b.x, a.y - b.y).magnitude;
 }

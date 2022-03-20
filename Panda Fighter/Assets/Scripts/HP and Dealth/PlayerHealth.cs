@@ -6,18 +6,17 @@ public class PlayerHealth : Health
 {
     public RespawningText respawnText;
     public GameObject inventory;
- 
     public override void Awake()
     {
         base.Awake();
 
-        maxHP = 40000;
+        maxHP = 400;
         bulletLayer = Layers.enemyBullet;
     }
 
     public override IEnumerator CallUponDying() 
     {
-        inventory.gameObject.SetActive(false);
+        inventory.SetActive(false);
         respawnText.StartRespawnCountdown(respawnTime);
 
         yield return new WaitForSeconds(respawnTime);
@@ -25,7 +24,7 @@ public class PlayerHealth : Health
         isDead = false;
 
         ragdolling.Disable();
-        inventory.gameObject.SetActive(true);
+        inventory.SetActive(true);
         weaponSystem.InitializeWeaponSystem();
 
         Transform respawnLocation = respawnLocations.GetChild(

@@ -27,11 +27,23 @@ public class LookAround : CentralLookAround
         //if player isn't spinning in mid-air with a double jump
         if (!animController.disableLimbsDuringDoubleJump)
         {
-            //player faces left or right depending on mouse cursor
-            if (Input.mousePosition.x >= camera.WorldToScreenPoint(transform.position).x)
-                body.localRotation = Quaternion.Euler(0, 0, 0);
-            else
-                body.localRotation = Quaternion.Euler(0, 180, 0);
+            //player faces left or right depending on mouse cursor + update how player is standing on the ground (in case it's tilted up/down)
+            if (Input.mousePosition.x >= camera.WorldToScreenPoint(transform.position).x) 
+            {
+                if (body.localRotation.y != 0) {
+                    body.localRotation = Quaternion.Euler(0, 0, 0);
+                    controller.updateGroundAngle(false);
+                    controller.forceUpdateTilt = true;
+                }
+            }
+            else if (body.localRotation.y == 0f) 
+            {
+                if (body.localRotation.y == 0) {
+                    body.localRotation = Quaternion.Euler(0, 180, 0);
+                    controller.updateGroundAngle(false);
+                    controller.forceUpdateTilt = true;
+                }
+            }
 
             //calculate the angle btwn mouse cursor and player's shooting arm
             Vector2 shootDirection = shooting.getAim();

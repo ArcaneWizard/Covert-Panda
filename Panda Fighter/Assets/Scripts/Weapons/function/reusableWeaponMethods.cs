@@ -9,6 +9,7 @@ public static class reusableWeaponMethods
     {
         bullet.transform.right = aim;
         rig.velocity = aim * speed;
+       // Debug.LogFormat("Reptidon: {3}, bullet {4}, aim: {0}, speed: {1}, velocity: {2}", aim, speed, rig.velocity, bullet.parent.parent.parent.GetSiblingIndex(), bullet.name);
         predictTrajectoryOfFastBullets(bullet, aim);
     }
 
@@ -55,13 +56,14 @@ public static class reusableWeaponMethods
     {
         Transform bullet = configuration.weaponSystem.GetBullet.transform;
         Rigidbody2D bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+        Vector2 newAim = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
 
         configuration.weaponSystem.useOneAmmo();
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
 
-        bullet.transform.right = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
-        bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * configuration.bulletSpeed;
-        predictTrajectoryOfFastBullets(bullet, aim);
+        bullet.transform.right = newAim;
+        bulletRig.velocity = newAim * configuration.bulletSpeed;
+        predictTrajectoryOfFastBullets(bullet, newAim);
     }
 
      // if it's a very fast bullet, apply predicative logic so that it doesn't pass through matter!

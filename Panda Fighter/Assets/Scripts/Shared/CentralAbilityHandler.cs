@@ -7,6 +7,8 @@ public class CentralAbilityHandler : MonoBehaviour
     public bool isInvisible { private set; get; }
     private bool canTurnInvisible;
 
+    private Collider2D collider;
+
     private float invisibleDuration = 3f;
     private float invisibleReloadTime = 15f;
 
@@ -14,6 +16,8 @@ public class CentralAbilityHandler : MonoBehaviour
     {
         isInvisible = false;
         canTurnInvisible = true;
+
+        collider = transform.GetChild(1).GetComponent<Collider2D>();
     }
 
     void Update()
@@ -25,10 +29,12 @@ public class CentralAbilityHandler : MonoBehaviour
     private IEnumerator turnInvisible()
     {
         isInvisible = true;
+        collider.enabled = false; 
         canTurnInvisible = false;
 
         yield return new WaitForSeconds(invisibleDuration);
         isInvisible = false;
+        collider.enabled = true; 
 
         yield return new WaitForSeconds(invisibleReloadTime);
         canTurnInvisible = true;

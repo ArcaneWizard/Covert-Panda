@@ -22,14 +22,16 @@ public abstract class Health : MonoBehaviour
     protected CentralWeaponSystem weaponSystem;
     protected CentralController controller;
     protected Ragdolling ragdolling;
+
     protected Rigidbody2D rig;
     protected Collider2D hitBox;
-
+    
     public virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         controller = transform.GetComponent<CentralController>();
         ragdolling = transform.GetComponent<Ragdolling>();
+
         rig = transform.GetComponent<Rigidbody2D>();
         hitBox = transform.GetChild(1).GetComponent<Collider2D>();
 
@@ -116,5 +118,5 @@ public abstract class Health : MonoBehaviour
     }
 
     public void TakeDamage(int damage) => currentHP -= damage;
-    public virtual IEnumerator CallUponDying() => null;
+    public abstract IEnumerator CallUponDying();
 }

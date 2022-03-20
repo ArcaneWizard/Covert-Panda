@@ -17,12 +17,14 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
     protected CentralShooting shooting;
     protected CentralLookAround lookAround;
+    protected Health health;
     private List<GameObject> Limbs_And_Weapons;
 
     public virtual void Awake()
     {
         shooting = transform.GetComponent<CentralShooting>();
         lookAround = transform.GetComponent<CentralLookAround>();
+        health = transform.GetComponent<Health>();
 
         Limbs_And_Weapons = new List<GameObject>();
         allBulletPools = transform.parent.GetChild(1).transform.GetChild(0);

@@ -9,7 +9,7 @@ public class AI_LookAround : CentralLookAround
     private Side side;
 
     public bool playerIsInSight { get; private set; }
-    public Vector3 lookAt { get; private set; }
+    public Vector2 lookAt { get; private set; }
 
     public override void Awake()
     {
@@ -27,7 +27,7 @@ public class AI_LookAround : CentralLookAround
         if (health.isDead)
             return;
 
-        lookAt = player.position - shootingArm.position;
+        lookAt = new Vector2(player.position.x - shootingArm.position.x, player.position.y - shootingArm.position.y);
         lookAndAimInRightDirection();
         ai_shooting.LateLateUpdate();
     }
