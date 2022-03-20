@@ -24,7 +24,12 @@ public class wShotgun : IWeapon
     {
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
         reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, configuration.bulletSpeed);
-        shootNewBulletAtAngle(goldenShotgunSpread, aim, bullet, bulletRig);
+
+        reusableWeaponMethods.configureNewBulletAndShootAtAngle(goldenShotgunSpread, aim, configuration, side);
+        reusableWeaponMethods.configureNewBulletAndShootAtAngle(-goldenShotgunSpread, aim, configuration, side);
+    }
+        
+        /*shootNewBulletAtAngle(goldenShotgunSpread, aim, bullet, bulletRig);
         shootNewBulletAtAngle(-goldenShotgunSpread, aim, bullet, bulletRig);
         configuration.bulletSpawnPoint.GetComponent<ParticleSystem>().Play();
     }
@@ -33,11 +38,11 @@ public class wShotgun : IWeapon
     {
         bullet = reusableWeaponMethods.retrieveNextBullet(configuration.weaponSystem);
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
+
         bullet.transform.right = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
         bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * configuration.bulletSpeed;
-    }
+    }*/
 
     /*Not being used anymore
     private void shotgunParticleExplosion(Vector2 aim)

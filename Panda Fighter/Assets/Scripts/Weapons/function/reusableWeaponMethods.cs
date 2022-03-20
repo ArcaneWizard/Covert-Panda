@@ -5,10 +5,11 @@ using System.Collections;
 public static class reusableWeaponMethods
 {
 
-    public static void shootBulletInStraightLine(Vector2 aim, Transform bullet, Rigidbody2D rig, float speed)
+    public static void shootBulletInStraightLine(Vector2 aim, Transform bullet, Rigidbody2D rig, float speed )
     {
         bullet.transform.right = aim;
         rig.velocity = aim * speed;
+        predictTrajectoryOfFastBullets(bullet, aim);
     }
 
     public static void configureReusedBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint, Side side)
@@ -47,16 +48,28 @@ public static class reusableWeaponMethods
             bullet.GetComponent<ParticleSystem>().Clear();
 
         // reset that the bullet can do damage
-        bullet.GetComponent<Bullet>().madeContact = false;
+        bullet.GetComponent<Bullet>().disabledImpactDetection = false;
     }
 
-    public static Transform retrieveNextBullet(CentralWeaponSystem weaponSystem)
+    public static void configureNewBulletAndShootAtAngle(float angle, Vector2 aim, WeaponConfiguration configuration, Side side)
     {
-        Transform bullet = weaponSystem.GetBullet.transform;
-        weaponSystem.useOneAmmo();
-        return bullet;
+        Transform bullet = configuration.weaponSystem.GetBullet.transform;
+        Rigidbody2D bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+
+        configuration.weaponSystem.useOneAmmo();
+        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
+
+        bullet.transform.right = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
+        bulletRig.velocity = Quaternion.AngleAxis(angle, Vector3.forward) * aim * configuration.bulletSpeed;
+        predictTrajectoryOfFastBullets(bullet, aim);
     }
 
+     // if it's a very fast bullet, apply predicative logic so that it doesn't pass through matter!
+    private static void predictTrajectoryOfFastBullets(Transform bullet, Vector2 aim) 
+    {
+        if (bullet.parent.GetComponent<WeaponConfiguration>().bulletSpeed > 65f)
+            bullet.transform.GetComponent<Bullet>().RunPredictiveLogic(aim, bullet.position);
+    }
 
     public static void fadeOutBullet(Transform bullet, float delay, float duration, MonoBehaviour mB) =>
         mB.StartCoroutine(fadeBullet(bullet, delay, duration));

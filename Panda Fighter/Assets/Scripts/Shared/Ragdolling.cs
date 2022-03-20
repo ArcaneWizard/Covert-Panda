@@ -44,7 +44,6 @@ public class Ragdolling : MonoBehaviour
     // Sets the velocity of the ragdoll hip equal to the player's velocity b4 they died
     public IEnumerator Enable()
     {
-        animator.SetInteger("ragdolling", 1);
         yield return new WaitForSeconds(2 * Time.deltaTime);
         
         animator.enabled = false;

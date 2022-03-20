@@ -8,6 +8,7 @@ public abstract class Health : MonoBehaviour
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
     public bool isDead { get; protected set; }
+    private int paddingHP = 15; //means the bar for hp should always "appear" as if 15/300 hp or more is left 
 
     protected float respawnTime = 5.22f;
     protected float respawnInvulnerabilityDuration = 2f;
@@ -53,35 +54,31 @@ public abstract class Health : MonoBehaviour
             return;
 
         if (col.gameObject.layer == bulletLayer)
-            bulletCollision(col.transform);
+            hitByBullet(col.transform);
 
         else if (col.gameObject.layer == Layers.explosion)
-            explosionCollision(col.transform);
+            hitByExplosion(col.transform);
     }
 
     // Helper method. If this entity collides with a bullet and that bullet hasn't made contact with 
     // anyone yet, reduce this entity's hp by the dmg that the particular bullet does. Also register that  
     // the bullet has made contact / done damage to someone + trigger any bullet action if needbe (ex. explosion) 
-    private void bulletCollision(Transform physicalBullet)
+    public void hitByBullet(Transform physicalBullet)
     {
         Bullet bullet = physicalBullet.GetComponent<Bullet>();
 
-        if (!bullet.madeContact)
+        if (!bullet.disabledImpactDetection) 
         {
-            string weaponType = physicalBullet.parent.GetComponent<WeaponTag>().Tag;
             currentHP -= bullet.Damage();
-
-            bullet.madeContact = true;
-            bullet.OnEntityEnter(transform);
+            bullet.ConfirmImpactWithCreature(transform);
         }
     }
 
     // Helper method for when this entity collides with an explosion. Check if 
     // this enemy has already been hurt by said explosion. If not, only then take damage
     // and that too based off the distance from the center of the explosion
-    private void explosionCollision(Transform explosionCollider)
+    private void hitByExplosion(Transform explosionCollider)
     {
-        Debug.Log(explosionCollider.transform.parent);
         Explosion explosion = explosionCollider.parent.transform.GetComponent<Explosion>();
         int id = gameObject.GetHashCode();
 
@@ -107,16 +104,17 @@ public abstract class Health : MonoBehaviour
             isDead = true;
             StartCoroutine(ragdolling.Enable());
 
-            currentHP = 0;
+            currentHP = -paddingHP;
             hpBar.transform.parent.gameObject.SetActive(false);
             hitBox.enabled = false;
 
             StartCoroutine(CallUponDying());
         }
 
-        hpBar.fillAmount = (float)currentHP / (float)maxHP;
+        hpBar.fillAmount = (float)(currentHP + paddingHP) / (float)maxHP;
         hpBar.transform.parent.GetComponent<RectTransform>().position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);
     }
 
+    public void TakeDamage(int damage) => currentHP -= damage;
     public virtual IEnumerator CallUponDying() => null;
 }

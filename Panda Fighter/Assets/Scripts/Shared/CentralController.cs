@@ -73,12 +73,12 @@ public class CentralController : MonoBehaviour
 
     public virtual void Update() => tilt();
 
-    public void setSpeed(float speed) => this.speed = speed;
     public void setDirection(int dir) => this.dirX = dir;
 
     //player or alien's body should tilt slightly on the slanted platform
     protected void tilt()
     {
+        DebugGUI.debugTexts[7] = Bullet.raycastsUsed.ToString();
         zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)

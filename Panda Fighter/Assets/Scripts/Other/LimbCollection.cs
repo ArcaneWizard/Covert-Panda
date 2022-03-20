@@ -14,7 +14,6 @@ public class LimbCollection : MonoBehaviour
     {
         limbs.Clear();
 
-        Debug.Log((creature != null) + ", " + (limbs != null));
         limbs.Add(limbTypes.chest, creature.chest);
         limbs.Add(limbTypes.leftThigh, creature.leftThigh);
         limbs.Add(limbTypes.rightThigh, creature.rightThigh);

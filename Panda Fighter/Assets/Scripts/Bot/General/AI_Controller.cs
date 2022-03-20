@@ -12,11 +12,13 @@ public class AI_Controller : CentralController
     private string action;
     public string actionProgress { get; private set; }
 
-    private bool needsToFall;
+    private bool hasNotFallenYet;
     private bool leftPlatform;
     private int lastMovementDirX;
     private float randomXPos;
     private float randomSpeed;
+
+    private float fallingDurationTimer;
 
     // action progress starts off as "finished" so that a new action can be started
     public override void Start()
@@ -52,7 +54,7 @@ public class AI_Controller : CentralController
         action = AI_action.action;
 
         if (action == "fallDown" || action == "fallDownCurve")
-            needsToFall = true;
+            hasNotFallenYet = true;
 
         else if (action == "headStraight")
             actionProgress = "finished";
@@ -76,18 +78,18 @@ public class AI_Controller : CentralController
         base.Update();
 
         // if a fall action has been initiated, then execute it when the AI walks off a platform
-        if (needsToFall && !isGrounded)
+        if (hasNotFallenYet && !isGrounded && !isTouchingMap)
             executeFall();
 
         // if the AI is grounded on the map
-        if (isGrounded && isTouchingMap)
+        if (isGrounded)
         {
             // execute any action that has been setup and is pending start
             if (actionProgress == "pending start")
                 executeAction();
 
             // if the AI has landed on a platform after falling, reset its speed and mark the action as finished
-            if (actionProgress == "in progress" && !needsToFall && (action == "fallDown" || action == "fallDownCurve"))
+            else if (actionProgress == "in progress" && !hasNotFallenYet && (action == "fallDown" || action == "fallDownCurve"))
             {
                 speed = maxSpeed;
                 actionProgress = "finished";
@@ -100,13 +102,23 @@ public class AI_Controller : CentralController
                 actionProgress = "finished";
             }
 
-            // AI moves at its max speed when not carrying out an action
+            // AI always moves at its max speed when not carrying out an action
             if (actionProgress == "finished")
                 speed = maxSpeed;
         }
 
         if ((action == "normalJump" || action == "doubleJump" || action == "launchPad") && !isGrounded && !leftPlatform)
             leftPlatform = true;
+
+        if (fallingDurationTimer > 0)
+            fallingDurationTimer -= Time.deltaTime;
+
+        if (fallingDurationTimer <= 0 && !isGrounded && !hasNotFallenYet && action == "fallDownCurve")
+        {
+            randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
+            dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
+            speed = Mathf.Abs(randomSpeed);
+        }
     }
 
     //------------------------------------------------------------------
@@ -119,14 +131,16 @@ public class AI_Controller : CentralController
         if (AI_action.action == "fallDown")
         {
             speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
-            needsToFall = false;
+            hasNotFallenYet = false;
         }
 
         // set initial fall speed only when actually falling (+ will change dir midway during fall)
-        else if (AI_action.action == "fallDownCurve")
+        else if (AI_action.action == "fallDownCurve") 
         {
-            StartCoroutine(executeFallingDownCurveMotion());
-            needsToFall = false;
+             lastMovementDirX = dirX;
+             speed = AI_action.speed.x;
+             hasNotFallenYet = false;
+             fallingDurationTimer = UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y);
         }
     }
 
@@ -140,6 +154,7 @@ public class AI_Controller : CentralController
         randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
+        hasNotFallenYet = false;
     }
 
     //------------------------------------------------------------------
@@ -268,7 +283,6 @@ public class AI_Controller : CentralController
         yield return new WaitForSeconds(UnityEngine.Random.Range(delay.x, delay.y));
         if (action.Equals(AI_action) && actionProgress == "in progress")
         {
-            Debug.Log("yeet");
             float randomSpeed = UnityEngine.Random.Range(velocity.x, velocity.y);
             dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
             speed = Mathf.Abs(randomSpeed);

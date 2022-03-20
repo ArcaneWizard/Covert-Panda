@@ -55,16 +55,14 @@ public class AI_WanderAround : MonoBehaviour
     // are no queued decision zones to analyze
     public void tick()
     {
+        // JUST FOR DEBUGGING
+        String listOfZones = $"creature ${transform.parent.GetSiblingIndex()} zones: \n";
+        foreach (Transform zone in decisionZones)
+            listOfZones+= zone.name + " \n";
+        DebugGUI.debugTexts[transform.parent.GetSiblingIndex()] = listOfZones;
+
         if (!shouldWander || decisionZones.Count == 0)
             return;
-
-        // JUST FOR DEBUGGING, IGNORE
-        //DebugGUI.debugText3 = controller.AI_action.action + (controller.decisionZone ? ", " +
-        //controller.decisionZone.name : "none");
-        //String a = "zones: \n";
-        //foreach (Transform zone in decisionZones)
-        //    a += zone.name + " \n";
-        //DebugGUI.debugText1 = a;
 
         // discards the next queued up decision zone if the bot has gotten too far from it distance
         // wise or elevation wise 
@@ -73,7 +71,7 @@ public class AI_WanderAround : MonoBehaviour
         {
             //DebugGUI.debugText5 = ("Discarded " + decisionZones.Peek() + " " +
             //getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
-            //decisionZones.Dequeue();
+            decisionZones.Dequeue();
             return;
         }
 

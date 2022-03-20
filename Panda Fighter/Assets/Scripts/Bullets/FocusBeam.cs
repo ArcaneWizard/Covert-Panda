@@ -55,5 +55,5 @@ public class FocusBeam : Bullet
         collider.offset = new Vector2(beamLength / 2, 0);
     }
 
-    public override void OnEntityEnter(Transform entity) => madeContact = false;
+    protected override void OnCreatureEnter(Transform entity) => disabledImpactDetection = false;
 }

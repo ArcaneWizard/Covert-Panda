@@ -46,6 +46,6 @@ public class ArcticStream : Bullet
         }
     }
 
-    public override void OnMapEnter(Transform map) => startExplosion();
-    public override void OnEntityEnter(Transform entity) => startExplosion();
+    protected override void OnMapEnter(Transform map) => startExplosion();
+    protected override void OnCreatureEnter(Transform entity) => startExplosion();
 }

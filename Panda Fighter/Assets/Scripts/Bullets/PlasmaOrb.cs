@@ -68,6 +68,6 @@ public class PlasmaOrb : Bullet
         }
     }
 
-    public override void OnMapEnter(Transform map) => StartCoroutine(startTimedPlasmaExplosion(map));
-    public override void OnEntityEnter(Transform map) => StartCoroutine(startTimedPlasmaExplosion(map));
+    protected override void OnMapEnter(Transform map) => StartCoroutine(startTimedPlasmaExplosion(map));
+    protected override void OnCreatureEnter(Transform entity) => StartCoroutine(startTimedPlasmaExplosion(entity));
 }

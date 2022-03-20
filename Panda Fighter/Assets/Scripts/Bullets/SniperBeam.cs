@@ -91,7 +91,8 @@ public class SniperBeam : Bullet
         );
     }
 
-    public override void OnMapEnter(Transform map) { }
+    protected override void OnMapEnter(Transform map) { }
+    protected override void OnCreatureEnter(Transform map) { }
 
     private void initiateExplosionAt(Vector3 location)
     {

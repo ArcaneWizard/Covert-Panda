@@ -56,11 +56,13 @@ public class Explosion : MonoBehaviour
         float squareDistance = Mathf.Pow(closestCollisionPoint.x - collider.transform.position.x, 2)
             + Mathf.Pow(closestCollisionPoint.y - collider.transform.position.y, 2);
 
-        if (squareDistance <= 5.5f)
-            return explosionDamage;
-        else if (squareDistance < 10f)
-            return Mathf.RoundToInt(explosionDamage * (-0.1f * squareDistance + 1.55f));
+        if (squareDistance <= radius * radius * 0.16f)
+            return Mathf.RoundToInt((explosionDamage * ((squareDistance/radius/radius/-1f) + 1f)) * UnityEngine.Random.Range(0.9f, 1.0f));
+        else if (squareDistance <= radius * radius * 0.64f)    
+            return Mathf.RoundToInt(explosionDamage * ((squareDistance/radius/radius/-0.8f) + 1.3f));
+        else if (squareDistance <= radius * radius)    
+            return  Mathf.RoundToInt(explosionDamage * (-2.5f * (squareDistance/radius/radius) + 2.7f));
         else
-            return Mathf.RoundToInt(explosionDamage * 5.4f / squareDistance);
+            return 0;
     }
 }

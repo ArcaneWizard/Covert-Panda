@@ -21,8 +21,8 @@ public class Railgun : Bullet
 
     private void OnEnable() => transform.GetComponent<ParticleSystem>().Stop();
 
-    public override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
-    public override void OnEntityEnter(Transform entity) => StartCoroutine(initiateExplosion());
+    protected override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
+    protected override void OnCreatureEnter(Transform entity) => StartCoroutine(initiateExplosion());
 
     private IEnumerator initiateExplosion()
     {

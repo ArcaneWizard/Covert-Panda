@@ -36,8 +36,8 @@ public class LavaOrb : Bullet
         fo.xMultiplier = (normal.y - 1) / -0.04f + 50f;
     }
 
-    public override void OnEntityEnter(Transform entity) => StartCoroutine(initiateExplosion());
-    public override void OnMapEnter(Transform entity) => StartCoroutine(initiateExplosion());
+    protected override void OnCreatureEnter(Transform entity) => StartCoroutine(initiateExplosion());
+    protected override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
 
     private IEnumerator initiateExplosion()
     {

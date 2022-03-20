@@ -39,8 +39,8 @@ public class Rocket : Bullet
         }
     }
 
-    public override void OnMapEnter(Transform map) => setupExplosion();
-    public override void OnEntityEnter(Transform entity) => setupExplosion();
+    protected override void OnMapEnter(Transform map) => setupExplosion();
+    protected override void OnCreatureEnter(Transform entity) => setupExplosion();
 
     private void setupExplosion()
     {
