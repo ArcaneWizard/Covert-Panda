@@ -53,6 +53,9 @@ public class WeaponConfiguration : MonoBehaviour
         aimTarget = Limbs.getAimTarget(limbs);
         IK_Coordinates = Limbs.getIKCoordinates(limbs);
 
-        if (weapon.transform.childCount > 0) bulletSpawnPoint = weapon.transform.GetChild(0);
+        if (weapon.transform.childCount > 0) 
+            bulletSpawnPoint = weapon.transform.GetChild(0);
+        
+        Orderer.updateOrder(weapon.transform, transform.parent.parent.parent);
     }
 }

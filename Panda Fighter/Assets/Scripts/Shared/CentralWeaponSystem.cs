@@ -60,7 +60,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
     public virtual void InitializeWeaponSystem() 
     {
-        foreach (KeyValuePair<string, IWeapon> weapon in IWeapons) 
+        foreach (KeyValuePair<string, IWeapon> weapon in IWeapons)  
             ammo[weapon.Key] = 0;
         
         weaponSelected = "";

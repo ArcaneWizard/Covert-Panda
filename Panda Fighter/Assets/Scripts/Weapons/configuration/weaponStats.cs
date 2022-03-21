@@ -27,7 +27,7 @@ public class WeaponStats : MonoBehaviour
 
         set(0.2f, 32, 100, 300, 40, 0, WeaponTags.ArcticPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.ArcticCannon);
         set(0.8f, 38, 99, 300, 120, 0, WeaponTags.PlasmaSniper, Mode.gun, Type.singleFire, l.Long_barrel, w.Sniper);
-        set(0.12f, 32, 99, 300, 35, 0, WeaponTags.Needler, Mode.gun, Type.spamFire, l.Middle_barrel, w.Needler);
+        set(0.2f, 32, 99, 300, 35, 0, WeaponTags.Needler, Mode.gun, Type.spamFire, l.Middle_barrel, w.Needler);
 
         set(0.00f, 34, 72, 3000, 5, 0, WeaponTags.FocusBeamer, Mode.gun, Type.holdFire, l.Short_barrel, w.FocusBeamer);
         set(0.8f, 34, 99, 300, 40, 140, WeaponTags.RocketLauncher, Mode.gun, Type.singleFire, l.Shoulder_rest, w.RocketLauncher);

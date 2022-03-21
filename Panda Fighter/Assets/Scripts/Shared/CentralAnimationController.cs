@@ -137,6 +137,8 @@ public class CentralAnimationController : MonoBehaviour
             else
                 completedDoubleJump = true;
         }
+        else if (animator.GetBool("double jump"))
+            transform.localEulerAngles = new Vector3(0, 0, 0);
     }
 
     // Entity's feet, which detect ground, become closer together when jumping. Also, the main collider

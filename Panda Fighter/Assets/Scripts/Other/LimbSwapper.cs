@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Threading.Tasks;
 
-[ExecuteAlways]
+//[ExecuteAlways]
 public class LimbSwapper : MonoBehaviour
 {
     //what limb this gameobject should be
@@ -22,6 +22,8 @@ public class LimbSwapper : MonoBehaviour
     {
         initializeComponents();
         updateSpriteAndBoneTransforms();
+        Orderer.updateOrder(transform, limbCollection.transform.parent.parent);
+
         Destroy(this);
     }
 
@@ -43,9 +45,9 @@ public class LimbSwapper : MonoBehaviour
         if (spriteSkin.boneTransforms.Length > 0)
             spriteSkin.boneTransforms[0] = spriteSkin.rootBone;
     }
+}
 
-
-
+/*
 #if (UNITY_EDITOR)
 
     // retrieve all limbs from the limb collection and update them. Runs:
@@ -104,5 +106,5 @@ public class LimbSwapper : MonoBehaviour
 
         UnityEditor.EditorUtility.SetDirty(this);
     }
-}
+}*/
 

@@ -4,12 +4,21 @@ using UnityEngine;
 public class AI_Shooting : CentralShooting
 {
     private AI_LookAround AI_lookAround;
-    private float countdownBtwnShots = 0f;
     private WeaponConfiguration configuration;
 
     private Vector2 reactionTime = new Vector2(0.2f, 0.35f);
+    private Vector2 angleAimIsOffBy = new Vector2(-15, 15f);
+    private float offsetAngle;
 
-    public override Vector2 getAim() => AI_lookAround.lookAt.normalized;
+    private float countdownBtwnShots = 0f;
+    private float timeSinceLastShot = 0f;
+
+    // aim should be off slightly by some random, offset angle
+    public override Vector2 getAim() 
+    {
+         offsetAngle = UnityEngine.Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
+         return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.lookAt.normalized;
+    }
 
     public override void Awake()
     {
@@ -19,6 +28,8 @@ public class AI_Shooting : CentralShooting
 
     void Update()
     {
+        timeSinceLastShot += Time.deltaTime;
+
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
@@ -34,25 +45,29 @@ public class AI_Shooting : CentralShooting
             if (combatMode == "gun")
             {
                 countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
+                timeSinceLastShot = 0f;
                 Attack();
             }
 
             else if (combatMode == "handheld" && weaponSystem.IWeapon.attackProgress == "finished")
             {
                 countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
+                timeSinceLastShot = 0f;
                 Attack();
             }
 
             else if (combatMode == "meelee" && weaponSystem.IWeapon.attackProgress == "finished")
             {
                 countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
+                timeSinceLastShot = 0f;
                 NonAmmoAttack();
             }
         }
 
         if (weaponSystem.GetAmmo > 0 && combatMode == "gun" && configuration.weaponType == Type.spamFire)
         {
-            countdownBtwnShots = configuration.fireRateInfo;
+            countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
+            timeSinceLastShot = 0f;
             Attack();
         }
     }
@@ -66,5 +81,5 @@ public class AI_Shooting : CentralShooting
             Attack();
     }
 
-    private float reactionDelay => UnityEngine.Random.Range(reactionTime.x, reactionTime.y);
+    private float reactionDelay => (timeSinceLastShot > 1f) ? UnityEngine.Random.Range(reactionTime.x, reactionTime.y) : 0;
 }

@@ -22,9 +22,11 @@ public class FocusBeam : Bullet
         initialColliderSize = collider.size;
     }
 
-    private void LateUpdate()
+    void Update() 
     {
-        if (!Input.GetMouseButton(0))
+        if (timerStayAlive > 0)
+            timerStayAlive -= Time.deltaTime;
+        else
             gameObject.SetActive(false);
     }
 
