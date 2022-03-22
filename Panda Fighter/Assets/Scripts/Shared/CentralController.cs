@@ -60,6 +60,7 @@ public class CentralController : MonoBehaviour
 
         Side side = transform.parent.GetComponent<Role>().side;
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
+        mainCollider.offset = new Vector2(0, 1.45f);
 
         maxSpeed = 20.5f;
         speed = maxSpeed;
@@ -78,7 +79,7 @@ public class CentralController : MonoBehaviour
     //player or alien's body should tilt slightly on the slanted platform
     protected void tilt()
     {
-        DebugGUI.debugTexts[7] = Bullet.raycastsUsed.ToString();
+        //DebugGUI.debugTexts[7] = Bullet.raycastsUsed.ToString();
         zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)

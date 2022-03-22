@@ -61,7 +61,7 @@ public class SniperBeam : Bullet
 
     private IEnumerator fadeBeam()
     {
-        yield return new WaitForSeconds(0.21f);
+        yield return new WaitForSeconds(0.41f);
         impactExplosion.SetBool("impactExplosion", false);
 
         while (beam.startColor.r > 0.6f)
@@ -91,8 +91,15 @@ public class SniperBeam : Bullet
         );
     }
 
-    protected override void OnMapEnter(Transform map) { }
-    protected override void OnCreatureEnter(Transform map) { }
+    protected override void OnMapEnter(Transform map) => StartCoroutine(allowImpactsForOneMoreFrame());
+    protected override void OnCreatureEnter(Transform creature) { }
+  
+    private IEnumerator allowImpactsForOneMoreFrame() 
+    {
+        disabledImpactDetection = false;
+        yield return new WaitForSeconds(Time.deltaTime);
+        disabledImpactDetection = true;
+    }
 
     private void initiateExplosionAt(Vector3 location)
     {

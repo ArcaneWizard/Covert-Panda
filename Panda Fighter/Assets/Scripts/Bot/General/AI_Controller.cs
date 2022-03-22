@@ -53,7 +53,7 @@ public class AI_Controller : CentralController
         dirX = AI_action.dirX;
         action = AI_action.action;
 
-        if (action == "fallDown" || action == "fallDownCurve")
+        if (action == "fallDown" || action == "fallDownCurve") 
             hasNotFallenYet = true;
 
         else if (action == "headStraight")
@@ -78,8 +78,11 @@ public class AI_Controller : CentralController
         base.Update();
 
         // if a fall action has been initiated, then execute it when the AI walks off a platform
-        if (hasNotFallenYet && !isGrounded && !isTouchingMap)
+        if (hasNotFallenYet && !isGrounded && !isTouchingMap) 
+        {
             executeFall();
+            hasNotFallenYet = false;
+        }
 
         // if the AI is grounded on the map
         if (isGrounded)
@@ -106,10 +109,15 @@ public class AI_Controller : CentralController
             if (actionProgress == "finished")
                 speed = maxSpeed;
         }
-
+        
+        // if the AI executed a jump and is no longer on the ground, update that it left the platform
         if ((action == "normalJump" || action == "doubleJump" || action == "launchPad") && !isGrounded && !leftPlatform)
             leftPlatform = true;
+        
 
+        // If the action was falling down in a curve, then after a given duration, change the creature's speed midway during the descent/fall
+        // Note, this can only occur when the creature is not grounded (still airborn), did fall off a platform, and the minimum time b4 changing speed
+        // has elapsed (so as to prevent a bug where the creature's speed keeps on getting updated even after an unexpecedtly quick landing)
         if (fallingDurationTimer > 0)
             fallingDurationTimer -= Time.deltaTime;
 
@@ -129,17 +137,13 @@ public class AI_Controller : CentralController
     {
         // set fall speed only when actually falling
         if (AI_action.action == "fallDown")
-        {
             speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
-            hasNotFallenYet = false;
-        }
 
         // set initial fall speed only when actually falling (+ will change dir midway during fall)
         else if (AI_action.action == "fallDownCurve") 
         {
              lastMovementDirX = dirX;
              speed = AI_action.speed.x;
-             hasNotFallenYet = false;
              fallingDurationTimer = UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y);
         }
     }
@@ -166,7 +170,7 @@ public class AI_Controller : CentralController
         randomXPos = UnityEngine.Random.Range(AI_action.jumpBounds.x, AI_action.jumpBounds.y);
         dirX = Math.Sign(randomXPos - transform.position.x);
 
-        while ((dirX == 1 && transform.position.x < randomXPos) || (dirX == -1 && transform.position.x > randomXPos))
+        while ((dirX == 1 && transform.position.x < randomXPos) || (dirX == -1 && transform.position.x > randomXPos)) 
             yield return null;
 
         dirX = AI_action.dirX;
@@ -175,8 +179,11 @@ public class AI_Controller : CentralController
         if (AI_action.action == "launchPad")
             StartCoroutine(executeLaunchAtRightMoment());
 
-        else if (AI_action.action == "normalJump")
-            StartCoroutine(executeNormalJumpAtRightMoment());
+        else if (AI_action.action == "normalJump") 
+        {
+            normalJump();
+            StartCoroutine(changeVelocityAfterDelay(AI_action.timeB4Change, AI_action.changedSpeed));
+        }
 
         else if (AI_action.action == "doubleJump")
             StartCoroutine(executeDoubleJumpAtRightMoment());
@@ -201,7 +208,7 @@ public class AI_Controller : CentralController
         speed = Mathf.Abs(randomSpeed);
 
         doubleJump();
-        actionProgress = "in progress";
+        //actionProgress = "in progress";
 
         StartCoroutine(changeVelocityAfterDelay(AI_action.timeB4SecondChange, AI_action.secondChangedSpeed));
     }
@@ -216,8 +223,8 @@ public class AI_Controller : CentralController
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
 
-        yield return new WaitForSeconds(Time.deltaTime * 2);
-        actionProgress = "in progress";
+        //yield return new WaitForSeconds(Time.deltaTime * 2);
+       // actionProgress = "in progress";
     }
 
     private void normalJump()

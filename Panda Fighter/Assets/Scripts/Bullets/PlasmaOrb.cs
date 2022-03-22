@@ -17,6 +17,7 @@ public class PlasmaOrb : Bullet
 
     private Vector3 contactLocation, surfaceContactLocation;
     private Transform trackingSurface;
+    private Transform creature;
 
 
     void Awake()
@@ -27,6 +28,12 @@ public class PlasmaOrb : Bullet
         physicalExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
         explosion.radius = 12f;
+    }
+
+    void OnEnable() 
+    {
+        explosionTimer = 0f;
+        rig.constraints = RigidbodyConstraints2D.None;
     }
 
     void Update()
@@ -44,8 +51,11 @@ public class PlasmaOrb : Bullet
             gameObject.SetActive(false);
         }
 
-        if (trackingSurface != null)
+        // update the sticky orb's position if it's clinging to a creature (that's alive)
+        if (trackingSurface != null && creature != null && !creature.GetComponent<Health>().isDead)
             transform.position = trackingSurface.position - surfaceContactLocation + contactLocation;
+        
+      //  Debug.LogFormat("{0}, {1}. {2}", trackingSurface, creature, !creature.GetComponent<Health>().isDead);
     }
 
     public IEnumerator startTimedPlasmaExplosion(Transform surface)
@@ -68,6 +78,14 @@ public class PlasmaOrb : Bullet
         }
     }
 
-    protected override void OnMapEnter(Transform map) => StartCoroutine(startTimedPlasmaExplosion(map));
-    protected override void OnCreatureEnter(Transform entity) => StartCoroutine(startTimedPlasmaExplosion(entity));
+    protected override void OnMapEnter(Transform map) 
+    {
+         StartCoroutine(startTimedPlasmaExplosion(map));
+         creature = null;
+    }
+    protected override void OnCreatureEnter(Transform entity) 
+    {
+        StartCoroutine(startTimedPlasmaExplosion(whatItStuckTo));
+        creature = entity;
+    }
 }

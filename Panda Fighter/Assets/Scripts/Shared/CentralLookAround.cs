@@ -22,6 +22,7 @@ public class CentralLookAround : MonoBehaviour
     protected CentralShooting shooting;
     protected CentralWeaponSystem weaponSystem;
     protected Health health;
+    protected Animator animator;
 
     public virtual void Awake()
     {
@@ -31,6 +32,7 @@ public class CentralLookAround : MonoBehaviour
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         health = transform.GetComponent<Health>();
         body = transform.GetChild(0);
+        animator = body.GetComponent<Animator>();
     }
 
     protected void rotateHeadAndWeapon(Vector2 shootDirection, float shootAngle)

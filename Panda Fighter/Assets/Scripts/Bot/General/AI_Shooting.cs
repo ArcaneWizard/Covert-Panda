@@ -33,7 +33,7 @@ public class AI_Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (health.isDead || !AI_lookAround.playerIsInSight || countdownBtwnShots > 0f)
+        if (health.isDead || !AI_lookAround.enemyInSight || countdownBtwnShots > 0f)
             return;
 
         if (weaponSystem.GetAmmo <= 0 || weaponSystem.weaponSelected == null)
@@ -74,7 +74,7 @@ public class AI_Shooting : CentralShooting
 
     public void LateLateUpdate()
     {
-        if (health.isDead || !AI_lookAround.playerIsInSight || weaponSystem.GetAmmo <= 0 || configuration == null)
+        if (health.isDead || !AI_lookAround.enemyInSight || weaponSystem.GetAmmo <= 0 || configuration == null)
             return;
 
         if (configuration.weaponType == Type.holdFire)

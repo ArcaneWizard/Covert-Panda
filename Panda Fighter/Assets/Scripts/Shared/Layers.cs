@@ -17,4 +17,8 @@ public static class Layers
 
     public static int friend = 12;
     public static int enemy = 9;
+
+    public static int armor = 15;
+    public static int specialBullet = 19;
+    public static int specialEnemyBullet = 20;
 }

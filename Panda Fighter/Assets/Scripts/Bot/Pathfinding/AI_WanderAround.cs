@@ -59,7 +59,7 @@ public class AI_WanderAround : MonoBehaviour
         String listOfZones = $"creature ${transform.parent.GetSiblingIndex()} zones: \n";
         foreach (Transform zone in decisionZones)
             listOfZones+= zone.name + " \n";
-        DebugGUI.debugTexts[transform.parent.GetSiblingIndex()] = listOfZones;
+        //.debugTexts[transform.parent.GetSiblingIndex()] = listOfZones;
 
         if (!shouldWander || decisionZones.Count == 0)
             return;

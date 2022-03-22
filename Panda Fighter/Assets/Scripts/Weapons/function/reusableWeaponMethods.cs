@@ -10,7 +10,7 @@ public static class reusableWeaponMethods
         bullet.transform.right = aim;
         rig.velocity = aim * speed;
        // Debug.LogFormat("Reptidon: {3}, bullet {4}, aim: {0}, speed: {1}, velocity: {2}", aim, speed, rig.velocity, bullet.parent.parent.parent.GetSiblingIndex(), bullet.name);
-        predictTrajectoryOfFastBullets(bullet, aim);
+        predictTrajectoryOfFastBullets(bullet, aim, false, false);
     }
 
     public static void configureReusedBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint, Side side)
@@ -63,14 +63,23 @@ public static class reusableWeaponMethods
 
         bullet.transform.right = newAim;
         bulletRig.velocity = newAim * configuration.bulletSpeed;
-        predictTrajectoryOfFastBullets(bullet, newAim);
+        predictTrajectoryOfFastBullets(bullet, newAim, false, false);
+    }
+    
+    public static void shootBulletInArc(Vector2 aim, Transform bullet, Rigidbody2D rig, float speed, bool stickyBullet )
+    {
+        bullet.transform.right = aim;
+        Vector2 unadjustedForce = speed * 40 * aim * new Vector2(1.4f, 1.5f);
+        rig.AddForce(unadjustedForce * rig.mass);
+        
+        predictTrajectoryOfFastBullets(bullet, aim, true, stickyBullet);
     }
 
      // if it's a very fast bullet, apply predicative logic so that it doesn't pass through matter!
-    private static void predictTrajectoryOfFastBullets(Transform bullet, Vector2 aim) 
+    private static void predictTrajectoryOfFastBullets(Transform bullet, Vector2 aim, bool updateBulletDirContinuously, bool stickyBullet) 
     {
-        if (bullet.parent.GetComponent<WeaponConfiguration>().bulletSpeed > 65f)
-            bullet.transform.GetComponent<Bullet>().RunPredictiveLogic(aim, bullet.position);
+        if (bullet.parent.GetComponent<WeaponConfiguration>().bulletSpeed > 55f)
+            bullet.transform.GetComponent<Bullet>().RunPredictiveLogic(aim, bullet.position, updateBulletDirContinuously, stickyBullet);
     }
 
     public static void fadeOutBullet(Transform bullet, float delay, float duration, MonoBehaviour mB) =>

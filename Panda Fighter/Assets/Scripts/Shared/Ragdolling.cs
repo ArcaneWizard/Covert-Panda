@@ -51,7 +51,6 @@ public class Ragdolling : MonoBehaviour
         animator.enabled = false;
         playerRig.isKinematic = true;
 
-        ragdollArms.SetActive(true);
         weaponSystem.weaponConfiguration.weapon.SetActive(false);
         foreach (GameObject armLimb in weaponSystem.weaponConfiguration.limbs) 
             armLimb.SetActive(false);
@@ -61,6 +60,8 @@ public class Ragdolling : MonoBehaviour
             rig.isKinematic = false;
             rig.gameObject.layer = Layers.collideWithMap;
         }  
+
+        ragdollArms.SetActive(true);
         
        // Sets the velocity of the ragdoll hip equal to the player's velocity b4 they died
         ragdollParts[0].AddForce(playerRig.velocity * UnityEngine.Random.Range(120, 200));

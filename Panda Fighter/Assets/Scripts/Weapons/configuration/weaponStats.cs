@@ -19,7 +19,7 @@ public class WeaponStats : MonoBehaviour
 
         set(0.3f, 32, 52, 300, 0, 450, WeaponTags.Grenades, Mode.handheld, Type.singleFire, l.Hands, w.GrenadeHands);
         set(0.33f, 32, 92, 300, 70, 30, WeaponTags.LavaPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.LavaOrbLauncher);
-        set(0.1f, 32, 50, 300, 0, 60, WeaponTags.PlasmaOrb, Mode.gun, Type.singleFire, l.Short_barrel, w.PlasmaOrbLauncher);
+        set(0.25f, 32, 57, 300, 0, 100, WeaponTags.PlasmaOrb, Mode.gun, Type.spamFire, l.Short_barrel, w.PlasmaOrbLauncher);
 
         set(0.2f, 32, 150, 300, 50, 30, WeaponTags.Railgun, Mode.gun, Type.singleFire, l.Middle_barrel, w.Shielder);
         set(0.33f, 10, 60, 300, 200, 0, WeaponTags.LeafScythe, Mode.meelee, Type.singleFire, l.Meelee_grip, w.LeafScythe);

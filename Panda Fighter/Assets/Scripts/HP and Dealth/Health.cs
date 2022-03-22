@@ -10,7 +10,7 @@ public abstract class Health : MonoBehaviour
     public bool isDead { get; protected set; }
     private int paddingHP = 15; //means the bar for hp should always "appear" as if 15/300 hp or more is left 
 
-    protected float respawnTime = 5.22f;
+    protected float respawnTime = 4.22f;
     protected float respawnInvulnerabilityDuration = 2f;
     public Transform respawnLocations;
 
@@ -48,7 +48,7 @@ public abstract class Health : MonoBehaviour
         isDead = false;
 
         hitBox.offset = new Vector2(0, -0.15f);
-        hitBox.size = new Vector2(0.15f, 2.48f);
+        hitBox.size = new Vector2(0.13f, 2.48f);
     }
 
     // checks for when the entity collides with a bullet or explosion. apply dmg
@@ -74,6 +74,7 @@ public abstract class Health : MonoBehaviour
 
         if (!bullet.disabledImpactDetection) 
         {
+            Debug.Log(gameObject.name);
             currentHP -= bullet.Damage();
             bullet.ConfirmImpactWithCreature(transform);
         }
@@ -121,5 +122,34 @@ public abstract class Health : MonoBehaviour
     }
 
     public void TakeDamage(int damage) => currentHP -= damage;
-    public abstract IEnumerator CallUponDying();
+
+    private IEnumerator CallUponDying() 
+    {
+        UponDying();
+
+        yield return new WaitForSeconds(respawnTime);
+        BeforeRespawning();
+        
+        yield return new WaitForSeconds(Time.deltaTime);
+        hpBar.transform.parent.gameObject.SetActive(true);
+        controller.updateGroundAngle(false);
+        controller.forceUpdateTilt = true;
+
+        yield return new WaitForSeconds(respawnInvulnerabilityDuration);
+        hitBox.enabled = true;
+    }
+
+    protected virtual void UponDying() {}
+
+    protected virtual void BeforeRespawning() 
+    {
+        currentHP = maxHP;
+        isDead = false;
+        ragdolling.Disable();
+        weaponSystem.InitializeWeaponSystem();
+
+        Transform respawnLocation = respawnLocations.GetChild(
+            UnityEngine.Random.Range(0,respawnLocations.childCount));
+        transform.position = respawnLocation.position;  
+    }
 }
