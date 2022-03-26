@@ -12,7 +12,7 @@ public abstract class Health : MonoBehaviour
 
     protected float respawnTime = 4.22f;
     protected float respawnInvulnerabilityDuration = 2f;
-    public Transform respawnLocations;
+    private Transform respawnLocations;
 
     protected Image hpBar;
     protected Vector2 hpBarOffset;
@@ -22,6 +22,8 @@ public abstract class Health : MonoBehaviour
     protected CentralWeaponSystem weaponSystem;
     protected CentralController controller;
     protected Ragdolling ragdolling;
+    protected CentralAbilityHandler abilityHandler;
+    protected Side side;
 
     protected Rigidbody2D rig;
     protected BoxCollider2D hitBox;
@@ -31,21 +33,28 @@ public abstract class Health : MonoBehaviour
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         controller = transform.GetComponent<CentralController>();
         ragdolling = transform.GetComponent<Ragdolling>();
+        abilityHandler = transform.GetComponent<CentralAbilityHandler>();
 
         rig = transform.GetComponent<Rigidbody2D>();
         hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
 
-        Side side = transform.parent.GetComponent<Role>().side;
+        side = transform.parent.GetComponent<Role>().side;
         hitBox.gameObject.layer = (side == Side.Friendly) ? Layers.friendlyHitBox : Layers.enemyHitBox;
 
         hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(0).GetComponent<Image>();
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
+
+        respawnLocations = (side == Side.Friendly) 
+            ? transform.parent.parent.parent.GetComponent<References>().FriendRespawnPoints
+            : transform.parent.parent.parent.GetComponent<References>().EnemyRespawnPoints;
     }
 
     private void Start()
     {
         currentHP = maxHP;
         isDead = false;
+
+        hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
 
         hitBox.offset = new Vector2(0, -0.15f);
         hitBox.size = new Vector2(0.13f, 2.48f);
@@ -55,7 +64,7 @@ public abstract class Health : MonoBehaviour
     // and update health bar correspondingly
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (isDead)
+        if (isDead || abilityHandler.isInvisible)
             return;
 
         if (col.gameObject.layer == bulletLayer)
@@ -151,5 +160,7 @@ public abstract class Health : MonoBehaviour
         Transform respawnLocation = respawnLocations.GetChild(
             UnityEngine.Random.Range(0,respawnLocations.childCount));
         transform.position = respawnLocation.position;  
+
+        transform.localEulerAngles = new Vector3(0, 0, 0);
     }
 }

@@ -6,7 +6,6 @@ public class Idle : IState
 {
     private AI_Controller controller;
     private float unfreezeTimer;
-    private Transform player;
 
     // how long (in seconds) the AI goes idle for. provided as a range
     private Vector2 freezeTime = new Vector2(0.2f, 2f);
@@ -17,10 +16,9 @@ public class Idle : IState
     public bool GoodTimeToGoIdle;
     public bool StopBeingIdle;
 
-    public Idle(AI_Controller controller, Transform player)
+    public Idle(AI_Controller controller)
     {
         this.controller = controller;
-        this.player = player;
 
         GoodTimeToGoIdle = false;
         StopBeingIdle = false;

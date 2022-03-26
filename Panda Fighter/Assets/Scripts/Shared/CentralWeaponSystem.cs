@@ -118,10 +118,23 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     public WeaponConfiguration weaponConfiguration => weaponConfigurations[weaponSelected];
     public WeaponConfiguration getWeaponConfiguration(String weapon) => weaponConfigurations[weapon];
 
-    //useful for special attacks (right click)
+    // useful for special attacks (right click)
     public GameObject getLastBullet()
     {
         int totalBullets = bulletPools[weaponSelected].Count;
         return bulletPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;
     }
+
+    // when creature collides with a pickable weapon, collect that weapon + tell the weapon holder to soon spawn a new weapon
+    private void OnTriggerEnter2D(Collider2D col) 
+    {
+        Debug.Log(col.gameObject.layer);
+        /*if (col.gameObject.layer == Layers.pickableWeapon) 
+        {
+            Debug.Log(col.gameObject);
+            collectNewWeapon(col.transform.GetComponent<WeaponTag>().Tag);
+            col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
+        }*/
+    }
+
 }

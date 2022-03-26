@@ -22,7 +22,7 @@ public class CentralAbilityHandler : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.T) && canTurnInvisible)
+        if (Input.GetKey(KeyCode.T) && canTurnInvisible && transform.parent.tag == "Player")
             StartCoroutine(turnInvisible());
     }
 

@@ -9,7 +9,8 @@ public class AI_Health : Health
     {
         base.Awake();
 
-        maxHP = 300;
+        maxHP = 400;
         bulletLayer = Layers.friendlyBullet;
+        
     }
 }

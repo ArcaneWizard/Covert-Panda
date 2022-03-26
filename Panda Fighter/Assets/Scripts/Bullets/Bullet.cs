@@ -61,7 +61,7 @@ public class Bullet : MonoBehaviour
         checkForPredictedCollision();
 
         // start the predictive raycast from slightly behind where the bullet actually spawns (to detect collisions on creatures walking the gun)
-        middleOfWeapon = new Vector2(transform.position.x - aim.x * 1.2f, transform.position.y - aim.y * 1.2f);
+        middleOfWeapon = new Vector2(transform.position.x - aim.x * 0.1f, transform.position.y - aim.y * 0.1f);
         RaycastHit2D hit = Physics2D.Raycast(middleOfWeapon, aim, raycastDistance, LayerMasks.mapOrTarget(transform));
 
        //if (hit.collider != null)
@@ -69,7 +69,7 @@ public class Bullet : MonoBehaviour
         predictedImpactLocation = (hit.collider != null) ? hit.point: new Vector2(transform.position.x + aim.x * raycastDistance, transform.position.y + aim.y * raycastDistance);
         predictedColliderHit = (hit.collider != null) ? hit.collider.transform : null;
         
-        yield return new WaitForSeconds(Time.deltaTime*2f*(hit.collider!= null ? 1f : 2f));
+        yield return new WaitForSeconds(Time.deltaTime*2f);
        
         StartCoroutine(updatePrediction());
     }     

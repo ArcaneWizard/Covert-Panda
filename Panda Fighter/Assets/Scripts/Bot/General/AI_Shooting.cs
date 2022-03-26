@@ -6,8 +6,8 @@ public class AI_Shooting : CentralShooting
     private AI_LookAround AI_lookAround;
     private WeaponConfiguration configuration;
 
-    private Vector2 reactionTime = new Vector2(0.2f, 0.35f);
-    private Vector2 angleAimIsOffBy = new Vector2(-15, 15f);
+    private Vector2 reactionTime = new Vector2(0.4f, 0.67f);
+    private Vector2 angleAimIsOffBy = new Vector2(-30, 30f);
     private float offsetAngle;
 
     private float countdownBtwnShots = 0f;
@@ -33,7 +33,7 @@ public class AI_Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (health.isDead || !AI_lookAround.enemyInSight || countdownBtwnShots > 0f)
+        if (health.isDead || !AI_lookAround.targetInSight || countdownBtwnShots > 0f)
             return;
 
         if (weaponSystem.GetAmmo <= 0 || weaponSystem.weaponSelected == null)
@@ -74,7 +74,7 @@ public class AI_Shooting : CentralShooting
 
     public void LateLateUpdate()
     {
-        if (health.isDead || !AI_lookAround.enemyInSight || weaponSystem.GetAmmo <= 0 || configuration == null)
+        if (health.isDead || !AI_lookAround.targetInSight || weaponSystem.GetAmmo <= 0 || configuration == null)
             return;
 
         if (configuration.weaponType == Type.holdFire)

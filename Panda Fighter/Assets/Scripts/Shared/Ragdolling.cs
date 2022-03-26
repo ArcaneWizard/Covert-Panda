@@ -35,7 +35,7 @@ public class Ragdolling : MonoBehaviour
         foreach (Rigidbody2D rig in ragdollParts)
         {
             rig.isKinematic = true;
-            rig.gameObject.layer = Layers.collideWithNothing;
+            rig.gameObject.layer = Layers.detectPickableWeapons;
         }
 
         playerRig.isKinematic = false;

@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.Generic; 
 using UnityEngine;
 
 public class AI : MonoBehaviour
@@ -11,8 +11,6 @@ public class AI : MonoBehaviour
     private AI_LookAround lookAround;
     private AI_WanderAround wanderAround;
     private AI_Controller controller;
-
-    public Transform Player;
 
     [SerializeField]
     private Transform possibleDestinations, manualDestination;
@@ -39,7 +37,7 @@ public class AI : MonoBehaviour
         var seekDestination = new SeekDestination(this, pathFollower, possibleDestinations, manualDestination, lookAround);
         var attack = new AttackAggressively();
         var flee = new Flee();
-        var idle = new Idle(controller, Player);
+        var idle = new Idle(controller);
 
         IState a = attack;
         transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.journey == "ended");

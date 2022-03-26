@@ -17,21 +17,21 @@ public class WeaponStats : MonoBehaviour
 
         this.weaponSystem = weaponSystem;
 
-        set(0.3f, 32, 52, 300, 0, 450, WeaponTags.Grenades, Mode.handheld, Type.singleFire, l.Hands, w.GrenadeHands);
-        set(0.33f, 32, 92, 300, 70, 30, WeaponTags.LavaPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.LavaOrbLauncher);
-        set(0.25f, 32, 57, 300, 0, 100, WeaponTags.PlasmaOrb, Mode.gun, Type.spamFire, l.Short_barrel, w.PlasmaOrbLauncher);
+        set(0.3f, 32, 52, 300, 0, 600, WeaponTags.Grenades, Mode.handheld, Type.singleFire, l.Hands, w.GrenadeHands);
+        set(0.33f, 32, 200, 300, 90, 30, WeaponTags.LavaPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.LavaOrbLauncher);
+        set(0.25f, 32, 90, 300, 0, 140, WeaponTags.PlasmaOrb, Mode.gun, Type.spamFire, l.Short_barrel, w.PlasmaOrbLauncher);
 
-        set(0.2f, 32, 150, 300, 50, 30, WeaponTags.Railgun, Mode.gun, Type.singleFire, l.Middle_barrel, w.Shielder);
-        set(0.33f, 10, 60, 300, 200, 0, WeaponTags.LeafScythe, Mode.meelee, Type.singleFire, l.Meelee_grip, w.LeafScythe);
-        set(0.6f, 10, 66, 300, 200, 0, WeaponTags.Shotgun, Mode.gun, Type.singleFire, l.Short_barrel, w.GoldenShotgun);
+        set(0.2f, 32, 200, 300, 30, 110, WeaponTags.Railgun, Mode.gun, Type.singleFire, l.Middle_barrel, w.Shielder);
+        set(0.33f, 10, -1, 300, 500, 0, WeaponTags.LeafScythe, Mode.meelee, Type.singleFire, l.Meelee_grip, w.LeafScythe);
+        set(0.6f, 10, 300, 300, 600, 0, WeaponTags.Shotgun, Mode.gun, Type.singleFire, l.Short_barrel, w.GoldenShotgun);
 
-        set(0.2f, 32, 100, 300, 40, 0, WeaponTags.ArcticPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.ArcticCannon);
-        set(0.8f, 38, 99, 300, 120, 0, WeaponTags.PlasmaSniper, Mode.gun, Type.singleFire, l.Long_barrel, w.Sniper);
-        set(0.2f, 32, 99, 300, 35, 0, WeaponTags.Needler, Mode.gun, Type.spamFire, l.Middle_barrel, w.Needler);
+        set(0.2f, 32, 200, 300, 90, 0, WeaponTags.ArcticPistol, Mode.gun, Type.singleFire, l.Pistol_grip, w.ArcticCannon);
+        set(0.8f, 38, -1, 300, 200, 20, WeaponTags.PlasmaSniper, Mode.gun, Type.singleFire, l.Long_barrel, w.Sniper);
+        set(0.15f, 32, 200, 300, 30, 0, WeaponTags.Needler, Mode.gun, Type.spamFire, l.Middle_barrel, w.Needler);
 
-        set(0.00f, 34, 72, 3000, 5, 0, WeaponTags.FocusBeamer, Mode.gun, Type.holdFire, l.Short_barrel, w.FocusBeamer);
-        set(0.8f, 34, 99, 300, 40, 140, WeaponTags.RocketLauncher, Mode.gun, Type.singleFire, l.Shoulder_rest, w.RocketLauncher);
-        set(0.25f, 32, 42, 300, 60, 140, WeaponTags.ArcticSprayer, Mode.gun, Type.spamFire, l.Shoulder_rest, w.ArcticSprayer);
+        set(0.00f, 34, -1, 3000, 7, 0, WeaponTags.FocusBeamer, Mode.gun, Type.holdFire, l.Short_barrel, w.FocusBeamer);
+        set(0.8f, 34, 180, 300, 0, 300, WeaponTags.RocketLauncher, Mode.gun, Type.singleFire, l.Shoulder_rest, w.RocketLauncher);
+        set(0.25f, 32, 100, 300, 60, 140, WeaponTags.ArcticSprayer, Mode.gun, Type.spamFire, l.Shoulder_rest, w.ArcticSprayer);
     }
 
     private void set(float fireRateInfo, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg, 

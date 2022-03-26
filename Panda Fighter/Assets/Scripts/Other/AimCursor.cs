@@ -9,7 +9,7 @@ public class AimCursor : MonoBehaviour
     public Transform rightArrow;
     public Transform leftArrow;
 
-    public Camera camera;
+    private Camera camera;
     private Transform player;
 
     private float zoom = 0.17f;
@@ -21,6 +21,7 @@ public class AimCursor : MonoBehaviour
     {
         zoom = defaultZoom;
         player = transform.parent.GetChild(0);
+        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
     }
 
     void Update()

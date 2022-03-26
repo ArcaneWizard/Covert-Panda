@@ -52,10 +52,11 @@ public class WeaponSystem : CentralWeaponSystem
     {
         base.InitializeWeaponSystem();
 
-        foreach (String weapon in IWeapons.Keys)
-            collectNewWeapon(weapon);
+        foreach (KeyValuePair<string, IWeapon> weapon in IWeapons)  
+            ammoText[weapon.Key].text = ammo[weapon.Key].ToString();
 
-        selectWeapon("Railgun");
+        collectNewWeapon("Needler");
+        selectWeapon("Needler");
     }
 
     // Associate each weapon with a different number key on the keyboard
@@ -83,7 +84,6 @@ public class WeaponSystem : CentralWeaponSystem
     // Allow player to select a different weapon 
     public override void selectWeapon(string weapon)
     {
-        Debug.Log("Yo" + weapon);
         string lastWeapon = weaponSelected;
         base.selectWeapon(weapon);
 

@@ -6,6 +6,7 @@ public class CentralAnimationController : MonoBehaviour
 {
     protected CentralController controller;
     protected Animator animator;
+    protected Camera camera;
     protected Transform body;
 
     public AnimationClip doubleJumpForwards;
@@ -26,6 +27,7 @@ public class CentralAnimationController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         body = transform.GetChild(0);
         controller = transform.GetComponent<CentralController>();
+        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
         initialColliderSize = controller.mainCollider.size;
     }

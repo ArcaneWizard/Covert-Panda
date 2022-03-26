@@ -4,12 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Shooting : CentralShooting
 {
-    public Camera camera;
+    private Camera camera;
+    private WeaponConfiguration configuration;
 
     private float countdownBtwnShots = 0f;
-
-    private WeaponConfiguration configuration;
     private String attackProgress;
+
+    public override void Awake() 
+    {
+        base.Awake();
+        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
+    }
 
     public override Vector2 getAim() 
     {

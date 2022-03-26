@@ -17,7 +17,7 @@ public class CentralController : MonoBehaviour
     public BoxCollider2D mainCollider;
 
     [Header("Camera stuff")]
-    public Camera camera;
+    private Camera camera;
 
     [Header("Ground detection")]
 
@@ -57,6 +57,7 @@ public class CentralController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         controller = transform.GetComponent<CentralAnimationController>();
         health = transform.GetComponent<Health>();
+        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
         Side side = transform.parent.GetComponent<Role>().side;
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
