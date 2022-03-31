@@ -11,7 +11,6 @@ public abstract class Health : MonoBehaviour
     private int paddingHP = 15; //means the bar for hp should always "appear" as if 15/300 hp or more is left 
 
     protected float respawnTime = 4.22f;
-    protected float respawnInvulnerabilityDuration = 2f;
     private Transform respawnLocations;
 
     protected Image hpBar;
@@ -41,7 +40,7 @@ public abstract class Health : MonoBehaviour
         side = transform.parent.GetComponent<Role>().side;
         hitBox.gameObject.layer = (side == Side.Friendly) ? Layers.friendlyHitBox : Layers.enemyHitBox;
 
-        hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(0).GetComponent<Image>();
+        hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(1).GetComponent<Image>();
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
 
         respawnLocations = (side == Side.Friendly) 
@@ -53,18 +52,19 @@ public abstract class Health : MonoBehaviour
     {
         currentHP = maxHP;
         isDead = false;
-
         hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
 
         hitBox.offset = new Vector2(0, -0.15f);
         hitBox.size = new Vector2(0.13f, 2.48f);
+
+        StartCoroutine(abilityHandler.spawnProtection());
     }
 
     // checks for when the entity collides with a bullet or explosion. apply dmg
     // and update health bar correspondingly
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (isDead || abilityHandler.isInvisible)
+        if (isDead || abilityHandler.isInvulnerable)
             return;
 
         if (col.gameObject.layer == bulletLayer)
@@ -144,8 +144,7 @@ public abstract class Health : MonoBehaviour
         controller.updateGroundAngle(false);
         controller.forceUpdateTilt = true;
 
-        yield return new WaitForSeconds(respawnInvulnerabilityDuration);
-        hitBox.enabled = true;
+        StartCoroutine(abilityHandler.spawnProtection());
     }
 
     protected virtual void UponDying() {}

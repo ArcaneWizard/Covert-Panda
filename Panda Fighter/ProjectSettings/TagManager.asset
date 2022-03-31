@@ -10,6 +10,7 @@ TagManager:
   - Boomerang
   - Lava Pistol
   - singleFire
+  - AI
   layers:
   - Default
   - TransparentFX
@@ -44,6 +45,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: map
+    uniqueID: 646110731
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

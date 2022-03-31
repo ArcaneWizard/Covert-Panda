@@ -1,42 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CentralAbilityHandler : MonoBehaviour
 {
-    public bool isInvisible { private set; get; }
+    public bool isInvulnerable {get; private set;}
+
+    private bool spawnProtectionEnabled;
+    private float spawnProtectionDuration = 1.7f;
+ 
+    public bool invisibilityEnabled {get; private set;}
     private bool canTurnInvisible;
-
-    private Collider2D collider;
-
     private float invisibleDuration = 3f;
     private float invisibleReloadTime = 15f;
 
+    private Collider2D hitBox;
+    private Image effectIndicator;
+
     void Awake()
     {
-        isInvisible = false;
+        invisibilityEnabled = false;
         canTurnInvisible = true;
 
-        collider = transform.GetChild(1).GetComponent<Collider2D>();
+        hitBox = transform.GetChild(1).GetComponent<Collider2D>();
+        effectIndicator = transform.parent.GetChild(2).GetChild(0).GetComponent<Image>();
     }
 
     void Update()
     {
         if (Input.GetKey(KeyCode.T) && canTurnInvisible && transform.parent.tag == "Player")
             StartCoroutine(turnInvisible());
+
+        isInvulnerable = (invisibilityEnabled || spawnProtectionEnabled);
+
+        hitBox.enabled = !isInvulnerable;
+        effectIndicator.color = spawnProtectionEnabled ?  new Color32(0, 255, 227, 255) : new Color32(0,0, 0, 255);
     }
 
     private IEnumerator turnInvisible()
     {
-        isInvisible = true;
-        collider.enabled = false; 
+        invisibilityEnabled = true;
         canTurnInvisible = false;
 
         yield return new WaitForSeconds(invisibleDuration);
-        isInvisible = false;
-        collider.enabled = true; 
+        invisibilityEnabled = false;
 
         yield return new WaitForSeconds(invisibleReloadTime);
         canTurnInvisible = true;
+    }
+
+    public IEnumerator spawnProtection() 
+    {
+        spawnProtectionEnabled = true;
+        yield return new WaitForSeconds(spawnProtectionDuration);
+        spawnProtectionEnabled = false;
     }
 }

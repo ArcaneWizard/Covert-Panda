@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class WeaponHolderFlare : MonoBehaviour
 {
-    public float lowestAlpha = 156;
-    public float highestAlpha = 210;
+    private float lowestAlpha = 155;
+    private float highestAlpha = 200;
 
     public Vector2 flickerSpeedRange = new Vector2(150, 200);
     private float flickerSpeed;

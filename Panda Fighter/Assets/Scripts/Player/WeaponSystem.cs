@@ -56,6 +56,7 @@ public class WeaponSystem : CentralWeaponSystem
             ammoText[weapon.Key].text = ammo[weapon.Key].ToString();
 
         collectNewWeapon("Needler");
+        collectNewWeapon("Grenades");
         selectWeapon("Needler");
     }
 
