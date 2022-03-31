@@ -6,30 +6,42 @@ public class CentralAnimationController : MonoBehaviour
 {
     protected CentralController controller;
     protected Animator animator;
+    private Rigidbody2D rig;
     protected Camera camera;
     protected Transform body;
 
     public AnimationClip doubleJumpForwards;
     public AnimationClip doubleJumpBackwards;
+    public Collider2D doubleJumpCollider;
+
+    public bool carryOutDoubleJump;
+    private bool isSpinning;
 
     public bool disableLimbsDuringDoubleJump { get; private set; }
-    private bool completedDoubleJump;
+    private bool completedSpinning;
     protected bool stopSpinning = true;
     protected int spinDirection = 0;
-    private float initialSpinSpeed = 350f;
-    private float endSpinSpeed = 11f;
-    private float durationSpinningFast = 0.35f;
+
+    private const float initialSpinSpeed = 1000f;
+    private const float endSpinSpeed = 600f;
+    private const float durationSpinningFast = 0.35f;
 
     private Vector2 initialColliderSize;
 
     private void Awake()
     {
-        animator = transform.GetChild(0).transform.GetComponent<Animator>();
         body = transform.GetChild(0);
+        rig = transform.GetComponent<Rigidbody2D>();
+        animator = body.GetComponent<Animator>();
+
         controller = transform.GetComponent<CentralController>();
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
         initialColliderSize = controller.mainCollider.size;
+
+        Side side = transform.parent.GetComponent<Role>().side;
+        doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
+        completedSpinning = true;
     }
 
     private void Update()
@@ -38,7 +50,21 @@ public class CentralAnimationController : MonoBehaviour
         StartCoroutine(adjustFeetAndColliders(controller.rightGroundChecker, controller.leftGroundChecker, controller.mainCollider));
     }
 
-    private void FixedUpdate() => carryOutDoubleJump();
+    private void FixedUpdate() 
+    {
+        if (carryOutDoubleJump)
+            doDoubleJumpMidairSpin();
+
+        // while spinning during a double jump, check when the creature becomes upright. Then, tell the creature to stop spinning
+        if (isSpinning && (
+                (spinDirection == -1 && transform.localEulerAngles.z < 30) || 
+                (spinDirection == 1 && ((transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40) || transform.localEulerAngles.z > 345))))
+        {
+            Debug.Log("x");
+            completedSpinning = true;
+            isSpinning = false;
+        }
+    }
 
     // Sets up the double jump animation. Specifies the direction to spin in, resets temporary spin settings,
     // disables concurrent limb updates (ex. can't control head movement while moving cursor) temporarily, 
@@ -58,39 +84,15 @@ public class CentralAnimationController : MonoBehaviour
         else
             animator.SetBool("forward double jump", true);
 
+        controller.mainCollider.enabled = false;
+        doubleJumpCollider.enabled = true;
+        completedSpinning = false;
         animator.SetInteger("jump version", 1);
         animator.SetBool("double jump", true);
-        completedDoubleJump = false;
 
-        yield return new WaitForSeconds(0.65f);
+        yield return new WaitForSeconds(0.5f);
         disableLimbsDuringDoubleJump = false;
     }
-
-    // Specify which animation to play (2 = jumping, 1 = walking, 0 = idle) and when.
-    // Will enter jump animation (Phase 2) when no longer grounded. 
-    // Will enter running/backwards walking animation (Phase 1) when moving 
-    // Will enter idle animation (Phase 0) when not moving and not in jump animation
-    // Will enter idle animation once grounded and last in jump animation
-    /*protected virtual void setAnimationState()
-    {
-        if (animator.GetInteger("Phase") != 2)
-        {
-            if (!controller.isGrounded)
-                animator.SetInteger("Phase", 2);
-            else if (controller.dirX != 0)
-                animator.SetInteger("Phase", 1);
-            else
-                animator.SetInteger("Phase", 0);
-        }
-
-        if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
-        {
-            animator.SetBool("jumped", false);
-            animator.SetInteger("jump version", 1);
-            animator.SetBool("double jump", false);
-            animator.SetInteger("Phase", 0);
-        }
-    }*/
 
     // Specify which animation to play and when
     // Will enter running/walking animation once grounded and moving 
@@ -100,12 +102,11 @@ public class CentralAnimationController : MonoBehaviour
     // Note about PHASES below: 2 = jumping, 1 = walking, 0 = idle
     protected virtual void setAnimationState()
     {
-        if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
+        if (animator.GetInteger("Phase") == 2 && controller.isGrounded && rig.velocity.y <= 0f)
         {
             animator.SetBool("jumped", false);
             animator.SetInteger("jump version", 1);
             animator.SetBool("double jump", false);
-            completedDoubleJump = true;
             animator.SetInteger("Phase", 0);
         }
 
@@ -122,25 +123,50 @@ public class CentralAnimationController : MonoBehaviour
     // When double jumping, entity spins at a given initialSpinSpeed for a specified duration, 
     // then slows down to an endSpinSpeed. Note: entity's rotation is synced to the progress of 
     // the double jump spin animation. Updates when it's completed the double jump 
-    private void carryOutDoubleJump()
+    private void doDoubleJumpMidairSpin()
     {
-        if (!completedDoubleJump)
+        if (!completedSpinning)
         {
-            float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
-            if (t > 0.9f) stopSpinning = true;
-
-            if (!stopSpinning || t > 0.1f)
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime  < 0.65f && !animator.IsInTransition(0))
             {
-                if (t < durationSpinningFast)
-                    transform.eulerAngles = new Vector3(0, 0, t * initialSpinSpeed / durationSpinningFast * spinDirection);
-                else
-                    transform.eulerAngles = new Vector3(0, 0, (initialSpinSpeed + (t - durationSpinningFast) * endSpinSpeed)) * spinDirection;
+                float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
+
+                if (t < durationSpinningFast) 
+                    transform.eulerAngles = new Vector3(0, 0, t * initialSpinSpeed * spinDirection);
+                else {
+                    transform.eulerAngles = new Vector3(0, 0, 
+                        durationSpinningFast * initialSpinSpeed * spinDirection + (t - durationSpinningFast) * endSpinSpeed * spinDirection);
+                }
+
+                if (!isSpinning && transform.localEulerAngles.z > 150 && transform.localEulerAngles.z < 250)
+                    isSpinning = true;
             }
             else
-                completedDoubleJump = true;
+                completedSpinning = true;
         }
-        else if (animator.GetBool("double jump"))
-            transform.localEulerAngles = new Vector3(0, 0, 0);
+        else if (animator.GetBool("double jump")) 
+        {
+            float z = (transform.localEulerAngles.z + 360) % 360;
+            if (Mathf.Abs(z - 360) < 2|| Mathf.Abs(z) < 2)
+            {
+                doubleJumpCollider.enabled = false;
+                controller.mainCollider.enabled = true;
+                carryOutDoubleJump = false;
+                isSpinning = false;
+            }
+            else 
+            {
+                z = (z < 180) ? transform.localEulerAngles.z - 2f : transform.localEulerAngles.z + 2f;
+                transform.localEulerAngles = new Vector3(0, 0, z);
+            }
+        }
+        else if (doubleJumpCollider.enabled) 
+        {
+            doubleJumpCollider.enabled = false;
+            controller.mainCollider.enabled = true;
+            carryOutDoubleJump = false;
+            isSpinning = false; 
+        }
     }
 
     // Entity's feet, which detect ground, become closer together when jumping. Also, the main collider

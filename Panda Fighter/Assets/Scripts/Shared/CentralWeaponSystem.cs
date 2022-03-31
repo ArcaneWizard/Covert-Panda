@@ -125,16 +125,4 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         return bulletPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;
     }
 
-    // when creature collides with a pickable weapon, collect that weapon + tell the weapon holder to soon spawn a new weapon
-    private void OnTriggerEnter2D(Collider2D col) 
-    {
-        Debug.Log(col.gameObject.layer);
-        /*if (col.gameObject.layer == Layers.pickableWeapon) 
-        {
-            Debug.Log(col.gameObject);
-            collectNewWeapon(col.transform.GetComponent<WeaponTag>().Tag);
-            col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
-        }*/
-    }
-
 }

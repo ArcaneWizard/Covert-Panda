@@ -10,10 +10,16 @@ public class Sideview_Controller : CentralController
     private int lastDirX;
     private bool needToWalkMinimumDistance;
 
+    private bool standingOnJumpPad;
+    private bool canThrustDown;
+
     public override void Update()
     {
         if (health.isDead) 
+        {
+            standingOnJumpPad = false;
             return;
+        }
 
         base.Update();
 
@@ -28,23 +34,23 @@ public class Sideview_Controller : CentralController
         takeFullStep();
 
         //use W and S keys for jumping up or thrusting downwards + allow double jump
-        if (Input.GetKeyDown(KeyCode.W) && animator.GetBool("jumped") && !animator.GetBool("double jump"))
+        if (Input.GetKeyDown(KeyCode.W)) 
         {
-            rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, doubleJumpForce));
-            StartCoroutine(controller.startDoubleJumpAnimation());
+            if (isGrounded && !animator.GetBool("jumped") && !animator.GetBool("double jump") && !standingOnJumpPad)
+                normalJump();
+
+            else if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
+                doubleJump();
+
+            else if (isGrounded && !animator.GetBool("jumped") && !animator.GetBool("double jump") && standingOnJumpPad)
+                jumpPadBoost();
         }
 
-        if (Input.GetKeyDown(KeyCode.W) && isGrounded && !animator.GetBool("double jump"))
+        if (Input.GetKeyDown(KeyCode.S) && canThrustDown)
         {
-            rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.gravityScale = maxGravity;
-            rig.AddForce(new Vector2(0, jumpForce));
-            animator.SetBool("jumped", true);
-        }
-
-        if (Input.GetKeyDown(KeyCode.S))
             rig.AddForce(new Vector2(0, -jumpForce));
+            canThrustDown = false;
+        }
 
         setPlayerVelocity();
     }
@@ -72,6 +78,9 @@ public class Sideview_Controller : CentralController
 
             //don't slip on steep slopes
             rig.gravityScale = (dirX == 0) ? 0f : maxGravity;
+
+            //allow player to thrust themselves downwards the next time they jump
+            canThrustDown = true;
         }
 
         //when player is not on the ground, player velocity is just left/right with gravity applied
@@ -119,5 +128,17 @@ public class Sideview_Controller : CentralController
         needToWalkMinimumDistance = true;
         yield return new WaitForSeconds(0.24f);
         needToWalkMinimumDistance = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D col) 
+    {
+        if (col.gameObject.layer == Layers.jumpPad)
+            standingOnJumpPad = true;
+    }
+
+    private void OnTriggerExit2D(Collider2D col) 
+    {
+        if (col.gameObject.layer == Layers.jumpPad)
+            standingOnJumpPad = false;
     }
 }

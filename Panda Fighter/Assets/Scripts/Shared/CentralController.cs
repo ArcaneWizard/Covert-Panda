@@ -15,6 +15,7 @@ public class CentralController : MonoBehaviour
     [Header("Limbs and colliders")]
     public Transform shootingArm;
     public BoxCollider2D mainCollider;
+    public BoxCollider2D oneWayCollider;
 
     [Header("Camera stuff")]
     private Camera camera;
@@ -223,7 +224,25 @@ public class CentralController : MonoBehaviour
         StartCoroutine(findWalls());
     }
 
-    protected void launchBoost()
+    protected void normalJump() 
+    {
+        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.gravityScale = maxGravity;
+
+        rig.AddForce(new Vector2(0, jumpForce));
+        animator.SetBool("jumped", true);
+    }
+
+    protected void doubleJump() 
+    {
+        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.gravityScale = maxGravity;
+
+        rig.AddForce(new Vector2(0, doubleJumpForce));
+        StartCoroutine(controller.startDoubleJumpAnimation());
+    }
+
+    protected void jumpPadBoost()
     {
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
@@ -248,4 +267,6 @@ public class CentralController : MonoBehaviour
         if (col.gameObject.layer == 11)
             isTouchingMap = false;
     }
+
+    private void FixedUpdate() => oneWayCollider.enabled = rig.velocity.y < 0.1f;
 }

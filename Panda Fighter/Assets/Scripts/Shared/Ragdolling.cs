@@ -58,7 +58,7 @@ public class Ragdolling : MonoBehaviour
         foreach (Rigidbody2D rig in ragdollParts)
         {
             rig.isKinematic = false;
-            rig.gameObject.layer = Layers.collideWithMap;
+            rig.gameObject.layer = Layers.deadRagdoll;
         }  
 
         ragdollArms.SetActive(true);

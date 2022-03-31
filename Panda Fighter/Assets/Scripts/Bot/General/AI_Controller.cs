@@ -177,11 +177,13 @@ public class AI_Controller : CentralController
         speed = UnityEngine.Random.Range(AI_action.speed.x, AI_action.speed.y);
 
         if (AI_action.action == "launchPad")
-            StartCoroutine(executeLaunchAtRightMoment());
+            StartCoroutine(executeJumpPadLaunchAtRightMoment());
 
         else if (AI_action.action == "normalJump") 
         {
-            normalJump();
+            if (isGrounded && !animator.GetBool("double jump"))
+                normalJump();
+
             StartCoroutine(changeVelocityAfterDelay(AI_action.timeB4Change, AI_action.changedSpeed));
         }
 
@@ -189,63 +191,32 @@ public class AI_Controller : CentralController
             StartCoroutine(executeDoubleJumpAtRightMoment());
     }
 
-    private IEnumerator executeNormalJumpAtRightMoment()
-    {
-        normalJump();
-        yield return new WaitForSeconds(Time.deltaTime * 2);
-        actionProgress = "in progress";
-
-        StartCoroutine(changeVelocityAfterDelay(AI_action.timeB4Change, AI_action.changedSpeed));
-    }
-
     private IEnumerator executeDoubleJumpAtRightMoment()
     {
-        normalJump();
+        
+        if (isGrounded && !animator.GetBool("double jump"))
+            normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
         randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
 
-        doubleJump();
-        //actionProgress = "in progress";
+        if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
+            doubleJump();
 
         StartCoroutine(changeVelocityAfterDelay(AI_action.timeB4SecondChange, AI_action.secondChangedSpeed));
     }
 
-    //apply a huge launch boost force and alter the alien's horizontal speed midway in its arc
-    private IEnumerator executeLaunchAtRightMoment()
+    //apply a huge jump pad boost force and alter the alien's horizontal speed midway in its arc
+    private IEnumerator executeJumpPadLaunchAtRightMoment()
     {
-        launchBoost();
+        jumpPadBoost();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(AI_action.timeB4Change.x, AI_action.timeB4Change.y));
         randomSpeed = UnityEngine.Random.Range(AI_action.changedSpeed.x, AI_action.changedSpeed.y);
         dirX = AI_action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
-
-        //yield return new WaitForSeconds(Time.deltaTime * 2);
-       // actionProgress = "in progress";
-    }
-
-    private void normalJump()
-    {
-        if (isGrounded && !animator.GetBool("double jump"))
-        {
-            rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, jumpForce));
-            animator.SetBool("jumped", true);
-        }
-    }
-
-    private void doubleJump()
-    {
-        if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
-        {
-            rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.gravityScale = maxGravity;
-            rig.AddForce(new Vector2(0, doubleJumpForce));
-            StartCoroutine(controller.startDoubleJumpAnimation());
-        }
     }
 
     private void LateUpdate() => setAlienVelocity();

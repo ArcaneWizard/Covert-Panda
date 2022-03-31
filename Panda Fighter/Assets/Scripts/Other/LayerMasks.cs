@@ -7,7 +7,7 @@ using UnityEngine;
 public static class LayerMasks
 {
     // returns a layermask allowing collisions with the map
-    public static LayerMask map => 1 << Layers.map;
+    public static LayerMask map => 1 << Layers.ground | 1 << Layers.oneWayGround;
 
     // returns a layermask allowing collisions with the map and the hit box of the opposite side (friends or enemies)
     public static LayerMask mapOrTarget(Side side) => map | target(side);

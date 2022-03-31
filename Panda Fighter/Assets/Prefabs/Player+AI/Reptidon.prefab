@@ -248,6 +248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootingArm: {fileID: 1968486328993095397}
   mainCollider: {fileID: 4589640269328164107}
+  oneWayCollider: {fileID: 0}
   leftGroundChecker: {fileID: 4589640269783349999}
   rightGroundChecker: {fileID: 4589640270714447555}
   physicalLeftFoot: {fileID: 4589640271237850371}
@@ -267,6 +268,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   doubleJumpForwards: {fileID: 7400000, guid: 417e154ed04f04dd7b3a2dc698885ed9, type: 2}
   doubleJumpBackwards: {fileID: 7400000, guid: a09d893a35d0240b4bb64d98e3c7f0f4, type: 2}
+  doubleJumpCollider: {fileID: 0}
+  carryOutDoubleJump: 0
 --- !u!114 &8431955666429603250
 MonoBehaviour:
   m_ObjectHideFlags: 0

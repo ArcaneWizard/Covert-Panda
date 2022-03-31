@@ -171,7 +171,7 @@ public class Bullet : MonoBehaviour
     // if a bullet hits any part of the map, trigger OnMapEnter() 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layers.map && !disabledImpactDetection) 
+        if ((col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround) && !disabledImpactDetection) 
         {
             disabledImpactDetection = true;  
             OnMapEnter(col.transform);

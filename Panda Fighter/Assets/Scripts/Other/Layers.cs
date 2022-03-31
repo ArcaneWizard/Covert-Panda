@@ -5,7 +5,7 @@ using UnityEngine;
 public static class Layers
 {
     // layer for the creature's armor/limbs when they are dead and ragdolling
-    public static int collideWithMap = 0;
+    public static int deadRagdoll = 0;
 
     // layer for the creature's armor/limbs when they are alive
     public static int detectPickableWeapons = 5;
@@ -13,8 +13,13 @@ public static class Layers
     // layer for the creature's hit box when they are invulnerable
     public static int collideWithNothing = 1;
 
-    public static int map = 11;
-    public static int pickableWeapon = 15;
+    // layer for the creature's one way collider (goes through one-way-ground when jumping, otherwise walks on it like normal ground)
+    public static int oneWayCollider = 4;
+
+    public static int ground = 11;
+    public static int oneWayGround = 20;
+    public static int weapons = 15;
+    public static int jumpPad = 19;
 
     public static int friendlyBullet = 13;
     public static int enemyBullet = 17;
