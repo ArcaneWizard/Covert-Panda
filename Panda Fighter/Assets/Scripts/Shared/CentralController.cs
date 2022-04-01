@@ -113,7 +113,7 @@ public class CentralController : MonoBehaviour
     public IEnumerator determineIfGrounded(bool disableLimbsDuringDoubleJump)
     {
         updateGroundAngle(disableLimbsDuringDoubleJump);
-        yield return new WaitForSeconds(0.14f);
+        yield return new WaitForSeconds(0.03f);
         StartCoroutine(determineIfGrounded(disableLimbsDuringDoubleJump));
     }
 
@@ -252,19 +252,19 @@ public class CentralController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.layer == 11)
+        if (col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround)
             isTouchingMap = true;
     }
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.gameObject.layer == 11)
+        if (col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround)
             isTouchingMap = true;
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.gameObject.layer == 11)
+        if (col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround)
             isTouchingMap = false;
     }
 

@@ -51,5 +51,5 @@ public class AI : MonoBehaviour
             stateMachine.AddTransition(from, to, condition);
     }
 
-    void Update() => stateMachine.Tick();
+    void Update() => stateMachine.Tick();   
 }

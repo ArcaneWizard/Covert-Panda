@@ -48,6 +48,7 @@ public class Sideview_Controller : CentralController
 
         if (Input.GetKeyDown(KeyCode.S) && canThrustDown)
         {
+            rig.velocity = new Vector2(rig.velocity.x, 0);
             rig.AddForce(new Vector2(0, -jumpForce));
             canThrustDown = false;
         }

@@ -102,19 +102,19 @@ public class CentralAnimationController : MonoBehaviour
     // Note about PHASES below: 2 = jumping, 1 = walking, 0 = idle
     protected virtual void setAnimationState()
     {
-        if (animator.GetInteger("Phase") == 2 && controller.isGrounded && rig.velocity.y <= 0f)
+        if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
         {
             animator.SetBool("jumped", false);
             animator.SetInteger("jump version", 1);
+            animator.SetInteger("Phase", (controller.dirX == 0) ? 0 : 1);
             animator.SetBool("double jump", false);
-            animator.SetInteger("Phase", 0);
         }
 
-        if (controller.isGrounded && controller.dirX != 0)
-            animator.SetInteger("Phase", 1);
-
-        else if (controller.isGrounded && controller.dirX == 0)
-            animator.SetInteger("Phase", 0);
+        else if (controller.isGrounded)
+            animator.SetInteger("Phase", (controller.dirX == 0) ? 0 : 1);
+        
+        /*else if (controller.isGrounded && controller.dirX == 0) // &&  (rig.velocity.y <= 0.1f || controller.isTouchingMap))
+            animator.SetInteger("Phase", 0);*/
 
         else if (!controller.isGrounded)
             animator.SetInteger("Phase", 2);
