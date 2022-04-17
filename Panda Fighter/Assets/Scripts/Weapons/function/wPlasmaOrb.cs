@@ -13,6 +13,6 @@ public class wPlasmaOrb : IWeapon
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint, side);
-        reusableWeaponMethods.shootBulletInArc(aim, bullet, rig, configuration.bulletSpeed, true);
+        reusableWeaponMethods.shootBulletInArc(aim, bullet, rig, new Vector2(1.4f, 1.5f), configuration.bulletSpeed, true);
     }
 }

@@ -7,7 +7,7 @@ public abstract class Health : MonoBehaviour
 {
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
-    public bool isDead { get; protected set; }
+    public bool isDead { get; private set; }
     private int paddingHP = 15; //means the bar for hp should always "appear" as if 15/300 hp or more is left 
 
     protected float respawnTime = 4.22f;
@@ -25,8 +25,9 @@ public abstract class Health : MonoBehaviour
     protected Side side;
 
     protected Rigidbody2D rig;
+    protected BoxCollider2D mainCollider;
     protected BoxCollider2D hitBox;
-    
+
     public virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
@@ -35,6 +36,7 @@ public abstract class Health : MonoBehaviour
         abilityHandler = transform.GetComponent<CentralAbilityHandler>();
 
         rig = transform.GetComponent<Rigidbody2D>();
+        mainCollider = transform.GetChild(0).GetComponent<BoxCollider2D>();
         hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
 
         side = transform.parent.GetComponent<Role>().side;
@@ -43,7 +45,7 @@ public abstract class Health : MonoBehaviour
         hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(1).GetComponent<Image>();
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
 
-        respawnLocations = (side == Side.Friendly) 
+        respawnLocations = (side == Side.Friendly)
             ? transform.parent.parent.parent.GetComponent<References>().FriendRespawnPoints
             : transform.parent.parent.parent.GetComponent<References>().EnemyRespawnPoints;
     }
@@ -81,11 +83,18 @@ public abstract class Health : MonoBehaviour
     {
         Bullet bullet = physicalBullet.GetComponent<Bullet>();
 
-        if (!bullet.disabledImpactDetection) 
+        if (!bullet.disableCollisionDetection)
         {
-            Debug.Log(gameObject.name);
+            bullet.disableCollisionDetection = true;
             currentHP -= bullet.Damage();
-            bullet.ConfirmImpactWithCreature(transform);
+            bullet.OnCreatureEnter(transform);
+
+            if (currentHP <= 0)
+            {
+                Transform killer = physicalBullet.parent.parent.parent.parent;
+                Stats.confirmKillFor(killer);
+                StartCoroutine(startDeathSequence());
+            }
         }
     }
 
@@ -101,6 +110,13 @@ public abstract class Health : MonoBehaviour
         {
             explosion.updateEntitiesHurt(id);
             currentHP -= explosion.damageBasedOffDistance(transform);
+
+            if (currentHP <= 0)
+            {
+                Transform killer = explosion.transform.parent.parent.parent.parent;
+                Stats.confirmKillFor(killer);
+                StartCoroutine(startDeathSequence());
+            }
         }
     }
 
@@ -111,34 +127,24 @@ public abstract class Health : MonoBehaviour
         if (isDead)
             return;
 
+        // for debugging purposes (auto kills everyone)
         if (Input.GetKeyDown(KeyCode.X))
-            currentHP = -20;
-
-        if (currentHP <= 0)
         {
-            isDead = true;
-            StartCoroutine(ragdolling.Enable());
-
-            currentHP = -paddingHP;
-            hpBar.transform.parent.gameObject.SetActive(false);
-            hitBox.enabled = false;
-
-            StartCoroutine(CallUponDying());
+            currentHP = 0;
+            StartCoroutine(startDeathSequence());
         }
 
         hpBar.fillAmount = (float)(currentHP + paddingHP) / (float)maxHP;
         hpBar.transform.parent.GetComponent<RectTransform>().position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);
     }
 
-    public void TakeDamage(int damage) => currentHP -= damage;
-
-    private IEnumerator CallUponDying() 
+    private IEnumerator startDeathSequence()
     {
         UponDying();
 
         yield return new WaitForSeconds(respawnTime);
         BeforeRespawning();
-        
+
         yield return new WaitForSeconds(Time.deltaTime);
         hpBar.transform.parent.gameObject.SetActive(true);
         controller.updateGroundAngle(false);
@@ -147,19 +153,46 @@ public abstract class Health : MonoBehaviour
         StartCoroutine(abilityHandler.spawnProtection());
     }
 
-    protected virtual void UponDying() {}
+    protected virtual void UponDying()
+    {
+        isDead = true;
+        currentHP = -paddingHP;
+        hpBar.transform.parent.gameObject.SetActive(false);
 
-    protected virtual void BeforeRespawning() 
+        hitBox.enabled = false;
+        mainCollider.enabled = false;
+
+        StartCoroutine(ragdolling.Enable());
+        Stats.confirmDeathFor(transform.parent);
+    }
+
+    protected virtual void BeforeRespawning()
     {
         currentHP = maxHP;
         isDead = false;
+
+        hitBox.enabled = true;
+        mainCollider.enabled = true;
+
         ragdolling.Disable();
         weaponSystem.InitializeWeaponSystem();
 
         Transform respawnLocation = respawnLocations.GetChild(
-            UnityEngine.Random.Range(0,respawnLocations.childCount));
-        transform.position = respawnLocation.position;  
+            UnityEngine.Random.Range(0, respawnLocations.childCount));
+        transform.position = respawnLocation.position;
 
         transform.localEulerAngles = new Vector3(0, 0, 0);
+    }
+
+    public void TakeDamageFromPredictedFastBulletCollision(int damage, Transform physicalBullet)
+    {
+        currentHP -= damage;
+
+        if (currentHP <= 0)
+        {
+            Transform killer = physicalBullet.parent.parent.parent.parent;
+            Stats.confirmKillFor(killer);
+            StartCoroutine(startDeathSequence());
+        }
     }
 }

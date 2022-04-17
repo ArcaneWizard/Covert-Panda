@@ -49,7 +49,7 @@ public static class reusableWeaponMethods
             bullet.GetComponent<ParticleSystem>().Clear();
 
         // reset that the bullet can do damage
-        bullet.GetComponent<Bullet>().disabledImpactDetection = false;
+        bullet.GetComponent<Bullet>().disableCollisionDetection = false;
     }
 
     public static void configureNewBulletAndShootAtAngle(float angle, Vector2 aim, WeaponConfiguration configuration, Side side)
@@ -66,10 +66,10 @@ public static class reusableWeaponMethods
         predictTrajectoryOfFastBullets(bullet, newAim, false, false);
     }
     
-    public static void shootBulletInArc(Vector2 aim, Transform bullet, Rigidbody2D rig, float speed, bool stickyBullet )
+    public static void shootBulletInArc(Vector2 aim, Transform bullet, Rigidbody2D rig, Vector2 forceMultiplier, float speed, bool stickyBullet )
     {
         bullet.transform.right = aim;
-        Vector2 unadjustedForce = speed * 40 * aim * new Vector2(1.4f, 1.5f);
+        Vector2 unadjustedForce = speed * 40 * aim * forceMultiplier;
         rig.AddForce(unadjustedForce * rig.mass);
         
         predictTrajectoryOfFastBullets(bullet, aim, true, stickyBullet);

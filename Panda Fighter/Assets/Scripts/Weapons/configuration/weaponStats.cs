@@ -31,10 +31,10 @@ public class WeaponStats : MonoBehaviour
 
         set(0.00f, 34, -1, 1200, 7, 0, WeaponTags.FocusBeamer, Mode.gun, Type.holdFire, l.Short_barrel, w.FocusBeamer);
         set(0.8f, 34, 180, 8, 0, 300, WeaponTags.RocketLauncher, Mode.gun, Type.singleFire, l.Shoulder_rest, w.RocketLauncher);
-        set(0.25f, 32, 65, 12, 60, 140, WeaponTags.ArcticSprayer, Mode.gun, Type.spamFire, l.Shoulder_rest, w.ArcticSprayer);
+        set(0.2f, 32, 60, 102, 60, 140, WeaponTags.ArcticSprayer, Mode.gun, Type.spamFire, l.Shoulder_rest, w.ArcticSprayer);
     }
 
-    private void set(float fireRateInfo, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg, 
+    private void set(float fireRateInfo, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
         int explosionDmg, WeaponTags tag, string combatMode, string weaponType, List<GameObject> limbs, GameObject weapon)
     {
         weaponSystem.getWeaponConfiguration(tag.ToString()).update(

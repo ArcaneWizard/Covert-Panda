@@ -6,6 +6,8 @@ public class CentralAnimationController : MonoBehaviour
 {
     protected CentralController controller;
     protected Animator animator;
+
+    private Health health;
     private Rigidbody2D rig;
     protected Camera camera;
     protected Transform body;
@@ -35,6 +37,7 @@ public class CentralAnimationController : MonoBehaviour
         animator = body.GetComponent<Animator>();
 
         controller = transform.GetComponent<CentralController>();
+        health = transform.GetComponent<Health>();
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
         initialColliderSize = controller.mainCollider.size;
@@ -46,21 +49,31 @@ public class CentralAnimationController : MonoBehaviour
 
     private void Update()
     {
+        if (health.isDead)
+            return;
+
         setAnimationState();
         StartCoroutine(adjustFeetAndColliders(controller.rightGroundChecker, controller.leftGroundChecker, controller.mainCollider));
     }
 
-    private void FixedUpdate() 
+    private void FixedUpdate()
     {
+        if (health.isDead)
+        {
+            completedSpinning = true;
+            isSpinning = false;
+            carryOutDoubleJump = false;
+            return;
+        }
+
         if (carryOutDoubleJump)
             doDoubleJumpMidairSpin();
 
         // while spinning during a double jump, check when the creature becomes upright. Then, tell the creature to stop spinning
         if (isSpinning && (
-                (spinDirection == -1 && transform.localEulerAngles.z < 30) || 
+                (spinDirection == -1 && transform.localEulerAngles.z < 30) ||
                 (spinDirection == 1 && ((transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40) || transform.localEulerAngles.z > 345))))
         {
-            Debug.Log("x");
             completedSpinning = true;
             isSpinning = false;
         }
@@ -112,7 +125,7 @@ public class CentralAnimationController : MonoBehaviour
 
         else if (controller.isGrounded)
             animator.SetInteger("Phase", (controller.dirX == 0) ? 0 : 1);
-        
+
         /*else if (controller.isGrounded && controller.dirX == 0) // &&  (rig.velocity.y <= 0.1f || controller.isTouchingMap))
             animator.SetInteger("Phase", 0);*/
 
@@ -127,14 +140,15 @@ public class CentralAnimationController : MonoBehaviour
     {
         if (!completedSpinning)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime  < 0.65f && !animator.IsInTransition(0))
+            if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.65f && !animator.IsInTransition(0))
             {
                 float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
 
-                if (t < durationSpinningFast) 
+                if (t < durationSpinningFast)
                     transform.eulerAngles = new Vector3(0, 0, t * initialSpinSpeed * spinDirection);
-                else {
-                    transform.eulerAngles = new Vector3(0, 0, 
+                else
+                {
+                    transform.eulerAngles = new Vector3(0, 0,
                         durationSpinningFast * initialSpinSpeed * spinDirection + (t - durationSpinningFast) * endSpinSpeed * spinDirection);
                 }
 
@@ -144,28 +158,28 @@ public class CentralAnimationController : MonoBehaviour
             else
                 completedSpinning = true;
         }
-        else if (animator.GetBool("double jump")) 
+        else if (animator.GetBool("double jump"))
         {
             float z = (transform.localEulerAngles.z + 360) % 360;
-            if (Mathf.Abs(z - 360) < 2|| Mathf.Abs(z) < 2)
+            if (Mathf.Abs(z - 360) < 2 || Mathf.Abs(z) < 2)
             {
                 doubleJumpCollider.enabled = false;
                 controller.mainCollider.enabled = true;
                 carryOutDoubleJump = false;
                 isSpinning = false;
             }
-            else 
+            else
             {
                 z = (z < 180) ? transform.localEulerAngles.z - 2f : transform.localEulerAngles.z + 2f;
                 transform.localEulerAngles = new Vector3(0, 0, z);
             }
         }
-        else if (doubleJumpCollider.enabled) 
+        else if (doubleJumpCollider.enabled)
         {
             doubleJumpCollider.enabled = false;
             controller.mainCollider.enabled = true;
             carryOutDoubleJump = false;
-            isSpinning = false; 
+            isSpinning = false;
         }
     }
 
