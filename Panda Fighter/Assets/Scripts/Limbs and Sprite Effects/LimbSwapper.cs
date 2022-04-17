@@ -86,7 +86,6 @@ public class LimbSwapper : MonoBehaviour
             updateSpriteAndBoneTransforms();
     }
     
-#endif
 
     // Automates the task of manually dragging in the limb collection to this object's hierarchy. 
     // Call at the top of OnValidate to run
@@ -105,5 +104,8 @@ public class LimbSwapper : MonoBehaviour
 
         UnityEditor.EditorUtility.SetDirty(this);
     }
+
+#endif
+
 }
 

@@ -17,7 +17,7 @@ public class SpawnWeaponManager : MonoBehaviour
             Debug.LogError("Need at least one weapon holder");
 
         Transform spawner = transform.GetChild(0).GetChild(1);
-        for (int index = 0; index < spawner.childCount; index++)
-            AvailableWeapons.Add(spawner.GetChild(index).GetComponent<WeaponTag>().Tag, index);
+        for (int i = 1; i < spawner.childCount; i++)
+            AvailableWeapons.Add(spawner.GetChild(i).GetComponent<WeaponTag>().Tag, i);
     }
 }

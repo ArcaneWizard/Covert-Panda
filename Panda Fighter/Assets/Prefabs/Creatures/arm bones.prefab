@@ -6876,7 +6876,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1132060247
 Transform:
   m_ObjectHideFlags: 0
@@ -6884,14 +6884,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1132060246}
-  m_LocalRotation: {x: 9.878694e-12, y: -2.1873196e-11, z: -0.36926377, w: -0.9293247}
-  m_LocalPosition: {x: 0.01, y: 0.59, z: 0.52348214}
-  m_LocalScale: {x: 3.0071812, y: 2.2402153, z: 1}
+  m_LocalRotation: {x: 1.10073044e-11, y: -2.132755e-11, z: -0.32023638, w: -0.9473377}
+  m_LocalPosition: {x: -0.247, y: 0.401, z: 0.52348214}
+  m_LocalScale: {x: 3.02, y: 1.98, z: 1}
   m_Children:
   - {fileID: 387743302}
   m_Father: {fileID: 667530081}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -357.003}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -322.646}
 --- !u!212 &1132060249
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6934,7 +6934,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_Sprite: {fileID: 21300000, guid: ed2589ce1c0124f6fad896aa6f168f49, type: 3}
-  m_Color: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
+  m_Color: {r: 0.6666667, g: 0.6666667, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -8344,7 +8344,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2137095266
 Transform:
   m_ObjectHideFlags: 0
@@ -18332,6 +18332,7 @@ GameObject:
   - component: {fileID: 3197793418505940281}
   - component: {fileID: 6654695502396069557}
   - component: {fileID: 1026314428298518099}
+  - component: {fileID: 5525466256184384664}
   m_Layer: 14
   m_Name: arm bones
   m_TagString: Untagged
@@ -18432,6 +18433,25 @@ MonoBehaviour:
   LongBarrelAim: {fileID: 291387130263349332}
   PistolGripAim: {fileID: 1307020981}
   ShoulderRestAim: {fileID: 1167862235}
+--- !u!95 &5525466256184384664
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291387131832321936}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0b937e738603d485d8805e28e34a2ec7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &291387131834320186
 GameObject:
   m_ObjectHideFlags: 0

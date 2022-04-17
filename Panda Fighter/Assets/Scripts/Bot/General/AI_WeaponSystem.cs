@@ -14,9 +14,11 @@ public class AI_WeaponSystem : CentralWeaponSystem
     {
         base.InitializeWeaponSystem();
         
-        int r = UnityEngine.Random.Range(0, IWeapons.Count);
-        startWithWeapon(IWeapons.Keys.ToArray()[r]);
-        //startWithWeapon("Needler");
+        string weapon = "";
+        while (weapon == "" || weapon == WeaponTags.Grenades.ToString()) 
+            weapon = IWeapons.Keys.ToArray()[UnityEngine.Random.Range(0, IWeapons.Count)];
+
+        startWithWeapon(weapon);
     }
 
     private void startWithWeapon(string weapon)
