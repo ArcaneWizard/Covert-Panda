@@ -72,8 +72,11 @@ public class AI_Controller : CentralController
     public override void Update()
     {
         // don't do anything if dead
-        if (health.isDead)
+        if (health.isDead) 
+        {
+            isTouchingMap = false;
             return;
+        }
 
         base.Update();
 

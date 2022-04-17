@@ -37,8 +37,7 @@ public class WeaponStats : MonoBehaviour
     private void set(float fireRateInfo, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
         int explosionDmg, WeaponTags tag, string combatMode, string weaponType, List<GameObject> limbs, GameObject weapon)
     {
-        weaponSystem.getWeaponConfiguration(tag.ToString()).update(
-            fireRateInfo, combatMode, weaponType, weaponRange, bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, weapon
-        );
+        weaponSystem.GetWeaponConfiguration(tag).update(fireRateInfo, combatMode, weaponType, weaponRange, 
+            bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, weapon);
     }
 }

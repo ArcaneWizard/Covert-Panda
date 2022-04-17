@@ -25,7 +25,7 @@ public class wRailgun : IWeapon
             timer += Time.deltaTime;
         }*/
 
-        DoAttack(shooting.getAim(), bullet, rig);
+        DoAttack(shooting.GetAim(), bullet, rig);
         yield return null;
     }
 

@@ -72,32 +72,26 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         if (weapon == weaponSelected || ammo[weapon] <= 0)
             return;
 
-        if (shooting.weaponHeld != null)
-            shooting.weaponHeld.gameObject.SetActive(false);
-
-        Debug.Log(weaponSelected);
         weaponSelected = weapon;
         IWeapons[weaponSelected].SetDefaultAnimation();
         IWeapons[weaponSelected].resetAttackProgress();
-        shooting.updateCombatMode(weaponConfiguration.combatMode);
-        lookAround.setAimTarget(weaponConfiguration.aimTarget);
-        lookAround.calculateShoulderAngles(weaponConfiguration.IK_Coordinates);
+
+        shooting.UpdateCombatMode(CurrentWeaponConfiguration.combatMode);
+        lookAround.setAimTarget(CurrentWeaponConfiguration.aimTarget);
+        lookAround.calculateShoulderAngles(CurrentWeaponConfiguration.IK_Coordinates);
 
         if (bulletPools.ContainsKey(weaponSelected))
             bulletNumber = ++bulletNumber % bulletPools[weaponSelected].Count;
-
-        if (weaponConfiguration.combatMode == "handheld")
-            shooting.updateWeaponHeldForHandheldWeapons();
 
         //deactivate the previous animated arm limbs + enable new ones
         foreach (GameObject limb_or_weapon in Limbs_And_Weapons)
             limb_or_weapon.SetActive(false);
         Limbs_And_Weapons.Clear();
 
-        Limbs_And_Weapons.Add(weaponConfiguration.weapon);
-        weaponConfiguration.weapon.SetActive(true);
+        Limbs_And_Weapons.Add(CurrentWeaponConfiguration.weapon);
+        CurrentWeaponConfiguration.weapon.SetActive(true);
 
-        foreach (GameObject limb_or_weapon in weaponConfiguration.limbs)
+        foreach (GameObject limb_or_weapon in CurrentWeaponConfiguration.limbs)
         {
             Limbs_And_Weapons.Add(limb_or_weapon);
             limb_or_weapon.SetActive(true);
@@ -112,17 +106,29 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         bulletNumber = ++bulletNumber % bulletPools[weaponSelected].Count;
     }
 
-    public GameObject GetBullet => bulletPools[weaponSelected][bulletNumber].gameObject;
-    public int GetAmmo => ammo[weaponSelected];
-    public IWeapon IWeapon => IWeapons[weaponSelected];
-    public WeaponConfiguration weaponConfiguration => weaponConfigurations[weaponSelected];
-    public WeaponConfiguration getWeaponConfiguration(String weapon) => weaponConfigurations[weapon];
+    public int CurrentAmmo => ammo[weaponSelected];
+    public IWeapon CurrentWeapon => IWeapons[weaponSelected];
+    public GameObject CurrentBullet => bulletPools[weaponSelected][bulletNumber].gameObject;
+    public WeaponConfiguration CurrentWeaponConfiguration => weaponConfigurations[weaponSelected];
 
-    // useful for special attacks (right click)
+    public int GetAmmo(WeaponTags weapon) => ammo[weapon.ToString()];
+    public IWeapon GetWeapon(WeaponTags weapon) => IWeapons[weapon.ToString()];
+    public WeaponConfiguration GetWeaponConfiguration(WeaponTags weapon) => weaponConfigurations[weapon.ToString()];
+
+    // Useful for getting grenades, counting down 1 ammo, and cycling through grenade pool
+    public GameObject GetBulletAndUseAmmo(WeaponTags weapon) 
+    {
+        ammo[weapon.ToString()] -= 1;
+        int bulletNumber = ammo[weapon.ToString()] % bulletPools[weapon.ToString()].Count;
+        return bulletPools[weapon.ToString()][bulletNumber].gameObject;
+    }
+
+    // Useful for weapons that shoot more than 1 bullet in a single burst
     public GameObject getLastBullet()
     {
         int totalBullets = bulletPools[weaponSelected].Count;
         return bulletPools[weaponSelected][(bulletNumber + totalBullets - 1) % totalBullets].gameObject;
     }
+
 
 }

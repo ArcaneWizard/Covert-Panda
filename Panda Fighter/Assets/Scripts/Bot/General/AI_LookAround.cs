@@ -81,14 +81,14 @@ public class AI_LookAround : CentralLookAround
 
         // scan for target creatures (on the opposite side) that are within a given radius from this creature. (scan radius is just the equipped weapon's range)
         foreach (Collider2D targetCollider in 
-            Physics2D.OverlapCircleAll(shootingArm.position, weaponSystem.weaponConfiguration.weaponRange, LayerMasks.target(side))) 
+            Physics2D.OverlapCircleAll(shootingArm.position, weaponSystem.CurrentWeaponConfiguration.weaponRange, LayerMasks.target(side))) 
         {
             GameObject target = targetCollider.transform.parent.gameObject;
             Vector3 targetPosition = target.transform.position;
             
             // send a raycast to the target creature (check if there's a barrier in btwn this creature's weapon and that target creature)
             RaycastHit2D hit = Physics2D.Raycast(shootingArm.position, targetPosition - shootingArm.position,
-                weaponSystem.weaponConfiguration.weaponRange, LayerMasks.mapOrTarget(side));
+                weaponSystem.CurrentWeaponConfiguration.weaponRange, LayerMasks.mapOrTarget(side));
 
             // if the target creature is in this creature's line of sight
             if (hit.collider != null && hit.collider.gameObject.layer == Layers.target(side)) 

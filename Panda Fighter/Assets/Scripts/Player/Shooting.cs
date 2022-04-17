@@ -16,7 +16,7 @@ public class Shooting : CentralShooting
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
     }
 
-    public override Vector2 getAim() 
+    public override Vector2 GetAim() 
     {
         Vector3 aim = Input.mousePosition - camera.WorldToScreenPoint(lookAround.shootingArm.position);
         return new Vector2(aim.x, aim.y).normalized;
@@ -24,23 +24,33 @@ public class Shooting : CentralShooting
 
     private void Update()
     {
-        configuration = weaponSystem.weaponConfiguration;
-        attackProgress = weaponSystem.IWeapon.attackProgress;
+        if (health.isDead)
+            return;
 
-        //Weapons where you right click for a diff attack or weapon mechanic
-        if (Input.GetMouseButtonDown(1) && !health.isDead)
-            RightClickAttack();
+        configuration = weaponSystem.CurrentWeaponConfiguration;
+        attackProgress = weaponSystem.CurrentWeapon.attackProgress;
+
+        if (Input.GetKeyDown(KeyCode.Tab) && weaponSystem.GetAmmo(WeaponTags.Grenades) > 0)
+            DeployGrenade();
+
+        ShootGunOrUseMeeleeWeapon();
+    }
+
+    private void ShootGunOrUseMeeleeWeapon() 
+    {
+        configuration = weaponSystem.CurrentWeaponConfiguration;
+        attackProgress = weaponSystem.CurrentWeapon.attackProgress;
 
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (health.isDead || weaponSystem.GetAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f)
+        if (weaponSystem.CurrentAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f)
             return;
 
         if (configuration.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))
         {
             countdownBtwnShots = configuration.fireRateInfo;
-            if (combatMode == "gun" || combatMode == "handheld")
+            if (combatMode == "gun")
                 Attack();
 
             else if (combatMode == "meelee")
@@ -52,17 +62,11 @@ public class Shooting : CentralShooting
             countdownBtwnShots = configuration.fireRateInfo;
             Attack();
         }
-
-        /*else if (configuration.weaponType == Type.chargeUpFire && Input.GetMouseButton(0))
-        {
-            countdownBtwnShots = configuration.fireRateInfo;
-            Attack();
-        }*/
     }
 
     public void LateLateUpdate()
     {
-        if (health.isDead || weaponSystem.GetAmmo <= 0 || configuration == null)
+        if (health.isDead || weaponSystem.CurrentAmmo <= 0 || configuration == null)
             return;
 
         if (configuration.weaponType == Type.holdFire && Input.GetMouseButton(0))

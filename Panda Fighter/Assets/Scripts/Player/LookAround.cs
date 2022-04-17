@@ -46,7 +46,7 @@ public class LookAround : CentralLookAround
             }
 
             //calculate the angle btwn mouse cursor and player's shooting arm
-            Vector2 shootDirection = shooting.getAim();
+            Vector2 shootDirection = shooting.GetAim();
             float shootAngle = Mathf.Atan2(shootDirection.y, Mathf.Abs(shootDirection.x)) * 180 / Mathf.PI;
 
             //apply offset to the shoot Angle when the player is tilted on a ramp:

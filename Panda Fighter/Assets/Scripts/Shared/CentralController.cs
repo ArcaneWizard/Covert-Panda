@@ -40,8 +40,8 @@ public class CentralController : MonoBehaviour
 
     protected bool wallToTheLeft, wallToTheRight;
 
-    public bool isGrounded { get; private set; }
-    public bool isTouchingMap { get; private set; }
+    public bool isGrounded { get; protected set; }
+    public bool isTouchingMap { get; protected set; }
     
     public bool forceUpdateTilt;
     protected float groundAngle;

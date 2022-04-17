@@ -27,7 +27,7 @@ public abstract class IWeapon : MonoBehaviour
     public void DoAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         Attack(aim, bullet, rig);
-        configuration.shooting.updateWeaponHeldForHandheldWeapons();
+        configuration.shooting.LetGoOffAnyGrenades();
         attackProgress = "finished";
     }
 

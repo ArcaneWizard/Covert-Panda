@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class CentralShooting : MonoBehaviour
 {
-    public GameObject weaponHeld { get; private set; }
+    public GameObject grenadeHeld { get; private set; }
     public string combatMode { get; private set; }
 
     protected CentralWeaponSystem weaponSystem;
@@ -20,7 +20,8 @@ public abstract class CentralShooting : MonoBehaviour
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         lookAround = transform.GetComponent<CentralLookAround>();
         health = transform.GetComponent<Health>();
-        weaponHeld = null;
+        
+        grenadeHeld = null;
     }
 
     private void LateUpdate()
@@ -28,58 +29,44 @@ public abstract class CentralShooting : MonoBehaviour
         if (health.isDead)
             return;
 
-        if (combatMode == "handheld")
+        if (grenadeHeld != null)
         {
-            if (weaponSystem.GetAmmo > 0)
-            {
-                weaponHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
-                weaponHeld.transform.GetComponent<Collider2D>().isTrigger = true;
+            grenadeHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+            grenadeHeld.transform.GetComponent<Collider2D>().isTrigger = true;
 
-                weaponHeld.transform.position = weaponSystem.weaponConfiguration.bulletSpawnPoint.position;
-                weaponHeld.transform.rotation = weaponSystem.weaponConfiguration.bulletSpawnPoint.rotation;
-                weaponHeld.SetActive(true);
-            }
+            grenadeHeld.transform.position = weaponSystem.GetWeaponConfiguration(WeaponTags.Grenades).bulletSpawnPoint.position;
+            grenadeHeld.transform.rotation = weaponSystem.GetWeaponConfiguration(WeaponTags.Grenades).bulletSpawnPoint.rotation;
+            grenadeHeld.SetActive(true);
         }
     }
 
-    public void updateWeaponHeldForHandheldWeapons() => weaponHeld = weaponSystem.GetBullet;
-    public void updateCombatMode(string combatMode) => this.combatMode = combatMode;
-
-    //specify which limbs, weapon and aim target to activate (the latter helps a weapon track while aiming) 
-    public void configureWeaponAndArms()
-    {
-        //deactivate the previous animated arm limbs + weapon
-        foreach (GameObject things in WeaponSetup)
-            things.SetActive(false);
-        WeaponSetup.Clear();
-
-        WeaponConfiguration config = weaponSystem.weaponConfiguration;
-        if (config.aimTarget != null)
-            lookAround.setAimTarget(config.aimTarget);
-
-        if (config.weapon != null)
-            WeaponSetup.Add(config.weapon);
-        foreach (GameObject limb in config.limbs)
-            WeaponSetup.Add(limb);
-        foreach (GameObject things in WeaponSetup)
-            things.SetActive(true);
-
-        lookAround.calculateShoulderAngles(config.IK_Coordinates);
-    }
+    public abstract Vector2 GetAim();
+    public void UpdateCombatMode(string combatMode) => this.combatMode = combatMode;
+    public void LetGoOffAnyGrenades() => grenadeHeld = null;
 
     protected void Attack()
     {
-        bullet = weaponSystem.GetBullet.transform;
+        bullet = weaponSystem.CurrentBullet.transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
         weaponSystem.useOneAmmo();
-        weaponSystem.IWeapon.DoSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.CurrentWeapon.DoSetupAttack(GetAim(), bullet, bulletRig);
     }
 
     protected void NonAmmoAttack()
     {
-        bullet = weaponSystem.GetBullet.transform;
+        bullet = weaponSystem.CurrentBullet.transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-        weaponSystem.IWeapon.DoSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.CurrentWeapon.DoSetupAttack(GetAim(), bullet, bulletRig);
+    }
+    
+    //TO-DO: should actually useup "Grenade ammo"
+    protected void DeployGrenade()
+    {
+        bullet = weaponSystem.GetBulletAndUseAmmo(WeaponTags.Grenades).transform;
+        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+        grenadeHeld = bullet.gameObject;
+
+        weaponSystem.GetWeapon(WeaponTags.Grenades).DoSetupAttack(GetAim(), bullet, bulletRig);
     }
 
     protected void RightClickAttack()
@@ -87,9 +74,7 @@ public abstract class CentralShooting : MonoBehaviour
         bullet = weaponSystem.getLastBullet().transform;
         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
 
-        weaponSystem.IWeapon.DoBonusSetupAttack(getAim(), bullet, bulletRig);
+        weaponSystem.CurrentWeapon.DoBonusSetupAttack(GetAim(), bullet, bulletRig);
     }
-
-    public abstract Vector2 getAim();
 
 }

@@ -17,6 +17,7 @@ public class Sideview_Controller : CentralController
     {
         if (health.isDead) 
         {
+            isTouchingMap = false;
             standingOnJumpPad = false;
             return;
         }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class DeployShield : MonoBehaviour
 {
     private GameObject shield;
-    private Transform player;
+    private Transform player; 
 
     void Awake()
     {

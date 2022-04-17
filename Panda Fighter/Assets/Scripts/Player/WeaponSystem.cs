@@ -55,8 +55,9 @@ public class WeaponSystem : CentralWeaponSystem
         foreach (KeyValuePair<string, IWeapon> weapon in IWeapons)  
             ammoText[weapon.Key].text = ammo[weapon.Key].ToString();
 
-        collectNewWeapon("ArcticSprayer");
         collectNewWeapon("Needler");
+        collectNewWeapon("ArcticSprayer");
+        collectNewWeapon("Grenades");
         selectWeapon("ArcticSprayer");
     }
 

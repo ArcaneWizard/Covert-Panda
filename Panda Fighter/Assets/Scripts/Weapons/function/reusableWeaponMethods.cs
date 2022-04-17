@@ -54,7 +54,7 @@ public static class reusableWeaponMethods
 
     public static void configureNewBulletAndShootAtAngle(float angle, Vector2 aim, WeaponConfiguration configuration, Side side)
     {
-        Transform bullet = configuration.weaponSystem.GetBullet.transform;
+        Transform bullet = configuration.weaponSystem.CurrentBullet.transform;
         Rigidbody2D bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
         Vector2 newAim = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
 

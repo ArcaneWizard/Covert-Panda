@@ -14,7 +14,7 @@ public class AI_Shooting : CentralShooting
     private float timeSinceLastShot = 0f;
 
     // aim should be off slightly by some random, offset angle
-    public override Vector2 getAim() 
+    public override Vector2 GetAim() 
     {
          offsetAngle = UnityEngine.Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
          return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.lookAt.normalized;
@@ -36,11 +36,11 @@ public class AI_Shooting : CentralShooting
         if (health.isDead || !AI_lookAround.targetInSight || countdownBtwnShots > 0f)
             return;
 
-        if (weaponSystem.GetAmmo <= 0 || weaponSystem.weaponSelected == null)
+        if (weaponSystem.CurrentAmmo <= 0 || weaponSystem.weaponSelected == null)
             return;
 
-        configuration = weaponSystem.weaponConfiguration;
-        if (weaponSystem.GetAmmo > 0 && configuration.weaponType == Type.singleFire)
+        configuration = weaponSystem.CurrentWeaponConfiguration;
+        if (weaponSystem.CurrentAmmo > 0 && configuration.weaponType == Type.singleFire)
         {
             if (combatMode == "gun")
             {
@@ -49,14 +49,14 @@ public class AI_Shooting : CentralShooting
                 Attack();
             }
 
-            else if (combatMode == "handheld" && weaponSystem.IWeapon.attackProgress == "finished")
+            else if (combatMode == "handheld" && weaponSystem.CurrentWeapon.attackProgress == "finished")
             {
                 countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
                 timeSinceLastShot = 0f;
                 Attack();
             }
 
-            else if (combatMode == "meelee" && weaponSystem.IWeapon.attackProgress == "finished")
+            else if (combatMode == "meelee" && weaponSystem.CurrentWeapon.attackProgress == "finished")
             {
                 countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
                 timeSinceLastShot = 0f;
@@ -64,7 +64,7 @@ public class AI_Shooting : CentralShooting
             }
         }
 
-        if (weaponSystem.GetAmmo > 0 && combatMode == "gun" && configuration.weaponType == Type.spamFire)
+        if (weaponSystem.CurrentAmmo > 0 && combatMode == "gun" && configuration.weaponType == Type.spamFire)
         {
             countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
             timeSinceLastShot = 0f;
@@ -74,7 +74,7 @@ public class AI_Shooting : CentralShooting
 
     public void LateLateUpdate()
     {
-        if (health.isDead || !AI_lookAround.targetInSight || weaponSystem.GetAmmo <= 0 || configuration == null)
+        if (health.isDead || !AI_lookAround.targetInSight || weaponSystem.CurrentAmmo <= 0 || configuration == null)
             return;
 
         if (configuration.weaponType == Type.holdFire)

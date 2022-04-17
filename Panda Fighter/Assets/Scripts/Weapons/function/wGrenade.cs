@@ -12,11 +12,16 @@ public class wGrenade : IWeapon
 
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        configuration.animator.SetInteger("Arms Phase", 1);
+        configuration.limbs[1].transform.parent.GetComponent<Animator>().Play(0, -1);
+        configuration.limbs[1].SetActive(true);
 
-        float wait = reusableWeaponMethods.calculateTimeB4ReleasingWeapon(0.02f, 0.0f, aim);
+        float wait = reusableWeaponMethods.calculateTimeB4ReleasingWeapon(0.02f, 0.2f, aim);
+        Debug.Log(wait);
         yield return new WaitForSeconds(wait);
         DoAttack(aim, bullet, rig);
+
+        yield return new WaitForSeconds(0.6f-wait);
+        configuration.limbs[1].SetActive(false);
     }
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
