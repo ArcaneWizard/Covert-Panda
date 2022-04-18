@@ -23,21 +23,31 @@ public class LavaOrb : Bullet
 
     private void OnEnable() => impactExplosion.Stop();
 
-    public void OrientExplosion(Vector2 normal)
+    public void OrientExplosion(bool adjustPosition)
     {
-        impactExplosion.transform.position = transform.position +
-            new Vector3(-normal.x * 1f, -normal.y * 1f, 0f);
+        impactExplosion.transform.localPosition = Vector3.zero;
+        impactExplosion.transform.position += adjustPosition 
+            ? new Vector3(-predictedNormal.x * 1f, -predictedNormal.y * 1f, 0f)
+            : Vector3.zero;
 
         var main = impactExplosion.main;
-        main.startLifetimeMultiplier = (normal.y - 1) / 5f + 2.2f;
-        main.gravityModifier = (normal.y - 1) / -1.25f + 0.9f;
+       // main.startLifetimeMultiplier = (predictedNormal.y - 1) / 5f + 2.2f;
+        main.gravityModifier = (predictedNormal.y - 1) / -1.25f + 0.9f;
 
         var fo = impactExplosion.forceOverLifetime;
-        fo.xMultiplier = (normal.y - 1) / -0.04f + 50f;
+        fo.xMultiplier = (predictedNormal.y - 1) / -0.04f + 50f;
     }
 
-    public override void OnCreatureEnter(Transform entity) => StartCoroutine(initiateExplosion());
-    protected override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
+    public override void OnCreatureEnter(Transform entity) 
+    {
+         StartCoroutine(initiateExplosion());
+         OrientExplosion(false);
+    }
+    protected override void OnMapEnter(Transform map) 
+    {
+        StartCoroutine(initiateExplosion());
+        OrientExplosion(true);
+    }
 
     private IEnumerator initiateExplosion()
     {

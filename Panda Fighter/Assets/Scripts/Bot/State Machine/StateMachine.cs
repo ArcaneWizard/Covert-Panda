@@ -33,8 +33,6 @@ public class StateMachine : MonoBehaviour
         }
 
         currentState?.Tick();
-
-        Debug.Log("STATE: " + currentState);
     }
 
     public void SetState(IState state)

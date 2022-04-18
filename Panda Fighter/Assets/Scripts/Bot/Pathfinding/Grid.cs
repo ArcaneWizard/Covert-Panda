@@ -46,10 +46,7 @@ public class Grid : MonoBehaviour
             if (grid.ContainsKey(closestNode.transform))
                 return grid[closestNode.transform];
             else
-            {
-                Debug.Log(closestNode.transform.name);
                 return grid[closestNode.transform];
-            }
         }
     }
 

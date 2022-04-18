@@ -135,11 +135,11 @@ public class PathFinding : MonoBehaviour
         if (path.Count == 0)
             return;
 
-        string s = $"{path[0].transform.name}";
+        /*string s = $"{path[0].transform.name}";
         for (int i = 1; i < path.Count; i++)
             s += $", {path[i].transform.name}";
 
-        Debug.Log(s);
+        Debug.Log(s);*/
         // Debug.Log($"{path[path.Count - 1].gCost} and {path[path.Count - 1].hCost}");
     }
 

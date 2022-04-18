@@ -7,7 +7,7 @@ public class AI_Shooting : CentralShooting
     private WeaponConfiguration configuration;
 
     private Vector2 reactionTime = new Vector2(0.4f, 0.67f);
-    private Vector2 angleAimIsOffBy = new Vector2(-30, 30f);
+    private Vector2 angleAimIsOffBy = new Vector2(-15, 15f);
     private float offsetAngle;
 
     private float countdownBtwnShots = 0f;

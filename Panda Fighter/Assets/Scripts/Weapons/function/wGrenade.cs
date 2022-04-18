@@ -16,7 +16,6 @@ public class wGrenade : IWeapon
         configuration.limbs[1].SetActive(true);
 
         float wait = reusableWeaponMethods.calculateTimeB4ReleasingWeapon(0.02f, 0.2f, aim);
-        Debug.Log(wait);
         yield return new WaitForSeconds(wait);
         DoAttack(aim, bullet, rig);
 

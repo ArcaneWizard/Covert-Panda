@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations;
 
 public class ArcticStream : Bullet
 {
@@ -20,8 +19,10 @@ public class ArcticStream : Bullet
         explosion.radius = 13;
     }
 
-    void Update()
+    public override void Update()
     {
+        base.Update();
+        Debug.Log("runing");
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
@@ -35,6 +36,7 @@ public class ArcticStream : Bullet
 
     private void startExplosion()
     {
+        Debug.Log("uee");
         if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
         {
             rig.constraints = RigidbodyConstraints2D.FreezeAll;

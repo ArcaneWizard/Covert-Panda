@@ -17,7 +17,7 @@ public class AI_WeaponSystem : CentralWeaponSystem
         string weapon = "";
         while (weapon == "" || weapon == WeaponTags.Grenades.ToString()) 
             weapon = IWeapons.Keys.ToArray()[UnityEngine.Random.Range(0, IWeapons.Count)];
-
+        
         startWithWeapon(weapon);
     }
 

@@ -10,7 +10,7 @@ public class PlayerHealth : Health
     {
         base.Awake();
 
-        maxHP = 500;
+        maxHP = 600;
         bulletLayer = Layers.enemyBullet;
     }
 

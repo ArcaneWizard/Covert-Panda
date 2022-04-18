@@ -55,10 +55,12 @@ public class WeaponSystem : CentralWeaponSystem
         foreach (KeyValuePair<string, IWeapon> weapon in IWeapons)  
             ammoText[weapon.Key].text = ammo[weapon.Key].ToString();
 
-        collectNewWeapon("Needler");
-        collectNewWeapon("ArcticSprayer");
-        collectNewWeapon("Grenades");
-        selectWeapon("ArcticSprayer");
+        collectNewWeapon(WeaponTags.ArcticPistol.ToString());
+        collectNewWeapon(WeaponTags.Grenades.ToString());
+        collectNewWeapon(WeaponTags.Railgun.ToString());
+        collectNewWeapon(WeaponTags.LavaPistol.ToString());
+        collectNewWeapon(WeaponTags.ArcticSprayer.ToString());
+        selectWeapon(WeaponTags.ArcticSprayer.ToString());
     }
 
     // Associate each weapon with a different number key on the keyboard

@@ -34,5 +34,11 @@ public static class Layers
 
     // returns a layer allowing collisions with the hit box of the opposite entity 
     // (player/friendly AI hit boxes for enemies and enemy hit boxes for the player/friendly bots)
-    public static int target(Side side) =>  (side == Side.Friendly) ? enemyHitBox : friendlyHitBox;
+    public static int target(Side side) =>  
+        (side == Side.Friendly) ? enemyHitBox : friendlyHitBox;
+    
+    // returns a layer allowing collisions with whichever side this bullet is intended tohit
+    
+    public static LayerMask target(GameObject bullet) =>
+        (bullet.layer == friendlyBullet) ? enemyHitBox : friendlyHitBox;
 }

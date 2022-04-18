@@ -145,7 +145,6 @@ public class AI_WanderAround : MonoBehaviour
 
         if (col.gameObject.layer == 8)
         {
-            Debug.Log("yeet ah");
             decisionZones.Enqueue(col.transform);
             justEnteredWanderingState = false;
         }

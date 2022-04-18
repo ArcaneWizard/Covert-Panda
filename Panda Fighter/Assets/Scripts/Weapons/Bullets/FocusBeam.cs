@@ -22,7 +22,7 @@ public class FocusBeam : Bullet
         initialColliderSize = collider.size;
     }
 
-    void Update() 
+    public override void Update() 
     {
         if (timerStayAlive > 0)
             timerStayAlive -= Time.deltaTime;

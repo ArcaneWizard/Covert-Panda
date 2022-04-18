@@ -64,7 +64,7 @@ public class CentralController : MonoBehaviour
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
         mainCollider.offset = new Vector2(0, 1.45f);
 
-        maxSpeed = 20.5f;
+        maxSpeed = 19.5f;
         speed = maxSpeed;
     }
 

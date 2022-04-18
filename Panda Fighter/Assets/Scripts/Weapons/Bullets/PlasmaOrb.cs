@@ -36,8 +36,10 @@ public class PlasmaOrb : Bullet
         rig.constraints = RigidbodyConstraints2D.None;
     }
 
-    void Update()
+    public override void Update()
     {
+        base.Update();
+        
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 

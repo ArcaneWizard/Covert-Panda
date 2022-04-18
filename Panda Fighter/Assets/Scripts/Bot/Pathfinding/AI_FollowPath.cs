@@ -28,7 +28,6 @@ public class AI_FollowPath : MonoBehaviour
 
     public IEnumerator startJourney(Vector3 destination)
     {
-        Debug.Log("bruh");
         journey = "pending start";
 
         //scan available routes for 2 seconds
@@ -112,7 +111,6 @@ public class AI_FollowPath : MonoBehaviour
     //otherwise teleport back on path
     private void getBackOnIntendedPath(Transform decisionZone)
     {
-        Debug.Log("getting back on intended path");
         bool foundReroute = false;
         foreach (Transform neighborZone in decisionZone)
         {

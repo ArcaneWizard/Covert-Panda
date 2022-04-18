@@ -24,7 +24,7 @@ public class Rocket : Bullet
         explosion.radius = 7f;
     }
 
-    void Update()
+    public override void Update()
     {
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;

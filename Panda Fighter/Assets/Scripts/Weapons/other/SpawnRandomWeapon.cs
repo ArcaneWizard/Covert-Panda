@@ -29,9 +29,8 @@ public class SpawnRandomWeapon : MonoBehaviour
 
     private void spawnRandomWeapon() 
     {
-         int random = UnityEngine.Random.Range(0, spawnWeaponManager.AvailableWeapons.Count);
-         string weaponTag = spawnWeaponManager.AvailableWeapons.Keys.ToArray()[random];
-         transform.GetChild(spawnWeaponManager.AvailableWeapons[weaponTag]).gameObject.SetActive(true);
+         int randomPick = UnityEngine.Random.Range(0, spawnWeaponManager.AvailableWeapons.Count);
+         transform.GetChild(spawnWeaponManager.AvailableWeapons[randomPick]).gameObject.SetActive(true);
 
          canSpawnWeapon = false;
     }
