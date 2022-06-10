@@ -30,7 +30,7 @@ public class WeaponStats : MonoBehaviour
         set(0.15f, 32, 200, 5000, 30, 0, WeaponTags.Needler, Mode.gun, Type.spamFire, l.Middle_barrel, w.Needler);
 
         set(0.00f, 34, -1, 5000, 7, 0, WeaponTags.FocusBeamer, Mode.gun, Type.holdFire, l.Short_barrel, w.FocusBeamer);
-        set(0.8f, 34, 180, 5000, 0, 300, WeaponTags.RocketLauncher, Mode.gun, Type.singleFire, l.Shoulder_rest, w.RocketLauncher);
+        set(0.8f, 34, 140, 5000, 0, 300, WeaponTags.RocketLauncher, Mode.gun, Type.singleFire, l.Shoulder_rest, w.RocketLauncher);
         set(0.07f, 32, 100, 5000, 60, 140, WeaponTags.ArcticSprayer, Mode.gun, Type.spamFire, l.Shoulder_rest, w.ArcticSprayer);
     }
 

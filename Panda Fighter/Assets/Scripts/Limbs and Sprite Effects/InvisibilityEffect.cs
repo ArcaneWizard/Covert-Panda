@@ -39,7 +39,7 @@ public class InvisibilityEffect : MonoBehaviour
     {
         sR.color = (centralAbilityHandler.invisibilityEnabled)
             ? new Color(color.r, color.g, color.b, 0.4f)
-            : new Color(color.r, color.g, color.g, 1f);
+            : new Color(color.r, color.g, color.b, 1f);
 
         gameObject.layer = (centralAbilityHandler.invisibilityEnabled) ? Layers.collideWithNothing : Layers.detectPickableWeapons;
     }
