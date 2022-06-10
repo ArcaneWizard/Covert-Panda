@@ -8,6 +8,9 @@ TextureImporter:
   - first:
       213: 425105644773349938
     second: needler bullets_1
+  - first:
+      213: 8402366958808165229
+    second: needler bullets_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -52,7 +55,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 20
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -129,7 +132,7 @@ TextureImporter:
         width: 17
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -149,8 +152,8 @@ TextureImporter:
         y: 47
         width: 21
         height: 6
-      alignment: 0
-      pivot: {x: 0, y: 0}
+      alignment: 9
+      pivot: {x: 0.255661, y: 0.7774334}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -158,6 +161,27 @@ TextureImporter:
       bones: []
       spriteID: 23a9ab4e45746e500800000000000000
       internalID: 425105644773349938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: needler bullets_2
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 32
+        width: 9
+        height: 31
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6b6d3c3b343b9470800000000000000
+      internalID: 8402366958808165229
       vertices: []
       indices: 
       edges: []

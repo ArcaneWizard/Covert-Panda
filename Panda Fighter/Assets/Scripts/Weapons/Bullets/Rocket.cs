@@ -26,6 +26,8 @@ public class Rocket : Bullet
 
     public override void Update()
     {
+        base.Update();
+        
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 

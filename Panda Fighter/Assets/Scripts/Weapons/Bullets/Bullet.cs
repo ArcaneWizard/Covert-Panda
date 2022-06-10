@@ -86,11 +86,10 @@ public class Bullet : MonoBehaviour
 
         // start the predictive raycast from slightly behind where the bullet actually spawns (to detect collisions on creatures walking the gun)
         middleOfWeapon = new Vector2(transform.position.x - aim.x * 0.1f, transform.position.y - aim.y * 0.1f);
-        Debug.Log(middleOfWeapon);
         RaycastHit2D hit = Physics2D.Raycast(middleOfWeapon, aim, raycastDistance, LayerMasks.mapOrTarget(transform));
 
-        if (hit.collider != null)
-             Debug.DrawLine(new Vector2(transform.position.x, transform.position.y), hit.point, Color.green, 4);
+        //if (hit.collider != null)
+        //     Debug.DrawLine(new Vector2(transform.position.x, transform.position.y), hit.point, Color.green, 4);
         predictedImpactLocation = (hit.collider != null) ? hit.point : new Vector2(transform.position.x + aim.x * raycastDistance, transform.position.y + aim.y * raycastDistance);
         predictedColliderHit = (hit.collider != null) ? hit.collider.transform : null;
 
@@ -114,7 +113,6 @@ public class Bullet : MonoBehaviour
         // execute the predicted impact
         if ((x == Mathf.Sign(aim.x) || x == 0) && (y == Mathf.Sign(aim.y) || y == 0))
         {
-            Debug.Log("1");
             executedPredictedImpact = true;
 
             // if the bullet was predicted to hit a creature (as opposed to the environment)
@@ -162,7 +160,6 @@ public class Bullet : MonoBehaviour
                 // damage the predicted enemy hit, and register said collision (the bullet may have an explosion or something)
                 predictedColliderHit.parent.GetComponent<Health>().TakeDamageFromPredictedFastBulletCollision(Damage(), transform);
                 OnCreatureEnter(predictedColliderHit.parent);
-            Debug.Log("12");
             }
         
             // if the bullet was predicted to hit part of the map
@@ -170,7 +167,6 @@ public class Bullet : MonoBehaviour
             {
                 transform.position = predictedImpactLocation;
                 OnMapEnter(predictedColliderHit);
-            Debug.Log("13");
             }
         }
     }
@@ -182,5 +178,8 @@ public class Bullet : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private float sqrDistance(Vector2 a, Vector2 b) => a.x * a.x + b.y * b.y;
+    protected float sqrDistance(Vector2 a, Vector2 b) {
+        Vector2 c = a - b;
+        return c.x * c.x + c.y * c.y;
+    }
 }

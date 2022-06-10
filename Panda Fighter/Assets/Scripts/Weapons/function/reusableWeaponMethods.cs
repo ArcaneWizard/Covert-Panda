@@ -52,15 +52,17 @@ public static class reusableWeaponMethods
         bullet.GetComponent<Bullet>().disableCollisionDetection = false;
     }
 
-    public static void configureNewBulletAndShootAtAngle(float angle, Vector2 aim, WeaponConfiguration configuration, Side side)
+    public static void configureNewBulletAndShootAtAngle(float angle, Vector2 aim, WeaponConfiguration configuration, Side side, Vector2 bulletSpawnOffset)
     {
         Transform bullet = configuration.weaponSystem.CurrentBullet.transform;
         Rigidbody2D bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+
         Vector2 newAim = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
 
         configuration.weaponSystem.useOneAmmo();
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
 
+        bullet.position += Vector3.up * UnityEngine.Random.Range(bulletSpawnOffset.x, bulletSpawnOffset.y);
         bullet.transform.right = newAim;
         bulletRig.velocity = newAim * configuration.bulletSpeed;
         predictTrajectoryOfFastBullets(bullet, newAim, false, false);

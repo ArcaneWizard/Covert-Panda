@@ -22,7 +22,7 @@ public class ArcticStream : Bullet
     public override void Update()
     {
         base.Update();
-        Debug.Log("runing");
+
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
@@ -36,7 +36,6 @@ public class ArcticStream : Bullet
 
     private void startExplosion()
     {
-        Debug.Log("uee");
         if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
         {
             rig.constraints = RigidbodyConstraints2D.FreezeAll;

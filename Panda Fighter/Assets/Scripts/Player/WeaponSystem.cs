@@ -59,8 +59,10 @@ public class WeaponSystem : CentralWeaponSystem
         collectNewWeapon(WeaponTags.Grenades.ToString());
         collectNewWeapon(WeaponTags.Railgun.ToString());
         collectNewWeapon(WeaponTags.LavaPistol.ToString());
+        collectNewWeapon(WeaponTags.Needler.ToString());
         collectNewWeapon(WeaponTags.ArcticSprayer.ToString());
-        selectWeapon(WeaponTags.ArcticSprayer.ToString());
+        collectNewWeapon(WeaponTags.Shotgun.ToString());
+        selectWeapon(WeaponTags.Shotgun.ToString());
     }
 
     // Associate each weapon with a different number key on the keyboard
