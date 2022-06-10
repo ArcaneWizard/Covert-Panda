@@ -27,8 +27,8 @@ public class CentralController : MonoBehaviour
     public Transform physicalLeftFoot;
     public Transform physicalRightFoot;
 
-    public float maxSpeed { get; private set; }
     protected float speed;
+    public static float maxSpeed = 20f;
     public static float jumpForce = 1450f;
     public static float doubleJumpForce = 1350f;
     public static float jumpPadForce = 2500f;
@@ -64,7 +64,6 @@ public class CentralController : MonoBehaviour
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
         mainCollider.offset = new Vector2(0, 1.45f);
 
-        maxSpeed = 20f;
         speed = maxSpeed;
     }
 

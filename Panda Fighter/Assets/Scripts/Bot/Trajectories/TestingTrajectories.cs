@@ -18,7 +18,7 @@ public class TestingTrajectories : MonoBehaviour
     private float jumpForce;
     private float doubleJumpForce;
     private float launchPadForce;
-    public Vector2 speedRange = new Vector2(10f, 10f);
+    public Vector2 speed = new Vector2(10f, 10f);
     public Vector2 timeB4Change = new Vector2(0f, 0f);
     public Vector2 changedSpeed = new Vector2(0f, 0f);
     public Vector2 timeB4SecondChange = new Vector2(0f, 0f);
@@ -28,6 +28,7 @@ public class TestingTrajectories : MonoBehaviour
     private float mass = 1f;
     private float defaultGravity = -32.5f;
     private float gravity;
+    private float maxSpeed;
 
     [Header("Other Settings")]
     public Vector2 jumpBounds = new Vector2(-1f, -1f);
@@ -48,8 +49,9 @@ public class TestingTrajectories : MonoBehaviour
         jumpForce = CentralController.jumpForce;
         doubleJumpForce = CentralController.doubleJumpForce;
         launchPadForce = CentralController.jumpPadForce;
-        defaultGravity = -32.5f;
+        maxSpeed = CentralController.maxSpeed;
 
+        defaultGravity = -32.5f;
         mass = 1f; 
 
         if (headStraight)
@@ -61,8 +63,7 @@ public class TestingTrajectories : MonoBehaviour
         else if (fallDown)
         {
             transform.name = "Fall Down";
-            drawNormalJump(defaultGravity, lengthShown, 0, speedRange.x);
-            drawNormalJump(defaultGravity, lengthShown, 0, speedRange.y);
+            drawNormalJump(defaultGravity, lengthShown, 0, speed.x);
         }
 
         else if (fallDownCurve)
@@ -90,8 +91,7 @@ public class TestingTrajectories : MonoBehaviour
         else 
         {
             transform.name = "Normal Jump";
-            drawNormalJump(defaultGravity, lengthShown, jumpForce, speedRange.x);
-            drawNormalJump(defaultGravity, lengthShown, jumpForce, speedRange.y);
+            drawNormalJump(defaultGravity, lengthShown, jumpForce, speed.x);
             showGizmoJumpBounds();
         }
 
@@ -128,7 +128,7 @@ public class TestingTrajectories : MonoBehaviour
 
     // helper method for storing all of this trajectory's info into an AI_ACTION 
     private AI_ACTION defineAction(string actionName) => new AI_ACTION(actionName, movementDirX,
-            speedRange, timeB4Change, changedSpeed, timeB4SecondChange, secondChangedSpeed, jumpBounds, transform.position);
+            speed, timeB4Change, changedSpeed, timeB4SecondChange, secondChangedSpeed, jumpBounds, transform.position);
 
 
     #if UNITY_EDITOR
@@ -160,7 +160,7 @@ public class TestingTrajectories : MonoBehaviour
     {
         this.gravity = 0;
         
-        Vector2 pointRightB4VelocityChange = plotJourney(4, transform.position, speedRange.x, 0);
+        Vector2 pointRightB4VelocityChange = plotJourney(4, transform.position, speed.x * maxSpeed, 0);
     }
 
     // draws a normal jump journey on the scene view
@@ -168,19 +168,19 @@ public class TestingTrajectories : MonoBehaviour
     {
         this.gravity = gravity;
 
-        Vector2 pointRightB4VelocityChange = plotJourneyVeryAccurately(timeB4Change.x * 5f, transform.position, speed, jumpForce);
-        plotJourneyAfterChangingSpeedOnce(lengthShown, pointRightB4VelocityChange, transform.position, speed, timeB4Change.x, changedSpeed.x, jumpForce);
+        Vector2 pointRightB4VelocityChange = plotJourneyVeryAccurately(timeB4Change.x * 5f, transform.position, speed * maxSpeed, jumpForce);
+        Vector2 pointRightB42ndVelocityChange = plotJourneyVeryAccurately(timeB4SecondChange.x * 5f, pointRightB4VelocityChange, changedSpeed.x * maxSpeed, 0);
+        plotJourneyAfterChangingSpeedOnce(lengthShown, pointRightB4VelocityChange, pointRightB42ndVelocityChange, changedSpeed.x * maxSpeed, timeB4SecondChange.x, secondChangedSpeed.x * maxSpeed, 0);
     }
-
     // draws the double jump journey on the scene view. first draws the normal jump up till right b4 
     // the double jump happens, then draws the double jump
     private void drawDoubleJump(float timeB4DoubleJump)
     {
         this.gravity = defaultGravity;
 
-        Vector2 pointRightB4DoubleJumping = plotJourneyVeryAccurately(timeB4DoubleJump * 5f, transform.position, speedRange.x, jumpForce);
-        Vector2 pointRightB4VelocityChange = plotJourneyVeryAccurately(timeB4SecondChange.x * 5f, pointRightB4DoubleJumping, changedSpeed.x, doubleJumpForce);
-        plotJourneyAfterChangingSpeedOnce(lengthShown, pointRightB4VelocityChange, pointRightB4DoubleJumping, changedSpeed.x, timeB4SecondChange.x, secondChangedSpeed.x, doubleJumpForce);
+        Vector2 pointRightB4DoubleJumping = plotJourneyVeryAccurately(timeB4DoubleJump * 5f, transform.position, speed.x * maxSpeed, jumpForce);
+        Vector2 pointRightB4VelocityChange = plotJourneyVeryAccurately(timeB4SecondChange.x * 5f, pointRightB4DoubleJumping, changedSpeed.x * maxSpeed, doubleJumpForce);
+        plotJourneyAfterChangingSpeedOnce(lengthShown, pointRightB4VelocityChange, pointRightB4DoubleJumping, changedSpeed.x * maxSpeed, timeB4SecondChange.x, secondChangedSpeed.x * maxSpeed, doubleJumpForce);
     }
     
     // draws the fall down arc journey on the scene view. first draws the fall down path till right b4
@@ -189,8 +189,8 @@ public class TestingTrajectories : MonoBehaviour
     {
         this.gravity = defaultGravity;
 
-        Vector2 pointRightB4ChangingSpeedHorizontally = plotJourneyVeryAccurately(timeB4DirSwitch * 5f + 0.01f, transform.position, speedRange.x, 0);
-        plotJourneyWithTimeOffset(lengthShown, pointRightB4ChangingSpeedHorizontally, changedSpeed.x, 0, timeB4DirSwitch * 5f);
+        Vector2 pointRightB4ChangingSpeedHorizontally = plotJourneyVeryAccurately(timeB4DirSwitch * 5f + 0.01f, transform.position, speed.x * maxSpeed, 0);
+        plotJourneyWithTimeOffset(lengthShown, pointRightB4ChangingSpeedHorizontally, changedSpeed.x * maxSpeed, 0, timeB4DirSwitch * 5f);
     }
 
     // draws the jump pad boost journey on the scene view. first draws the upwards path till right b4 the
@@ -199,11 +199,11 @@ public class TestingTrajectories : MonoBehaviour
     {
         this.gravity = gravity;
 
-        Vector2 pointB4ChangingSpeedOnce = plotJourneyVeryAccurately(timeB4Change.x * 5, transform.position, speedRange.x, jumpForce);
-        Vector2 pointB4ChangingSpeedTwice = plotJourneyAfterChangingSpeedOnce(timeB4SecondChange.x * 5, pointB4ChangingSpeedOnce, transform.position, speedRange.x,
-            timeB4Change.x, changedSpeed.x, jumpForce);
-        plotJourneyAfterChangingSpeedTwice(lengthShown, pointB4ChangingSpeedTwice, transform.position, speedRange.x, timeB4Change.x, changedSpeed.x, timeB4SecondChange.x,
-            secondChangedSpeed.x, jumpForce);
+        Vector2 pointB4ChangingSpeedOnce = plotJourneyVeryAccurately(timeB4Change.x * 5, transform.position, speed.x * maxSpeed, jumpForce);
+        Vector2 pointB4ChangingSpeedTwice = plotJourneyAfterChangingSpeedOnce(timeB4SecondChange.x * 5, pointB4ChangingSpeedOnce, transform.position, speed.x * maxSpeed,
+            timeB4Change.x, changedSpeed.x * maxSpeed, jumpForce);
+        plotJourneyAfterChangingSpeedTwice(lengthShown, pointB4ChangingSpeedTwice, transform.position, speed.x * maxSpeed, timeB4Change.x, changedSpeed.x * maxSpeed, timeB4SecondChange.x,
+            secondChangedSpeed.x * maxSpeed, jumpForce);
     }
 
     //----------------------------------------------------------------------------------------------------------------
