@@ -105,6 +105,7 @@ public class CentralAnimationController : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         disableLimbsDuringDoubleJump = false;
+        animator.SetBool("jumped", false);
     }
 
     // Specify which animation to play and when
