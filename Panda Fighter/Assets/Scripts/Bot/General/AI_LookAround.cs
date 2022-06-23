@@ -9,7 +9,6 @@ public class AI_LookAround : CentralLookAround
 
     public GameObject targetInSight { get; private set; }
     public Vector2 lookAt { get; private set; }
-
     private float randomFloat;
 
     public override void Awake()
@@ -34,9 +33,12 @@ public class AI_LookAround : CentralLookAround
         else if (controller.isGrounded && controller.isTouchingMap) 
         {
             lookAt = new Vector2(
-                Mathf.PerlinNoise(Time.time, randomFloat/2f) * 2f - 1f, 
-                Mathf.PerlinNoise(Time.time, randomFloat) * 2f -1f //Mathf.Tan(transform.localEulerAngles.z * Mathf.PI / 180) + 
+                Mathf.PerlinNoise(Time.time/2f, randomFloat/2f) * 2f - 1f, 
+                Mathf.PerlinNoise(Time.time/2f, randomFloat) * 2f - 0.96f//Mathf.Tan(transform.localEulerAngles.z * Mathf.PI / 180) + 
             );
+
+            if (Mathf.Abs(lookAt.x) < 0.45f) 
+                lookAt = new Vector2(Mathf.Sign(lookAt.x) * 0.45f, lookAt.y);
         }
         
         lookAndAimInRightDirection();

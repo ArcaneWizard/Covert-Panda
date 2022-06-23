@@ -8,10 +8,10 @@ public class Idle : IState
     private float unfreezeTimer;
 
     // how long (in seconds) the AI goes idle for. provided as a range
-    private Vector2 freezeTime = new Vector2(0.2f, 1.2f);
+    private Vector2 freezeTime = new Vector2(0.3f, 2f);
 
     // how often (in seconds) the AI goes idle. provided as a range
-    private Vector2 delayGoingIdle = new Vector2(5.5f, 10f);
+    private Vector2 delayGoingIdle = new Vector2(4f, 9.8f);
 
     public bool GoodTimeToGoIdle;
     public bool StopBeingIdle;
@@ -53,7 +53,7 @@ public class Idle : IState
         GoodTimeToGoIdle = controller.isGrounded && controller.isTouchingMap;
 
         int x = 1;
-        if (!GoodTimeToGoIdle && x <= 2) 
+        if (!GoodTimeToGoIdle && x <= 1) 
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 1.2f));
             GoodTimeToGoIdle = controller.isGrounded && controller.isTouchingMap;
