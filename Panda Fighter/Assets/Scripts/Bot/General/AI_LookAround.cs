@@ -20,7 +20,7 @@ public class AI_LookAround : CentralLookAround
         side = transform.parent.GetComponent<Role>().side;
 
         randomFloat = UnityEngine.Random.Range(0f, 10f);
-        StartCoroutine(IsTargertInLightOfSight());
+        StartCoroutine(IsTargetInLightOfSight());
     }
 
     private void LateUpdate()
@@ -28,19 +28,17 @@ public class AI_LookAround : CentralLookAround
         if (health.isDead)
             return;
 
-        // look
         if (targetInSight)
             lookAt = new Vector2(targetInSight.transform.position.x - shootingArm.position.x, targetInSight.transform.position.y - shootingArm.position.y);
 
-        else if (controller.isGrounded && controller.isTouchingMap && animator.GetInteger("Phase") != 2) 
+        else if (controller.isGrounded && controller.isTouchingMap) 
         {
             lookAt = new Vector2(
-                1 + (Mathf.PerlinNoise(Time.time, randomFloat/2f) * 2f - 1f), 
-                Mathf.Tan(transform.localEulerAngles.z * Mathf.PI / 180) + (Mathf.PerlinNoise(Time.time, randomFloat) * 2f -1f)
+                Mathf.PerlinNoise(Time.time, randomFloat/2f) * 2f - 1f, 
+                Mathf.PerlinNoise(Time.time, randomFloat) * 2f -1f //Mathf.Tan(transform.localEulerAngles.z * Mathf.PI / 180) + 
             );
         }
         
-        //handles creature orientation (left/right), gun rotation, gun position, head rotation
         lookAndAimInRightDirection();
 
         //for weapons that stay activated when holding down right click (ex. beam weapons), run their shooting logic AFTER lookAt is updated above
@@ -74,7 +72,7 @@ public class AI_LookAround : CentralLookAround
         }
     }
 
-    private IEnumerator IsTargertInLightOfSight()
+    private IEnumerator IsTargetInLightOfSight()
     {
         yield return new WaitForSeconds(0.3f);
         targetInSight = null;
@@ -101,7 +99,7 @@ public class AI_LookAround : CentralLookAround
             }
         }
 
-        StartCoroutine(IsTargertInLightOfSight());
+        StartCoroutine(IsTargetInLightOfSight());
     }
 
     private float sqrDistance(Vector2 a, Vector2 b) {

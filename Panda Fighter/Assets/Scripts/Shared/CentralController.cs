@@ -31,8 +31,8 @@ public class CentralController : MonoBehaviour
     protected float speed;
     public static float jumpForce = 1750f; //1450f;
     public static float doubleJumpForce = 1850f; //1350f;
-    public static float jumpPadForce = 2500f;
-    protected float maxGravity = 5f;
+    public static float jumpPadForce = 3400; //2000f
+    protected float maxGravity = 5f; //2.5f
 
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
     protected GameObject leftFootGround, rightFootGround, centerGround;
@@ -220,7 +220,7 @@ public class CentralController : MonoBehaviour
             //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
 
-        yield return new WaitForSeconds(0.33f);
+        yield return new WaitForSeconds(Time.deltaTime * 2);
         StartCoroutine(findWalls());
     }
 

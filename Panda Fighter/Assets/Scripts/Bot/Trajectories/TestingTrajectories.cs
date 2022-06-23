@@ -48,7 +48,7 @@ public class TestingTrajectories : MonoBehaviour
         jumpForce = CentralController.jumpForce;
         doubleJumpForce = CentralController.doubleJumpForce;
         launchPadForce = CentralController.jumpPadForce;
-        defaultGravity = -32.5f;
+        defaultGravity = -65f;
 
         mass = 1f; 
 

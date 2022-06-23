@@ -8,10 +8,10 @@ public class Idle : IState
     private float unfreezeTimer;
 
     // how long (in seconds) the AI goes idle for. provided as a range
-    private Vector2 freezeTime = new Vector2(0.4f, 3f);
+    private Vector2 freezeTime = new Vector2(0.2f, 1.2f);
 
     // how often (in seconds) the AI goes idle. provided as a range
-    private Vector2 delayGoingIdle = new Vector2(1.5f, 5.5f);
+    private Vector2 delayGoingIdle = new Vector2(5.5f, 10f);
 
     public bool GoodTimeToGoIdle;
     public bool StopBeingIdle;
