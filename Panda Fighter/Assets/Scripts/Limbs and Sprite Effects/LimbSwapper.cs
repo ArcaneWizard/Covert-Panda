@@ -55,8 +55,8 @@ public class LimbSwapper : MonoBehaviour
     // the creature type was registered first as the limb collection is dependent on the creature type
     async void OnValidate() 
     {
-        await Task.Delay(1000);
-        //findlimbCollection();
+        /*await Task.Delay(1000);
+        findlimbCollection();
 
         // prefabs don't have a parent, so the editor will never update them
         if (!limbCollection || !limbCollection.transform.parent)
@@ -66,8 +66,9 @@ public class LimbSwapper : MonoBehaviour
         if (EditorApplication.isPlayingOrWillChangePlaymode)
             return;
         
-        initializeComponents();
+        initializeComponents();s
         updateSpriteAndBoneTransforms();
+        */
     }
     
     // Retrieve all limbs from the limb collection and update them. Runs whenever

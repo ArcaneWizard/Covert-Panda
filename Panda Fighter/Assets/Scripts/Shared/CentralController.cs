@@ -29,10 +29,10 @@ public class CentralController : MonoBehaviour
 
     public float maxSpeed { get; private set; }
     protected float speed;
-    public static float jumpForce = 1450f;
-    public static float doubleJumpForce = 1350f;
+    public static float jumpForce = 1750f; //1450f;
+    public static float doubleJumpForce = 1850f; //1350f;
     public static float jumpPadForce = 2500f;
-    protected float maxGravity = 2.5f;
+    protected float maxGravity = 5f;
 
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
     protected GameObject leftFootGround, rightFootGround, centerGround;
@@ -64,7 +64,7 @@ public class CentralController : MonoBehaviour
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
         mainCollider.offset = new Vector2(0, 1.45f);
 
-        maxSpeed = 19.5f;
+        maxSpeed = 22f;
         speed = maxSpeed;
     }
 
