@@ -3,17 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CentralAbilityHandler : MonoBehaviour
-{
-    public bool isInvulnerable { get; private set; }
+// Handles the abilities of the creature (ex. invisiblity, spawn protection, etc.)
+// NOTE: needs to be refactored with the use of an interface named Ability for defining each ability
+// This will improve scalability when tons of complex abilities exist in the future
 
-    private bool spawnProtectionEnabled;
+public class CentralAbilityHandler : MonoBehaviour {
+
+    // whether or not the creature is invulnerable to damage
+    public bool IsInvulnerable { get; private set; }
+
+    // whether ot not the creature looks invisible (cannot be detected/shot at by others)
+    public bool IsInvisible { get; private set; }
+
+    private bool hasSpawnProtection;
     private float spawnProtectionDuration = 1.7f;
 
-    public bool invisibilityEnabled { get; private set; }
     private bool canTurnInvisible;
-    private float invisibleDuration = 3f;
-    private float invisibleReloadTime = 15f;
+    private float invisibilityDuration = 3f;
+    private float invisibilityCooldown = 15f;
 
     private Collider2D hitBox;
     private Health health;
@@ -21,7 +28,7 @@ public class CentralAbilityHandler : MonoBehaviour
 
     void Awake()
     {
-        invisibilityEnabled = false;
+        IsInvisible = false;
         canTurnInvisible = true;
 
         hitBox = transform.GetChild(1).GetComponent<Collider2D>();
@@ -37,28 +44,28 @@ public class CentralAbilityHandler : MonoBehaviour
         if (Input.GetKey(KeyCode.T) && canTurnInvisible && transform.parent.tag == "Player")
             StartCoroutine(turnInvisible());
 
-        isInvulnerable = (invisibilityEnabled || spawnProtectionEnabled);
+        IsInvulnerable = (IsInvisible || hasSpawnProtection);
 
-        hitBox.enabled = !isInvulnerable;
-        effectIndicator.color = spawnProtectionEnabled ? new Color32(0, 255, 227, 255) : new Color32(0, 0, 0, 255);
+        hitBox.enabled = !IsInvulnerable;
+        effectIndicator.color = hasSpawnProtection ? new Color32(0, 255, 227, 255) : new Color32(0, 0, 0, 255);
     }
 
     private IEnumerator turnInvisible()
     {
-        invisibilityEnabled = true;
+        IsInvisible = true;
         canTurnInvisible = false;
 
-        yield return new WaitForSeconds(invisibleDuration);
-        invisibilityEnabled = false;
+        yield return new WaitForSeconds(invisibilityDuration);
+        IsInvisible = false;
 
-        yield return new WaitForSeconds(invisibleReloadTime);
+        yield return new WaitForSeconds(invisibilityCooldown);
         canTurnInvisible = true;
     }
 
-    public IEnumerator spawnProtection()
+    public IEnumerator enableSpawnProtection()
     {
-        spawnProtectionEnabled = true;
+        hasSpawnProtection = true;
         yield return new WaitForSeconds(spawnProtectionDuration);
-        spawnProtectionEnabled = false;
+        hasSpawnProtection = false;
     }
 }

@@ -6,7 +6,7 @@ public class Particles : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround)
+        if (col.gameObject.layer == Layers.DefaultGround || col.gameObject.layer == Layers.OneWayGround)
             gameObject.SetActive(false);
     }
 }

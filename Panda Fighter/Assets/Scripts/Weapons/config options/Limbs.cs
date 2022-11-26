@@ -14,7 +14,7 @@ public class Limbs : MonoBehaviour
 
     private AimTargets Targets;
 
-    public Transform getAimTarget(List<GameObject> limb)
+    public Transform GetIK_WeaponAimTracker(List<GameObject> limb)
     {
         if (!Targets)
             Targets = transform.GetComponent<AimTargets>();
@@ -35,21 +35,21 @@ public class Limbs : MonoBehaviour
         return null;
     }
 
-    public List<Vector2> getIKCoordinates(List<GameObject> limb)
+    public List<Vector2> GetIK_WeaponCoordinates(List<GameObject> limb)
     {
         if (!Targets)
             Targets = transform.GetComponent<AimTargets>();
 
         if (limb == Short_barrel)
-            return AimingDir.ShortBarrelAiming;
+            return IKCoordinatesForAiming.ShortBarrelCoordinates;
         else if (limb == Meelee_grip)
-            return AimingDir.MeeleeGripAiming;
+            return IKCoordinatesForAiming.MeeleeGripCoordinates;
         else if (limb == Pistol_grip)
-            return AimingDir.PistolGripAiming;
+            return IKCoordinatesForAiming.PistolGripCoordinates;
         else if (limb == Shoulder_rest)
-            return AimingDir.ShoulderRestAiming;
+            return IKCoordinatesForAiming.ShoulderRestCoordinates;
 
-        return AimingDir.DefaultAiming;
+        return IKCoordinatesForAiming.DefaultCoordinates;
     }
 }
 

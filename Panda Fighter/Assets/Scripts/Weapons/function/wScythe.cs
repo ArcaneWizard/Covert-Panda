@@ -11,7 +11,7 @@ public class wScythe : IWeapon
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         configuration.animator.SetInteger("Arms Phase", 11);
-        configuration.aimTarget.gameObject.SetActive(false);
+        configuration.weaponAimTracker.gameObject.SetActive(false);
 
         while (configuration.animator.GetInteger("Arms Phase") == 11)
             yield return null;
@@ -19,7 +19,7 @@ public class wScythe : IWeapon
         DoAttack(aim, bullet, rig);
     }
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) => configuration.aimTarget.gameObject.SetActive(true);
+    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) => configuration.weaponAimTracker.gameObject.SetActive(true);
 
     public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {

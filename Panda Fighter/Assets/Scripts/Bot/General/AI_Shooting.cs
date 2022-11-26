@@ -7,7 +7,7 @@ public class AI_Shooting : CentralShooting
     private WeaponConfiguration configuration;
 
     private Vector2 reactionTime = new Vector2(0.4f, 0.67f);
-    private Vector2 angleAimIsOffBy = new Vector2(-15, 15f);
+    private Vector2 angleAimIsOffBy = new Vector2(-12, 12f);
     private float offsetAngle;
 
     private float countdownBtwnShots = 0f;
@@ -17,10 +17,10 @@ public class AI_Shooting : CentralShooting
     public override Vector2 GetAim() 
     {
          offsetAngle = UnityEngine.Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
-         return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.lookAt.normalized;
+         return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.directionToLook.normalized;
     }
 
-    public override void Awake()
+    protected override void Awake()
     {
         base.Awake();
         AI_lookAround = transform.GetComponent<AI_LookAround>();
@@ -33,14 +33,15 @@ public class AI_Shooting : CentralShooting
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (health.isDead || !AI_lookAround.targetInSight || countdownBtwnShots > 0f)
+        if (health.isDead || !AI_lookAround.EnemySpotted || countdownBtwnShots > 0f)
             return;
 
         if (weaponSystem.CurrentAmmo <= 0 || weaponSystem.weaponSelected == null)
             return;
 
         configuration = weaponSystem.CurrentWeaponConfiguration;
-        if (weaponSystem.CurrentAmmo > 0 && configuration.weaponType == Type.singleFire)
+
+        if (configuration.weaponType == Type.singleFire)
         {
             if (combatMode == "gun")
             {
@@ -64,22 +65,18 @@ public class AI_Shooting : CentralShooting
             }
         }
 
-        if (weaponSystem.CurrentAmmo > 0 && combatMode == "gun" && configuration.weaponType == Type.spamFire)
+        else if (combatMode == "gun" && configuration.weaponType == Type.spamFire)
         {
             countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
             timeSinceLastShot = 0f;
             Attack();
         }
-    }
 
-    public void LateLateUpdate()
-    {
-        if (health.isDead || !AI_lookAround.targetInSight || weaponSystem.CurrentAmmo <= 0 || configuration == null)
-            return;
-
-        if (configuration.weaponType == Type.holdFire)
+        else if (configuration.weaponType == Type.holdFire)
             Attack();
     }
 
-    private float reactionDelay => (timeSinceLastShot > 1f) ? UnityEngine.Random.Range(reactionTime.x, reactionTime.y) : 0;
+    private float reactionDelay => (timeSinceLastShot > 1f) 
+        ? UnityEngine.Random.Range(reactionTime.x, reactionTime.y) 
+        : UnityEngine.Random.Range(0.1f, 0.22f);
 }

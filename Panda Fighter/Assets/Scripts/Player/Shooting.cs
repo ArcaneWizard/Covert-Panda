@@ -10,16 +10,12 @@ public class Shooting : CentralShooting
     private float countdownBtwnShots = 0f;
     private String attackProgress;
 
-    public override void Awake() 
+    public override Vector2 GetAim() => lookAround.directionToLook;
+
+    protected override void Awake() 
     {
         base.Awake();
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
-    }
-
-    public override Vector2 GetAim() 
-    {
-        Vector3 aim = Input.mousePosition - camera.WorldToScreenPoint(lookAround.shootingArm.position);
-        return new Vector2(aim.x, aim.y).normalized;
     }
 
     private void Update()
@@ -62,14 +58,8 @@ public class Shooting : CentralShooting
             countdownBtwnShots = configuration.fireRateInfo;
             Attack();
         }
-    }
 
-    public void LateLateUpdate()
-    {
-        if (health.isDead || weaponSystem.CurrentAmmo <= 0 || configuration == null)
-            return;
-
-        if (configuration.weaponType == Type.holdFire && Input.GetMouseButton(0))
+        else if (configuration.weaponType == Type.holdFire && Input.GetMouseButton(0))
             Attack();
     }
 }

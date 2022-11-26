@@ -7,15 +7,15 @@ public abstract class CentralShooting : MonoBehaviour
     public GameObject grenadeHeld { get; private set; }
     public string combatMode { get; private set; }
 
-    protected CentralWeaponSystem weaponSystem;
     protected CentralLookAround lookAround;
+    protected CentralWeaponSystem weaponSystem;
     protected Health health;
 
     private List<GameObject> WeaponSetup = new List<GameObject>();
     private Transform bullet;
     private Rigidbody2D bulletRig;
 
-    public virtual void Awake()
+    protected virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         lookAround = transform.GetComponent<CentralLookAround>();

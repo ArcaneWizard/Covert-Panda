@@ -11,12 +11,14 @@ public class WeaponConfiguration : MonoBehaviour
     public int startingAmmo { get; private set; }
     public int bulletSpeed { get; private set; }
     public float weaponRange { get; private set; }
-    public List<GameObject> limbs { get; private set; }
-    public Transform bulletSpawnPoint { get; private set; }
-    public GameObject weapon { get; private set; }
-    public List<Vector2> IK_Coordinates { get; private set; } //required for configuring aiming
-    public Transform aimTarget { get; private set; }  //required when combat mode isn't handheld
     public float fireRateInfo { get; private set; }  //required for spam fire weapons
+
+    public Transform bulletSpawnPoint { get; private set; }
+    public List<GameObject> limbs { get; private set; }
+    public GameObject weapon { get; private set; }
+    public Transform weaponPivot { get; private set; }
+    public List<Vector2> weaponIKCoordinates { get; private set; } //required for configuring a weapon's aim to be very precise when using a mouse
+    public Transform weaponAimTracker { get; private set; }  //required for configuring a weapon's aim to be very precise when using a mouse
 
     public CentralWeaponSystem weaponSystem { get; private set; }
     public CentralShooting shooting { get; private set; }
@@ -50,12 +52,14 @@ public class WeaponConfiguration : MonoBehaviour
         animator = entity.GetComponent<Animator>();
 
         Limbs = entity.transform.GetChild(0).GetChild(0).transform.GetComponent<Limbs>();
-        aimTarget = Limbs.getAimTarget(limbs);
-        IK_Coordinates = Limbs.getIKCoordinates(limbs);
+        weaponAimTracker = Limbs.GetIK_WeaponAimTracker(limbs);
+        weaponIKCoordinates = Limbs.GetIK_WeaponCoordinates(limbs);
+
+        weaponPivot = (weaponAimTracker) ? weaponAimTracker.parent.GetChild(1) : null;
 
         if (weapon.transform.childCount > 0) 
             bulletSpawnPoint = weapon.transform.GetChild(0);
         
-        Orderer.updateOrder(weapon.transform, transform.parent.parent.parent);
+        Orderer.updateSpriteOrder(weapon.transform, transform.parent.parent.parent);
     }
 }

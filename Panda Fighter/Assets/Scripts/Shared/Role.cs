@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Contains which side this entity is on, and which creature it is 
+
 [ExecuteAlways]
 public class Role : MonoBehaviour
 {
@@ -29,3 +31,4 @@ public enum Side
     Friendly,
     Enemy
 }
+ 

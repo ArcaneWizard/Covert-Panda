@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Manages the creature's animation states and updates the creature's feet position
+// and collider size based off the current animation state
+
 public class CentralAnimationController : MonoBehaviour
 {
     protected CentralController controller;
@@ -16,17 +19,17 @@ public class CentralAnimationController : MonoBehaviour
     public AnimationClip doubleJumpBackwards;
     public Collider2D doubleJumpCollider;
 
+    public bool IsExecutingDoubleJump { get; private set; }
     public bool carryOutDoubleJump;
     private bool isSpinning;
 
-    public bool disableLimbsDuringDoubleJump { get; private set; }
     private bool completedSpinning;
     protected bool stopSpinning = true;
     protected int spinDirection = 0;
 
     private const float initialSpinSpeed = 1000f;
     private const float endSpinSpeed = 600f;
-    private const float durationSpinningFast = 0.35f;
+    private const float spinDuration = 0.35f;
 
     private Vector2 initialColliderSize;
 
@@ -43,7 +46,7 @@ public class CentralAnimationController : MonoBehaviour
         initialColliderSize = controller.mainCollider.size;
 
         Side side = transform.parent.GetComponent<Role>().side;
-        doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
+        doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layers.Friend : Layers.Enemy;
         completedSpinning = true;
     }
 
@@ -88,7 +91,7 @@ public class CentralAnimationController : MonoBehaviour
     {
         spinDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
         stopSpinning = false;
-        disableLimbsDuringDoubleJump = true;
+        IsExecutingDoubleJump = true;
 
         if (controller.dirX == -1 && body.localEulerAngles.y == 0)
             animator.SetBool("forward double jump", false);
@@ -104,7 +107,7 @@ public class CentralAnimationController : MonoBehaviour
         animator.SetBool("double jump", true);
 
         yield return new WaitForSeconds(0.5f);
-        disableLimbsDuringDoubleJump = false;
+        IsExecutingDoubleJump = false;
     }
 
     // Specify which animation to play and when
@@ -144,12 +147,12 @@ public class CentralAnimationController : MonoBehaviour
             {
                 float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
 
-                if (t < durationSpinningFast)
+                if (t < spinDuration)
                     transform.eulerAngles = new Vector3(0, 0, t * initialSpinSpeed * spinDirection);
                 else
                 {
                     transform.eulerAngles = new Vector3(0, 0,
-                        durationSpinningFast * initialSpinSpeed * spinDirection + (t - durationSpinningFast) * endSpinSpeed * spinDirection);
+                        spinDuration * initialSpinSpeed * spinDirection + (t - spinDuration) * endSpinSpeed * spinDirection);
                 }
 
                 if (!isSpinning && transform.localEulerAngles.z > 150 && transform.localEulerAngles.z < 250)

@@ -35,7 +35,7 @@ public class Ragdolling : MonoBehaviour
         foreach (Rigidbody2D rig in ragdollParts)
         {
             rig.isKinematic = true;
-            rig.gameObject.layer = Layers.detectPickableWeapons;
+            rig.gameObject.layer = Layers.ArmorOrLimb;
         }
 
         playerRig.isKinematic = false;
@@ -58,7 +58,7 @@ public class Ragdolling : MonoBehaviour
         foreach (Rigidbody2D rig in ragdollParts)
         {
             rig.isKinematic = false;
-            rig.gameObject.layer = Layers.deadRagdoll;
+            rig.gameObject.layer = Layers.ArmorOrLimbInRagdoll;
         }  
 
         ragdollArms.SetActive(true);

@@ -8,7 +8,7 @@ public class DetectWeapons : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col) 
     {
-        if (col.gameObject.layer == Layers.weapons) 
+        if (col.gameObject.layer == Layers.Weapons) 
         {
             weaponSystem.collectNewWeapon(col.GetComponent<WeaponTag>().Tag);
             col.gameObject.SetActive(false);

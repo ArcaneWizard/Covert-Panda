@@ -22,7 +22,7 @@ public class LimbSwapper : MonoBehaviour
     {
         initializeComponents();
         updateSpriteAndBoneTransforms();
-        Orderer.updateOrder(transform, limbCollection.transform.parent.parent);
+        Orderer.updateSpriteOrder(transform, limbCollection.transform.parent.parent);
 
         Destroy(this);
     }
@@ -53,10 +53,11 @@ public class LimbSwapper : MonoBehaviour
     // 1) when this limb is updated in the editor and needs to be retrieved (ex. left arm changed to right arm)
     // 2) when the editor scene is first loaded so all limbs need to be retrieved. Note: the 1 sec delay ensures 
     // the creature type was registered first as the limb collection is dependent on the creature type
-    async void OnValidate() 
+    /*async void OnValidate() 
     {
-        /*await Task.Delay(1000);
-        findlimbCollection();
+        await Task.Delay(1000);
+        if (!findlimbCollection())
+            return;
 
         // prefabs don't have a parent, so the editor will never update them
         if (!limbCollection || !limbCollection.transform.parent)
@@ -66,10 +67,9 @@ public class LimbSwapper : MonoBehaviour
         if (EditorApplication.isPlayingOrWillChangePlaymode)
             return;
         
-        initializeComponents();s
+        initializeComponents();
         updateSpriteAndBoneTransforms();
-        */
-    }
+    }*/
     
     // Retrieve all limbs from the limb collection and update them. Runs whenever
     // whnever the editor detects a change was made in the hierarchy (ie. creature type was changed)
@@ -90,20 +90,27 @@ public class LimbSwapper : MonoBehaviour
 
     // Automates the task of manually dragging in the limb collection to this object's hierarchy. 
     // Call at the top of OnValidate to run
-    private void findlimbCollection()
+    private bool findlimbCollection()
     {
         counter =  0;
+        Transform problem = transform;
         armBones = transform;
  
-        while (!limbCollection || counter <= 8)
+        while (!limbCollection && counter <= 8)
         {
             counter++;
-            armBones = armBones.parent;
-            if (armBones.GetComponent<LimbCollection>())
+
+            if (armBones != null)
+                armBones = armBones.parent;
+
+            if (armBones != null && armBones.GetComponent<LimbCollection>())
                 limbCollection = armBones.GetComponent<LimbCollection>();
+            else
+                return false;
         }
 
         UnityEditor.EditorUtility.SetDirty(this);
+        return true;
     }
 
 #endif

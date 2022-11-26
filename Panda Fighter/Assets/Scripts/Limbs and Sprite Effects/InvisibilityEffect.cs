@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+// Manages and implements the invisibility effect for a creature, during which
+// the creature visually appears translucent.
+
 public class InvisibilityEffect : MonoBehaviour
 {
     public CentralAbilityHandler centralAbilityHandler;
@@ -37,10 +40,10 @@ public class InvisibilityEffect : MonoBehaviour
 
     void Update()
     {
-        sR.color = (centralAbilityHandler.invisibilityEnabled)
+        sR.color = (centralAbilityHandler.IsInvisible)
             ? new Color(color.r, color.g, color.b, 0.4f)
             : new Color(color.r, color.g, color.b, 1f);
 
-        gameObject.layer = (centralAbilityHandler.invisibilityEnabled) ? Layers.collideWithNothing : Layers.detectPickableWeapons;
+        gameObject.layer = (centralAbilityHandler.IsInvisible) ? Layers.InvulnerableHitBox : Layers.ArmorOrLimb;
     }
 }

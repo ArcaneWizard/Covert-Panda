@@ -133,13 +133,13 @@ public class Sideview_Controller : CentralController
 
     private void OnTriggerEnter2D(Collider2D col) 
     {
-        if (col.gameObject.layer == Layers.jumpPad)
+        if (col.gameObject.layer == Layers.JumpPad)
             standingOnJumpPad = true;
     }
 
     private void OnTriggerExit2D(Collider2D col) 
     {
-        if (col.gameObject.layer == Layers.jumpPad)
+        if (col.gameObject.layer == Layers.JumpPad)
             standingOnJumpPad = false;
     }
 }

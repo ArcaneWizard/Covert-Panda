@@ -16,7 +16,7 @@ public static class reusableWeaponMethods
     public static void configureReusedBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint, Side side)
     {
         // spawn bullet at the right place + default velocity and rotation
-        bullet.position = bulletSpawnPoint.position;
+        bullet.transform.position = bulletSpawnPoint.position;
         bullet.localEulerAngles = new Vector3(0, 0, bullet.localEulerAngles.z);
         bulletRig.velocity = new Vector2(0, 0);
         bulletRig.angularVelocity = 0;

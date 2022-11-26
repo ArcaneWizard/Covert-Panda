@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Orderer : MonoBehaviour 
 {
-    public static void updateOrder(Transform sprite, Transform entity) 
+    public static void updateSpriteOrder(Transform sprite, Transform entity) 
     {
         if (sprite.GetComponent<SpriteRenderer>() == null)
             return;

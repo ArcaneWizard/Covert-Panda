@@ -11,7 +11,7 @@ public class PlayerHealth : Health
         base.Awake();
 
         maxHP = 600;
-        bulletLayer = Layers.enemyBullet;
+        bulletLayer = Layers.EnemyBullet;
     }
 
     protected override void UponDying() 

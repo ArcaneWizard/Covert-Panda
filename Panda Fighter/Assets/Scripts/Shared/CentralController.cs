@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Manages the creature's movement, including related tasks like ground raycasting,
+// wall detection, and jumping.
+
 public class CentralController : MonoBehaviour
 {
     protected Rigidbody2D rig;
     protected Transform body;
     protected CentralAnimationController controller;
     protected Health health;
-
-    [HideInInspector]
     public Animator animator { get; private set; }
 
     [Header("Limbs and colliders")]
@@ -17,38 +18,37 @@ public class CentralController : MonoBehaviour
     public BoxCollider2D mainCollider;
     public BoxCollider2D oneWayCollider;
 
-    [Header("Camera stuff")]
-    private Camera camera;
-
     [Header("Ground detection")]
-
     public Transform leftGroundChecker;
     public Transform rightGroundChecker;
     public Transform physicalLeftFoot;
     public Transform physicalRightFoot;
 
-    public float maxSpeed { get; private set; }
-    protected float speed;
-    public static float jumpForce = 1750f; //1450f;
-    public static float doubleJumpForce = 1850f; //1350f;
-    public static float jumpPadForce = 3400; //2000f
-    protected float maxGravity = 5f; //2.5f
-
-    protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
-    protected GameObject leftFootGround, rightFootGround, centerGround;
-    protected float lastGroundAngle;
-
-    protected bool wallToTheLeft, wallToTheRight;
-
+    // Useful movement information
     public bool isGrounded { get; protected set; }
     public bool isTouchingMap { get; protected set; }
-    
+    public float maxSpeed { get; private set; }
+    protected float speed; // current speed of creature
+    public int dirX { get; protected set; } // current movement dir of creature
+
+    // Important movement constants:
+    public static float jumpForce = 1750f; 
+    public static float doubleJumpForce = 1850f; 
+    public static float jumpPadForce = 3400; 
+    public static float maxGravity = 5f;
+
+    // Info about the ground or walls detected:
+    protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
+    protected GameObject leftFootGround, rightFootGround, centerGround;
+    protected bool wallToTheLeft, wallToTheRight;
+
+    // Info about the ground angle/current tilt of the creature on a platform
+    protected float lastGroundAngle;
     public bool forceUpdateTilt;
     protected float groundAngle;
     protected Vector2 groundDir;
     protected bool checkForAngle;
 
-    public int dirX { get; protected set; }
     protected float zAngle;
 
     public void Awake()
@@ -58,10 +58,9 @@ public class CentralController : MonoBehaviour
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         controller = transform.GetComponent<CentralAnimationController>();
         health = transform.GetComponent<Health>();
-        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
         Side side = transform.parent.GetComponent<Role>().side;
-        mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.friend : Layers.enemy;
+        mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.Friend : Layers.Enemy;
         mainCollider.offset = new Vector2(0, 1.45f);
 
         maxSpeed = 22f;
@@ -71,10 +70,15 @@ public class CentralController : MonoBehaviour
     public virtual void Start()
     {
         StartCoroutine(findWalls());
-        StartCoroutine(determineIfGrounded(controller.disableLimbsDuringDoubleJump));
+        StartCoroutine(determineIfGrounded(controller.IsExecutingDoubleJump));
     }
 
-    public virtual void Update() => tilt();
+    public virtual void Update()
+    {
+        if (speed < 0)
+            Debug.LogError("speed should never be negative. Set dirX to negative instead");
+        tilt();
+    }
 
     public void setDirection(int dir) => this.dirX = dir;
 
@@ -252,19 +256,19 @@ public class CentralController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround)
+        if (col.gameObject.layer == Layers.DefaultGround || col.gameObject.layer == Layers.OneWayGround)
             isTouchingMap = true;
     }
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround)
+        if (col.gameObject.layer == Layers.DefaultGround || col.gameObject.layer == Layers.OneWayGround)
             isTouchingMap = true;
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layers.ground || col.gameObject.layer == Layers.oneWayGround)
+        if (col.gameObject.layer == Layers.DefaultGround || col.gameObject.layer == Layers.OneWayGround)
             isTouchingMap = false;
     }
 

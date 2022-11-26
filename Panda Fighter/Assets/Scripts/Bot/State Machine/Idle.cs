@@ -4,59 +4,57 @@ using UnityEngine;
 
 public class Idle : IState
 {
-    private AI_Controller controller;
-    private float unfreezeTimer;
-
     // how long (in seconds) the AI goes idle for. provided as a range
-    private Vector2 freezeTime = new Vector2(0.3f, 2f);
+    private Vector2 duration = new Vector2(0.3f, 2f);
 
     // how often (in seconds) the AI goes idle. provided as a range
-    private Vector2 delayGoingIdle = new Vector2(4f, 9.8f);
+    private Vector2 frequency = new Vector2(4f, 9.8f);
 
-    public bool GoodTimeToGoIdle;
-    public bool StopBeingIdle;
+    private AI_Controller controller;
+
+    private float timer;
+    public bool NotIdle;
+
 
     public Idle(AI_Controller controller)
     {
         this.controller = controller;
 
-        GoodTimeToGoIdle = false;
-        StopBeingIdle = false;
+        NotIdle = false;
         controller.StartCoroutine(updateWhenAiShouldGoIdle());
     }
 
     public void OnEnter()
     {
-        unfreezeTimer = UnityEngine.Random.Range(freezeTime.x, freezeTime.y);
+        timer = UnityEngine.Random.Range(duration.x, duration.y);
         controller.setDirection(0);
     }
 
     public void Tick()
     {
-        if (unfreezeTimer > 0)
-            unfreezeTimer -= Time.deltaTime;
+        if (timer > 0)
+            timer -= Time.deltaTime;
         else
-            StopBeingIdle = true;
+            NotIdle = true;
     }
 
     public void OnExit()
-    {
-        GoodTimeToGoIdle = false;
-        StopBeingIdle = false;
+    { 
+        NotIdle = false;
         controller.setDirection(UnityEngine.Random.Range(0, 2) * 2 - 1);
-    }
+    } 
 
     private IEnumerator updateWhenAiShouldGoIdle()
     {
-        float delay = UnityEngine.Random.Range(delayGoingIdle.x, delayGoingIdle.y);
+        float delay = UnityEngine.Random.Range(frequency.x, frequency.y);
         yield return new WaitForSeconds(delay);
-        GoodTimeToGoIdle = controller.isGrounded && controller.isTouchingMap;
+        bool canGoIdle = controller.isGrounded && controller.isTouchingMap;
 
         int x = 1;
-        if (!GoodTimeToGoIdle && x <= 1) 
+        if (!canGoIdle && x <= 1) 
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 1.2f));
-            GoodTimeToGoIdle = controller.isGrounded && controller.isTouchingMap;
+            canGoIdle = controller.isGrounded && controller.isTouchingMap;
             ++x;
         }
             

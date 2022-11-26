@@ -77,8 +77,8 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         IWeapons[weaponSelected].resetAttackProgress();
 
         shooting.UpdateCombatMode(CurrentWeaponConfiguration.combatMode);
-        lookAround.setAimTarget(CurrentWeaponConfiguration.aimTarget);
-        lookAround.calculateShoulderAngles(CurrentWeaponConfiguration.IK_Coordinates);
+        lookAround.setAimTarget(CurrentWeaponConfiguration.weaponAimTracker);
+        lookAround.calculateShoulderAngles(CurrentWeaponConfiguration.weaponIKCoordinates);
 
         if (bulletPools.ContainsKey(weaponSelected))
             bulletNumber = ++bulletNumber % bulletPools[weaponSelected].Count;

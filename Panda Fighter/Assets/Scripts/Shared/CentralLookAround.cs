@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CentralLookAround : MonoBehaviour
+public abstract class CentralLookAround : MonoBehaviour
 {
+    public Vector2 directionToLook { get; protected set; }
+    [SerializeField] protected Transform weaponPivot;
+    
     //ideal aim coordinates when looking to the side, up or down 
-    [HideInInspector]
-    private Vector2 pointingRight, pointingUp, pointingDown, shoulderPos;
+    private Vector2 pointingRight, pointingUp, pointingDown, shoulderPos; 
     private float upVector, downVector, rightVector;
     private float up, right, down;
 
-    public Transform head;
-    public Transform shootingArm;
+    [SerializeField] protected Transform head;
     protected Camera camera;
-
     protected Transform body;
     private Transform aimTarget;
 
@@ -24,7 +24,10 @@ public class CentralLookAround : MonoBehaviour
     protected Health health;
     protected Animator animator;
 
-    public virtual void Awake()
+    protected abstract void figureOutDirectionToLookIn();
+    protected abstract void updateDirectionCreatureFaces();
+    
+    protected virtual void Awake()
     {
         controller = transform.GetComponent<CentralController>();
         animController = transform.GetComponent<CentralAnimationController>();
@@ -36,70 +39,87 @@ public class CentralLookAround : MonoBehaviour
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
     }
 
-    protected void rotateHeadAndWeapon(Vector2 shootDirection, float shootAngle)
-    {
-        if (shootDirection.y >= 0)
-        {
-            float slope = (up - right) / 90f;
-            float weaponRotation = shootAngle * slope + right;
-
-            float dirSlope = (upVector - rightVector) / 90f;
-            float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
-
-            Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-            if (aimTarget)
-                aimTarget.transform.localPosition = targetLocation;
-
-            // head rotation is calculated with a linear equation mapping shooting dir/angle to the corresponding head rotation
-            float headSlope = (135f - 92.4f) / 90f;
-            float headRotation = headSlope * shootAngle + 92.4f;
-
-            // offset the head rotation by the angle of the ground that the creature is standing on (ie. the angle the creature is tilted)
-            headRotation += Mathf.Sign(shootDirection.x) * transform.localEulerAngles.z;
-            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headRotation);
-        }
-
-        if (shootDirection.y < 0)
-        {
-            float slope = (down - right) / -90f;
-            float weaponRotation = shootAngle * slope + right;
-
-            float dirSlope = (downVector - rightVector) / -90f;
-            float weaponDirMagnitude = shootAngle * dirSlope + rightVector;
-
-            Vector2 targetLocation = weaponDirMagnitude * new Vector2(Mathf.Cos(weaponRotation * Mathf.PI / 180f), Mathf.Sin(weaponRotation * Mathf.PI / 180f)) + shoulderPos;
-            if (aimTarget)
-                aimTarget.transform.localPosition = targetLocation;
-
-            float headSlope = (40f - 92.4f) / -90f;
-            float headRotation = headSlope * shootAngle + 92.4f;
-
-            headRotation += Mathf.Sign(shootDirection.x) * transform.localEulerAngles.z;
-            head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headRotation);
-        }
-    }
+    // updates the weapon's aim target (all weapons/shoulders are configured to automatically rotate to follow the aim target as it moves) 
+    public void setAimTarget(Transform aimTarget) => this.aimTarget = aimTarget;
 
     public void calculateShoulderAngles(List<Vector2> aiming)
     {
-        //get specific weapon aim coordinates
+        //get where the weapon's aiming target should be positioned when pointing the gun right, up or down
         pointingRight = aiming[0];
         pointingUp = aiming[1];
         pointingDown = aiming[2];
         shoulderPos = aiming[3];
 
-        //ideal angle from shoulder to specific gun coordinates
-        up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+        //get the aim target's angle relative to the shoulder when pointing the gun right, up or down
         right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+        up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
         down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
 
-        //ideal vector magnitudes from shoulder to specific gun coordinates
-        upVector = (pointingUp - shoulderPos).magnitude;
+        //get the aim target's distance from the shoulder when pointing the gun right, up or down
         rightVector = (pointingRight - shoulderPos).magnitude;
+        upVector = (pointingUp - shoulderPos).magnitude;
         downVector = (pointingDown - shoulderPos).magnitude;
     }
 
-    public void setAimTarget(Transform aimTarget)
+    protected virtual void LateUpdate() 
     {
-        this.aimTarget = aimTarget;
+        if (health.isDead || animController.IsExecutingDoubleJump)
+            return;
+        
+        figureOutDirectionToLookIn();
+        updateDirectionCreatureFaces();
+        updateGunAndHeadRotation();
+    }
+
+    private void updateGunAndHeadRotation() 
+    {
+        //calculate the angle btwn mouse cursor and player's shooting arm
+        float angleOfSight = Mathf.Atan2(directionToLook.y, Mathf.Abs(directionToLook.x)) * 180 / Mathf.PI;
+
+        //adjust the angle of sight correspondingly when the player body is tilted on sloped ground/ramps:
+        float zAngle = (transform.eulerAngles.z > 180f) ? 360 - transform.eulerAngles.z : transform.eulerAngles.z;
+        zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
+        angleOfSight -= zAngle;
+
+        rotateHead(angleOfSight);
+        rotateWeapon(angleOfSight);
+    }
+
+    private void rotateHead(float angleOfSight) 
+    {
+        float headSlope, headRotation;
+        if (directionToLook.y >= 0)
+            headSlope = (135f - 92.4f) / 90f;
+        else
+            headSlope = (40f - 92.4f) / -90f;
+        
+        headRotation = headSlope * angleOfSight + 92.4f;
+        headRotation += Mathf.Sign(directionToLook.x) * transform.localEulerAngles.z;
+        head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headRotation);
+    }
+
+    private void rotateWeapon(float angleOfSight)
+    {
+        float aimTargetDistanceFromShoulder, aimTargetAngle;
+        if (directionToLook.y >= 0)
+        {
+            float slope = (up - right) / 90f;
+            aimTargetAngle = angleOfSight * slope + right;
+
+            float dirSlope = (upVector - rightVector) / 90f;
+            aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+        }
+        else 
+        {
+            float slope = (down - right) / -90f;
+            aimTargetAngle = angleOfSight * slope + right;
+
+            float dirSlope = (downVector - rightVector) / -90f;
+            aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+        }
+
+        if (aimTarget)
+            aimTarget.transform.localPosition = aimTargetDistanceFromShoulder 
+                * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
     }
 }

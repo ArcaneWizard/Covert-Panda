@@ -36,7 +36,7 @@ public class AI_Controller : CentralController
     {
         this.Action = AI_action;
         decisionZone = zone;
-        actionProgress = "pending start";
+        actionProgress = "pending start"; 
     }
 
     // executes the initialized action and sets action progress to "in progress"
@@ -112,7 +112,7 @@ public class AI_Controller : CentralController
             }
 
             // AI always moves at its max speed when not carrying out an action
-            if (actionProgress == "finished")
+            if (actionProgress == "finished") 
                 speed = maxSpeed;
         }
         

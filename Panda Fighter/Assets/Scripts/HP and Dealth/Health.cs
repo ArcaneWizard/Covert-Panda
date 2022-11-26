@@ -40,7 +40,7 @@ public abstract class Health : MonoBehaviour
         hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
 
         side = transform.parent.GetComponent<Role>().side;
-        hitBox.gameObject.layer = (side == Side.Friendly) ? Layers.friendlyHitBox : Layers.enemyHitBox;
+        hitBox.gameObject.layer = (side == Side.Friendly) ? Layers.FriendlyHitBox : Layers.EnemyHitBox;
 
         hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(1).GetComponent<Image>();
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
@@ -59,27 +59,27 @@ public abstract class Health : MonoBehaviour
         hitBox.offset = new Vector2(0, -0.15f);
         hitBox.size = new Vector2(0.13f, 2.48f);
 
-        StartCoroutine(abilityHandler.spawnProtection());
+        StartCoroutine(abilityHandler.enableSpawnProtection());
     }
 
     // checks for when the entity collides with a bullet or explosion. apply dmg
     // and update health bar correspondingly
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (isDead || abilityHandler.isInvulnerable)
+        if (isDead || abilityHandler.IsInvulnerable)
             return;
 
         if (col.gameObject.layer == bulletLayer)
             hitByBullet(col.transform);
 
-        else if (col.gameObject.layer == Layers.explosion)
+        else if (col.gameObject.layer == Layers.Explosion)
             hitByExplosion(col.transform);
     }
 
     // Helper method. If this entity collides with a bullet and that bullet hasn't made contact with 
     // anyone yet, reduce this entity's hp by the dmg that the particular bullet does. Also register that  
-    // the bullet has made contact / done damage to someone + trigger any bullet action if needbe (ex. explosion) 
-    public void hitByBullet(Transform physicalBullet)
+    // the bullet has smade contact / done damage to someone + trigger any bullet action if needbe (ex. explosion) 
+    private void hitByBullet(Transform physicalBullet)
     {
         Bullet bullet = physicalBullet.GetComponent<Bullet>();
 
@@ -150,7 +150,7 @@ public abstract class Health : MonoBehaviour
         controller.updateGroundAngle(false);
         controller.forceUpdateTilt = true;
 
-        StartCoroutine(abilityHandler.spawnProtection());
+        StartCoroutine(abilityHandler.enableSpawnProtection());
     }
 
     protected virtual void UponDying()
