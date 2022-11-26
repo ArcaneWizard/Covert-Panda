@@ -16,7 +16,7 @@ public class wFocusBeamer : IWeapon
         bullet.transform.right = aim;
 
         bullet.transform.GetComponent<FocusBeam>().Beam(configuration.bulletSpawnPoint,
-            configuration.weapon.transform, animController.IsExecutingDoubleJump);
+            configuration.weapon.transform, animController.DisableLimbsDuringDoubleJump);
     }
 
 }

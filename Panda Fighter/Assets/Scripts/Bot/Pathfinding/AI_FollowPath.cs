@@ -56,15 +56,15 @@ public class AI_FollowPath : MonoBehaviour
 
         //head towards starting path Node
         if (transform.position.x < path[0].transform.position.x)
-            controller.setDirection(1);
+            controller.SetDirection(1);
         else
-            controller.setDirection(-1);
+            controller.SetDirection(-1);
     }
 
     public void tick()
     {
         if (journey == "in progress" && controller.actionProgress == "finished" && controller.isGrounded && controller.isTouchingMap)
-            controller.setDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
+            controller.SetDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
     }
 
     public void endJourney() => journey = "ended";

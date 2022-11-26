@@ -33,8 +33,6 @@ public class Teleportation : MonoBehaviour
     {
         Vector3 nextLocation = teleportationZones.transform.GetChild(random.Next(0, teleportationZones.childCount)).position;
         transform.position = new Vector3(nextLocation.x, nextLocation.y, transform.position.z);
-
-        controller.updateGroundAngle(false);
-        controller.forceUpdateTilt = true;
+        controller.UpdateTiltInstantly();
     }
 }

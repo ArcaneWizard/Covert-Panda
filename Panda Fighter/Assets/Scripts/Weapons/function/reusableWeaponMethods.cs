@@ -23,9 +23,9 @@ public static class reusableWeaponMethods
 
         // set the layer of the bullet (does it damage the player/friendly creatures or enemy creatures)
         if (side == Side.Friendly)
-            bullet.gameObject.layer = Layers.friendlyBullet;
+            bullet.gameObject.layer = Layers.FriendlyBullet;
         else
-            bullet.gameObject.layer = Layers.enemyBullet;
+            bullet.gameObject.layer = Layers.EnemyBullet;
 
         // reenable collider
         bullet.GetComponent<Collider2D>().enabled = true;

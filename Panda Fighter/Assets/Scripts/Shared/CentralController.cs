@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Manages the creature's movement, including related tasks like ground raycasting,
-// wall detection, and jumping.
+// Manages the creature's movement, including related tasks like checking if
+// the creature is grounded and getting a jump boost from jump-pads
 
 public class CentralController : MonoBehaviour
 {
@@ -42,14 +42,10 @@ public class CentralController : MonoBehaviour
     protected GameObject leftFootGround, rightFootGround, centerGround;
     protected bool wallToTheLeft, wallToTheRight;
 
-    // Info about the ground angle/current tilt of the creature on a platform
-    protected float lastGroundAngle;
-    public bool forceUpdateTilt;
+    // Info about the slope of the ground 
+    protected Vector2 groundSlope;
     protected float groundAngle;
-    protected Vector2 groundDir;
-    protected bool checkForAngle;
-
-    protected float zAngle;
+    private float lastGroundAngle;
 
     public void Awake()
     {
@@ -69,24 +65,26 @@ public class CentralController : MonoBehaviour
 
     public virtual void Start()
     {
-        StartCoroutine(findWalls());
-        StartCoroutine(determineIfGrounded(controller.IsExecutingDoubleJump));
+        StartCoroutine(performWallChecks());
+        StartCoroutine(repeatedlyCheckIfGrounded());
     }
 
-    public virtual void Update()
+    public virtual void Update() => updateTilt(false);
+
+    // Set the x direction of the creature's movement (1 = right, 0 = still, -1 = left)
+    public void SetDirection(int dir) => this.dirX = dir;
+
+    // Immediately update the creature's standing tilt for the current ground 
+    public void UpdateTiltInstantly()
     {
-        if (speed < 0)
-            Debug.LogError("speed should never be negative. Set dirX to negative instead");
-        tilt();
+        updateGroundAngle();
+        updateTilt(true);
     }
 
-    public void setDirection(int dir) => this.dirX = dir;
-
-    //player or alien's body should tilt slightly on the slanted platform
-    protected void tilt()
+    // Update the creature's standing tilt and feet rotation depending on the ground angle
+    private void updateTilt(bool instantly)
     {
-        //DebugGUI.debugTexts[7] = Bullet.raycastsUsed.ToString();
-        zAngle = transform.eulerAngles.z;
+        float zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)
             zAngle = zAngle - 360;
@@ -102,11 +100,8 @@ public class CentralController : MonoBehaviour
         else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
 
-        if (forceUpdateTilt) 
-        {
+        if (instantly) 
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
-            forceUpdateTilt = false;
-        }
 
         float tempGroundAngle = (groundAngle <= 180f) ? groundAngle : groundAngle - 360;
         physicalLeftFoot.transform.localEulerAngles = new Vector3(0, 0, 90 + tempGroundAngle);
@@ -114,16 +109,17 @@ public class CentralController : MonoBehaviour
     }
     
     //check if the creature is on the ground + update the groundAngle
-    public IEnumerator determineIfGrounded(bool disableLimbsDuringDoubleJump)
+    private IEnumerator repeatedlyCheckIfGrounded()
     {
-        updateGroundAngle(disableLimbsDuringDoubleJump);
+        updateGroundAngle();
         yield return new WaitForSeconds(0.03f);
-        StartCoroutine(determineIfGrounded(disableLimbsDuringDoubleJump));
+        StartCoroutine(repeatedlyCheckIfGrounded());
     }
 
-    public void updateGroundAngle(bool disableLimbsDuringDoubleJump) 
+    // update the ground angle
+    private void updateGroundAngle() 
     {
-        //use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
+        // use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
         leftGroundHit = Physics2D.Raycast(leftGroundChecker.position, Vector2.down, 2f, LayerMasks.map);
         if (leftGroundHit.collider != null)
             leftGroundHit = Physics2D.Raycast(leftGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, LayerMasks.map);
@@ -135,54 +131,55 @@ public class CentralController : MonoBehaviour
         leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
         rightFootGround = (rightGroundHit.collider != null && rightGroundHit.normal.y >= 0.3f) ? rightGroundHit.collider.gameObject : null;
 
-        //if the creature was just grounded after falling OR the player been moving on the ground, enable this bool (used later to prevent bug)
+        // if the creature was just grounded after falling OR the player been moving on the ground, enable this bool (used later to prevent bug)
+        bool checkForAngle = false;
         if ((!isGrounded || dirX != 0) && (leftFootGround || rightFootGround))
             checkForAngle = true;
 
-        //determine if creature is grounded if either foot raycast hit the ground
-        if (!disableLimbsDuringDoubleJump)
+        // determine if creature is grounded if either foot raycast hit the ground
+        if (!controller.DisableLimbsDuringDoubleJump)
             isGrounded = leftFootGround || rightFootGround;
 
-        //register the angle of the ground
+        // register the angle of the ground
         if (isGrounded)
         {
-            //moving right while facing right or moving left while facing left -> use "right foot" gameobject
+            // moving right while facing right or moving left while facing left -> use "right foot" gameobject
             if (((dirX == 1 && body.localEulerAngles.y == 0) || (dirX == -1 && body.localEulerAngles.y == 180)) && rightFootGround)
             {
-                groundDir = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
-                float f = groundDir.y / groundDir.x;
+                groundSlope = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
+                float f = groundSlope.y / groundSlope.x;
                 groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
             }
 
-            //moving left while facing right or moving right facing left -> use "left foot" gameobject
+            // moving left while facing right or moving right facing left -> use "left foot" gameobject
             else if (((dirX == -1 && body.localEulerAngles.y == 0) || (dirX == 1 && body.localEulerAngles.y == 180)) && leftFootGround)
             {
-                groundDir = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
-                float f = groundDir.y / groundDir.x;
+                groundSlope = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
+                float f = groundSlope.y / groundSlope.x;
                 groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
             }
 
-            //not moving 
+            // not moving 
             else if (rightFootGround && rightGroundHit.normal.y != 1)
             {
-                groundDir = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
-                float f = groundDir.y / groundDir.x;
+                groundSlope = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
+                float f = groundSlope.y / groundSlope.x;
                 groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
             }
 
-            //not moving
+            // not moving
             else if (leftFootGround)
             {
-                groundDir = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
-                float f = groundDir.y / groundDir.x;
+                groundSlope = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
+                float f = groundSlope.y / groundSlope.x;
                 groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
             }
 
-            //not moving
+            // not moving
             else
             {
-                groundDir = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
-                float f = groundDir.y / groundDir.x;
+                groundSlope = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
+                float f = groundSlope.y / groundSlope.x;
                 groundAngle = Mathf.Atan(f) * 180f / Mathf.PI;
             }
         }
@@ -190,42 +187,39 @@ public class CentralController : MonoBehaviour
         else
         {
             groundAngle = 0;
-            groundDir = new Vector2(1, 0);
+            groundSlope = new Vector2(1, 0);
         }
 
-        //lastGroundAngle is used elsewhere to prevent a bug: where the player sometimes spasms when standing still on uneven terrain
+        // lastGroundAngle will be used to prevent a bug where the player sometimes spasms when standing still on uneven terrain
         if (checkForAngle)
-        {
             lastGroundAngle = groundAngle;
-            checkForAngle = false;
-        }
     }
 
-    protected IEnumerator findWalls()
+    private IEnumerator performWallChecks()
     {
         if (body.localEulerAngles.y == 0)
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(leftGroundChecker.position, -groundDir, 2f, LayerMasks.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(leftGroundChecker.position, -groundSlope, 2f, LayerMasks.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(rightGroundChecker.position, groundDir, 2f, LayerMasks.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(rightGroundChecker.position, groundSlope, 2f, LayerMasks.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
         else
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(rightGroundChecker.position, -groundDir, 2f, LayerMasks.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(rightGroundChecker.position, -groundSlope, 2f, LayerMasks.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(leftGroundChecker.position, groundDir, 2f, LayerMasks.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(leftGroundChecker.position, groundSlope, 2f, LayerMasks.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
 
         yield return new WaitForSeconds(Time.deltaTime * 2);
-        StartCoroutine(findWalls());
+        StartCoroutine(performWallChecks());
     }
 
     protected void normalJump() 
@@ -243,7 +237,7 @@ public class CentralController : MonoBehaviour
         rig.gravityScale = maxGravity;
 
         rig.AddForce(new Vector2(0, doubleJumpForce));
-        StartCoroutine(controller.startDoubleJumpAnimation());
+        StartCoroutine(controller.SetupDoubleJumpSomersault());
     }
 
     protected void jumpPadBoost()

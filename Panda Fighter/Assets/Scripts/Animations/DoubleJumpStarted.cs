@@ -6,6 +6,6 @@ public class DoubleJumpStarted : StateMachineBehaviour
 {
     override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
     {
-        animator.transform.parent.GetComponent<CentralAnimationController>().carryOutDoubleJump = true;
+        //animator.transform.parent.GetComponent<CentralAnimationController>().StartDoubleJump();
     }
 }

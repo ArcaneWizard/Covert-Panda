@@ -75,7 +75,7 @@ public class Sideview_Controller : CentralController
 
             //player velocity is parallel to the slanted ground
             else
-                rig.velocity = groundDir * speed * dirX;
+                rig.velocity = groundSlope * speed * dirX;
 
             //don't slip on steep slopes
             rig.gravityScale = (dirX == 0) ? 0f : maxGravity;

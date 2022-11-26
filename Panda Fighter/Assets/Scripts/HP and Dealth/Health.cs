@@ -147,8 +147,7 @@ public abstract class Health : MonoBehaviour
 
         yield return new WaitForSeconds(Time.deltaTime);
         hpBar.transform.parent.gameObject.SetActive(true);
-        controller.updateGroundAngle(false);
-        controller.forceUpdateTilt = true;
+        controller.UpdateTiltInstantly();
 
         StartCoroutine(abilityHandler.enableSpawnProtection());
     }

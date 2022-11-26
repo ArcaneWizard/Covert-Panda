@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// When the the creature looks around with their weapon, update the arm limbs/weapon
+// to aim in the correct direction and update the head to look in the correct direction 
+
 public abstract class CentralLookAround : MonoBehaviour
 {
     public Vector2 directionToLook { get; protected set; }
@@ -39,7 +42,7 @@ public abstract class CentralLookAround : MonoBehaviour
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
     }
 
-    // updates the weapon's aim target (all weapons/shoulders are configured to automatically rotate to follow the aim target as it moves) 
+    // updates the weapon's IK aim target 
     public void setAimTarget(Transform aimTarget) => this.aimTarget = aimTarget;
 
     public void calculateShoulderAngles(List<Vector2> aiming)
@@ -63,7 +66,7 @@ public abstract class CentralLookAround : MonoBehaviour
 
     protected virtual void LateUpdate() 
     {
-        if (health.isDead || animController.IsExecutingDoubleJump)
+        if (health.isDead || animController.DisableLimbsDuringDoubleJump)
             return;
         
         figureOutDirectionToLookIn();

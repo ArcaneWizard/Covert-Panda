@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class AI_AnimationController : CentralAnimationController
 {
-    protected override void setAnimationState()
+    protected override void updateCurrentAnimation()
     {
-        base.setAnimationState();
+        base.updateCurrentAnimation();
         bool facingRight = body.localEulerAngles.y == 0;
 
         // if you're looking in the same direction as you're running, play the 

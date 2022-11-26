@@ -239,7 +239,7 @@ public class AI_Controller : CentralController
             else if (actionProgress == "finished" && wallToTheRight)
                 dirX = -1;
 
-            rig.velocity = groundDir * speed * dirX;
+            rig.velocity = groundSlope * speed * dirX;
             rig.gravityScale = (dirX == 0) ? 0f : maxGravity;
         }
 
