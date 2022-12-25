@@ -611,7 +611,6 @@ MonoBehaviour:
   rightGroundChecker: {fileID: 8025231701959861733}
   physicalLeftFoot: {fileID: 8025231701375706661}
   physicalRightFoot: {fileID: 8025231702789707839}
-  forceUpdateTilt: 0
 --- !u!114 &2732179973243828987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,10 +623,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2476524a036684a8fbe08359d72fe592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doubleJumpForwards: {fileID: 7400000, guid: 417e154ed04f04dd7b3a2dc698885ed9, type: 2}
-  doubleJumpBackwards: {fileID: 7400000, guid: a09d893a35d0240b4bb64d98e3c7f0f4, type: 2}
   doubleJumpCollider: {fileID: 8991020208848330079}
-  carryOutDoubleJump: 0
 --- !u!114 &2732179973243828986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2333,6 +2329,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -7055813389962289685, guid: b6b9d695ce72f4515bbcf456ae3858b4,
         type: 3}
+    - target: {fileID: 5383488770034507225, guid: b5928dc3414a74ddcb4e50770c39d51c,
+        type: 3}
+      propertyPath: m_RootBone
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383488770034507225, guid: b5928dc3414a74ddcb4e50770c39d51c,
+        type: 3}
+      propertyPath: m_Bounds.m_Center.x
+      value: 1.53001
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383488770034507225, guid: b5928dc3414a74ddcb4e50770c39d51c,
+        type: 3}
+      propertyPath: m_Bounds.m_Center.y
+      value: 1.1987301
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383488770034507225, guid: b5928dc3414a74ddcb4e50770c39d51c,
+        type: 3}
+      propertyPath: m_Bounds.m_Extent.x
+      value: 1.53001
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383488770034507225, guid: b5928dc3414a74ddcb4e50770c39d51c,
+        type: 3}
+      propertyPath: m_Bounds.m_Extent.y
+      value: 1.1987301
+      objectReference: {fileID: 0}
+    - target: {fileID: 5383488770034507225, guid: b5928dc3414a74ddcb4e50770c39d51c,
+        type: 3}
+      propertyPath: m_BoneTransforms.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5383488770034507227, guid: b5928dc3414a74ddcb4e50770c39d51c,
         type: 3}
       propertyPath: m_Layer

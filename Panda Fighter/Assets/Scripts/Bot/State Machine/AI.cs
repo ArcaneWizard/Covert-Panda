@@ -7,21 +7,17 @@ public class AI : MonoBehaviour
 {
     private GameObject AI_body;
     private AI_FollowPath pathFollower;
-    private PathFinding pathFinding;
     private AI_LookAround lookAround;
     private AI_WanderAround wanderAround;
     private AI_Controller controller;
 
     [SerializeField]
     private Transform possibleDestinations, manualDestination;
-    private bool occasionallyGrounded;
 
     private StateMachine stateMachine;
 
     void Awake()
     {
-        pathFinding = transform.GetComponent<PathFinding>();
-
         AI_body = transform.GetChild(0).gameObject;
         pathFollower = AI_body.AddComponent<AI_FollowPath>();
         wanderAround = AI_body.AddComponent<AI_WanderAround>();

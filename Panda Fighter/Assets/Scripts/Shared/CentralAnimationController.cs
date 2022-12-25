@@ -61,56 +61,33 @@ public class CentralAnimationController : MonoBehaviour
 
         if (somersaultState == SomersaultState.HasStarted)
         {
-           executeSomersault();
+           executeDoubleJumpSomersault();
 
-           // if creature is rotated between 150 and 250 degrees, somersault is mid-way to completion
            if (transform.localEulerAngles.z > 150 && transform.localEulerAngles.z < 250)
                 somersaultState = SomersaultState.Midway;
         }
 
-        if (somersaultState == SomersaultState.Midway)
+        else if (somersaultState == SomersaultState.Midway)
         {
-            executeSomersault();
+            Debug.Log("mid way");
+            executeDoubleJumpSomersault();
 
             bool isCreatureUpright = false;
-
             if (somersaultDirection == -1)
                 isCreatureUpright = transform.localEulerAngles.z < 30f;
             else if (somersaultDirection == 1)
                 isCreatureUpright = (transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40) || transform.localEulerAngles.z > 345;
 
             if (isCreatureUpright)
-            {
-                endSomersault();
-                somersaultState = SomersaultState.Ended;
-            }
+                somersaultState = SomersaultState.AlmostEnded;
         }
-    }
 
-    // Setup the double jump somersault. Specifies the direction to somersault in, disables concurrent limb updates temporarily
-    // (ex. can't control head movement while moving cursor), and plays the mid-air somersault animation.
-    // Temporarily disables creature's main collider and uses a different collider for the in-air summersault
-    public IEnumerator SetupDoubleJumpSomersault()
-    {
-        somersaultDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
-        somersaultState = SomersaultState.HasStarted;
-        DisableLimbsDuringDoubleJump = true;
-
-        // Plays the forwards spin animation if the entity is facing the direction it's moving in;
-        // plays backward spin animation if the entity is facing one direction but moving in the other.
-        if (controller.dirX == -1 && body.localEulerAngles.y == 0)
-            animator.SetBool("forward double jump", false);
-        else if (controller.dirX == 1 && body.localEulerAngles.y == 180)
-            animator.SetBool("forward double jump", false);
-        else
-            animator.SetBool("forward double jump", true);
-
-        controller.mainCollider.enabled = false;
-        doubleJumpCollider.enabled = true;
-        animator.SetBool("double jump", true);
-
-        yield return new WaitForSeconds(0.5f);
-        DisableLimbsDuringDoubleJump = false;
+        else if (somersaultState == SomersaultState.AlmostEnded)
+        {
+            Debug.Log("gonna end");
+            endDoubleJumpSomersault();
+            somersaultState = SomersaultState.Ended;
+        }
     }
 
     // Specify which animation to play and when. PHASES: 2 = jumping, 1 = walking, 0 = idle
@@ -129,16 +106,45 @@ public class CentralAnimationController : MonoBehaviour
         else if (controller.isGrounded)
             animator.SetInteger("Phase", (controller.dirX == 0) ? 0 : 1);
 
-        else 
+        else
             animator.SetInteger("Phase", 2);
+    }
+
+    public void StartDoubleJump() => somersaultState = SomersaultState.HasStarted;
+
+    // Setup the double jump somersault. Specifies the direction to somersault in, disables concurrent limb updates temporarily
+    // (ex. can't control head movement while moving cursor), and plays the mid-air somersault animation.
+    // Temporarily disables creature's main collider and uses a different collider for the in-air summersault
+    public IEnumerator SetupDoubleJumpSomersault()
+    {
+        somersaultDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
+        DisableLimbsDuringDoubleJump = true;
+
+        controller.mainCollider.enabled = false;
+        doubleJumpCollider.enabled = true;
+
+        // Plays the forwards spin animation if the entity is facing the direction it's moving in;
+        // plays backward spin animation if the entity is facing one direction but moving in the other.
+        animator.SetBool("double jump", true);
+        if (controller.dirX == -1 && body.localEulerAngles.y == 0)
+            animator.SetBool("forward double jump", false);
+        else if (controller.dirX == 1 && body.localEulerAngles.y == 180)
+            animator.SetBool("forward double jump", false);
+        else
+            animator.SetBool("forward double jump", true);
+
+
+        yield return new WaitForSeconds(0.5f);
+        DisableLimbsDuringDoubleJump = false;
     }
 
     // To double jump, the creature somersaults at a specified speed for a specified duration, 
     // then slows down rotating to a slower speed. The creature's rotation is synced to the progress of 
     // the double jump animation.
-    private void executeSomersault()
+    private void executeDoubleJumpSomersault()
     {
-        if(animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.65f && !animator.IsInTransition(0)) {
+        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.65f && !animator.IsInTransition(0))
+        {
             float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
 
             if (t < somersaultDuration)
@@ -149,10 +155,14 @@ public class CentralAnimationController : MonoBehaviour
                     somersaultDuration * initialSomersaultSpeed * somersaultDirection + (t - somersaultDuration) * endSomersaultSpeed * somersaultDirection);
             }
         }
-
+        else
+        {
+            Debug.Log(animator.GetCurrentAnimatorStateInfo(0).normalizedTime + "," + !animator.IsInTransition(0));
+            somersaultState = SomersaultState.AlmostEnded;
+        }
     }
 
-    private void endSomersault()
+    private void endDoubleJumpSomersault()
     {
         if (animator.GetBool("double jump"))
         {
@@ -197,7 +207,8 @@ public class CentralAnimationController : MonoBehaviour
     private enum SomersaultState
     {
         HasStarted, 
-        Midway, 
+        Midway,
+        AlmostEnded,
         Ended
     }
 }

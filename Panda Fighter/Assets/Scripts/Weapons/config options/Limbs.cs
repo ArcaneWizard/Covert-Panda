@@ -41,15 +41,15 @@ public class Limbs : MonoBehaviour
             Targets = transform.GetComponent<AimTargets>();
 
         if (limb == Short_barrel)
-            return IKCoordinatesForAiming.ShortBarrelCoordinates;
+            return IKAimingCoordinates.ShortBarrelCoordinates;
         else if (limb == Meelee_grip)
-            return IKCoordinatesForAiming.MeeleeGripCoordinates;
+            return IKAimingCoordinates.MeeleeGripCoordinates;
         else if (limb == Pistol_grip)
-            return IKCoordinatesForAiming.PistolGripCoordinates;
+            return IKAimingCoordinates.PistolGripCoordinates;
         else if (limb == Shoulder_rest)
-            return IKCoordinatesForAiming.ShoulderRestCoordinates;
+            return IKAimingCoordinates.ShoulderRestCoordinates;
 
-        return IKCoordinatesForAiming.DefaultCoordinates;
+        return IKAimingCoordinates.DefaultCoordinates;
     }
 }
 

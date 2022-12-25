@@ -6,7 +6,7 @@ using UnityEngine;
 // Stores the Inverse Kinematic (IK) coordinates that properly setup the rotation of a creature's arms
 // when aiming a weapon. Coordinates are grouped by which weapon type the arm limbs are meant to hold
 
-public static class IKCoordinatesForAiming
+public static class IKAimingCoordinates
 {
     //ideal coordinates when looking to the side, up or down ----> (DEFAULT FOR MOST WEAPONS)
     private static Vector2 defaultPointingRight = new Vector2(1.307f, 2.101f);

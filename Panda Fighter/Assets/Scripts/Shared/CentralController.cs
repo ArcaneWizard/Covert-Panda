@@ -87,8 +87,9 @@ public class CentralController : MonoBehaviour
         float zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)
-            zAngle = zAngle - 360;
+            zAngle -= 360;
 
+        Debug.Log(groundAngle);
         float newGroundAngle = groundAngle <= 180 ? groundAngle / 2.2f : ((groundAngle - 360) / 2.2f);
 
         if (isGrounded && (dirX != 0 || (dirX == 0 && groundAngle == lastGroundAngle)))
@@ -112,7 +113,7 @@ public class CentralController : MonoBehaviour
     private IEnumerator repeatedlyCheckIfGrounded()
     {
         updateGroundAngle();
-        yield return new WaitForSeconds(0.03f);
+        yield return new WaitForSeconds(0.06f);
         StartCoroutine(repeatedlyCheckIfGrounded());
     }
 

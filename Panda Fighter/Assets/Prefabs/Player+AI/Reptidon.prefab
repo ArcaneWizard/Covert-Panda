@@ -359,7 +359,6 @@ MonoBehaviour:
   rightGroundChecker: {fileID: 4589640270714447555}
   physicalLeftFoot: {fileID: 4589640271237850371}
   physicalRightFoot: {fileID: 4589640269824891673}
-  forceUpdateTilt: 0
 --- !u!114 &8431955666429603213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,10 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f1c454ec0b84a44bd216ee6d6adff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doubleJumpForwards: {fileID: 7400000, guid: 417e154ed04f04dd7b3a2dc698885ed9, type: 2}
-  doubleJumpBackwards: {fileID: 7400000, guid: a09d893a35d0240b4bb64d98e3c7f0f4, type: 2}
   doubleJumpCollider: {fileID: 9053294355431229785}
-  carryOutDoubleJump: 0
 --- !u!114 &8431955666429603250
 MonoBehaviour:
   m_ObjectHideFlags: 0
