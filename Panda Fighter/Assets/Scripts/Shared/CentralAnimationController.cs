@@ -10,7 +10,6 @@ public class CentralAnimationController : MonoBehaviour
 {
     protected CentralController controller;
     protected Animator animator;
-
     private Health health;
     protected Camera camera;
     protected Transform body;
@@ -26,11 +25,10 @@ public class CentralAnimationController : MonoBehaviour
 
     private Vector2 initialColliderSize;
 
-    private void Awake()
+    private void Awake() 
     {
         body = transform.GetChild(0);
         animator = body.GetComponent<Animator>();
-
         controller = transform.GetComponent<CentralController>();
         health = transform.GetComponent<Health>();
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
@@ -42,24 +40,25 @@ public class CentralAnimationController : MonoBehaviour
         somersaultState = SomersaultState.Ended;
     }
 
-    private void Update()
+    private void Update() 
     {
         if (health.isDead)
             return;
 
-        updateCurrentAnimation();
-        StartCoroutine(updateFeetAndCollider(controller.rightGroundChecker, controller.leftGroundChecker, controller.mainCollider));
+        updateAnimationState();
+        StartCoroutine(adjustFeetAndColliders(controller.rightGroundChecker, 
+            controller.leftGroundChecker, controller.mainCollider));
     }
 
-    private void FixedUpdate()
+    private void FixedUpdate() 
     {
-        if (health.isDead)
+        if (health.isDead) 
         {
             somersaultState = SomersaultState.Ended;
             return;
         }
 
-        if (somersaultState == SomersaultState.HasStarted)
+        if (somersaultState == SomersaultState.HasStarted) 
         {
            executeDoubleJumpSomersault();
 
@@ -67,50 +66,47 @@ public class CentralAnimationController : MonoBehaviour
                 somersaultState = SomersaultState.Midway;
         }
 
-        else if (somersaultState == SomersaultState.Midway)
+        else if (somersaultState == SomersaultState.Midway) 
         {
-            Debug.Log("mid way");
             executeDoubleJumpSomersault();
 
             bool isCreatureUpright = false;
             if (somersaultDirection == -1)
                 isCreatureUpright = transform.localEulerAngles.z < 30f;
-            else if (somersaultDirection == 1)
-                isCreatureUpright = (transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40) || transform.localEulerAngles.z > 345;
+            else if (somersaultDirection == 1) {
+                isCreatureUpright = (transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40) 
+                    || transform.localEulerAngles.z > 345;
+            }
 
             if (isCreatureUpright)
                 somersaultState = SomersaultState.AlmostEnded;
         }
 
-        else if (somersaultState == SomersaultState.AlmostEnded)
+        else if (somersaultState == SomersaultState.AlmostEnded) 
         {
-            Debug.Log("gonna end");
             endDoubleJumpSomersault();
             somersaultState = SomersaultState.Ended;
         }
     }
 
-    // Specify which animation to play and when. PHASES: 2 = jumping, 1 = walking, 0 = idle
-    // Will enter idle animation once grounded and not moving
+    public void StartDoubleJumpAnimation() => somersaultState = SomersaultState.HasStarted;
+
+    // Specify which animation to play and when. 
+    // Will enter idle animation once grounded + not moving
+    // Will enter running animation once grounded + moving 
     // Will enter jump animation when no longer grounded. 
-    // Will enter the idle animation + reset jump for next time, once grounded after a jump
-    protected virtual void updateCurrentAnimation()
-    {
-        if (animator.GetInteger("Phase") == 2 && controller.isGrounded)
+    // Note about animator's PHASE values below: 2 = jumping, 1 = walking, 0 = idle
+    protected virtual void updateAnimationState() {
+        if (controller.isGrounded) 
         {
             animator.SetBool("jumped", false);
             animator.SetInteger("Phase", (controller.dirX == 0) ? 0 : 1);
             animator.SetBool("double jump", false);
         }
 
-        else if (controller.isGrounded)
-            animator.SetInteger("Phase", (controller.dirX == 0) ? 0 : 1);
-
         else
             animator.SetInteger("Phase", 2);
     }
-
-    public void StartDoubleJump() => somersaultState = SomersaultState.HasStarted;
 
     // Setup the double jump somersault. Specifies the direction to somersault in, disables concurrent limb updates temporarily
     // (ex. can't control head movement while moving cursor), and plays the mid-air somersault animation.
@@ -162,24 +158,21 @@ public class CentralAnimationController : MonoBehaviour
         }
     }
 
-    private void endDoubleJumpSomersault()
+    private void endDoubleJumpSomersault() 
     {
-        if (animator.GetBool("double jump"))
-        {
+        if (animator.GetBool("double jump")) {
             float z = (transform.localEulerAngles.z + 360) % 360;
-            if (Mathf.Abs(z - 360) < 2 || Mathf.Abs(z) < 2)
-            {
+
+            if (Mathf.Abs(z - 360) < 2 || Mathf.Abs(z) < 2) {
                 doubleJumpCollider.enabled = false;
                 controller.mainCollider.enabled = true;
             }
-            else
-            {
+            else {
                 z = (z < 180) ? transform.localEulerAngles.z - 2f : transform.localEulerAngles.z + 2f;
                 transform.localEulerAngles = new Vector3(0, 0, z);
             }
         }
-        else if (doubleJumpCollider.enabled)
-        {
+        else if (doubleJumpCollider.enabled) {
             doubleJumpCollider.enabled = false;
             controller.mainCollider.enabled = true;
         }
@@ -187,7 +180,7 @@ public class CentralAnimationController : MonoBehaviour
 
     // Entity's feet, which detect ground, become closer together when jumping. Also, the main collider
     // becomes thinner when the entiy is jumping, and shorter when the entity is double jumping
-    protected IEnumerator updateFeetAndCollider(Transform rightFoot, Transform leftFoot, BoxCollider2D mainCollider)
+    protected IEnumerator adjustFeetAndColliders(Transform rightFoot, Transform leftFoot, BoxCollider2D mainCollider) 
     {
         yield return new WaitForSeconds(0.03f);
 
@@ -204,7 +197,7 @@ public class CentralAnimationController : MonoBehaviour
         mainCollider.size = new Vector2(x, y);
     }
 
-    private enum SomersaultState
+    private enum SomersaultState 
     {
         HasStarted, 
         Midway,

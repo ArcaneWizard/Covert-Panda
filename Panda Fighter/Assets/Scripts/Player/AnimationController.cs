@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class AnimationController : CentralAnimationController
 {
-    protected override void updateCurrentAnimation()
+    protected override void updateAnimationState()
     {
-        base.updateCurrentAnimation();
+        base.updateAnimationState();
         bool facingRight = Input.mousePosition.x >= camera.WorldToScreenPoint(controller.shootingArm.parent.position).x;
 
         //if you're looking in the opposite direction as you're running, set walking speed to -1 (which auto triggers backwards walking animation)
