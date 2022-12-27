@@ -8,7 +8,7 @@ using UnityEngine;
 // colliders and feet position accordingly. Note: the animation controller
 // is already setup to change animations according to the creature's phase
 
-public class CentralPhaseManager : MonoBehaviour
+public class CentralPhaseTracker : MonoBehaviour
 {
     public bool DisableLimbsDuringSomersault { get; private set; }
 
@@ -53,23 +53,20 @@ public class CentralPhaseManager : MonoBehaviour
             controller.leftGroundChecker, controller.mainCollider));
     }
 
-    // returns whether or not the creature is in a specific phase
-    public bool IsIdle => phase == Phases.Idle;
-    public bool IsRunning => phase == Phases.Running;
-    public bool IsFalling => phase == Phases.Falling;
-    public bool IsJumping => phase == Phases.Jumping;
-    public bool IsDoubleJumping => phase == Phases.DoubleJumping;
+    // returns whether or not the creature is in a specific phase / condition
+    public bool IsPhase(Phase specificPhase) => phase == (int)specificPhase;
+    public bool IsPhaseMidAir => (2 <= phase && phase <= 4);
 
     // sets the creature's phase as specified
     public void EnterJumpPhase()
     {
         animator.SetInteger("jump version", UnityEngine.Random.Range(0, 2));
-        setPhase(Phases.Jumping);
+        setPhase(Phase.Jumping);
     }
 
     public IEnumerator EnterDoubleJumpPhase()
     {
-        setPhase(Phases.DoubleJumping);
+        setPhase(Phase.DoubleJumping);
 
         DisableLimbsDuringSomersault = true;
         StartCoroutine(somersaultHandler.Start());
@@ -79,7 +76,7 @@ public class CentralPhaseManager : MonoBehaviour
 
     // get + set the creature's phase
     private int phase => animator.GetInteger("Phase");
-    private void setPhase(int p) => animator.SetInteger("Phase", p);
+    private void setPhase(Phase p) => animator.SetInteger("Phase", (int)p);
 
     private void FixedUpdate() 
     {
@@ -91,19 +88,19 @@ public class CentralPhaseManager : MonoBehaviour
         
         // the creature is idle or running if it's grounded and hasn't jumped recently
         if (controller.isGrounded && !controller.recentlyJumpedOffGround)
-            setPhase((controller.dirX == 0) ? Phases.Idle : Phases.Running);
+            setPhase((controller.dirX == 0) ? Phase.Idle : Phase.Running);
 
         // else the creature is falling if a mid-air phase (falling, jumping, double jumping) hasn't been set yet
-        else if (!Phases.IsMidAir(phase))
-            setPhase(Phases.Falling);
+        else if (!IsPhaseMidAir)
+            setPhase(Phase.Falling);
             
         // if creature isn't jumping, reset the jump animation version 
-        if (phase != Phases.Jumping)
+        if (IsPhase(Phase.Jumping))
             animator.SetInteger("jump version", 0);
 
         // play forward or backwards running animation depending on
         // whether the creature runs forwards or backwards 
-        if (phase == Phases.Running)
+        if (IsPhase(Phase.Running))
         {
             if ((controller.dirX == 1 && lookAround.facingRight()) || controller.dirX == -1 && !lookAround.facingRight())
                 animator.SetBool("walking forwards", true);
@@ -121,16 +118,16 @@ public class CentralPhaseManager : MonoBehaviour
     {
         yield return new WaitForSeconds(Time.deltaTime);
 
-        rightFoot.localPosition = (!Phases.IsMidAir(phase))
+        rightFoot.localPosition = (!IsPhaseMidAir)
         ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
         : new Vector3(0.332f, rightFoot.localPosition.y, 0);
 
-        leftFoot.localPosition = (!Phases.IsMidAir(phase))
+        leftFoot.localPosition = (!IsPhaseMidAir)
         ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
         : new Vector3(-0.157f, leftFoot.localPosition.y, 0);
 
-        float x = Phases.IsMidAir(phase) ? 0.68f : 1f;
-        float y = (phase == Phases.DoubleJumping && somersaultHandler.state != SomersaultState.Exited) 
+        float x = IsPhaseMidAir ? 0.68f : 1f;
+        float y = (IsPhase(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited) 
             ? initialColliderSize.y * 2f / 3f 
             : initialColliderSize.y;
         mainCollider.size = new Vector2(x, y);

@@ -4,10 +4,7 @@ using System.Text;
 
 public class WeaponTag : MonoBehaviour
 {
-
-    public WeaponTags tag;
-
-    public string Tag => tag.ToString();
+    public Weapon tag;
 
     void OnValidate()
     {

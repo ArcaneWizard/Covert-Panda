@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class RagdollingReset : StateMachineBehaviour
 {
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex) => animator.SetInteger("ragdolling", 2);
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex) 
+        => animator.SetInteger("ragdolling", 2);
 }

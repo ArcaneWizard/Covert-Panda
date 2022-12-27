@@ -16,17 +16,17 @@ public class Somersault
     private Transform transform;
     private Transform body;
     private CentralController controller;
-    private CentralPhaseManager phaseManager;
+    private CentralPhaseTracker phaseTracker;
     private Collider2D mainCollider;
     private Collider2D somersaultCollider;
     private Animator animator;
 
-    public Somersault(Transform transform, CentralPhaseManager phaseManager, Collider2D mainCollider,
+    public Somersault(Transform transform, CentralPhaseTracker phaseTracker, Collider2D mainCollider,
         Collider2D somersaultCollider, Animator animator, CentralController controller) 
     {
         this.transform = transform;
         this.body = transform.GetChild(0);
-        this.phaseManager = phaseManager;
+        this.phaseTracker = phaseTracker;
         this.mainCollider = mainCollider;
         this.somersaultCollider = somersaultCollider;
         this.animator = animator;
@@ -62,7 +62,7 @@ public class Somersault
     public void Tick()
     {
         // if creature isn't double jumping, reset the somersault direction 
-        if (!phaseManager.IsDoubleJumping)
+        if (!phaseTracker.IsPhase(Phase.DoubleJumping))
         {
             state = SomersaultState.Exited;
             animator.SetBool("somersault forwards", true);

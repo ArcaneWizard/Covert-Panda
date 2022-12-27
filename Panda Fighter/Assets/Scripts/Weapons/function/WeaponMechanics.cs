@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class IWeapon : MonoBehaviour
+public abstract class WeaponMechanics : MonoBehaviour
 {
     public virtual void SetDefaultAnimation() { return; }
     public abstract IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig);
@@ -13,10 +13,12 @@ public abstract class IWeapon : MonoBehaviour
     public string attackProgress { get; protected set; }
     public string bonusAttackProgress { get; protected set; }
     public CentralShooting shooting { get; protected set; }
-    public CentralPhaseManager animController { get; protected set; }
+    public CentralPhaseTracker phaseTracker { get; protected set; }
     public Side side { get; protected set; }
+    
+    protected WeaponConfiguration config;
 
-    [HideInInspector] public WeaponConfiguration configuration;
+    public void Initialize(WeaponConfiguration config) => this.config = config;
 
     public void DoSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
@@ -27,7 +29,7 @@ public abstract class IWeapon : MonoBehaviour
     public void DoAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         Attack(aim, bullet, rig);
-        configuration.shooting.LetGoOffAnyGrenades();
+        config.shooting.LetGoOffAnyGrenades();
         attackProgress = "finished";
     }
 
@@ -43,19 +45,19 @@ public abstract class IWeapon : MonoBehaviour
         bonusAttackProgress = "finished";
     }
 
-    public virtual void Awake()
+    //referenced when you switch to a different weapons
+    public void resetAttackProgress()
     {
-        shooting = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralShooting>();
-        animController = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralPhaseManager>();
-        side = transform.parent.parent.parent.GetComponent<Role>().side;
-
         attackProgress = "finished";
         bonusAttackProgress = "finished";
     }
 
-    //referenced when you switch to a different weapons
-    public void resetAttackProgress()
+    void Awake()
     {
+        shooting = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralShooting>();
+        phaseTracker = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralPhaseTracker>();
+        side = transform.parent.parent.parent.GetComponent<Role>().side;
+
         attackProgress = "finished";
         bonusAttackProgress = "finished";
     }

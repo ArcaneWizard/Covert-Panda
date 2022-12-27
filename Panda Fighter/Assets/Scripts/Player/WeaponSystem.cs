@@ -52,17 +52,17 @@ public class WeaponSystem : CentralWeaponSystem
     {
         base.InitializeWeaponSystem();
 
-        foreach (KeyValuePair<string, IWeapon> weapon in IWeapons)  
-            ammoText[weapon.Key].text = ammo[weapon.Key].ToString();
+        foreach (KeyValuePair<string, WeaponMechanics> weapon in weaponBehaviours)  
+            ammoText[weapon.Key].text = ammoCount[weapon.Key].ToString();
 
-        collectNewWeapon(WeaponTags.ArcticPistol.ToString());
-        collectNewWeapon(WeaponTags.Grenades.ToString());
-        collectNewWeapon(WeaponTags.Railgun.ToString());
-        collectNewWeapon(WeaponTags.LavaPistol.ToString());
-        collectNewWeapon(WeaponTags.Needler.ToString());
-        collectNewWeapon(WeaponTags.ArcticSprayer.ToString());
-        collectNewWeapon(WeaponTags.Shotgun.ToString());
-        selectWeapon(WeaponTags.Shotgun.ToString());
+        collectNewWeapon(Weapon.ArcticPistol.ToString());
+        collectNewWeapon(Weapon.Railgun.ToString());
+        collectNewWeapon(Weapon.LavaPistol.ToString());
+        collectNewWeapon(Weapon.Needler.ToString());
+        collectNewWeapon(Weapon.Grenades.ToString());
+        collectNewWeapon(Weapon.ArcticSprayer.ToString());
+        collectNewWeapon(Weapon.Shotgun.ToString());
+        selectWeapon(Weapon.Shotgun.ToString());
     }
 
     // Associate each weapon with a different number key on the keyboard
@@ -82,44 +82,41 @@ public class WeaponSystem : CentralWeaponSystem
 
         else if (Input.GetKeyDown(KeyCode.Equals))
             selectWeapon(inventory.GetChild(10).GetComponent<WeaponTag>().Tag);
-
-        else if (Input.GetKeyDown(KeyCode.LeftBracket))
-            selectWeapon(inventory.GetChild(11).GetComponent<WeaponTag>().Tag);
     }
 
     // Allow player to select a different weapon 
-    public override void selectWeapon(string weapon)
+    protected override void selectWeapon(Weapon weapon)
     {
-        string lastWeapon = weaponSelected;
+        string lastWeapon = currentWeapon;
         base.selectWeapon(weapon);
 
-        if (weaponSelected != lastWeapon)
+        if (currentWeapon != lastWeapon)
         {
             //unselect previous weapon slot
             if (lastWeapon != "")
                 weaponSlot[lastWeapon].sprite = slotNotSelected;
 
             //select new weapon slot
-            weaponSlot[weaponSelected].sprite = slotSelected;
+            weaponSlot[currentWeapon].sprite = slotSelected;
         }
     }
 
     // Player collects a weapon by physically touching it
-    public override void collectNewWeapon(string weapon)
+    protected override void collectNewWeapon(Weapon weapon)
     {
         base.collectNewWeapon(weapon);
-        ammoText[weapon].text = ammo[weapon].ToString();
+        ammoText[weapon].text = ammoCount[weapon].ToString();
         weaponIcon[weapon].sprite = equipped[weapon];
     }
 
     // Player uses up ammo of a certain weapon
-    public override void useOneAmmo()
+    protected override void useOneAmmo()
     {
         base.useOneAmmo();
-        ammoText[weaponSelected].text = ammo[weaponSelected].ToString();
+        ammoText[currentWeapon].text = ammoCount[currentWeapon].ToString();
 
-        if (ammo[weaponSelected] <= 0)
-            weaponIcon[weaponSelected].sprite = notEquipped[weaponSelected];
+        if (ammoCount[currentWeapon] <= 0)
+            weaponIcon[currentWeapon].sprite = notEquipped[currentWeapon];
     }
 }
 

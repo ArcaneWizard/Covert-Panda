@@ -181,6 +181,7 @@ public abstract class Health : MonoBehaviour
         transform.position = respawnLocation.position;
 
         transform.localEulerAngles = new Vector3(0, 0, 0);
+        controller.UpdateTiltInstantly();
     }
 
     public void TakeDamageFromPredictedFastBulletCollision(int damage, Transform physicalBullet)

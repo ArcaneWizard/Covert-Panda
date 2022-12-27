@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Weapons : MonoBehaviour
+public class PhysicalWeapons : MonoBehaviour
 {
     public GameObject GrenadeHands;
     public GameObject LavaOrbLauncher;

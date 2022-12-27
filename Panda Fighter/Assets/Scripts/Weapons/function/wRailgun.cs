@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class wRailgun : IWeapon
+public class wRailgun : WeaponMechanics
 {
     private float timer;
     private ParticleSystem chargeParticles;
@@ -31,13 +31,13 @@ public class wRailgun : IWeapon
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, configuration.bulletSpawnPoint, side);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, configuration.bulletSpeed);
+        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
+        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, config.bulletSpeed);
     }
 
     private void Start()
     {
-        chargeParticles = configuration.bulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
+        chargeParticles = config.bulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         chargeParticles.Clear();
     }
 

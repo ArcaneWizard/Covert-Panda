@@ -177,7 +177,7 @@ public class AI_Controller : CentralController
 
         else if (Action.actionName == "normalJump") 
         {
-            if (isGrounded && !phaseManager.IsDoubleJumping && !phaseManager.IsJumping)
+            if (isGrounded && !phaseTracker.IsPhase(Phase.DoubleJumping) && !phaseTracker.IsPhase(Phase.Jumping))
                 normalJump();
 
             StartCoroutine(changeVelocityAfterDelay(Action.timeB4Change, Action.changedSpeed, Action));
@@ -189,7 +189,7 @@ public class AI_Controller : CentralController
 
     private IEnumerator executeDoubleJumpAtRightMoment(AI_ACTION currentAction)
     {
-        if (isGrounded && !phaseManager.IsDoubleJumping)
+        if (isGrounded && !phaseTracker.IsPhase(Phase.DoubleJumping))
             normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(Action.timeB4Change.x, Action.timeB4Change.y));
@@ -200,7 +200,7 @@ public class AI_Controller : CentralController
         dirX = Action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
 
-        if (phaseManager.IsJumping && !phaseManager.IsDoubleJumping)
+        if (phaseTracker.IsPhase(Phase.Jumping) && !phaseTracker.IsPhase(Phase.DoubleJumping))
             doubleJump();
 
         StartCoroutine(changeVelocityAfterDelay(Action.timeB4SecondChange, Action.secondChangedSpeed, Action));
@@ -230,11 +230,11 @@ public class AI_Controller : CentralController
     private void setAlienVelocity()
     {
         // nullify the slight bounce on a slope glitch when changing slopes
-        if (!phaseManager.IsJumping && rig.velocity.y > 0)
+        if ((!phaseTracker.IsPhaseMidAir || phaseTracker.IsPhase(Phase.Falling)) && rig.velocity.y > 0)
             rig.velocity = new Vector2(0, 0);
 
         // when alien is on the ground, alien velocity is parallel to the slanted ground 
-        if (!phaseManager.IsJumping && isGrounded && isTouchingMap)
+        if (!phaseTracker.IsPhaseMidAir && isGrounded && isTouchingMap)
         {
             if (actionProgress == "finished" && wallToTheLeft) 
                 dirX = 1;

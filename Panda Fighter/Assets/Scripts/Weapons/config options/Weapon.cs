@@ -1,5 +1,5 @@
 
-public enum WeaponTags
+public enum Weapon
 {
     Grenades,
     Railgun,

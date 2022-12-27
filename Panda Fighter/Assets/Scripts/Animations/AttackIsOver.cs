@@ -7,6 +7,5 @@ public class AttackIsOver : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
     {
         animator.transform.GetComponent<CentralWeaponSystem>().CurrentWeapon.SetDefaultAnimation();
-        animator.transform.GetComponent<CentralWeaponSystem>().CurrentWeapon.SetDefaultAnimation();
     }
 }
