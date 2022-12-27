@@ -12,36 +12,55 @@ public class Somersault
     protected int somersaultDirection;
 
     private Transform transform;
+    private Transform body;
+    private CentralController controller;
     private CentralPhaseManager phaseManager;
     private Collider2D mainCollider;
     private Collider2D somersaultCollider;
     private Animator animator;
 
     public Somersault(Transform transform, CentralPhaseManager phaseManager, Collider2D mainCollider,
-        Collider2D somersaultCollider, Animator animator) 
+        Collider2D somersaultCollider, Animator animator, CentralController controller) 
     {
         this.transform = transform;
+        this.body = transform.GetChild(0);
         this.phaseManager = phaseManager;
         this.mainCollider = mainCollider;
         this.somersaultCollider = somersaultCollider;
         this.animator = animator;
+        this.controller = controller;
     }
 
-    public enum SomersaultState
+    public void Reset() => state = SomersaultState.Exited;
+
+    // Setup creature to do a double jump somersault. Factor in the direction to somersault in, 
+    // disable limb movement during the somersault (ex. can't control head movement with cursor), 
+    // and give the creature a smaller collider than normal during the somersault
+    public void Start()
     {
-        Started,
-        UpsideDown,
-        NearFinished,
-        Exited
+        // setup 
+        somersaultDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
+
+        if (controller.dirX == -1 && body.localEulerAngles.y == 0)
+            animator.SetBool("somersault forwards", false);
+        else if (controller.dirX == 1 && body.localEulerAngles.y == 180)
+            animator.SetBool("somersault forwards", false);
+        else
+            animator.SetBool("somersault forwards", true);
+
+        mainCollider.enabled = false;
+        somersaultCollider.enabled = true;
+
+        // start somersault
+        state = SomersaultState.Started;
     }
 
-    public void Initialize() => state = SomersaultState.Exited;
-
-    public void Run()
+    public void Tick()
     {
         // if creature isn't double jumping, reset the somersault direction 
-        if (!phaseManager.IsDoubleJumping) 
+        if (!phaseManager.IsDoubleJumping)
         {
+            state = SomersaultState.Exited;
             animator.SetBool("somersault forwards", true);
             return;
         }
@@ -67,41 +86,7 @@ public class Somersault
         }
 
         else if (state == SomersaultState.NearFinished)
-        {
             endSomersault();
-
-            if (PhaseMidAir != PhasesMidAir.DoubleJumping)
-            {
-                state = SomersaultState.Exited;
-                doubleJumpCollider.enabled = false;
-                controller.mainCollider.enabled = true;
-            }
-        }
-    }
-
-    public void Reset() => state = SomersaultState.Exited;
-
-    // Setup creature to do a double jump somersault. Factor in the direction to somersault in, 
-    // disable limb movement during the somersault (ex. can't control head movement with cursor), 
-    // and give the creature a smaller collider than normal during the somersault
-    public void StartSomersault()
-    {
-        // setup 
-        somersaultDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
-        DisableLimbsDuringDoubleJump = true;
-
-        if (controller.dirX == -1 && body.localEulerAngles.y == 0)
-            animator.SetBool("somersault forwards", false);
-        else if (controller.dirX == 1 && body.localEulerAngles.y == 180)
-            animator.SetBool("somersault forwards", false);
-        else
-            animator.SetBool("somersault forwards", true);
-
-        controller.mainCollider.enabled = false;
-        doubleJumpCollider.enabled = true;
-
-        // start somersault
-        state = SomersaultState.Started;
     }
 
     // To double jump, the creature somersaults at a specified speed for a specified duration, 
@@ -132,13 +117,15 @@ public class Somersault
 
         if (Mathf.Abs(z - 360) < 2 || Mathf.Abs(z) < 2)
         {
-            doubleJumpCollider.enabled = false;
-            controller.mainCollider.enabled = true;
+            somersaultCollider.enabled = false;
+            mainCollider.enabled = true;
+            state = SomersaultState.Exited;
+            transform.localEulerAngles = new Vector3(0f, 0f, 0f);
         }
         else
         {
             z = (z < 180) ? transform.localEulerAngles.z - 2f : transform.localEulerAngles.z + 2f;
-            transform.localEulerAngles = new Vector3(0, 0, z);
+            transform.localEulerAngles = new Vector3(0f, 0f, z);
         }
     }
 }

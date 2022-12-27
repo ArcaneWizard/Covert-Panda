@@ -59,11 +59,11 @@ public class Controller : CentralController
     private void setPlayerVelocity()
     {
         //nullify the slight bounce on a slope glitch when changing slopes
-        if (!phaseManager.IsJumping && rig.velocity.y > 0)
+        if (!phaseManager.IsJumping && !phaseManager.IsDoubleJumping && rig.velocity.y > 0)
             rig.velocity = new Vector2(0, 0);
 
         //when player is on the ground, player velocity is parallel to the slanted ground 
-        if (!phaseManager.IsJumping && isGrounded && isTouchingMap)
+        if (!phaseManager.IsJumping && !phaseManager.IsDoubleJumping && isGrounded && isTouchingMap)
         {
             //no x velocity when running into a wall to avoid bounce/fall glitch
             if (dirX == 1 && wallToTheRight)

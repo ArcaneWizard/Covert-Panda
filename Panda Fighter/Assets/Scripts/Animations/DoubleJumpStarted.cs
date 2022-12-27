@@ -11,6 +11,6 @@ public class DoubleJumpStarted : StateMachineBehaviour
         if (!phaseManager)
             phaseManager = animator.transform.parent.GetComponent<CentralPhaseManager>();
 
-        phaseManager.StartSomersault();
+       // phaseManager.StartSomersault();
     }
 }

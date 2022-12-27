@@ -90,6 +90,11 @@ public abstract class CentralController : MonoBehaviour
     // Update the creature's standing tilt and feet rotation depending on the ground angle
     private void updateTilt(bool instantly)
     {
+        if (float.IsNaN(groundAngle)) {
+            Debug.Log("returning");
+            return;
+        }
+
         float zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)
@@ -110,8 +115,9 @@ public abstract class CentralController : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
 
         float tempGroundAngle = (groundAngle <= 180f) ? groundAngle : groundAngle - 360;
-        physicalLeftFoot.transform.localEulerAngles = new Vector3(0, 0, 90 + tempGroundAngle);
-        physicalRightFoot.transform.localEulerAngles = new Vector3(0, 0, 90 + tempGroundAngle);
+        Debug.Log(90 + tempGroundAngle);
+        physicalLeftFoot.transform.eulerAngles = new Vector3(0, 0, 107 + tempGroundAngle);
+        physicalRightFoot.transform.eulerAngles = new Vector3(0, 0, 107 + tempGroundAngle);
     }
     
     //check if the creature is on the ground + update the groundAngle
@@ -143,7 +149,7 @@ public abstract class CentralController : MonoBehaviour
             checkForAngle = true;
 
         // determine if creature is grounded if either foot raycast hit the ground
-        if (!phaseManager.DisableLimbsDuringDoubleJump)
+        if (!phaseManager.DisableLimbsDuringSomersault)
             isGrounded = leftFootGround || rightFootGround;
 
         // register the angle of the ground
@@ -231,7 +237,7 @@ public abstract class CentralController : MonoBehaviour
     protected void normalJump()
     {
         StartCoroutine(RecentlyJumpedOffGround());
-        phaseManager.SetMidAirPhase(PhasesMidAir.Jumping);
+        phaseManager.EnterJumpPhase();
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
@@ -240,7 +246,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected void doubleJump()
     {
-        phaseManager.SetMidAirPhase(PhasesMidAir.DoubleJumping);
+        StartCoroutine(phaseManager.EnterDoubleJumpPhase());
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
@@ -250,7 +256,7 @@ public abstract class CentralController : MonoBehaviour
     protected void jumpPadBoost()
     {
         StartCoroutine(RecentlyJumpedOffGround());
-        phaseManager.SetMidAirPhase(PhasesMidAir.Jumping);
+        phaseManager.EnterJumpPhase();
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
