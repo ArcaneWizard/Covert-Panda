@@ -1,4 +1,4 @@
-public class PhasesMidAir 
+public class MidAirPhases 
 {
     public static int Default = 0;
     public static int Jumping = 1;

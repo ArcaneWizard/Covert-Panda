@@ -12,7 +12,7 @@ public abstract class CentralController : MonoBehaviour
     // Useful movement information:
     public bool isGrounded { get; protected set; }
     public bool isTouchingMap { get; protected set; }
-    public bool recentlyJumped {get; private set; }
+    public bool recentlyJumpedOffGround {get; private set; }
     
     // Current direction of creature's movement (-1 = left, 0 = idle, 1 = right)
     public int dirX { get; protected set; } 
@@ -230,8 +230,8 @@ public abstract class CentralController : MonoBehaviour
 
     protected void normalJump()
     {
-        StartCoroutine(registerRecentJump());
-        phaseManager.SetPhaseMidAir(PhasesMidAir.Jumping);
+        StartCoroutine(RecentlyJumpedOffGround());
+        phaseManager.SetMidAirPhase(PhasesMidAir.Jumping);
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
@@ -240,8 +240,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected void doubleJump()
     {
-        StartCoroutine(registerRecentJump());
-        phaseManager.SetPhaseMidAir(PhasesMidAir.DoubleJumping);
+        phaseManager.SetMidAirPhase(PhasesMidAir.DoubleJumping);
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
@@ -250,8 +249,8 @@ public abstract class CentralController : MonoBehaviour
 
     protected void jumpPadBoost()
     {
-        StartCoroutine(registerRecentJump());
-        phaseManager.SetPhaseMidAir(PhasesMidAir.Jumping);
+        StartCoroutine(RecentlyJumpedOffGround());
+        phaseManager.SetMidAirPhase(PhasesMidAir.Jumping);
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
@@ -278,11 +277,11 @@ public abstract class CentralController : MonoBehaviour
 
     private void FixedUpdate() => oneWayCollider.enabled = rig.velocity.y < 0.1f;
 
-    private IEnumerator registerRecentJump()
+    private IEnumerator RecentlyJumpedOffGround()
     {
-        recentlyJumped = true;
+        recentlyJumpedOffGround = true;
         yield return new WaitForSeconds(0.2f);
-        recentlyJumped = false;
+        recentlyJumpedOffGround = false;
     }
 
 }

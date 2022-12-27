@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class DoubleJumpStarted : StateMachineBehaviour
 {
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex)
+    private CentralPhaseManager phaseManager;
+
+    override public void OnStateEnter(Animator animator, AnimatorStateInfo animatorStateInfo, int layerIndex) 
     {
-        animator.transform.parent.GetComponent<CentralPhaseManager>().DoDoubleJump();
+        if (!phaseManager)
+            phaseManager = animator.transform.parent.GetComponent<CentralPhaseManager>();
+
+        phaseManager.StartSomersault();
     }
 }
