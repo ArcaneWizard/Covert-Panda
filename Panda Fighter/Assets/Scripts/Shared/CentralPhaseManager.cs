@@ -8,11 +8,12 @@ using UnityEngine;
 // colliders and feet position accordingly. Note: the animation controller
 // is already setup to change animations according to the creature's phase
 
-public abstract class CentralPhaseManager : MonoBehaviour
+public class CentralPhaseManager : MonoBehaviour
 {
     public bool DisableLimbsDuringSomersault { get; private set; }
 
     protected CentralController controller;
+    protected CentralLookAround lookAround;
     protected Animator animator;
     private Health health;
     protected Camera camera;
@@ -27,6 +28,7 @@ public abstract class CentralPhaseManager : MonoBehaviour
         body = transform.GetChild(0);
         animator = body.GetComponent<Animator>();
         controller = transform.GetComponent<CentralController>();
+        lookAround = transform.GetComponent<CentralLookAround>();
         health = transform.GetComponent<Health>();
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
@@ -51,26 +53,33 @@ public abstract class CentralPhaseManager : MonoBehaviour
             controller.leftGroundChecker, controller.mainCollider));
     }
 
-    // get + set the creature's phase
-    private int currPhase => animator.GetInteger("Phase");
-    private void SetPhase(int p) => animator.SetInteger("Phase", p);
+    // returns whether or not the creature is in a specific phase
+    public bool IsIdle => phase == Phases.Idle;
+    public bool IsRunning => phase == Phases.Running;
+    public bool IsFalling => phase == Phases.Falling;
+    public bool IsJumping => phase == Phases.Jumping;
+    public bool IsDoubleJumping => phase == Phases.DoubleJumping;
 
     // sets the creature's phase as specified
-    public void EnterJumpPhase() => SetPhase(Phase.Jumping);
+    public void EnterJumpPhase()
+    {
+        animator.SetInteger("jump version", UnityEngine.Random.Range(0, 2));
+        setPhase(Phases.Jumping);
+    }
+
     public IEnumerator EnterDoubleJumpPhase()
     {
-        SetPhase(Phase.DoubleJumping);
+        setPhase(Phases.DoubleJumping);
 
         DisableLimbsDuringSomersault = true;
-        somersaultHandler.Start();
+        StartCoroutine(somersaultHandler.Start());
         yield return new WaitForSeconds(0.5f);
         DisableLimbsDuringSomersault = false;
     }
 
-    // returns whether or not the creature is in a specific phase
-    public bool IsFalling => currPhase == Phase.Falling;
-    public bool IsJumping => currPhase == Phase.Jumping;
-    public bool IsDoubleJumping => currPhase == Phase.DoubleJumping;
+    // get + set the creature's phase
+    private int phase => animator.GetInteger("Phase");
+    private void setPhase(int p) => animator.SetInteger("Phase", p);
 
     private void FixedUpdate() 
     {
@@ -82,21 +91,21 @@ public abstract class CentralPhaseManager : MonoBehaviour
         
         // the creature is idle or running if it's grounded and hasn't jumped recently
         if (controller.isGrounded && !controller.recentlyJumpedOffGround)
-            SetPhase((controller.dirX == 0) ? Phase.Idle : Phase.Running);
+            setPhase((controller.dirX == 0) ? Phases.Idle : Phases.Running);
 
         // else the creature is falling if a mid-air phase (falling, jumping, double jumping) hasn't been set yet
-        else if (!Phase.IsMidAir(currPhase))
-            SetPhase(Phase.Falling);
+        else if (!Phases.IsMidAir(phase))
+            setPhase(Phases.Falling);
             
         // if creature isn't jumping, reset the jump animation version 
-        if (currPhase != Phase.Jumping)
+        if (phase != Phases.Jumping)
             animator.SetInteger("jump version", 0);
 
         // play forward or backwards running animation depending on
         // whether the creature runs forwards or backwards 
-        if (currPhase == Phase.Running)
+        if (phase == Phases.Running)
         {
-            if ((controller.dirX == 1 && facingRight()) || controller.dirX == -1 && !facingRight())
+            if ((controller.dirX == 1 && lookAround.facingRight()) || controller.dirX == -1 && !lookAround.facingRight())
                 animator.SetBool("walking forwards", true);
             else if (controller.dirX != 0)
                 animator.SetBool("walking forwards", false);
@@ -110,22 +119,20 @@ public abstract class CentralPhaseManager : MonoBehaviour
     // becomes thinner when the entiy is jumping, and shorter when the entity is double jumping
     protected IEnumerator adjustFeetAndColliders(Transform rightFoot, Transform leftFoot, BoxCollider2D mainCollider) 
     {
-        yield return new WaitForSeconds(0.03f);
+        yield return new WaitForSeconds(Time.deltaTime);
 
-        rightFoot.localPosition = (!Phase.IsMidAir(currPhase))
+        rightFoot.localPosition = (!Phases.IsMidAir(phase))
         ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
         : new Vector3(0.332f, rightFoot.localPosition.y, 0);
 
-        leftFoot.localPosition = (!Phase.IsMidAir(currPhase))
+        leftFoot.localPosition = (!Phases.IsMidAir(phase))
         ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
         : new Vector3(-0.157f, leftFoot.localPosition.y, 0);
 
-        float x = Phase.IsMidAir(currPhase) ? 0.68f : 1f;
-        float y = (currPhase == Phase.DoubleJumping && somersaultHandler.state != SomersaultState.Exited) 
+        float x = Phases.IsMidAir(phase) ? 0.68f : 1f;
+        float y = (phase == Phases.DoubleJumping && somersaultHandler.state != SomersaultState.Exited) 
             ? initialColliderSize.y * 2f / 3f 
             : initialColliderSize.y;
         mainCollider.size = new Vector2(x, y);
     }
-
-    protected abstract bool facingRight();
 }

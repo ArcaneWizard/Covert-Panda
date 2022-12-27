@@ -27,6 +27,7 @@ public abstract class CentralLookAround : MonoBehaviour
     protected Health health;
     protected Animator animator;
 
+    public abstract bool facingRight();
     protected abstract void figureOutDirectionToLookIn();
     protected abstract void updateDirectionCreatureFaces();
     

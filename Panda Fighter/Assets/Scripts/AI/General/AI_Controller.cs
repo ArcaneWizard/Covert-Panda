@@ -65,7 +65,7 @@ public class AI_Controller : CentralController
             Debug.LogError($"Action {actionName} has no hard coded AI logic.");
     }
 
-    public override void Update()
+    void Update()
     {
         // don't do anything if dead
         if (health.isDead) 
@@ -73,8 +73,6 @@ public class AI_Controller : CentralController
             isTouchingMap = false;
             return;
         }
-
-        base.Update();
 
         // if a fall action has been initiated, then execute it when the AI walks off a platform
         if (hasNotFallenYet && !isGrounded && !isTouchingMap) 
@@ -222,7 +220,11 @@ public class AI_Controller : CentralController
         speed = Mathf.Abs(randomSpeed);
     }
 
-    private void LateUpdate() => setAlienVelocity();
+    public override void LateUpdate() 
+    {
+        base.LateUpdate();
+        setAlienVelocity();
+    }
 
     // handles setting the alien velocity on slopes, while falling, etc.
     private void setAlienVelocity()

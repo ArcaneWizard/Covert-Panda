@@ -1,7 +1,7 @@
 public enum SomersaultState
 {
     Started,
-    UpsideDown,
+    MidWay,
     NearFinished,
     Exited
 }

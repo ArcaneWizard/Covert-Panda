@@ -11,6 +11,8 @@ public class Somersault
     private const float somersaultDuration = 0.35f;
     protected int somersaultDirection;
 
+    float somersaultStopWatch;
+
     private Transform transform;
     private Transform body;
     private CentralController controller;
@@ -36,7 +38,7 @@ public class Somersault
     // Setup creature to do a double jump somersault. Factor in the direction to somersault in, 
     // disable limb movement during the somersault (ex. can't control head movement with cursor), 
     // and give the creature a smaller collider than normal during the somersault
-    public void Start()
+    public IEnumerator Start()
     {
         // setup 
         somersaultDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
@@ -53,6 +55,8 @@ public class Somersault
 
         // start somersault
         state = SomersaultState.Started;
+        yield return new WaitForSeconds(0.2f);
+        state = SomersaultState.MidWay;
     }
 
     public void Tick()
@@ -66,14 +70,9 @@ public class Somersault
         }
 
         if (state == SomersaultState.Started)
-        {
             doSomersault();
 
-            if (transform.localEulerAngles.z > 150 && transform.localEulerAngles.z < 250)
-                state = SomersaultState.UpsideDown;
-        }
-
-        else if (state == SomersaultState.UpsideDown)
+        else if (state == SomersaultState.MidWay)
         {
             doSomersault();
 
@@ -81,8 +80,13 @@ public class Somersault
                 || (somersaultDirection == 1 && (transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40))
                 || (somersaultDirection == 1 && transform.localEulerAngles.z > 345);
 
-            if (spunBackUpright)
+            if (spunBackUpright) {
+                bool a = (somersaultDirection == -1 && transform.localEulerAngles.z < 30);
+                bool b = (somersaultDirection == 1 && (transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40));
+                bool c = (somersaultDirection == 1 && transform.localEulerAngles.z > 345);
+                Debug.Log($"{a},{b},{c}");
                 state = SomersaultState.NearFinished;
+            }
         }
 
         else if (state == SomersaultState.NearFinished)
@@ -94,21 +98,16 @@ public class Somersault
     // the double jump animation.
     private void doSomersault()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 0.65f && !animator.IsInTransition(0))
-        {
-            float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
+        float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
 
-            if (t < somersaultDuration)
-                transform.eulerAngles = new Vector3(0, 0, t * initSomersaultSpeed * somersaultDirection);
-            else
-            {
-                float zAngle = somersaultDuration * initSomersaultSpeed * somersaultDirection
-                        + (t - somersaultDuration) * endSomersaultSpeed * somersaultDirection;
-                transform.eulerAngles = new Vector3(0, 0, zAngle);
-            }
-        }
+        if (t < somersaultDuration)
+            transform.eulerAngles = new Vector3(0, 0, t * initSomersaultSpeed * somersaultDirection);
         else
-            state = SomersaultState.NearFinished;
+        {
+            float zAngle = somersaultDuration * initSomersaultSpeed * somersaultDirection
+                    + (t - somersaultDuration) * endSomersaultSpeed * somersaultDirection;
+            transform.eulerAngles = new Vector3(0, 0, zAngle);
+        }
     }
 
     private void endSomersault()
@@ -117,6 +116,7 @@ public class Somersault
 
         if (Mathf.Abs(z - 360) < 2 || Mathf.Abs(z) < 2)
         {
+            Debug.Log("over");
             somersaultCollider.enabled = false;
             mainCollider.enabled = true;
             state = SomersaultState.Exited;

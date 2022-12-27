@@ -13,6 +13,9 @@ public abstract class CentralController : MonoBehaviour
     public bool isGrounded { get; protected set; }
     public bool isTouchingMap { get; protected set; }
     public bool recentlyJumpedOffGround {get; private set; }
+
+    [Range(-25.0f, 25.0f)]
+    public float offset;
     
     // Current direction of creature's movement (-1 = left, 0 = idle, 1 = right)
     public int dirX { get; protected set; } 
@@ -27,6 +30,7 @@ public abstract class CentralController : MonoBehaviour
     protected Transform body;
     protected CentralPhaseManager phaseManager;
     protected Health health;
+    protected CentralLookAround lookAround;
     protected Animator animator;
 
     [Header("Limbs and colliders")]
@@ -53,12 +57,15 @@ public abstract class CentralController : MonoBehaviour
     protected float groundAngle;
     private float lastGroundAngle;
 
+    private bool updateTiltInstantly;
+
     public void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
         body = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
         phaseManager = transform.GetComponent<CentralPhaseManager>();
+        lookAround = transform.GetComponent<CentralLookAround>();
         health = transform.GetComponent<Health>();
 
         Side side = transform.parent.GetComponent<Role>().side;
@@ -75,32 +82,37 @@ public abstract class CentralController : MonoBehaviour
         StartCoroutine(repeatedlyCheckIfGrounded());
     }
 
-    public virtual void Update() => updateTilt(false);
+    public virtual void LateUpdate() 
+    {
+        if (health.isDead)
+            return;
+
+        updateTilt();
+    }
 
     // Set the x direction of the creature's movement (1 = right, 0 = still, -1 = left)
     public void SetDirection(int dir) => this.dirX = dir;
 
     // Immediately update the creature's standing tilt for the current ground 
-    public void UpdateTiltInstantly()
-    {
-        updateGroundAngle();
-        updateTilt(true);
-    }
+    public void UpdateTiltInstantly() => updateTiltInstantly = true;
 
     // Update the creature's standing tilt and feet rotation depending on the ground angle
-    private void updateTilt(bool instantly)
+    private void updateTilt()
     {
-        if (float.IsNaN(groundAngle)) {
-            Debug.Log("returning");
-            return;
+        if (updateTiltInstantly) {
+            updateGroundAngle();
+            updateTiltInstantly = false;
         }
+
+        if (float.IsNaN(groundAngle)) 
+            return;
 
         float zAngle = transform.eulerAngles.z;
 
         if (zAngle > 180)
             zAngle -= 360;
 
-        float newGroundAngle = groundAngle <= 180 ? groundAngle / 2.2f : ((groundAngle - 360) / 2.2f);
+        float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.9f : ((groundAngle - 360) / 1.9f);
 
         if (isGrounded && (dirX != 0 || (dirX == 0 && groundAngle == lastGroundAngle)))
         {
@@ -111,13 +123,21 @@ public abstract class CentralController : MonoBehaviour
         else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !phaseManager.IsDoubleJumping)
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
 
-        if (instantly) 
+        if (updateTiltInstantly) 
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
 
-        float tempGroundAngle = (groundAngle <= 180f) ? groundAngle : groundAngle - 360;
-        Debug.Log(90 + tempGroundAngle);
-        physicalLeftFoot.transform.eulerAngles = new Vector3(0, 0, 107 + tempGroundAngle);
-        physicalRightFoot.transform.eulerAngles = new Vector3(0, 0, 107 + tempGroundAngle);
+        /*float tempGroundAngle = (groundAngle <= 180f) ? groundAngle : groundAngle - 360;
+        
+        if (phaseManager.IsIdle) 
+        {
+            float shoeAngle = tempGroundAngle / 1.9f - 9f;
+            float xTheta = lookAround.facingRight() ? 0f : -180f;
+            float zTheta = lookAround.facingRight() ? shoeAngle
+                : 180 + shoeAngle -  2 * zAngle;
+
+            physicalLeftFoot.transform.eulerAngles = new Vector3(xTheta, 0f, zTheta);
+            physicalRightFoot.transform.eulerAngles = new Vector3(xTheta, 0f, zTheta);
+        }*/
     }
     
     //check if the creature is on the ground + update the groundAngle

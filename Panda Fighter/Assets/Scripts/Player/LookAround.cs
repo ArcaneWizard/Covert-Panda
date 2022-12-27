@@ -12,6 +12,8 @@ public class LookAround : CentralLookAround
         playerShooting = transform.GetComponent<Shooting>();
     }
 
+    public override bool facingRight() => directionToLook.x >= 0; 
+
     protected override void figureOutDirectionToLookIn() 
     {
         Vector3 weaponPivotPos = weaponSystem.CurrentWeaponConfiguration.weaponPivot.position;

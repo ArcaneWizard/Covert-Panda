@@ -12,7 +12,7 @@ public class Controller : CentralController
     private bool standingOnJumpPad;
     private bool canThrustDown;
 
-    public override void Update()
+    void Update()
     {
         if (health.isDead) 
         {
@@ -20,8 +20,6 @@ public class Controller : CentralController
             standingOnJumpPad = false;
             return;
         }
-
-        base.Update();
 
         // use A and D keys for left or right movement
         dirX = 0;
@@ -127,7 +125,7 @@ public class Controller : CentralController
     private IEnumerator waitForStepToComplete()
     {
         needToWalkMinimumDistance = true;
-        yield return new WaitForSeconds(0.24f);
+        yield return new WaitForSeconds(0.1f);
         needToWalkMinimumDistance = false;
     }
 
