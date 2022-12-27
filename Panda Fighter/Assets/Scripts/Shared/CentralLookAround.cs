@@ -20,7 +20,7 @@ public abstract class CentralLookAround : MonoBehaviour
     protected Transform body;
     private Transform aimTarget;
 
-    protected CentralAnimationController animController;
+    protected CentralPhaseManager phaseManager;
     protected CentralController controller;
     protected CentralShooting shooting;
     protected CentralWeaponSystem weaponSystem;
@@ -33,7 +33,7 @@ public abstract class CentralLookAround : MonoBehaviour
     protected virtual void Awake()
     {
         controller = transform.GetComponent<CentralController>();
-        animController = transform.GetComponent<CentralAnimationController>();
+        phaseManager = transform.GetComponent<CentralPhaseManager>();
         shooting = transform.GetComponent<CentralShooting>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         health = transform.GetComponent<Health>();
@@ -66,7 +66,7 @@ public abstract class CentralLookAround : MonoBehaviour
 
     protected virtual void LateUpdate() 
     {
-        if (health.isDead || animController.DisableLimbsDuringDoubleJump)
+        if (health.isDead || phaseManager.DisableLimbsDuringDoubleJump)
             return;
         
         figureOutDirectionToLookIn();

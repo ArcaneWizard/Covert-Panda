@@ -13,7 +13,7 @@ public abstract class IWeapon : MonoBehaviour
     public string attackProgress { get; protected set; }
     public string bonusAttackProgress { get; protected set; }
     public CentralShooting shooting { get; protected set; }
-    public CentralAnimationController animController { get; protected set; }
+    public CentralPhaseManager animController { get; protected set; }
     public Side side { get; protected set; }
 
     [HideInInspector] public WeaponConfiguration configuration;
@@ -46,7 +46,7 @@ public abstract class IWeapon : MonoBehaviour
     public virtual void Awake()
     {
         shooting = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralShooting>();
-        animController = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralAnimationController>();
+        animController = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralPhaseManager>();
         side = transform.parent.parent.parent.GetComponent<Role>().side;
 
         attackProgress = "finished";

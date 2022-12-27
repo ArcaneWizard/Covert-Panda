@@ -2,16 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Manages the creature's movement, including related tasks like checking if
-// the creature is grounded and getting a jump boost from jump-pads
+// Implements the creature's movement (for running, jumping, double
+// jumping, and getting a jump boost off jump pads). Stores useful
+// movement info such as whether the creature is grounded or touching
+// the map, and the direction it's moving
 
-public class CentralController : MonoBehaviour
+public abstract class CentralController : MonoBehaviour
 {
+    // Useful movement information:
+    public bool isGrounded { get; protected set; }
+    public bool isTouchingMap { get; protected set; }
+    public bool recentlyJumped {get; private set; }
+    
+    // Current direction of creature's movement (-1 = left, 0 = idle, 1 = right)
+    public int dirX { get; protected set; } 
+
+    // Important movement constants:
+    public const float jumpForce = 1750f; 
+    public const float doubleJumpForce = 1850f; 
+    public const float jumpPadForce = 3400; 
+    public const float maxGravity = 5f;
+    
     protected Rigidbody2D rig;
     protected Transform body;
-    protected CentralAnimationController controller;
+    protected CentralPhaseManager phaseManager;
     protected Health health;
-    public Animator animator { get; private set; }
+    protected Animator animator;
 
     [Header("Limbs and colliders")]
     public Transform shootingArm;
@@ -24,18 +40,8 @@ public class CentralController : MonoBehaviour
     public Transform physicalLeftFoot;
     public Transform physicalRightFoot;
 
-    // Useful movement information
-    public bool isGrounded { get; protected set; }
-    public bool isTouchingMap { get; protected set; }
-    public float maxSpeed { get; private set; }
-    protected float speed; // current speed of creature
-    public int dirX { get; protected set; } // current movement dir of creature
-
-    // Important movement constants:
-    public static float jumpForce = 1750f; 
-    public static float doubleJumpForce = 1850f; 
-    public static float jumpPadForce = 3400; 
-    public static float maxGravity = 5f;
+    protected float maxSpeed;
+    protected float speed; 
 
     // Info about the ground or walls detected:
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
@@ -52,7 +58,7 @@ public class CentralController : MonoBehaviour
         rig = transform.GetComponent<Rigidbody2D>();
         body = transform.GetChild(0).transform;
         animator = transform.GetChild(0).transform.GetComponent<Animator>();
-        controller = transform.GetComponent<CentralAnimationController>();
+        phaseManager = transform.GetComponent<CentralPhaseManager>();
         health = transform.GetComponent<Health>();
 
         Side side = transform.parent.GetComponent<Role>().side;
@@ -89,7 +95,6 @@ public class CentralController : MonoBehaviour
         if (zAngle > 180)
             zAngle -= 360;
 
-        Debug.Log(groundAngle);
         float newGroundAngle = groundAngle <= 180 ? groundAngle / 2.2f : ((groundAngle - 360) / 2.2f);
 
         if (isGrounded && (dirX != 0 || (dirX == 0 && groundAngle == lastGroundAngle)))
@@ -98,7 +103,7 @@ public class CentralController : MonoBehaviour
                 transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20 * Time.deltaTime);
         }
 
-        else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !animator.GetBool("double jump"))
+        else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !phaseManager.IsDoubleJumping)
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
 
         if (instantly) 
@@ -138,7 +143,7 @@ public class CentralController : MonoBehaviour
             checkForAngle = true;
 
         // determine if creature is grounded if either foot raycast hit the ground
-        if (!controller.DisableLimbsDuringDoubleJump)
+        if (!phaseManager.DisableLimbsDuringDoubleJump)
             isGrounded = leftFootGround || rightFootGround;
 
         // register the angle of the ground
@@ -223,30 +228,34 @@ public class CentralController : MonoBehaviour
         StartCoroutine(performWallChecks());
     }
 
-    protected void normalJump() 
+    protected void normalJump()
     {
+        StartCoroutine(registerRecentJump());
+        phaseManager.SetPhaseMidAir(PhasesMidAir.Jumping);
+
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
-
         rig.AddForce(new Vector2(0, jumpForce));
-        animator.SetBool("jumped", true);
     }
 
-    protected void doubleJump() 
+    protected void doubleJump()
     {
+        StartCoroutine(registerRecentJump());
+        phaseManager.SetPhaseMidAir(PhasesMidAir.DoubleJumping);
+
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
-
         rig.AddForce(new Vector2(0, doubleJumpForce));
-        StartCoroutine(controller.SetupDoubleJumpSomersault());
     }
 
     protected void jumpPadBoost()
     {
+        StartCoroutine(registerRecentJump());
+        phaseManager.SetPhaseMidAir(PhasesMidAir.Jumping);
+
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = maxGravity;
         rig.AddForce(new Vector2(0, jumpPadForce));
-        animator.SetBool("jumped", true);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -268,4 +277,12 @@ public class CentralController : MonoBehaviour
     }
 
     private void FixedUpdate() => oneWayCollider.enabled = rig.velocity.y < 0.1f;
+
+    private IEnumerator registerRecentJump()
+    {
+        recentlyJumped = true;
+        yield return new WaitForSeconds(0.2f);
+        recentlyJumped = false;
+    }
+
 }

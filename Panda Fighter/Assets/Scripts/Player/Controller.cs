@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sideview_Controller : CentralController
+public class Controller : CentralController
 {
     private int lastDirX;
     private bool needToWalkMinimumDistance;
@@ -36,13 +36,13 @@ public class Sideview_Controller : CentralController
         //use W and S keys for jumping up or thrusting downwards + allow double jump
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            if (isGrounded && !animator.GetBool("jumped") && !animator.GetBool("double jump") && !standingOnJumpPad)
+            if (isGrounded && !phaseManager.IsJumping && !standingOnJumpPad)
                 normalJump();
 
-            else if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
+            else if (phaseManager.IsJumping)
                 doubleJump();
 
-            else if (isGrounded && !animator.GetBool("jumped") && !animator.GetBool("double jump") && standingOnJumpPad)
+            else if (isGrounded && !phaseManager.IsJumping && standingOnJumpPad)
                 jumpPadBoost();
         }
 
@@ -59,11 +59,11 @@ public class Sideview_Controller : CentralController
     private void setPlayerVelocity()
     {
         //nullify the slight bounce on a slope glitch when changing slopes
-        if (!animator.GetBool("jumped") && rig.velocity.y > 0)
+        if (!phaseManager.IsJumping && rig.velocity.y > 0)
             rig.velocity = new Vector2(0, 0);
 
         //when player is on the ground, player velocity is parallel to the slanted ground 
-        if (!animator.GetBool("jumped") && isGrounded && isTouchingMap)
+        if (!phaseManager.IsJumping && isGrounded && isTouchingMap)
         {
             //no x velocity when running into a wall to avoid bounce/fall glitch
             if (dirX == 1 && wallToTheRight)

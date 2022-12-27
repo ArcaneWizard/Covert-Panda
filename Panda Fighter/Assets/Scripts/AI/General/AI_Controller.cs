@@ -179,7 +179,7 @@ public class AI_Controller : CentralController
 
         else if (Action.actionName == "normalJump") 
         {
-            if (isGrounded && !animator.GetBool("double jump"))
+            if (isGrounded && !phaseManager.IsDoubleJumping && !phaseManager.IsJumping)
                 normalJump();
 
             StartCoroutine(changeVelocityAfterDelay(Action.timeB4Change, Action.changedSpeed, Action));
@@ -191,7 +191,7 @@ public class AI_Controller : CentralController
 
     private IEnumerator executeDoubleJumpAtRightMoment(AI_ACTION currentAction)
     {
-        if (isGrounded && !animator.GetBool("double jump"))
+        if (isGrounded && !phaseManager.IsDoubleJumping)
             normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(Action.timeB4Change.x, Action.timeB4Change.y));
@@ -202,7 +202,7 @@ public class AI_Controller : CentralController
         dirX = Action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
 
-        if (animator.GetBool("jumped") && !animator.GetBool("double jump"))
+        if (phaseManager.IsJumping && !phaseManager.IsDoubleJumping)
             doubleJump();
 
         StartCoroutine(changeVelocityAfterDelay(Action.timeB4SecondChange, Action.secondChangedSpeed, Action));
@@ -228,11 +228,11 @@ public class AI_Controller : CentralController
     private void setAlienVelocity()
     {
         // nullify the slight bounce on a slope glitch when changing slopes
-        if (!animator.GetBool("jumped") && rig.velocity.y > 0)
+        if (!phaseManager.IsJumping && rig.velocity.y > 0)
             rig.velocity = new Vector2(0, 0);
 
         // when alien is on the ground, alien velocity is parallel to the slanted ground 
-        if (!animator.GetBool("jumped") && isGrounded && isTouchingMap)
+        if (!phaseManager.IsJumping && isGrounded && isTouchingMap)
         {
             if (actionProgress == "finished" && wallToTheLeft) 
                 dirX = 1;
