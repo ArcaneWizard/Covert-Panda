@@ -1,7 +1,7 @@
 
 public enum Weapon
 {
-    Grenades,
+    None,
     Railgun,
     LavaPistol,
     PlasmaOrb,

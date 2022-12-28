@@ -54,12 +54,10 @@ public static class reusableWeaponMethods
 
     public static void configureNewBulletAndShootAtAngle(float angle, Vector2 aim, WeaponConfiguration configuration, Side side, Vector2 bulletSpawnOffset)
     {
-        Transform bullet = configuration.weaponSystem.CurrentBullet.transform;
-        Rigidbody2D bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-
         Vector2 newAim = Quaternion.AngleAxis(angle, Vector3.forward) * aim;
 
-        configuration.weaponSystem.useOneAmmo();
+        Transform bullet = configuration.weaponSystem.useOneAmmo();
+        Rigidbody2D bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, configuration.bulletSpawnPoint, side);
 
         bullet.position += Vector3.up * UnityEngine.Random.Range(bulletSpawnOffset.x, bulletSpawnOffset.y);

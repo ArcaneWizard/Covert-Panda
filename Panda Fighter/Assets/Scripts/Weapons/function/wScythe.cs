@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wScythe : WeaponMechanics
+public class wScythe : WeaponImplementation
 {
     private Vector2 scytheSpinSpeed = new Vector2(1200, 1400);
 
@@ -21,7 +21,7 @@ public class wScythe : WeaponMechanics
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) => config.weaponAimTracker.gameObject.SetActive(true);
 
-    public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
+   /* public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
         float throwDelay = reusableWeaponMethods.calculateTimeB4ReleasingWeapon(0.04f, 0.22f, aim);
         config.animator.SetInteger("Arms Phase", 11);
@@ -40,6 +40,6 @@ public class wScythe : WeaponMechanics
         reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.weapon.transform, side);
         bulletRig.velocity = aim * config.bulletSpeed;
         bulletRig.angularVelocity = Random.Range(scytheSpinSpeed.x, scytheSpinSpeed.y) * Mathf.Sign(-aim.x);
-    }
+    }*/
 }
 

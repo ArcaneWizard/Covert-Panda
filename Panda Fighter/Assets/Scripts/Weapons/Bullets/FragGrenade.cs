@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grenade : Bullet
+public class FragGrenade : Bullet
 {
     private int surfacesTouched = 0;
     private float explosionTimer = 0;

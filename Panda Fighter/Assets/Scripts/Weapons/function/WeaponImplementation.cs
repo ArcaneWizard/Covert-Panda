@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class WeaponMechanics : MonoBehaviour
+public abstract class WeaponImplementation : MonoBehaviour
 {
     public virtual void SetDefaultAnimation() { return; }
     public abstract IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig);
@@ -29,7 +29,7 @@ public abstract class WeaponMechanics : MonoBehaviour
     public void DoAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
         Attack(aim, bullet, rig);
-        config.shooting.LetGoOffAnyGrenades();
+        config.shooting.ReleasedGrenade();
         attackProgress = "finished";
     }
 

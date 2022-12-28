@@ -174,7 +174,7 @@ public abstract class Health : MonoBehaviour
         mainCollider.enabled = true;
 
         ragdolling.Disable();
-        weaponSystem.InitializeWeaponSystem();
+        weaponSystem.Reset();
 
         Transform respawnLocation = respawnLocations.GetChild(
             UnityEngine.Random.Range(0, respawnLocations.childCount));

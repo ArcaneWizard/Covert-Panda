@@ -36,7 +36,7 @@ public class AI_Shooting : CentralShooting
         if (health.isDead || !AI_lookAround.EnemySpotted || countdownBtwnShots > 0f)
             return;
 
-        if (weaponSystem.CurrentAmmo <= 0 || weaponSystem.weaponSelected == null)
+        if (weaponSystem.CurrentWeaponAmmo <= 0 || weaponSystem.weaponSelected == null)
             return;
 
         configuration = weaponSystem.CurrentWeaponConfiguration;

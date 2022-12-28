@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wLavaPistol : WeaponMechanics
+public class wLavaPistol : WeaponImplementation
 {
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {

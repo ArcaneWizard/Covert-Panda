@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wGrenade : WeaponMechanics
+public class wGrenade : WeaponImplementation
 {
     protected float grenadeThrowForce = 2200;
     protected float grenadeYForce = -20;

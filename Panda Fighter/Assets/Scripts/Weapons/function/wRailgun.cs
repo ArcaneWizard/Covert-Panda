@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class wRailgun : WeaponMechanics
+public class wRailgun : WeaponImplementation
 {
     private float timer;
     private ParticleSystem chargeParticles;

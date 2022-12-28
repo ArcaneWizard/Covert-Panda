@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wArcticSprayer : WeaponMechanics
+public class wArcticSprayer : WeaponImplementation
 {
     private Transform gizmo = null;
 

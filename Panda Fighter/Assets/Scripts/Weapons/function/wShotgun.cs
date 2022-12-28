@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wShotgun : WeaponMechanics
+public class wShotgun : WeaponImplementation
 {
     private Vector2 bulletSpawnOffset = new Vector2(0.1f, 0.4f);
     private float bulletSpread;

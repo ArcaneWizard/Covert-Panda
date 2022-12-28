@@ -23,26 +23,18 @@ public class Shooting : CentralShooting
         if (health.isDead)
             return;
 
-        configuration = weaponSystem.CurrentWeaponConfiguration;
-        attackProgress = weaponSystem.CurrentWeapon.attackProgress;
-
-        if (Input.GetKeyDown(KeyCode.Tab) && weaponSystem.GetAmmo(WeaponTags.Grenades) > 0)
+        if (Input.GetKeyDown(KeyCode.Tab) && grenadeSystem.GetGrenadeCount() > 0)
             DeployGrenade();
-
-        ShootGunOrUseMeeleeWeapon();
-    }
-
-    private void ShootGunOrUseMeeleeWeapon() 
-    {
-        configuration = weaponSystem.CurrentWeaponConfiguration;
-        attackProgress = weaponSystem.CurrentWeapon.attackProgress;
 
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (weaponSystem.CurrentAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f)
+        if (weaponSystem.CurrentWeaponAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f)
             return;
 
+        configuration = weaponSystem.CurrentWeaponConfiguration;
+        attackProgress = weaponSystem.CurrentWeapon.attackProgress;
+        
         if (configuration.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))
         {
             countdownBtwnShots = configuration.fireRateInfo;

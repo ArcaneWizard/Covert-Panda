@@ -20,7 +20,7 @@ public class WeaponSystem : CentralWeaponSystem
     public Sprite slotSelected, slotNotSelected;
     private String tag;
 
-    public override void Awake()
+    protected override void Awake()
     {
         base.Awake();
 
@@ -47,45 +47,21 @@ public class WeaponSystem : CentralWeaponSystem
         }
     }
 
-    // Default weapon you start off with
-    public override void InitializeWeaponSystem()
-    {
-        base.InitializeWeaponSystem();
-
-        foreach (KeyValuePair<string, WeaponMechanics> weapon in weaponBehaviours)  
-            ammoText[weapon.Key].text = ammoCount[weapon.Key].ToString();
-
-        collectNewWeapon(Weapon.ArcticPistol.ToString());
-        collectNewWeapon(Weapon.Railgun.ToString());
-        collectNewWeapon(Weapon.LavaPistol.ToString());
-        collectNewWeapon(Weapon.Needler.ToString());
-        collectNewWeapon(Weapon.Grenades.ToString());
-        collectNewWeapon(Weapon.ArcticSprayer.ToString());
-        collectNewWeapon(Weapon.Shotgun.ToString());
-        selectWeapon(Weapon.Shotgun.ToString());
-    }
-
     // Associate each weapon with a different number key on the keyboard
     void Update()
     {
         if (health.isDead)
             return;
 
-        for (int weaponCount = 1; weaponCount <= 9; weaponCount++)
+        // use number keys to switch between weapons in your inventory
+        for (int i = 1; i <= maxWeaponsInInventory; i++)
         {
-            if (Input.GetKeyDown(weaponCount.ToString()))
-                selectWeapon(inventory.GetChild(weaponCount - 1).GetComponent<WeaponTag>().Tag);
+            if (Input.GetKeyDown(i.ToString()))
+                switchWeapons(i-1);
         }
-
-        if (Input.GetKeyDown(KeyCode.Minus))
-            selectWeapon(inventory.GetChild(9).GetComponent<WeaponTag>().Tag);
-
-        else if (Input.GetKeyDown(KeyCode.Equals))
-            selectWeapon(inventory.GetChild(10).GetComponent<WeaponTag>().Tag);
     }
 
-    // Allow player to select a different weapon 
-    protected override void selectWeapon(Weapon weapon)
+   /* protected virtual void switchWeapons(int inventoryIdx)
     {
         string lastWeapon = currentWeapon;
         base.selectWeapon(weapon);
@@ -102,9 +78,9 @@ public class WeaponSystem : CentralWeaponSystem
     }
 
     // Player collects a weapon by physically touching it
-    protected override void collectNewWeapon(Weapon weapon)
+    protected override void pickupWeapon(Weapon weapon)
     {
-        base.collectNewWeapon(weapon);
+        base.pickupWeapon(weapon);
         ammoText[weapon].text = ammoCount[weapon].ToString();
         weaponIcon[weapon].sprite = equipped[weapon];
     }
@@ -117,6 +93,6 @@ public class WeaponSystem : CentralWeaponSystem
 
         if (ammoCount[currentWeapon] <= 0)
             weaponIcon[currentWeapon].sprite = notEquipped[currentWeapon];
-    }
+    }*/
 }
 
