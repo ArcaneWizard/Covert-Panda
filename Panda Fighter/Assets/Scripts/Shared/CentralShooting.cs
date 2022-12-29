@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class CentralShooting : MonoBehaviour
 {
-    public GameObject grenadeHeld { get; private set; }
+    //public GameObject grenadeHeld { get; private set; }
 
     protected CentralLookAround lookAround;
     protected CentralWeaponSystem weaponSystem;
@@ -21,10 +21,10 @@ public abstract class CentralShooting : MonoBehaviour
         lookAround = transform.GetComponent<CentralLookAround>();
         health = transform.GetComponent<Health>();
         
-        grenadeHeld = null;
+        //grenadeHeld = null;
     }
 
-    private void LateUpdate()
+    /*private void LateUpdate()
     {
         if (health.isDead)
             return;
@@ -34,36 +34,20 @@ public abstract class CentralShooting : MonoBehaviour
             grenadeHeld.transform.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             grenadeHeld.transform.GetComponent<Collider2D>().isTrigger = true;
 
-            grenadeHeld.transform.position = grenadeSystem.CurrentGrenadeConfiguration.bulletSpawnPoint.position;
-            grenadeHeld.transform.rotation = grenadeSystem.CurrentGrenadeConfiguration.bulletSpawnPoint.rotation;
+            grenadeHeld.transform.position = grenadeSystem.CurrentGrenadeConfiguration.BulletSpawnPoint.position;
+            grenadeHeld.transform.rotation = grenadeSystem.CurrentGrenadeConfiguration.BulletSpawnPoint.rotation;
             grenadeHeld.SetActive(true);
         }
-    }
+    }*/
 
     public abstract Vector2 GetAim();
 
-    public void ReleasedGrenade() => grenadeHeld = null;
+    //public void ReleasedGrenade() => grenadeHeld = null;
 
-    protected void DeployGrenade()
-    {
-        Transform grenade = grenadeSystem.UseOneGrenade().transform;
-        Rigidbody2D grenadeRig = grenade.GetComponent<Rigidbody2D>();
-        grenadeHeld = grenade.gameObject;
-        grenadeSystem.CurrentGrenadeImplementation.DoSetupAttack(GetAim(), grenade, grenadeRig);
-    }
+    protected void DeployGrenade() => StartCoroutine(grenadeSystem.CurrentGrenadeImplementation.StartAttack(GetAim()));
 
-    protected void Attack()
-    {
-        bullet = weaponSystem.UseOneBullet().transform;
-        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
-        weaponSystem.CurrentWeaponImplementation.DoSetupAttack(GetAim(), bullet, bulletRig);
-    }
-
-    protected void NonAmmoAttack()
-    {
-        weaponSystem.CurrentWeaponImplementation.DoSetupAttack(GetAim(), null, null);
-    }
-
+    protected void AttackWithWeapon() => StartCoroutine(weaponSystem.CurrentWeaponImplementation.StartAttack(GetAim()));
+    
    /* protected void RightClickAttack()
     {
         bullet = weaponSystem.getLastBullet().transform;

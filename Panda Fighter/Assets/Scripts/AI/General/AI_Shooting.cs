@@ -4,7 +4,6 @@ using UnityEngine;
 public class AI_Shooting : CentralShooting
 {
     private AI_LookAround AI_lookAround;
-    private WeaponConfiguration configuration;
 
     private Vector2 reactionTime = new Vector2(0.4f, 0.67f);
     private Vector2 angleAimIsOffBy = new Vector2(-12, 12f);
@@ -30,50 +29,32 @@ public class AI_Shooting : CentralShooting
     {
         timeSinceLastShot += Time.deltaTime;
 
+        if (health.isDead)
+        {
+            countdownBtwnShots = 0f;
+            return;
+        }
+
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (health.isDead || !AI_lookAround.EnemySpotted || countdownBtwnShots > 0f)
+        WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
+        WeaponImplementation implementation = weaponSystem.CurrentWeaponImplementation;
+
+        if (!AI_lookAround.EnemySpotted || countdownBtwnShots > 0f || weaponSystem.CurrentAmmo <= 0)
             return;
 
-        if (weaponSystem.CurrentWeaponAmmo <= 0 || weaponSystem.weaponSelected == null)
+        if (implementation.attackProgress == Progress.Finished)
             return;
 
-        configuration = weaponSystem.CurrentWeaponConfiguration;
-
-        if (configuration.weaponType == Type.singleFire)
-        {
-            if (combatMode == "gun")
-            {
-                countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
-                timeSinceLastShot = 0f;
-                Attack();
-            }
-
-            else if (combatMode == "handheld" && weaponSystem.CurrentWeapon.attackProgress == "finished")
-            {
-                countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
-                timeSinceLastShot = 0f;
-                Attack();
-            }
-
-            else if (combatMode == "meelee" && weaponSystem.CurrentWeapon.attackProgress == "finished")
-            {
-                countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
-                timeSinceLastShot = 0f;
-                NonAmmoAttack();
-            }
-        }
-
-        else if (combatMode == "gun" && configuration.weaponType == Type.spamFire)
+        if (configuration.weaponType != WeaponType.holdFire)
         {
             countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
             timeSinceLastShot = 0f;
-            Attack();
+            AttackWithWeapon();
         }
-
-        else if (configuration.weaponType == Type.holdFire)
-            Attack();
+        else 
+            AttackWithWeapon();
     }
 
     private float reactionDelay => (timeSinceLastShot > 1f) 

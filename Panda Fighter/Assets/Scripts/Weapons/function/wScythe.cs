@@ -6,20 +6,20 @@ public class wScythe : WeaponImplementation
 {
     private Vector2 scytheSpinSpeed = new Vector2(1200, 1400);
 
-    public override void SetDefaultAnimation() => config.animator.SetInteger("Arms Phase", 10);
+    public override void SetDefaultAnimation() => weaponConfiguration.animator.SetInteger("Arms Phase", 10);
 
     public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        config.animator.SetInteger("Arms Phase", 11);
-        config.weaponAimTracker.gameObject.SetActive(false);
+        weaponConfiguration.animator.SetInteger("Arms Phase", 11);
+        weaponConfiguration.weaponAimTracker.gameObject.SetActive(false);
 
-        while (config.animator.GetInteger("Arms Phase") == 11)
+        while (weaponConfiguration.animator.GetInteger("Arms Phase") == 11)
             yield return null;
 
         DoAttack(aim, bullet, rig);
     }
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) => config.weaponAimTracker.gameObject.SetActive(true);
+    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) => weaponConfiguration.weaponAimTracker.gameObject.SetActive(true);
 
    /* public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {

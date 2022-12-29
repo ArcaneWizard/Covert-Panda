@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Layers
+public static class Layer
 {
     public static int ArmorOrLimb = 5;
     public static int ArmorOrLimbInRagdoll = 0;

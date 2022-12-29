@@ -12,7 +12,7 @@ public class wNormalWeapon : WeaponImplementation
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, config.bulletSpeed);
+        WeaponAction.ConfigureBullet(bullet, rig, weaponConfiguration.bulletSpawnPoint, side);
+        WeaponAction.ShootBullet(aim, bullet, rig, weaponConfiguration.bulletSpeed);
     }
 }

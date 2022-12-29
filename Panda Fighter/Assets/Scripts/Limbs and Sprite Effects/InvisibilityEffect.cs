@@ -44,6 +44,6 @@ public class InvisibilityEffect : MonoBehaviour
             ? new Color(color.r, color.g, color.b, 0.4f)
             : new Color(color.r, color.g, color.b, 1f);
 
-        gameObject.layer = (centralAbilityHandler.IsInvisible) ? Layers.InvulnerableHitBox : Layers.ArmorOrLimb;
+        gameObject.layer = (centralAbilityHandler.IsInvisible) ? Layer.InvulnerableHitBox : Layer.ArmorOrLimb;
     }
 }

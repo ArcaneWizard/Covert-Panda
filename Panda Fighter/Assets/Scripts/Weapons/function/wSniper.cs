@@ -12,7 +12,7 @@ public class wSniper : WeaponImplementation
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
+        WeaponAction.ConfigureBullet(bullet, rig, weaponConfiguration.bulletSpawnPoint, side);
         bullet.transform.right = aim;
         bullet.transform.GetComponent<SniperBeam>().ShowBeam();
     }

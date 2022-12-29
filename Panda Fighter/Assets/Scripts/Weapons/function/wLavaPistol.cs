@@ -4,17 +4,15 @@ using System.Collections.Generic;
 
 public class wLavaPistol : WeaponImplementation
 {
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator StartAttack(Vector2 aim)
     {
-        DoAttack(aim, bullet, rig);
+        StartCoroutine(base.StartAttack(aim));
+
+        Transform bullet = WeaponAction.ShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        bullet.localEulerAngles = Vector3.zero;
+
+        FinishAttack();
         yield return null;
     }
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
-    {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, config.bulletSpeed);
-
-        bullet.localEulerAngles = new Vector3(0, 0, 0);
-    }
 }

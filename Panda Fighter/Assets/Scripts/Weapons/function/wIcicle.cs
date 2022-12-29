@@ -4,15 +4,14 @@ using System.Collections.Generic;
 
 public class wIcicle : WeaponImplementation
 {
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator StartAttack(Vector2 aim)
     {
-        DoAttack(aim, bullet, rig);
+        StartCoroutine(base.StartAttack(aim));
+
+        WeaponAction.ShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+
+        FinishAttack();
         yield return null;
     }
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
-    {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, config.bulletSpeed);
-    }
 }

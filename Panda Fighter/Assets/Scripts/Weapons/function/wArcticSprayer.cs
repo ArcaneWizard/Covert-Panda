@@ -6,19 +6,12 @@ public class wArcticSprayer : WeaponImplementation
 {
     private Transform gizmo = null;
 
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator StartAttack(Vector2 aim)
     {
-        DoAttack(aim, bullet, rig);
+        StartCoroutine(base.StartAttack(aim));
+        gizmo = WeaponAction.ShootBulletInArc(aim, weaponSystem, weaponConfiguration, side, false);
+        FinishAttack();
         yield return null;
-    }
-
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
-    {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
-
-        gizmo = bullet;
-
-        reusableWeaponMethods.shootBulletInArc(aim, bullet, rig, new Vector2(1f, 1.1f), config.bulletSpeed, false);
     }
 
      void OnDrawGizmos()

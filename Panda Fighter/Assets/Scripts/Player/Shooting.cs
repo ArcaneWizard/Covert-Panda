@@ -4,54 +4,38 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Shooting : CentralShooting
 {
-    private Camera camera;
-    private WeaponConfiguration configuration;
-
+    private Progress attackProgress;
     private float countdownBtwnShots = 0f;
-    private String attackProgress;
 
     public override Vector2 GetAim() => lookAround.directionToLook;
-
-    protected override void Awake() 
-    {
-        base.Awake();
-        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
-    }
 
     private void Update()
     {
         if (health.isDead)
+        {
+            countdownBtwnShots = 0f;
             return;
+        }
 
-        if (Input.GetKeyDown(KeyCode.Tab) && grenadeSystem.GetGrenadeCount() > 0)
+        if (Input.GetKeyDown(KeyCode.Tab) && grenadeSystem.GrenadesLeft > 0)
             DeployGrenade();
 
         if (countdownBtwnShots > 0f)
             countdownBtwnShots -= Time.deltaTime;
 
-        if (weaponSystem.CurrentWeaponAmmo <= 0 || attackProgress != "finished" || countdownBtwnShots > 0f)
+        WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
+        WeaponImplementation implementation = weaponSystem.CurrentWeaponImplementation;
+
+        if (weaponSystem.CurrentAmmo <= 0 || implementation.attackProgress != Progress.Finished || countdownBtwnShots > 0f)
             return;
 
-        configuration = weaponSystem.CurrentWeaponConfiguration;
-        attackProgress = weaponSystem.CurrentWeapon.attackProgress;
-        
-        if (configuration.weaponType == Type.singleFire && Input.GetMouseButtonDown(0))
+        if (configuration.weaponType != WeaponType.holdFire && Input.GetMouseButtonDown(0))
         {
             countdownBtwnShots = configuration.fireRateInfo;
-            if (combatMode == "gun")
-                Attack();
-
-            else if (combatMode == "meelee")
-                NonAmmoAttack();
+            AttackWithWeapon();
         }
 
-        else if (configuration.weaponType == Type.spamFire && Input.GetMouseButton(0))
-        {
-            countdownBtwnShots = configuration.fireRateInfo;
-            Attack();
-        }
-
-        else if (configuration.weaponType == Type.holdFire && Input.GetMouseButton(0))
-            Attack();
+        else if (configuration.weaponType == WeaponType.holdFire && Input.GetMouseButton(0))
+            AttackWithWeapon();
     }
 }

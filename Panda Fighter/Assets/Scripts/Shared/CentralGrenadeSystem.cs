@@ -55,9 +55,12 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
             grenadeConfigurations[grenadeType] = config;
 
             WeaponImplementation implementation = grenadePool.GetComponent<WeaponImplementation>();
-            implementation.Initialize(config);
+            implementation.Initialize(config, this, null);
             grenadeImplementations[grenadeType] = implementation;
         }
+
+        GrenadeStats grenadeStats = new GrenadeStats(this);
+        grenadeStats.Initialize();
     }
 
     private void Start() => Reset();
@@ -81,15 +84,17 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     // Useful for quickly retrieving info about the selected grenade
     private Grenade currentGrenade => inventory[currIdx];
     public int GrenadesLeft => grenadesLeft[currIdx];
+
     public WeaponImplementation CurrentGrenadeImplementation => grenadeImplementations[currentGrenade];
     public WeaponConfiguration CurrentGrenadeConfiguration => grenadeConfigurations[currentGrenade];
+    public WeaponConfiguration GetConfiguration(Grenade grenade) => grenadeConfigurations[grenade];
 
-    // Uses a grenade. Lowers grenade count and returns a physical grenade gameobject
-    public GameObject UseOneGrenade()
+    // Uses a grenade. Lowers grenade left and returns a physical grenade
+    public Transform UseOneGrenade()
     {
         grenadesLeft[currIdx]--;
         int grenadePoolIdx = grenadesLeft[currIdx] % grenadePools[currentGrenade].Count;
-        return grenadePools[currentGrenade][grenadePoolIdx].gameObject;
+        return grenadePools[currentGrenade][grenadePoolIdx];
     }
 
     protected virtual void switchGrenades(int idx)
@@ -110,13 +115,13 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
         // if we already have that grenade, just replenish ammo
         if (grenadesToIndices.TryGetValue(grenade, out int newIdx)) 
         {
-            grenadesLeft[newIdx] = grenadeConfigurations[grenade].startingAmmo;
+            grenadesLeft[newIdx] = grenadeConfigurations[grenade].StartingAmmo;
             return;
         }
 
         // otherwise pickup grenade into the current slot
         inventory[currIdx] = grenade;
-        grenadesLeft[currIdx] = CurrentGrenadeConfiguration.startingAmmo;
+        grenadesLeft[currIdx] = CurrentGrenadeConfiguration.StartingAmmo;
 
         grenadesToIndices[grenade] = currIdx;
         openInventoryIndices.Remove(currIdx);
@@ -129,7 +134,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
         // if we already have that grenade, just replenish ammo
         if (grenadesToIndices.TryGetValue(grenade, out int idx))
         {
-            grenadesLeft[idx] = grenadeConfigurations[grenade].startingAmmo;
+            grenadesLeft[idx] = grenadeConfigurations[grenade].StartingAmmo;
             return true;
         }
 
@@ -137,7 +142,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
         foreach (int slot in openInventoryIndices) 
         {
             inventory[slot] = grenade;
-            grenadesLeft[slot] = grenadeConfigurations[grenade].startingAmmo;
+            grenadesLeft[slot] = grenadeConfigurations[grenade].StartingAmmo;
 
             openInventoryIndices.Remove(slot);
             grenadesToIndices[grenade] = slot;

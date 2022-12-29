@@ -69,7 +69,7 @@ public abstract class CentralController : MonoBehaviour
         health = transform.GetComponent<Health>();
 
         Side side = transform.parent.GetComponent<Role>().side;
-        mainCollider.gameObject.layer = (side == Side.Friendly) ? Layers.Friend : Layers.Enemy;
+        mainCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
         mainCollider.offset = new Vector2(0, 1.45f);
 
         maxSpeed = 22f;
@@ -285,19 +285,19 @@ public abstract class CentralController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layers.DefaultGround || col.gameObject.layer == Layers.OneWayGround)
+        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
             isTouchingMap = true;
     }
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layers.DefaultGround || col.gameObject.layer == Layers.OneWayGround)
+        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
             isTouchingMap = true;
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layers.DefaultGround || col.gameObject.layer == Layers.OneWayGround)
+        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
             isTouchingMap = false;
     }
 

@@ -27,7 +27,7 @@ public class Mode
 }
 
 //gun types
-public class Type
+public class WeaponType
 {
     public const string singleFire = "single fire";
     public const string spamFire = "spam fire";

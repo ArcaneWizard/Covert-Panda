@@ -131,13 +131,13 @@ public class Controller : CentralController
 
     private void OnTriggerEnter2D(Collider2D col) 
     {
-        if (col.gameObject.layer == Layers.JumpPad)
+        if (col.gameObject.layer == Layer.JumpPad)
             standingOnJumpPad = true;
     }
 
     private void OnTriggerExit2D(Collider2D col) 
     {
-        if (col.gameObject.layer == Layers.JumpPad)
+        if (col.gameObject.layer == Layer.JumpPad)
             standingOnJumpPad = false;
     }
 }

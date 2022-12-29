@@ -40,7 +40,7 @@ public abstract class Health : MonoBehaviour
         hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
 
         side = transform.parent.GetComponent<Role>().side;
-        hitBox.gameObject.layer = (side == Side.Friendly) ? Layers.FriendlyHitBox : Layers.EnemyHitBox;
+        hitBox.gameObject.layer = (side == Side.Friendly) ? Layer.FriendlyHitBox : Layer.EnemyHitBox;
 
         hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(1).GetComponent<Image>();
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
@@ -72,7 +72,7 @@ public abstract class Health : MonoBehaviour
         if (col.gameObject.layer == bulletLayer)
             hitByBullet(col.transform);
 
-        else if (col.gameObject.layer == Layers.Explosion)
+        else if (col.gameObject.layer == Layer.Explosion)
             hitByExplosion(col.transform);
     }
 

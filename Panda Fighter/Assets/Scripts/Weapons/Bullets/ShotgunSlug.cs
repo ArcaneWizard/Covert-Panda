@@ -34,7 +34,7 @@ public class ShotgunSlug : Bullet
 
     public override int Damage()
     {
-        int damage = transform.parent.GetComponent<WeaponConfiguration>().bulletDmg;
+        int damage = transform.parent.GetComponent<WeaponConfiguration>().BulletDmg;
         float distance = sqrDistance(transform.position, spawnPosition);
 
         if (distance <= 200f)

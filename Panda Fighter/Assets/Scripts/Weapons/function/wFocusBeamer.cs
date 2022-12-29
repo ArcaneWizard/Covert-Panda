@@ -12,7 +12,7 @@ public class wFocusBeamer : WeaponImplementation
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
+        ReusableWeaponImplentations.ConfigureBullet(bullet, rig, config.bulletSpawnPoint, side);
         bullet.transform.right = aim;
 
         bullet.transform.GetComponent<FocusBeam>().Beam(config.bulletSpawnPoint,

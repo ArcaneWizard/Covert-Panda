@@ -16,7 +16,7 @@ public class LookAround : CentralLookAround
 
     protected override void figureOutDirectionToLookIn() 
     {
-        Vector3 weaponPivotPos = weaponSystem.CurrentWeaponConfiguration.weaponPivot.position;
+        Vector3 weaponPivotPos = weaponSystem.CurrentWeaponConfiguration.WeaponPivot.position;
         directionToLook = (Input.mousePosition - camera.WorldToScreenPoint(weaponPivotPos)).normalized;
     }
 

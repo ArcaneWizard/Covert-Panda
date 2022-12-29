@@ -34,7 +34,7 @@ public class CentralPhaseTracker : MonoBehaviour
 
         Side side = transform.parent.GetComponent<Role>().side;
 
-        doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layers.Friend : Layers.Enemy;
+        doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
         doubleJumpCollider.enabled = false;
         controller.mainCollider.enabled = true;
         initialColliderSize = controller.mainCollider.size;

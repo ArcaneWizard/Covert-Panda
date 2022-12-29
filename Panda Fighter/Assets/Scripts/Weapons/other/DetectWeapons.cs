@@ -6,13 +6,13 @@ public class DetectWeapons : MonoBehaviour
 {
     public CentralWeaponSystem weaponSystem;
 
-    private void OnTriggerEnter2D(Collider2D col) 
+   /* private void OnTriggerEnter2D(Collider2D col) 
     {
         if (col.gameObject.layer == Layers.Weapons) 
         {
-            weaponSystem.collectNewWeapon(col.GetComponent<WeaponTag>().Tag);
+            bool pickedup = weaponSystem.PickupWeaponIfInventoryNotFull(col.GetComponent<WeaponTag>().tag);
             col.gameObject.SetActive(false);
             col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
         }
-    }
+    }*/
 }

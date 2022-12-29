@@ -15,13 +15,13 @@ public class wShotgun : WeaponImplementation
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, bulletRig, config.bulletSpawnPoint, side);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, bulletRig, config.bulletSpeed);
+        ReusableWeaponImplentations.ConfigureBullet(bullet, bulletRig, config.bulletSpawnPoint, side);
+        ReusableWeaponImplentations.ShootBullet(aim, bullet, bulletRig, config.bulletSpeed);
 
         bulletSpread = UnityEngine.Random.Range(2, 8f);
-        reusableWeaponMethods.configureNewBulletAndShootAtAngle(bulletSpread, aim, config, side, bulletSpawnOffset);
+        ReusableWeaponImplentations.configureNewBulletAndShootAtAngle(bulletSpread, aim, config, side, bulletSpawnOffset);
 
         bulletSpread = UnityEngine.Random.Range(2, 8f);
-        reusableWeaponMethods.configureNewBulletAndShootAtAngle(-bulletSpread, aim, config, side, bulletSpawnOffset);
+        ReusableWeaponImplentations.configureNewBulletAndShootAtAngle(-bulletSpread, aim, config, side, bulletSpawnOffset);
     }
 }

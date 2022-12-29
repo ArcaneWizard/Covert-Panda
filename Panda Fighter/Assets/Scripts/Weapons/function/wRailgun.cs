@@ -25,19 +25,19 @@ public class wRailgun : WeaponImplementation
             timer += Time.deltaTime;
         }*/
 
-        DoAttack(shooting.GetAim(), bullet, rig);
+        DoAttack(aim, bullet, rig);
         yield return null;
     }
 
     public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
     {
-        reusableWeaponMethods.configureReusedBullet(bullet, rig, config.bulletSpawnPoint, side);
-        reusableWeaponMethods.shootBulletInStraightLine(aim, bullet, rig, config.bulletSpeed);
+        WeaponAction.ConfigureBullet(bullet, rig, weaponConfiguration.bulletSpawnPoint, side);
+        WeaponAction.ShootBullet(aim, bullet, rig, weaponConfiguration.bulletSpeed);
     }
 
     private void Start()
     {
-        chargeParticles = config.bulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
+        chargeParticles = weaponConfiguration.bulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         chargeParticles.Clear();
     }
 

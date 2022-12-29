@@ -78,7 +78,7 @@ public class AI_LookAround : CentralLookAround
             );
 
             // if the enemy creature is in this creature's line of sight, switch focus to it if it's closer than other enemies
-            if (hit.collider != null && hit.collider.gameObject.layer == Layers.GetHitBoxOfOpposition(side)) 
+            if (hit.collider != null && hit.collider.gameObject.layer == Layer.GetHitBoxOfOpposition(side)) 
             {
                 if (EnemySpotted == null || sqrDistance(EnemySpotted.transform.position, weaponPivot.position) 
                     > sqrDistance(nearbyEnemy.transform.position, weaponPivot.position))

@@ -37,7 +37,7 @@ public class Explosion : MonoBehaviour
     // damaged by the explosion
     public IEnumerator damageSurroundingEntities()
     {
-        transform.GetChild(0).gameObject.layer = Layers.Explosion;
+        transform.GetChild(0).gameObject.layer = Layer.Explosion;
 
         collider.enabled = true;
         yield return new WaitForSeconds(Time.deltaTime);

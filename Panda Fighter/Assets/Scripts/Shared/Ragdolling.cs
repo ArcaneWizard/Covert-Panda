@@ -35,7 +35,7 @@ public class Ragdolling : MonoBehaviour
         foreach (Rigidbody2D rig in ragdollParts)
         {
             rig.isKinematic = true;
-            rig.gameObject.layer = Layers.ArmorOrLimb;
+            rig.gameObject.layer = Layer.ArmorOrLimb;
         }
 
         playerRig.isKinematic = false;
@@ -51,14 +51,14 @@ public class Ragdolling : MonoBehaviour
         animator.enabled = false;
         playerRig.isKinematic = true;
 
-        weaponSystem.CurrentWeaponConfiguration.weapon.SetActive(false);
-        foreach (GameObject armLimb in weaponSystem.CurrentWeaponConfiguration.limbs) 
+        weaponSystem.CurrentWeaponConfiguration.PhysicalWeapon.SetActive(false);
+        foreach (GameObject armLimb in weaponSystem.CurrentWeaponConfiguration.WeaponSpecificArms) 
             armLimb.SetActive(false);
 
         foreach (Rigidbody2D rig in ragdollParts)
         {
             rig.isKinematic = false;
-            rig.gameObject.layer = Layers.ArmorOrLimbInRagdoll;
+            rig.gameObject.layer = Layer.ArmorOrLimbInRagdoll;
         }  
 
         ragdollArms.SetActive(true);

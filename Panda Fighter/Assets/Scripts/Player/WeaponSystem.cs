@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class WeaponSystem : CentralWeaponSystem
 {
-    private Dictionary<string, Image> weaponIcon = new Dictionary<string, Image>();
+   /* private Dictionary<string, Image> weaponIcon = new Dictionary<string, Image>();
     private Dictionary<string, Image> weaponSlot = new Dictionary<string, Image>();
     private Dictionary<string, Sprite> equipped = new Dictionary<string, Sprite>();
     private Dictionary<string, Sprite> notEquipped = new Dictionary<string, Sprite>();
@@ -16,15 +16,14 @@ public class WeaponSystem : CentralWeaponSystem
 
     public Transform inventory;
     public Transform equippedWeaponSprites, unequippedWeaponSprites;
-
     public Sprite slotSelected, slotNotSelected;
-    private String tag;
+
 
     protected override void Awake()
     {
         base.Awake();
 
-        //add each weapon's icon image, ammo text and weapon slot border to a dictionary, accessible by weapon tag
+        /add each weapon's icon image, ammo text and weapon slot border to a dictionary, accessible by weapon tag
         foreach (Transform weapon in inventory)
         {
             tag = weapon.GetComponent<WeaponTag>().Tag;
@@ -45,9 +44,9 @@ public class WeaponSystem : CentralWeaponSystem
             tag = weapon.GetComponent<WeaponTag>().Tag;
             notEquipped.Add(tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
         }
-    }
+        */
+    
 
-    // Associate each weapon with a different number key on the keyboard
     void Update()
     {
         if (health.isDead)
@@ -61,38 +60,49 @@ public class WeaponSystem : CentralWeaponSystem
         }
     }
 
-   /* protected virtual void switchWeapons(int inventoryIdx)
+    private void OnTriggerStay2D(Collider2D col)
     {
-        string lastWeapon = currentWeapon;
-        base.selectWeapon(weapon);
-
-        if (currentWeapon != lastWeapon)
+        if (col.gameObject.layer == Layer.Weapons && Input.GetKeyDown(KeyCode.LeftShift))
         {
-            //unselect previous weapon slot
-            if (lastWeapon != "")
-                weaponSlot[lastWeapon].sprite = slotNotSelected;
-
-            //select new weapon slot
-            weaponSlot[currentWeapon].sprite = slotSelected;
+            Weapon weapon = col.transform.GetComponent<WeaponTag>().tag;
+            pickupWeapon(weapon);
+            col.gameObject.SetActive(false);
+            col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
         }
     }
 
-    // Player collects a weapon by physically touching it
-    protected override void pickupWeapon(Weapon weapon)
-    {
-        base.pickupWeapon(weapon);
-        ammoText[weapon].text = ammoCount[weapon].ToString();
-        weaponIcon[weapon].sprite = equipped[weapon];
-    }
+    /* protected virtual void switchWeapons(int inventoryIdx)
+     {
+         string lastWeapon = currentWeapon;
+         base.selectWeapon(weapon);
 
-    // Player uses up ammo of a certain weapon
-    protected override void useOneAmmo()
-    {
-        base.useOneAmmo();
-        ammoText[currentWeapon].text = ammoCount[currentWeapon].ToString();
+         if (currentWeapon != lastWeapon)
+         {
+             //unselect previous weapon slot
+             if (lastWeapon != "")
+                 weaponSlot[lastWeapon].sprite = slotNotSelected;
 
-        if (ammoCount[currentWeapon] <= 0)
-            weaponIcon[currentWeapon].sprite = notEquipped[currentWeapon];
-    }*/
+             //select new weapon slot
+             weaponSlot[currentWeapon].sprite = slotSelected;
+         }
+     }
+
+     // Player collects a weapon by physically touching it
+     protected override void pickupWeapon(Weapon weapon)
+     {
+         base.pickupWeapon(weapon);
+         ammoText[weapon].text = ammoCount[weapon].ToString();
+         weaponIcon[weapon].sprite = equipped[weapon];
+     }
+
+     // Player uses up ammo of a certain weapon
+     protected override void useOneAmmo()
+     {
+         base.useOneAmmo();
+         ammoText[currentWeapon].text = ammoCount[currentWeapon].ToString();
+
+         if (ammoCount[currentWeapon] <= 0)
+             weaponIcon[currentWeapon].sprite = notEquipped[currentWeapon];
+     }*/
 }
 
