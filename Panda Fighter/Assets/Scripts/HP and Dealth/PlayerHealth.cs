@@ -6,7 +6,8 @@ public class PlayerHealth : Health
 {
     public RespawningText respawnText;
     public GameObject inventory;
-    public override void Awake()
+
+    protected override void Awake()
     {
         base.Awake();
 

@@ -24,7 +24,7 @@ public class Rocket : Bullet
         explosion.radius = 7f;
     }
 
-    public override void Update()
+    protected override void Update()
     {
         base.Update();
         
@@ -42,7 +42,7 @@ public class Rocket : Bullet
     }
 
     protected override void OnMapEnter(Transform map) => setupExplosion();
-    public override void OnCreatureEnter(Transform entity) => setupExplosion();
+    protected override void OnCreatureEnter(Transform entity) => setupExplosion();
 
     private void setupExplosion()
     {

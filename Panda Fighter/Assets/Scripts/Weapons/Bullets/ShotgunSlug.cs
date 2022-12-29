@@ -9,8 +9,9 @@ public class ShotgunSlug : Bullet
     private float trailOffset;
     private TrailRenderer trailRenderer;
 
-    private void OnEnable() 
+    public override void Reset() 
     {
+        base.Reset();
         spawnPosition = transform.position;
 
         if (trailRenderer == null)
@@ -21,11 +22,11 @@ public class ShotgunSlug : Bullet
         trailOffset = UnityEngine.Random.Range(0.8f, 4); 
     }
 
-    public override void Update() 
+    protected override void Update() 
     {
         base.Update();
 
-        if (sqrDistance(transform.position, spawnPosition) > trailOffset && gameObject.activeSelf) 
+        if (squaredDistance(transform.position, spawnPosition) > trailOffset && gameObject.activeSelf) 
         {
            StartCoroutine(delayBulletStreaks());
            trailOffset = Int32.MaxValue;
@@ -35,7 +36,7 @@ public class ShotgunSlug : Bullet
     public override int Damage()
     {
         int damage = transform.parent.GetComponent<WeaponConfiguration>().BulletDmg;
-        float distance = sqrDistance(transform.position, spawnPosition);
+        float distance = squaredDistance(transform.position, spawnPosition);
 
         if (distance <= 200f)
             return damage;
@@ -46,7 +47,7 @@ public class ShotgunSlug : Bullet
     }
 
     protected override void OnMapEnter(Transform map) => StartCoroutine(madeContact());
-    public override void OnCreatureEnter(Transform creature) => StartCoroutine(madeContact());
+    protected override void OnCreatureEnter(Transform creature) => StartCoroutine(madeContact());
 
     private IEnumerator madeContact() 
     {

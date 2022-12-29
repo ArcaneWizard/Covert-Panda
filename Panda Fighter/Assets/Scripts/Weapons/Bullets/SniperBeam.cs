@@ -13,10 +13,8 @@ public class SniperBeam : Bullet
 
     private Vector2 initialColliderSize;
     private float beamLength;
-    private Vector2 hitPoint;
 
     private float beamDistance = 60f;
-    private LayerMask map;
 
     void Awake()
     {
@@ -30,8 +28,9 @@ public class SniperBeam : Bullet
         color = beam.startColor;
     }
 
-    void OnEnable()
+    public override void Reset()
     {
+        base.Reset();
         beam.startColor = new Color(color.r, color.g, color.b, 1f);
         beam.endColor = new Color(color.r, color.g, color.b, 1f);
     }
@@ -91,21 +90,12 @@ public class SniperBeam : Bullet
         );
     }
 
-    protected override void OnMapEnter(Transform map) => StartCoroutine(allowImpactsForOneMoreFrame());
-    public override void OnCreatureEnter(Transform creature) { }
-  
-    private IEnumerator allowImpactsForOneMoreFrame() 
-    {
-        disableCollisionDetection = false;
-        yield return new WaitForSeconds(Time.deltaTime);
-        disableCollisionDetection = true;
-    }
+    protected override void OnMapEnter(Transform map) { }
+    protected override void OnCreatureEnter(Transform creature) { }
 
     private void initiateExplosionAt(Vector3 location)
     {
         impactExplosion.transform.position = location;
         impactExplosion.SetBool("impactExplosion", true);
-        //explosionCounter = ++explosionCounter % transform.childCount;
-        //impactExplosion = transform.GetChild(explosionCounter).transform.GetComponent<Animator>();
     }
 }

@@ -19,7 +19,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     protected int bulletPoolIdx = 0;
 
     protected Dictionary<Weapon, WeaponConfiguration> weaponConfigurations;
-    protected Dictionary<Weapon, WeaponImplementation> weaponImplementations;
+    protected Dictionary<Weapon, WeaponBehaviour> weaponBehaviours;
     private List<GameObject> physicalWeaponAndLimbs;
 
     protected CentralShooting shooting;
@@ -33,8 +33,10 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         health = transform.GetComponent<Health>();
 
         bulletPools = new Dictionary<Weapon, List<Transform>>();
-        weaponImplementations = new Dictionary<Weapon, WeaponImplementation>();
+        weaponBehaviours = new Dictionary<Weapon, WeaponBehaviour>();
         weaponConfigurations = new Dictionary<Weapon, WeaponConfiguration>();
+        weaponSlot = new Dictionary<Weapon, int>();
+        openInventorySlots = new HashSet<int>();
 
         inventory = new Weapon[maxWeaponsInInventory];
         ammo = new int[maxWeaponsInInventory];
@@ -45,7 +47,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
         foreach (Transform bulletPool in allBulletPools)
         {
-            Weapon weapon = bulletPool.GetComponent<Weapon>();
+            Weapon weapon = bulletPool.GetComponent<WeaponTag>().Tag;
 
             //make each weapon's ammo pool accesible by a dictionary
             List<Transform> tempBulletPool = new List<Transform>();
@@ -57,16 +59,16 @@ public abstract class CentralWeaponSystem : MonoBehaviour
             WeaponConfiguration config = bulletPool.GetComponent<WeaponConfiguration>();
             weaponConfigurations[weapon] = config;
 
-            WeaponImplementation implementation = bulletPool.GetComponent<WeaponImplementation>();
-            implementation.Initialize(config, null, this);  
-            weaponImplementations[weapon] = implementation;
+            WeaponBehaviour behavior = bulletPool.GetComponent<WeaponBehaviour>();
+            behavior.Initialize(config, null, this);  
+            weaponBehaviours[weapon] = behavior;
         }
 
         WeaponStats weaponStats = new WeaponStats(this);
         weaponStats.Initialize();
-    }
 
-    void Start() => Reset();
+        Reset();
+    }
 
     // Uses a bullet. Lowers bullet count and returns a physical bullet
     public Transform UseOneBullet()
@@ -80,7 +82,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     public Weapon CurrentWeapon => inventory[currSlot];
     public int CurrentAmmo => ammo[currSlot];
 
-    public WeaponImplementation CurrentWeaponImplementation => weaponImplementations[CurrentWeapon];
+    public WeaponBehaviour CurrentWeaponImplementation => weaponBehaviours[CurrentWeapon];
     public WeaponConfiguration CurrentWeaponConfiguration => weaponConfigurations[CurrentWeapon];
     public WeaponConfiguration GetConfiguration(Weapon weapon) => weaponConfigurations[weapon];
 
@@ -100,44 +102,21 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
         pickupWeapon(Weapon.ArcticPistol);
         pickupWeapon(Weapon.LeafScythe);
+        useWeapon(currSlot);
     }
 
     // switch to the weapon in the specified inventory slot
-    protected virtual void switchWeapons(int slot)
+    protected virtual void switchWeapons(int slot) 
     {
+        // invalid inventory slot
         if (slot < 0 || slot >= maxWeaponsInInventory)
             return;
 
-        // if this weapon is already selected, no need to do anything
-        if (currSlot == slot)
+        // slot is already selected or no weapon exists at the specified slot
+        if (currSlot == slot || inventory[slot] == Weapon.None)
             return;
 
-        currSlot = slot;
-        weaponImplementations[CurrentWeapon].SetDefaultAnimation();
-        weaponImplementations[CurrentWeapon].ResetAttackProgress();
-
-        lookAround.setAimTarget(CurrentWeaponConfiguration.WeaponAimTracker);
-        lookAround.calculateShoulderAngles(CurrentWeaponConfiguration.WeaponIKCoordinates);
-
-        // note: meelee weapons don't have bullet pools
-        if (bulletPools.ContainsKey(CurrentWeapon))
-            bulletPoolIdx = ++bulletPoolIdx % bulletPools[CurrentWeapon].Count;
-
-        // deactivate the old weapon + arm limbs for that weapon 
-        foreach (GameObject thing in physicalWeaponAndLimbs)
-            thing.SetActive(false);
-
-        physicalWeaponAndLimbs.Clear();
-
-        // store the new weapon + arm limbs and activate them 
-        physicalWeaponAndLimbs.Add(CurrentWeaponConfiguration.Weapon);
-        CurrentWeaponConfiguration.Weapon.SetActive(true);
-
-        foreach (GameObject limb in CurrentWeaponConfiguration.WeaponLimbs)
-        {
-            physicalWeaponAndLimbs.Add(limb);
-            limb.SetActive(true);
-        }
+        useWeapon(slot);
     }
 
     // pickup weapon into the current inventory slot
@@ -183,11 +162,42 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         return false;
     }
 
+    // use the weapon at the specified slot 
+    private void useWeapon(int slot)
+    {
+        currSlot = slot;
+        weaponBehaviours[CurrentWeapon].UponEquippingWeapon();
+        weaponBehaviours[CurrentWeapon].ResetAttackProgress();
+
+        lookAround.setAimTarget(CurrentWeaponConfiguration.WeaponAimTracker);
+        lookAround.calculateShoulderAngles(CurrentWeaponConfiguration.WeaponIKCoordinates);
+
+        // note: meelee weapons don't have bullet pools
+        if (bulletPools.ContainsKey(CurrentWeapon))
+            bulletPoolIdx = ++bulletPoolIdx % bulletPools[CurrentWeapon].Count;
+
+        // deactivate the old weapon + arm limbs for that weapon 
+        foreach (GameObject thing in physicalWeaponAndLimbs)
+            thing.SetActive(false);
+
+        physicalWeaponAndLimbs.Clear();
+
+        // store the new weapon + arm limbs and activate them 
+        physicalWeaponAndLimbs.Add(CurrentWeaponConfiguration.PhysicalWeapon);
+        CurrentWeaponConfiguration.PhysicalWeapon.SetActive(true);
+
+        foreach (GameObject limb in CurrentWeaponConfiguration.WeaponSpecificArms)
+        {
+            physicalWeaponAndLimbs.Add(limb);
+            limb.SetActive(true);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.layer == Layer.Weapons)
         {
-            Weapon weapon = col.transform.GetComponent<WeaponTag>().tag;
+            Weapon weapon = col.transform.GetComponent<WeaponTag>().Tag;
             autoPickupWeapon(weapon);
             col.gameObject.SetActive(false);
             col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();

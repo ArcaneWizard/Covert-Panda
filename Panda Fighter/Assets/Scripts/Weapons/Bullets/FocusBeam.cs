@@ -22,7 +22,7 @@ public class FocusBeam : Bullet
         initialColliderSize = collider.size;
     }
 
-    public override void Update() 
+    protected override void Update() 
     {
         if (timerStayAlive > 0)
             timerStayAlive -= Time.deltaTime;
@@ -57,5 +57,5 @@ public class FocusBeam : Bullet
         collider.offset = new Vector2(beamLength / 2, 0);
     }
 
-    public override void OnCreatureEnter(Transform entity) => disableCollisionDetection = false;
+    protected override void OnCreatureEnter(Transform entity) { }
 }

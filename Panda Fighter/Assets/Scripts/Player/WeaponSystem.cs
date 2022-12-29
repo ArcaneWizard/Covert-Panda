@@ -64,7 +64,7 @@ public class WeaponSystem : CentralWeaponSystem
     {
         if (col.gameObject.layer == Layer.Weapons && Input.GetKeyDown(KeyCode.LeftShift))
         {
-            Weapon weapon = col.transform.GetComponent<WeaponTag>().tag;
+            Weapon weapon = col.transform.GetComponent<WeaponTag>().Tag;
             pickupWeapon(weapon);
             col.gameObject.SetActive(false);
             col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();

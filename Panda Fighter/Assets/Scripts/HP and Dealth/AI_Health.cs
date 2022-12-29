@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AI_Health : Health
 {
-    public override void Awake()
+    protected override void Awake()
     {
         base.Awake();
 

@@ -21,9 +21,13 @@ public class LavaOrb : Bullet
         impactExplosion.gameObject.SetActive(true);
     }
 
-    private void OnEnable() => impactExplosion.Stop();
+    public override void Reset()
+    {
+        base.Reset();
+        impactExplosion.Stop();
+    }
 
-    public void OrientExplosion(bool adjustPosition)
+    private void OrientExplosion(bool adjustPosition)
     {
         impactExplosion.transform.localPosition = Vector3.zero;
         impactExplosion.transform.position += adjustPosition 
@@ -38,7 +42,7 @@ public class LavaOrb : Bullet
         fo.xMultiplier = (predictedNormal.y - 1) / -0.04f + 50f;
     }
 
-    public override void OnCreatureEnter(Transform entity) 
+    protected override void OnCreatureEnter(Transform entity) 
     {
          StartCoroutine(initiateExplosion());
          OrientExplosion(false);

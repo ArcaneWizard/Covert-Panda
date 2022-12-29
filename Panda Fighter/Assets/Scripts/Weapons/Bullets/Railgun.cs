@@ -19,10 +19,14 @@ public class Railgun : Bullet
         explosion.radius = 1.1f;
     }
 
-    private void OnEnable() => transform.GetComponent<ParticleSystem>().Stop();
+    public override void Reset()
+    {
+        base.Reset();
+        transform.GetComponent<ParticleSystem>().Stop();
+    }
 
     protected override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
-    public override void OnCreatureEnter(Transform entity) => StartCoroutine(initiateExplosion());
+    protected override void OnCreatureEnter(Transform entity) => StartCoroutine(initiateExplosion());
 
     private IEnumerator initiateExplosion()
     {

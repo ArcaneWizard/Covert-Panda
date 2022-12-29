@@ -6,7 +6,6 @@ using UnityEngine.Animations;
 public class PlasmaOrb : Bullet
 {
     private float explosionTimer = 0;
-    private LayerMask surfaces = 1 << 11 | 1 << 14;
 
     private float delayTillExplosion = 0.9f;
 
@@ -30,13 +29,14 @@ public class PlasmaOrb : Bullet
         explosion.radius = 12f;
     }
 
-    void OnEnable() 
+    public override void Reset() 
     {
+        base.Reset();
         explosionTimer = 0f;
         rig.constraints = RigidbodyConstraints2D.None;
     }
 
-    public override void Update()
+    protected override void Update()
     {
         base.Update();
         
@@ -56,11 +56,9 @@ public class PlasmaOrb : Bullet
         // update the sticky orb's position if it's clinging to a creature (that's alive)
         if (trackingSurface != null && creature != null && !creature.GetComponent<Health>().isDead)
             transform.position = trackingSurface.position - surfaceContactLocation + contactLocation;
-        
-      //  Debug.LogFormat("{0}, {1}. {2}", trackingSurface, creature, !creature.GetComponent<Health>().isDead);
     }
 
-    public IEnumerator startTimedPlasmaExplosion(Transform surface)
+    private IEnumerator startTimedPlasmaExplosion(Transform surface)
     {
         if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
         {
@@ -86,7 +84,7 @@ public class PlasmaOrb : Bullet
          creature = null;
     }
     
-    public override void OnCreatureEnter(Transform entity) 
+    protected override void OnCreatureEnter(Transform entity) 
     {
         StartCoroutine(startTimedPlasmaExplosion(whatItStuckTo));
         creature = entity;

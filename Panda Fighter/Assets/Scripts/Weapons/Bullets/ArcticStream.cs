@@ -19,7 +19,7 @@ public class ArcticStream : Bullet
         explosion.radius = 13;
     }
 
-    public override void Update()
+    protected override void Update()
     {
         base.Update();
 
@@ -48,5 +48,5 @@ public class ArcticStream : Bullet
     }
 
     protected override void OnMapEnter(Transform map) => startExplosion();
-    public override void OnCreatureEnter(Transform entity) => startExplosion();
+    protected override void OnCreatureEnter(Transform entity) => startExplosion();
 }

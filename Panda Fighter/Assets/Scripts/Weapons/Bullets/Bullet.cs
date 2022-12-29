@@ -4,36 +4,104 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    // returns the damage the bullet does
-    public virtual int Damage() => transform.parent.GetComponent<WeaponConfiguration>().bulletDmg;
+    // Reset the bullet settings before using it
+    public virtual void Reset()
+    {
+        updateBulletDirContinuously = false;
+        HasHitCreature = false;
+        HasHitMap = false;
+    }
 
-    // Called whenever the bullet hits a physical platform/object on the map. By default, deactivate the bullet.
-    protected virtual void OnMapEnter(Transform map) => StartCoroutine(delay());
+    // Returns the damage the bullet does
+    public virtual int Damage() => transform.parent.GetComponent<WeaponConfiguration>().BulletDmg;
 
-    // Called whenever the bullet hits a creature. By default, deactivate the bullet.
-    public virtual void OnCreatureEnter(Transform creature) => gameObject.SetActive(false);
+    // Whether a creature has been hit. If true, don't damage another creature even if there's a collision
+    public bool HasHitCreature { get; private set; }
 
-    // if a bullet hits any part of the map, trigger OnMapEnter() 
+    // Register that a creature was hit by this bullet
+    public void HitCreature(Transform creature)
+    {
+        HasHitCreature = true;
+        OnCreatureEnter(creature);
+    }
+
+    // Enable predictive collision logic on fast bullets so they don't accidently go through walls/platforms 
+    public void EnablePredictiveCollisions(Vector2 aim, bool updateBulletDirContinuously, bool sticksToCreatures)
+    {
+        predictedImpactLocation = Vector2.zero;
+        predictedColliderHit = null;
+
+        executedPredictedImpact = false;
+        raycastDistance = (updateBulletDirContinuously) ? 15 : 70;
+        this.aim = aim;
+
+        this.updateBulletDirContinuously = updateBulletDirContinuously;
+        this.sticksToCreatures = sticksToCreatures;
+        raycastLogic();
+
+        // stop physically detecting for a creature
+        HasHitCreature = true;
+    }
+
+    // Called whenever the bullet hits a creature. By default, deactivate the bullet
+    protected virtual void OnCreatureEnter(Transform creature) => gameObject.SetActive(false);
+
+    // Called whenever the bullet hits a physical platform/object on the map. By default,
+    // deactivate the bullet after 1 frame
+    protected virtual void OnMapEnter(Transform map) => StartCoroutine(deactivateBullet());
+
+    // For sticky bullets, keeps track of the limb that the bullet stuck to 
+    protected Transform whatItStuckTo { get; private set; }
+
+    // Returns squared distance between two vectors
+    protected float squaredDistance(Vector2 a, Vector2 b)
+    {
+        Vector2 c = a - b;
+        return c.x * c.x + c.y * c.y;
+    }
+
+    // Invokes OnMapEnter() when the bullet collides with the map
+    private bool HasHitMap;
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if ((col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround) && !disableCollisionDetection)
+        if (HasHitMap)
+            return;
+
+        if ((col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround))
         {
-            disableCollisionDetection = true;
+            HasHitMap = true;
             OnMapEnter(col.transform);
         }
     }
 
-     // for fast bullets, store the predicted hit location + who or what's gonna be hit (predicted when bullet is about to be shot)
-    public Vector2 predictedImpactLocation { get; private set; }
-    public Transform predictedColliderHit { get; private set; }
-    public Vector2 predictedNormal { get; private set; }
-    public static int raycastsUsed;
+    protected virtual void Update()
+    {
+        if (executedPredictedImpact)
+            return;
 
-    //  whether or not the bullet can detect physical collisions (with a creature, platform, etc.). Enabled whenever predicting collisions
-    public bool disableCollisionDetection;
+        raycastLogic();
+    }
 
-    // for sticky bullets, keep track of the limb that the bullet stuck to
-    protected Transform whatItStuckTo { get; private set; }
+    protected virtual void FixedUpdate()
+    {
+        if (updateBulletDirContinuously && transform.GetComponent<Rigidbody2D>().velocity != Vector2.zero)
+            aim = transform.GetComponent<Rigidbody2D>().velocity.normalized;
+
+        checkForPredictedCollision();
+    }
+
+    private IEnumerator deactivateBullet()
+    {
+        transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        yield return new WaitForSeconds(Time.deltaTime);
+        gameObject.SetActive(false);
+    }
+
+    // for fast bullets, store the predicted hit location + who or what's gonna be hit (predicted when bullet is about to be shot)
+    private Vector2 predictedImpactLocation;
+    private Transform predictedColliderHit;
+    protected Vector2 predictedNormal;
+
     private bool sticksToCreatures;
 
     private int raycastDistance = 70;
@@ -45,43 +113,9 @@ public class Bullet : MonoBehaviour
     private Vector2 aim;
     private Vector2 middleOfWeapon;
 
-    // run predictive collision logic for fast bullets. 
-    public void RunPredictiveLogic(Vector2 aim, Vector2 bulletStartPosition, bool updateBulletDirContinuously, bool sticksToCreatures)
-    {
-        predictedImpactLocation = Vector2.zero;
-        predictedColliderHit = null;
-
-        executedPredictedImpact = false;
-        disableCollisionDetection = true;
-        raycastDistance = (updateBulletDirContinuously) ? 15 : 70;
-        this.aim = aim;
-
-        this.updateBulletDirContinuously = updateBulletDirContinuously;
-        this.sticksToCreatures = sticksToCreatures;
-        raycastLogic();
-    }
-
-    public virtual void Update()
-    {
-        if (executedPredictedImpact)
-            return;
-
-        raycastLogic();
-    }
-
-    void FixedUpdate()
-    {
-        if (updateBulletDirContinuously && transform.GetComponent<Rigidbody2D>().velocity != Vector2.zero)
-            aim = transform.GetComponent<Rigidbody2D>().velocity.normalized;
-        
-        checkForPredictedCollision();
-    }
 
     private void raycastLogic() 
     {
-        WeaponConfiguration weaponConfiguration = transform.parent.GetComponent<WeaponConfiguration>();
-        ++raycastsUsed;
-
         checkForPredictedCollision();
 
         // start the predictive raycast from slightly behind where the bullet actually spawns (to detect collisions on creatures walking the gun)
@@ -137,7 +171,7 @@ public class Bullet : MonoBehaviour
 
                         foreach (GameObject lowerLimb in predictedColliderHit.parent.GetChild(0).GetComponent<CreatureLimbs>().LowerBody)
                         {
-                            distance = sqrDistance(lowerLimb.transform.position, predictedImpactLocation);
+                            distance = squaredDistance(lowerLimb.transform.position, predictedImpactLocation);
                             if (distance < closestDistance || closestDistance == -1)
                             {
                                 closestLowerLimb = lowerLimb;
@@ -158,8 +192,9 @@ public class Bullet : MonoBehaviour
                 transform.position = predictedImpactLocation;
 
                 // damage the predicted enemy hit, and register said collision (the bullet may have an explosion or something)
-                predictedColliderHit.parent.GetComponent<Health>().TakeDamageFromPredictedFastBulletCollision(Damage(), transform);
+                predictedColliderHit.parent.GetComponent<Health>().DamagedByBullet(Damage(), transform);
                 OnCreatureEnter(predictedColliderHit.parent);
+                HasHitCreature = true;
             }
         
             // if the bullet was predicted to hit part of the map
@@ -169,17 +204,5 @@ public class Bullet : MonoBehaviour
                 OnMapEnter(predictedColliderHit);
             }
         }
-    }
-
-    private IEnumerator delay()
-    {
-        transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        yield return new WaitForSeconds(Time.deltaTime);
-        gameObject.SetActive(false);
-    }
-
-    protected float sqrDistance(Vector2 a, Vector2 b) {
-        Vector2 c = a - b;
-        return c.x * c.x + c.y * c.y;
     }
 }

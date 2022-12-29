@@ -110,8 +110,8 @@ public static class WeaponAction
 
     private static void configureBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint, Side side)
     {
-        // spawn bullet at the right place + default velocity and rotation
-        bullet.transform.position = bulletSpawnPoint.position;
+        // spawn bullet at the right place. it should be still with default rotation
+        bullet.position = bulletSpawnPoint.position;
         bullet.localEulerAngles = new Vector3(0, 0, bullet.localEulerAngles.z);
         bulletRig.velocity = new Vector2(0, 0);
         bulletRig.angularVelocity = 0;
@@ -122,7 +122,7 @@ public static class WeaponAction
         else
             bullet.gameObject.layer = Layer.EnemyBullet;
 
-        // reenable collider
+        // re-enable collider
         bullet.GetComponent<Collider2D>().enabled = true;
 
         // reset the bullet sprite to be opaque (ie. alpha = 1)
@@ -132,9 +132,9 @@ public static class WeaponAction
             bullet.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
         }
 
-        // reinitiate the OnEnable method of the bullet (where variables get reset)
-        bullet.gameObject.SetActive(false);
+        // reset the bullet and re-enable it
         bullet.gameObject.SetActive(true);
+        bullet.GetComponent<Bullet>().Reset();
 
         // reset the trail renderer and particle effect, if any
         if (bullet.GetComponent<TrailRenderer>())
@@ -142,23 +142,20 @@ public static class WeaponAction
 
         if (bullet.GetComponent<ParticleSystem>())
             bullet.GetComponent<ParticleSystem>().Clear();
-
-        // reset that the bullet can do damage
-        bullet.GetComponent<Bullet>().disableCollisionDetection = false;
     }
 
     // predicative logic ensures that super fast bullets don't pass through matter!
     private static void predictTrajectoryOfFastBullets(Transform bullet, Vector2 aim, bool updateBulletDirContinuously, bool stickyBullet) 
     {
         if (bullet.parent.GetComponent<WeaponConfiguration>().BulletSpeed > 55f)
-            bullet.transform.GetComponent<Bullet>().RunPredictiveLogic(aim, bullet.position, updateBulletDirContinuously, stickyBullet);
+            bullet.GetComponent<Bullet>().EnablePredictiveCollisions(aim, updateBulletDirContinuously, stickyBullet);
     }
 
     private static IEnumerator fadeBullet(Transform bullet, float delay, float duration)
     {
         yield return new WaitForSeconds(delay);
         float alphaDissipateRate = 0.1f / duration;
-        SpriteRenderer sR = bullet.transform.GetComponent<SpriteRenderer>();
+        SpriteRenderer sR = bullet.GetComponent<SpriteRenderer>();
 
         while (duration > 0 && bullet.gameObject.activeSelf)
         {

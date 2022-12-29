@@ -19,6 +19,8 @@ public class wRailgun : WeaponBehaviour
 
     private void Start()
     {
+        if (weaponConfiguration == null)
+            Debug.Log("yeet");
         chargeParticles = weaponConfiguration.BulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         chargeParticles.Clear();
     }

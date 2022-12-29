@@ -39,7 +39,7 @@ public class FragGrenade : Bullet
         StartCoroutine(explosion.damageSurroundingEntities());
     }
 
-    public override void OnCreatureEnter(Transform creature) { }
+    protected override void OnCreatureEnter(Transform creature) { }
     protected override void OnMapEnter(Transform map) { }
 
     void Update()

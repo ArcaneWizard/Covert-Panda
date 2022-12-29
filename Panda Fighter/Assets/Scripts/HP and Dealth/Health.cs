@@ -28,7 +28,7 @@ public abstract class Health : MonoBehaviour
     protected BoxCollider2D mainCollider;
     protected BoxCollider2D hitBox;
 
-    public virtual void Awake()
+    protected virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         controller = transform.GetComponent<CentralController>();
@@ -50,7 +50,7 @@ public abstract class Health : MonoBehaviour
             : transform.parent.parent.parent.GetComponent<References>().EnemyRespawnPoints;
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         currentHP = maxHP;
         isDead = false;
@@ -61,9 +61,21 @@ public abstract class Health : MonoBehaviour
 
         StartCoroutine(abilityHandler.enableSpawnProtection());
     }
+    
+    // creature takes damage from a bullet 
+    public void DamagedByBullet(int damage, Transform physicalBullet)
+    {
+        currentHP -= damage;
 
-    // checks for when the entity collides with a bullet or explosion. apply dmg
-    // and update health bar correspondingly
+        if (currentHP <= 0)
+        {
+            Transform killer = physicalBullet.parent.parent.parent.parent;
+            Stats.confirmKillFor(killer);
+            StartCoroutine(startDeathSequence());
+        }
+    }
+
+    // checks for when the entity collides with a bullet or explosion
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (isDead || abilityHandler.IsInvulnerable)
@@ -76,25 +88,15 @@ public abstract class Health : MonoBehaviour
             hitByExplosion(col.transform);
     }
 
-    // Helper method. If this entity collides with a bullet and that bullet hasn't made contact with 
-    // anyone yet, reduce this entity's hp by the dmg that the particular bullet does. Also register that  
-    // the bullet has smade contact / done damage to someone + trigger any bullet action if needbe (ex. explosion) 
+    // creature takes damage from a bullet (and only if the bullet hasn't already hit someone else)
     private void hitByBullet(Transform physicalBullet)
     {
         Bullet bullet = physicalBullet.GetComponent<Bullet>();
 
-        if (!bullet.disableCollisionDetection)
+        if (!bullet.HasHitCreature)
         {
-            bullet.disableCollisionDetection = true;
-            currentHP -= bullet.Damage();
-            bullet.OnCreatureEnter(transform);
-
-            if (currentHP <= 0)
-            {
-                Transform killer = physicalBullet.parent.parent.parent.parent;
-                Stats.confirmKillFor(killer);
-                StartCoroutine(startDeathSequence());
-            }
+            bullet.HitCreature(transform); 
+            DamagedByBullet(bullet.Damage(), physicalBullet);
         }
     }
 
@@ -182,17 +184,5 @@ public abstract class Health : MonoBehaviour
 
         transform.localEulerAngles = new Vector3(0, 0, 0);
         controller.UpdateTiltInstantly();
-    }
-
-    public void TakeDamageFromPredictedFastBulletCollision(int damage, Transform physicalBullet)
-    {
-        currentHP -= damage;
-
-        if (currentHP <= 0)
-        {
-            Transform killer = physicalBullet.parent.parent.parent.parent;
-            Stats.confirmKillFor(killer);
-            StartCoroutine(startDeathSequence());
-        }
     }
 }

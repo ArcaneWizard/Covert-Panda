@@ -65,10 +65,10 @@ public class WeaponStats
             WeaponTypes.gun, FiringModes.spamFire, limbs.Shoulder_rest, equip.ArcticSprayer);
     }
 
-    private void set(Weapon weapon, float fireRateInfo, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
+    private void set(Weapon weapon, float maxAttacksPerSecond, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
         int explosionDmg, string combatMode, string weaponType, List<GameObject> limbs, GameObject physicalWeapon)
     {
-        weaponSystem.GetConfiguration(weapon).Initialize(fireRateInfo, combatMode, weaponType, weaponRange, 
+        weaponSystem.GetConfiguration(weapon).Initialize(maxAttacksPerSecond, combatMode, weaponType, weaponRange, 
             bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, physicalWeapon);
     }
 }
