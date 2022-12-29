@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PhysicalWeapons : MonoBehaviour
 {
-    public GameObject GrenadeHands;
+    public GameObject GrenadeHands; // to be removed
     public GameObject LavaOrbLauncher;
     public GameObject PlasmaOrbLauncher;
     public GameObject Shielder;
@@ -19,7 +19,7 @@ public class PhysicalWeapons : MonoBehaviour
 }
 
 //combat Modes
-public class Mode
+public class WeaponTypes
 {
     public const string gun = "gun";
     public const string meelee = "meelee";
@@ -27,7 +27,7 @@ public class Mode
 }
 
 //gun types
-public class WeaponType
+public class FiringModes
 {
     public const string singleFire = "single fire";
     public const string spamFire = "spam fire";

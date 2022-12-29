@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wBoomerang : WeaponImplementation
+public class wBoomerang : WeaponBehaviour
 {
     protected Vector2 boomerangSpinSpeed = new Vector2(600, 1050);
 

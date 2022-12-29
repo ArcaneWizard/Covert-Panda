@@ -5,7 +5,7 @@ using UnityEngine;
 // This class houses the different arms the creature has, one of which is enabled
 // depending on which type of weapon the creature is holding
 
-public class WeaponSpecificArm : MonoBehaviour
+public class ArmsHandler : MonoBehaviour
 {
     public List<GameObject> Hands; // Refactor note: should't have a seperate arm just for grenades (since they can be thrown while holding a weapon)
     public List<GameObject> Short_barrel;

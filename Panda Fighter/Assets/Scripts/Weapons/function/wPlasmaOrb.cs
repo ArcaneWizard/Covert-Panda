@@ -2,17 +2,19 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wPlasmaOrb : WeaponImplementation
+public class wPlasmaOrb : WeaponBehaviour
 {
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        DoAttack(aim, bullet, rig);
-        yield return null;
-    }
+        StartCoroutine(base.Attack(aim));
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
-    {
-        WeaponAction.ConfigureBullet(bullet, rig, weaponConfiguration.bulletSpawnPoint, side);
-        WeaponAction.ShootBulletInArc(aim, bullet, rig, new Vector2(1.4f, 1.5f), weaponConfiguration.bulletSpeed, true);
+        Vector2 forceMultiplier = new Vector2(1.4f, 1.5f);
+        Vector2 forceOffset = new Vector2(0f, 0f);
+
+       WeaponAction.SpawnAndShootBulletInArc(aim, forceMultiplier, forceOffset,
+            weaponSystem, weaponConfiguration, side, false);
+
+        ConfirmAttackFinished();
+        yield return null;
     }
 }

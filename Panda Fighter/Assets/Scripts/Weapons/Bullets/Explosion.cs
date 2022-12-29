@@ -23,7 +23,7 @@ public class Explosion : MonoBehaviour
     {
         if (collider)
             collider.radius = radius;
-        explosionDamage = transform.parent.GetComponent<WeaponConfiguration>().explosionDmg;
+        explosionDamage = transform.parent.GetComponent<WeaponConfiguration>().ExplosionDmg;
     }
 
     // check if an entity was already damaged by an explosion

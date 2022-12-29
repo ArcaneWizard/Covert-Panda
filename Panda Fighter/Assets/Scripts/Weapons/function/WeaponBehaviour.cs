@@ -31,7 +31,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
     public virtual void UponEquippingWeapon() { return; }
 
     // behaviour when creature does a default attack with this weapon
-    public virtual IEnumerator StartAttack(Vector2 aim)
+    public virtual IEnumerator Attack(Vector2 aim)
     {
         attackProgress = Progress.Started;
         yield return null;
@@ -39,7 +39,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
 
     // behaviour when creature does a bonus attack (if possible) with
     // this weapon
-    public virtual IEnumerator StartBonusAttack(Vector2 aim)
+    public virtual IEnumerator BonusAttack(Vector2 aim)
     {
         bonusAttackProgress = Progress.Started;
         yield return null;
@@ -52,8 +52,8 @@ public abstract class WeaponBehaviour : MonoBehaviour
         bonusAttackProgress = Progress.Finished;
     }
 
-    protected void FinishAttack() => attackProgress = Progress.Finished;
-    protected void FinishBonusAttack() => bonusAttackProgress = Progress.Finished;
+    protected void ConfirmAttackFinished() => attackProgress = Progress.Finished;
+    protected void ConfirmBonusAttackFinished() => bonusAttackProgress = Progress.Finished;
 
     void Awake()
     {

@@ -2,15 +2,15 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wIcicle : WeaponImplementation
+public class wIcicle : WeaponBehaviour
 {
-    public override IEnumerator StartAttack(Vector2 aim)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        StartCoroutine(base.StartAttack(aim));
+        StartCoroutine(base.Attack(aim));
 
-        WeaponAction.ShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
 
-        FinishAttack();
+        ConfirmAttackFinished();
         yield return null;
     }
 

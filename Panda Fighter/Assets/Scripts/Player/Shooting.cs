@@ -24,18 +24,18 @@ public class Shooting : CentralShooting
             countdownBtwnShots -= Time.deltaTime;
 
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
-        WeaponImplementation implementation = weaponSystem.CurrentWeaponImplementation;
+        WeaponBehaviour implementation = weaponSystem.CurrentWeaponImplementation;
 
         if (weaponSystem.CurrentAmmo <= 0 || implementation.attackProgress != Progress.Finished || countdownBtwnShots > 0f)
             return;
 
-        if (configuration.weaponType != WeaponType.holdFire && Input.GetMouseButtonDown(0))
+        if (configuration.WeaponType != FiringModes.holdFire && Input.GetMouseButtonDown(0))
         {
-            countdownBtwnShots = configuration.fireRateInfo;
+            countdownBtwnShots = configuration.FireRateInfo;
             AttackWithWeapon();
         }
 
-        else if (configuration.weaponType == WeaponType.holdFire && Input.GetMouseButton(0))
+        else if (configuration.WeaponType == FiringModes.holdFire && Input.GetMouseButton(0))
             AttackWithWeapon();
     }
 }

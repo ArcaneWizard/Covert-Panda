@@ -2,24 +2,22 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wScythe : WeaponImplementation
+public class wScythe : WeaponBehaviour
 {
-    private Vector2 scytheSpinSpeed = new Vector2(1200, 1400);
+    public override void UponEquippingWeapon() => weaponConfiguration.Animator.SetInteger("Arms Phase", 10);
 
-    public override void SetDefaultAnimation() => weaponConfiguration.animator.SetInteger("Arms Phase", 10);
-
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        weaponConfiguration.animator.SetInteger("Arms Phase", 11);
-        weaponConfiguration.weaponAimTracker.gameObject.SetActive(false);
+        StartCoroutine(base.Attack(aim));
 
-        while (weaponConfiguration.animator.GetInteger("Arms Phase") == 11)
+        weaponConfiguration.Animator.SetInteger("Arms Phase", 11);
+        weaponConfiguration.WeaponAimTracker.gameObject.SetActive(false);
+
+        while (weaponConfiguration.Animator.GetInteger("Arms Phase") == 11)
             yield return null;
 
-        DoAttack(aim, bullet, rig);
+        ConfirmAttackFinished();
     }
-
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig) => weaponConfiguration.weaponAimTracker.gameObject.SetActive(true);
 
    /* public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)
     {

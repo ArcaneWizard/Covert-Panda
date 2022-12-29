@@ -2,18 +2,16 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wSniper : WeaponImplementation
+public class wSniper : WeaponBehaviour
 {
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        DoAttack(aim, bullet, rig);
-        yield return null;
-    }
+        StartCoroutine(base.Attack(aim));
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
-    {
-        WeaponAction.ConfigureBullet(bullet, rig, weaponConfiguration.bulletSpawnPoint, side);
-        bullet.transform.right = aim;
-        bullet.transform.GetComponent<SniperBeam>().ShowBeam();
+        Transform bullet = WeaponAction.SpawnBullet(aim, weaponSystem, weaponConfiguration, side, false);
+        bullet.GetComponent<SniperBeam>().ShowBeam();
+
+        ConfirmAttackFinished();
+        yield return null;
     }
 }

@@ -39,7 +39,7 @@ public class AI_Shooting : CentralShooting
             countdownBtwnShots -= Time.deltaTime;
 
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
-        WeaponImplementation implementation = weaponSystem.CurrentWeaponImplementation;
+        WeaponBehaviour implementation = weaponSystem.CurrentWeaponImplementation;
 
         if (!AI_lookAround.EnemySpotted || countdownBtwnShots > 0f || weaponSystem.CurrentAmmo <= 0)
             return;
@@ -47,9 +47,9 @@ public class AI_Shooting : CentralShooting
         if (implementation.attackProgress == Progress.Finished)
             return;
 
-        if (configuration.weaponType != WeaponType.holdFire)
+        if (configuration.WeaponType != FiringModes.holdFire)
         {
-            countdownBtwnShots = configuration.fireRateInfo + reactionDelay;
+            countdownBtwnShots = configuration.FireRateInfo + reactionDelay;
             timeSinceLastShot = 0f;
             AttackWithWeapon();
         }

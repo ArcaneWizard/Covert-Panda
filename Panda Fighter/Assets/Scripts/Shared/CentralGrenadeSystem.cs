@@ -18,7 +18,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     protected Dictionary<Grenade, List<Transform>> grenadePools;
 
     protected Dictionary<Grenade, WeaponConfiguration> grenadeConfigurations;
-    protected Dictionary<Grenade, WeaponImplementation> grenadeImplementations;
+    protected Dictionary<Grenade, WeaponBehaviour> grenadeImplementations;
 
     protected CentralShooting shooting;
     protected CentralLookAround lookAround;
@@ -31,7 +31,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
         health = transform.GetComponent<Health>();
 
         grenadePools = new Dictionary<Grenade, List<Transform>>();
-        grenadeImplementations = new Dictionary<Grenade, WeaponImplementation>();
+        grenadeImplementations = new Dictionary<Grenade, WeaponBehaviour>();
         grenadeConfigurations = new Dictionary<Grenade, WeaponConfiguration>();
 
         inventory = new Grenade[maxGrenadesCarried];
@@ -54,7 +54,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
             WeaponConfiguration config = grenadePool.GetComponent<WeaponConfiguration>();
             grenadeConfigurations[grenadeType] = config;
 
-            WeaponImplementation implementation = grenadePool.GetComponent<WeaponImplementation>();
+            WeaponBehaviour implementation = grenadePool.GetComponent<WeaponBehaviour>();
             implementation.Initialize(config, this, null);
             grenadeImplementations[grenadeType] = implementation;
         }
@@ -85,7 +85,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     private Grenade currentGrenade => inventory[currIdx];
     public int GrenadesLeft => grenadesLeft[currIdx];
 
-    public WeaponImplementation CurrentGrenadeImplementation => grenadeImplementations[currentGrenade];
+    public WeaponBehaviour CurrentGrenadeImplementation => grenadeImplementations[currentGrenade];
     public WeaponConfiguration CurrentGrenadeConfiguration => grenadeConfigurations[currentGrenade];
     public WeaponConfiguration GetConfiguration(Grenade grenade) => grenadeConfigurations[grenade];
 

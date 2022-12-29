@@ -2,16 +2,16 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wLavaPistol : WeaponImplementation
+public class wLavaPistol : WeaponBehaviour
 {
-    public override IEnumerator StartAttack(Vector2 aim)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        StartCoroutine(base.StartAttack(aim));
+        StartCoroutine(base.Attack(aim));
 
-        Transform bullet = WeaponAction.ShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        Transform bullet = WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
         bullet.localEulerAngles = Vector3.zero;
 
-        FinishAttack();
+        ConfirmAttackFinished();
         yield return null;
     }
 

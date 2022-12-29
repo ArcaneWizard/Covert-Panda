@@ -2,19 +2,19 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wFragGrenade : WeaponImplementation
+public class wFragGrenade : WeaponBehaviour
 {
     protected float grenadeThrowForce = 2200;
     protected float grenadeYForce = -20;
 
-    public override void SetDefaultAnimation() => weaponConfiguration.animator.SetInteger("Arms Phase", 0);
+    public override void UponEquippingWeapon() => weaponConfiguration.Animator.SetInteger("Arms Phase", 0);
 
-    public override IEnumerator StartAttack(Vector2 aim)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        StartCoroutine(base.StartAttack(aim));
+        StartCoroutine(base.Attack(aim));
 
-        weaponConfiguration.WeaponLimbs[1].transform.parent.GetComponent<Animator>().Play(0, -1);
-        weaponConfiguration.WeaponLimbs[1].SetActive(true);
+        weaponConfiguration.WeaponSpecificArms[1].transform.parent.GetComponent<Animator>().Play(0, -1);
+        weaponConfiguration.WeaponSpecificArms[1].SetActive(true);
 
         float wait = WeaponAction.CalculateTimeB4ReleasingGrenade(0.02f, 0.2f, aim);
         yield return new WaitForSeconds(wait);
@@ -30,8 +30,8 @@ public class wFragGrenade : WeaponImplementation
         rig.AddForce(unadjustedForce * rig.mass);
 
         yield return new WaitForSeconds(0.6f - wait);
-        weaponConfiguration.WeaponLimbs[1].SetActive(false);
+        weaponConfiguration.WeaponSpecificArms[1].SetActive(false);
 
-        FinishAttack();
+        ConfirmAttackFinished();
     } 
 }

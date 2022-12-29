@@ -2,17 +2,15 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wNormalWeapon : WeaponImplementation
+public class wNormalWeapon : WeaponBehaviour
 {
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        DoAttack(aim, bullet, rig);
-        yield return null;
-    }
+        StartCoroutine(base.Attack(aim));
 
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
-    {
-        WeaponAction.ConfigureBullet(bullet, rig, weaponConfiguration.bulletSpawnPoint, side);
-        WeaponAction.ShootBullet(aim, bullet, rig, weaponConfiguration.bulletSpeed);
+        WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+
+        ConfirmAttackFinished();
+        yield return null;
     }
 }

@@ -2,18 +2,18 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class wNeedler : WeaponImplementation
+public class wNeedler : WeaponBehaviour
 {
-    public override IEnumerator SetupAttack(Vector2 aim, Transform bullet, Rigidbody2D rig)
+    public override IEnumerator Attack(Vector2 aim)
     {
-        DoAttack(aim, bullet, rig);
+        StartCoroutine(base.Attack(aim));
+
+        Transform bullet = WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        float yOffset = Random.Range(-0.13f, 0.13f);
+        bullet.position += new Vector3(0, yOffset, 0f);
+
+        ConfirmAttackFinished();
         yield return null;
     }
-
-    public override void Attack(Vector2 aim, Transform bullet, Rigidbody2D rig)
-    {
-        ReusableWeaponImplentations.ConfigureBullet(bullet, rig, config.bulletSpawnPoint, side);
-        bullet.position += new Vector3(0, UnityEngine.Random.Range(-0.13f, 0.13f), 0f);
-        ReusableWeaponImplentations.ShootBullet(aim, bullet, rig, config.bulletSpeed);
-    }
 }
+

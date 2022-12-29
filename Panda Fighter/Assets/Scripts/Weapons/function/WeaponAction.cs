@@ -8,13 +8,13 @@ using UnityEngine;
 
 public static class WeaponAction
 {
-    // spawns in a new bullet and shoots it in straight line forward
-    public static Transform ShootBulletForward(Vector2 aim, CentralWeaponSystem weaponSystem,
+    // spawns in a new bullet and shoots it in straight line forward.
+    public static Transform SpawnAndShootBulletForward(Vector2 aim, CentralWeaponSystem weaponSystem,
         WeaponConfiguration configuration, Side side, bool isBulletSticky)
     {
         Transform bullet = weaponSystem.UseOneBullet().transform;
         Rigidbody2D bulletRig = bullet.GetComponent<Rigidbody2D>();
-        ConfigureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
+        configureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
 
         bullet.right = aim;
         bulletRig.velocity = aim * configuration.BulletSpeed;
@@ -24,13 +24,13 @@ public static class WeaponAction
     }
 
     // spawns in a new bullet and shoots it a specified angle off from the specified aim direction
-    public static Transform ShootBulletDiagonally(Vector2 aim, float angleOffset,
+    public static Transform SpawnAndShootBulletDiagonally(Vector2 aim, float angleOffset,
         Vector2 verticalOffsetRange, CentralWeaponSystem weaponSystem,
         WeaponConfiguration configuration, Side side, bool isBulletSticky)
     {
         Transform bullet = weaponSystem.UseOneBullet().transform;
         Rigidbody2D bulletRig = bullet.GetComponent<Rigidbody2D>();
-        ConfigureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
+        configureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
 
         Vector2 newAim = Quaternion.AngleAxis(angleOffset, Vector3.forward) * aim;
         bullet.position += Vector3.up * UnityEngine.Random.Range(verticalOffsetRange.x, verticalOffsetRange.y);
@@ -42,15 +42,15 @@ public static class WeaponAction
     }
 
     // spawns in a new bullet and shoots it in an arc
-    public static Transform ShootBulletInArc(Vector2 aim, CentralWeaponSystem weaponSystem,
-        WeaponConfiguration configuration, Side side, bool isBulletSticky)
+    public static Transform SpawnAndShootBulletInArc(Vector2 aim, Vector2 forceMultiplier, Vector2 forceOffset,
+        CentralWeaponSystem weaponSystem, WeaponConfiguration configuration, Side side, bool isBulletSticky)
     {
         Transform bullet = weaponSystem.UseOneBullet().transform;
         Rigidbody2D bulletRig = bullet.GetComponent<Rigidbody2D>();
-        ConfigureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
+        configureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
 
         bullet.right = aim;
-        Vector2 unadjustedForce = configuration.BulletSpeed * 40 * aim;
+        Vector2 unadjustedForce = configuration.BulletSpeed * 40 * aim * forceMultiplier + forceOffset;
         bulletRig.AddForce(unadjustedForce * bulletRig.mass);
 
         predictTrajectoryOfFastBullets(bullet, aim, true, isBulletSticky);
@@ -64,7 +64,7 @@ public static class WeaponAction
     {
         Transform bullet = weaponSystem.UseOneBullet().transform;
         Rigidbody2D bulletRig = bullet.GetComponent<Rigidbody2D>();
-        ConfigureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
+        configureBullet(bullet, bulletRig, configuration.BulletSpawnPoint, side);
 
         bullet.right = aim;
         return bullet;
@@ -76,7 +76,7 @@ public static class WeaponAction
     {
         Transform grenade = grenadeSystem.UseOneGrenade();
         Rigidbody2D grenadeRig = grenade.GetComponent<Rigidbody2D>();
-        ConfigureBullet(grenade, grenadeRig, configuration.BulletSpawnPoint, side);
+        configureBullet(grenade, grenadeRig, configuration.BulletSpawnPoint, side);
 
         grenade.transform.right = aim;
         Vector2 unadjustedForce = configuration.BulletSpeed * 40 * aim;
@@ -93,7 +93,7 @@ public static class WeaponAction
     {
         Transform grenade = grenadeSystem.UseOneGrenade();
         Rigidbody2D grenadeRig = grenade.GetComponent<Rigidbody2D>();
-        ConfigureBullet(grenade, grenadeRig, configuration.BulletSpawnPoint, side);
+        configureBullet(grenade, grenadeRig, configuration.BulletSpawnPoint, side);
 
         grenade.right = aim;
         return grenade;
@@ -108,7 +108,7 @@ public static class WeaponAction
     public static float CalculateTimeB4ReleasingGrenade(float trackingMultiplier, float trackingOffset, Vector2 aim)
         => ((-aim.y + 1) * trackingMultiplier + trackingOffset);
 
-    private static void ConfigureBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint, Side side)
+    private static void configureBullet(Transform bullet, Rigidbody2D bulletRig, Transform bulletSpawnPoint, Side side)
     {
         // spawn bullet at the right place + default velocity and rotation
         bullet.transform.position = bulletSpawnPoint.position;

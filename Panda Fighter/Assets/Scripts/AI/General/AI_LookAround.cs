@@ -60,7 +60,7 @@ public class AI_LookAround : CentralLookAround
 
         Collider2D[] enemiesWithinRangeOfWeapon = Physics2D.OverlapCircleAll(
                 transform.position, 
-                weaponSystem.CurrentWeaponConfiguration.weaponRange,
+                weaponSystem.CurrentWeaponConfiguration.WeaponRange,
                 LayerMasks.target(side)
         );
 
@@ -73,7 +73,7 @@ public class AI_LookAround : CentralLookAround
             RaycastHit2D hit = Physics2D.Raycast(
                 weaponPivot.position, 
                 nearbyEnemy.transform.position - weaponPivot.position,
-                weaponSystem.CurrentWeaponConfiguration.weaponRange, 
+                weaponSystem.CurrentWeaponConfiguration.WeaponRange, 
                 LayerMasks.mapOrTarget(side)
             );
 
