@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// This abstract class is utilized to implement a weapon's behaviour upon being
-// equipped, and how it attacks (ex. how the gun fires bullets). It tracks the
-// progress of the attack (Started or Finished). Additionally, it allows
-// weapons to implement a 2nd/bonus attack.
+// This abstract class is utilized to implement a weapon's behaviour:
+// aka how it fires/attacks, and any animation/behaviour the moment its equipped.
+// The progress of an "attack" is tracked, useful to know for weapons
+// that charge up or meelee weapons that swing. Additionally, weapons
+// can implement a 2nd/bonus attack.
 
 public abstract class WeaponBehaviour : MonoBehaviour
 {
@@ -27,18 +28,17 @@ public abstract class WeaponBehaviour : MonoBehaviour
         this.weaponSystem = weaponSystem;
     }
 
-    // behaviour when weapon is equipped
+    // what happens right when the weapon is equipped
     public virtual void UponEquippingWeapon() { return; }
 
-    // behaviour when creature does a default attack with this weapon
+    // default attack with this weapon. The aim direction is specified
     public virtual IEnumerator Attack(Vector2 aim)
     {
         attackProgress = Progress.Started;
         yield return null;
     }
 
-    // behaviour when creature does a bonus attack (if possible) with
-    // this weapon
+    // bonus attack (if possible) with this weapon. The aim direction is specified
     public virtual IEnumerator BonusAttack(Vector2 aim)
     {
         bonusAttackProgress = Progress.Started;

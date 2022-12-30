@@ -62,7 +62,7 @@ public class WeaponStats
 
         set(Weapon.ArcticSprayer, 0.07f, 32,  100, 5000, 
             60,  140, 
-            WeaponTypes.gun, FiringModes.spamFire, limbs.Shoulder_rest, equip.ArcticSprayer);
+            WeaponTypes.gun, FiringModes.singleFire, limbs.Shoulder_rest, equip.ArcticSprayer);
     }
 
     private void set(Weapon weapon, float maxAttacksPerSecond, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,

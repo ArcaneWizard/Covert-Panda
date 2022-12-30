@@ -46,7 +46,7 @@ public abstract class CentralShooting : MonoBehaviour
 
     protected void DeployGrenade() => StartCoroutine(grenadeSystem.CurrentGrenadeImplementation.Attack(GetAim()));
 
-    protected void AttackWithWeapon() => StartCoroutine(weaponSystem.CurrentWeaponImplementation.Attack(GetAim()));
+    protected void AttackWithWeapon() => StartCoroutine(weaponSystem.CurrentWeaponBehaviour.Attack(GetAim()));
     
    /* protected void RightClickAttack()
     {

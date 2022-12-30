@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Shooting : CentralShooting
 {
-    private Progress attackProgress;
     private float countdownBtwnShots = 0f;
 
     public override Vector2 GetAim() => lookAround.directionToLook;
@@ -24,12 +23,18 @@ public class Shooting : CentralShooting
             countdownBtwnShots -= Time.deltaTime;
 
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
-        WeaponBehaviour implementation = weaponSystem.CurrentWeaponImplementation;
+        WeaponBehaviour behaviour = weaponSystem.CurrentWeaponBehaviour;
 
-        if (weaponSystem.CurrentAmmo <= 0 || implementation.attackProgress != Progress.Finished || countdownBtwnShots > 0f)
+        if (weaponSystem.CurrentAmmo <= 0 || behaviour.attackProgress != Progress.Finished || countdownBtwnShots > 0f)
             return;
 
-        if (configuration.WeaponType != FiringModes.holdFire && Input.GetMouseButtonDown(0))
+        if (configuration.WeaponType == FiringModes.singleFire && Input.GetMouseButtonDown(0))
+        {
+            countdownBtwnShots = configuration.FireRateInfo;
+            AttackWithWeapon();
+        }
+
+        else if (configuration.WeaponType == FiringModes.spamFire && Input.GetMouseButton(0))
         {
             countdownBtwnShots = configuration.FireRateInfo;
             AttackWithWeapon();

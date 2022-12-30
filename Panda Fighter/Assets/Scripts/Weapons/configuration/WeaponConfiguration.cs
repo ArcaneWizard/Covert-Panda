@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// This class houses the actual stats of the weapon (ex. bullet speed).
+// It also houses physical components of the weapon relevant to using it correctly.
+
 public class WeaponConfiguration : MonoBehaviour
 {
     public string CombatMode { get; private set; }
@@ -11,7 +14,7 @@ public class WeaponConfiguration : MonoBehaviour
     public int StartingAmmo { get; private set; }
     public int BulletSpeed { get; private set; }
     public float WeaponRange { get; private set; }
-    public float FireRateInfo { get; private set; }  
+    public float FireRateInfo { get; private set; }  // max attacks or fired shots per second
 
     public Transform BulletSpawnPoint { get; private set; }
     public List<GameObject> WeaponSpecificArms { get; private set; }
