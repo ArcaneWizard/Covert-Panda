@@ -34,13 +34,13 @@ public class Controller : CentralController
         //use W and S keys for jumping up or thrusting downwards + allow double jump
         if (Input.GetKeyDown(KeyCode.W)) 
         {
-            if (isGrounded && !phaseTracker.IsPhase(Phase.Jumping) && !standingOnJumpPad)
+            if (isGrounded && !phaseTracker.Is(Phase.Jumping) && !standingOnJumpPad)
                 normalJump();
 
-            else if (phaseTracker.IsPhase(Phase.Jumping)) 
+            else if (phaseTracker.Is(Phase.Jumping)) 
                 doubleJump();
 
-            else if (isGrounded && !phaseTracker.IsPhase(Phase.Jumping) && standingOnJumpPad)
+            else if (isGrounded && !phaseTracker.Is(Phase.Jumping) && standingOnJumpPad)
                 jumpPadBoost();
         }
 
@@ -57,11 +57,11 @@ public class Controller : CentralController
     private void setPlayerVelocity()
     {
         //nullify the slight bounce on a slope glitch when changing slopes
-        if ((!phaseTracker.IsPhaseMidAir || phaseTracker.IsPhase(Phase.Falling)) && rig.velocity.y > 0)
+        if ((!phaseTracker.IsMidAir || phaseTracker.Is(Phase.Falling)) && rig.velocity.y > 0)
             rig.velocity = new Vector2(0, 0);
 
         //when player is on the ground, player velocity is parallel to the slanted ground 
-        if (!phaseTracker.IsPhaseMidAir && isGrounded && isTouchingMap)
+        if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
         {
             //no x velocity when running into a wall to avoid bounce/fall glitch
             if (dirX == 1 && wallToTheRight)

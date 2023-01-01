@@ -86,7 +86,7 @@ public class PlasmaOrb : Bullet
     
     protected override void OnCreatureEnter(Transform entity) 
     {
-        StartCoroutine(startTimedPlasmaExplosion(whatItStuckTo));
+        StartCoroutine(startTimedPlasmaExplosion(entity));
         creature = entity;
     }
 }

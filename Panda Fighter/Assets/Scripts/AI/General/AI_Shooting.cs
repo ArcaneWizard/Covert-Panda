@@ -15,7 +15,7 @@ public class AI_Shooting : CentralShooting
     // aim should be off slightly by some random, offset angle
     public override Vector2 GetAim() 
     {
-         offsetAngle = UnityEngine.Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
+         offsetAngle = Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
          return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.directionToLook.normalized;
     }
 
@@ -44,7 +44,7 @@ public class AI_Shooting : CentralShooting
         if (!AI_lookAround.EnemySpotted || countdownBtwnShots > 0f || weaponSystem.CurrentAmmo <= 0)
             return;
 
-        if (behaviour.attackProgress == Progress.Finished)
+        if (behaviour.attackProgress != Progress.Finished)
             return;
 
         if (configuration.WeaponType != FiringModes.holdFire)
@@ -58,6 +58,6 @@ public class AI_Shooting : CentralShooting
     }
 
     private float reactionDelay => (timeSinceLastShot > 1f) 
-        ? UnityEngine.Random.Range(reactionTime.x, reactionTime.y) 
-        : UnityEngine.Random.Range(0.1f, 0.22f);
+        ? Random.Range(reactionTime.x, reactionTime.y) 
+        : Random.Range(0.1f, 0.22f);
 }

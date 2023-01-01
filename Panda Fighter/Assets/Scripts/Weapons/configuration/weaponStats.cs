@@ -20,11 +20,11 @@ public class WeaponStats
 
     public void Initialize()
     {
-        set(Weapon.LavaPistol, 0.15f, 32,  200, 5000,
+        set(Weapon.LavaPistol, 0.15f, 32,  200, 20,
             90,  30,
             WeaponTypes.gun, FiringModes.singleFire, limbs.Pistol_grip, equip.LavaOrbLauncher);
 
-        set(Weapon.PlasmaOrb, 0.25f, 32,  90, 5000,
+        set(Weapon.PlasmaOrb, 0.25f, 32,  90, 20,
             0, 140, 
             WeaponTypes.gun, FiringModes.spamFire, limbs.Short_barrel, equip.PlasmaOrbLauncher);
 
@@ -32,15 +32,15 @@ public class WeaponStats
             30, 110, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.Middle_barrel, equip.Shielder);
 
-        set(Weapon.LeafScythe, 0.33f, 10,  -1, 5000,
+        set(Weapon.LeafScythe, 0.33f, 10,  -1, 20,
             500, 0, 
             WeaponTypes.meelee, FiringModes.singleFire, limbs.Meelee_grip, equip.LeafScythe);
 
-        set(Weapon.Shotgun, 0.6f,  10,  300, 5000,
+        set(Weapon.Shotgun, 0.6f,  10,  300, 20,
             600, 0, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.Short_barrel, equip.GoldenShotgun);
 
-        set(Weapon.ArcticPistol, 0.2f,  32,  200, 5000,  
+        set(Weapon.ArcticPistol, 0.2f,  32,  200, 20,  
             90,  0, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.Pistol_grip, equip.ArcticCannon);
 
@@ -48,19 +48,19 @@ public class WeaponStats
             200, 20, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.Long_barrel, equip.Sniper);
 
-        set(Weapon.Needler, 0.15f, 32,  200, 5000, 
+        set(Weapon.Needler, 0.15f, 32,  200, 50, 
             30,  0, 
             WeaponTypes.gun, FiringModes.spamFire, limbs.Middle_barrel, equip.Needler);
 
-        set(Weapon.FocusBeamer, 0.00f, 34,  -1,  5000,
+        set(Weapon.FocusBeamer, 0.00f, 34,  -1,  20,
             7,   0, 
             WeaponTypes.gun, FiringModes.holdFire, limbs.Short_barrel, equip.FocusBeamer);
             
-        set(Weapon.RocketLauncher, 0.8f,  34,  140, 5000,
+        set(Weapon.RocketLauncher, 0.8f,  34,  140, 7,
             0, 300, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.Shoulder_rest, equip.RocketLauncher);
 
-        set(Weapon.ArcticSprayer, 0.07f, 32,  100, 5000, 
+        set(Weapon.ArcticSprayer, 0.07f, 32,  100, 15, 
             60,  140, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.Shoulder_rest, equip.ArcticSprayer);
     }

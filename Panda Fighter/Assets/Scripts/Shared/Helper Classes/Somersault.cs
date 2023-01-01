@@ -62,7 +62,7 @@ public class Somersault
     public void Tick()
     {
         // if creature isn't double jumping, reset the somersault direction 
-        if (!phaseTracker.IsPhase(Phase.DoubleJumping))
+        if (!phaseTracker.Is(Phase.DoubleJumping))
         {
             state = SomersaultState.Exited;
             animator.SetBool("somersault forwards", true);

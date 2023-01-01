@@ -9,30 +9,20 @@ using UnityEngine;
 
 public abstract class CentralController : MonoBehaviour
 {
-    // Useful movement information:
+    // Useful information
     public bool isGrounded { get; protected set; }
     public bool isTouchingMap { get; protected set; }
     public bool recentlyJumpedOffGround {get; private set; }
-
-    [Range(-25.0f, 25.0f)]
-    public float offset;
     
     // Current direction of creature's movement (-1 = left, 0 = idle, 1 = right)
     public int dirX { get; protected set; } 
 
     // Important movement constants:
-    public const float jumpForce = 1750f; 
+    public const float jumpForce = 1820f; 
     public const float doubleJumpForce = 1850f; 
     public const float jumpPadForce = 3400; 
     public const float maxGravity = 5f;
-    
-    protected Rigidbody2D rig;
-    protected Transform body;
-    protected CentralPhaseTracker phaseTracker;
-    protected Health health;
-    protected CentralLookAround lookAround;
-    protected Animator animator;
-
+   
     [Header("Limbs and colliders")]
     public Transform shootingArm;
     public BoxCollider2D mainCollider;
@@ -44,8 +34,19 @@ public abstract class CentralController : MonoBehaviour
     public Transform physicalLeftFoot;
     public Transform physicalRightFoot;
 
+    // Immediately correct the creature's tilt on the sloped ground it's standing on
+    public void UpdateTiltInstantly() => updateTiltInstantly = true;
+
+
+    protected Rigidbody2D rig;
+    protected Transform body;
+    protected CentralPhaseTracker phaseTracker;
+    protected Health health;
+    protected CentralLookAround lookAround;
+    protected Animator animator;
+
     protected float maxSpeed;
-    protected float speed; 
+    protected float speed;
 
     // Info about the ground or walls detected:
     protected RaycastHit2D leftGroundHit, rightGroundHit, centerGroundHit;
@@ -59,7 +60,7 @@ public abstract class CentralController : MonoBehaviour
 
     private bool updateTiltInstantly;
 
-    public void Awake()
+    void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
         body = transform.GetChild(0).transform;
@@ -76,25 +77,19 @@ public abstract class CentralController : MonoBehaviour
         speed = maxSpeed;
     }
 
-    public virtual void Start()
+    protected virtual void Start()
     {
         StartCoroutine(performWallChecks());
         StartCoroutine(repeatedlyCheckIfGrounded());
     }
 
-    public virtual void LateUpdate() 
+    protected virtual void LateUpdate() 
     {
         if (health.isDead)
             return;
 
         updateTilt();
     }
-
-    // Set the x direction of the creature's movement (1 = right, 0 = still, -1 = left)
-    public void SetDirection(int dir) => this.dirX = dir;
-
-    // Immediately update the creature's standing tilt for the current ground 
-    public void UpdateTiltInstantly() => updateTiltInstantly = true;
 
     // Update the creature's standing tilt and feet rotation depending on the ground angle
     private void updateTilt()
@@ -120,7 +115,7 @@ public abstract class CentralController : MonoBehaviour
                 transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20 * Time.deltaTime);
         }
 
-        else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !phaseTracker.IsPhase(Phase.DoubleJumping))
+        else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !phaseTracker.Is(Phase.DoubleJumping))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
 
         if (updateTiltInstantly) 

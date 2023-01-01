@@ -17,7 +17,7 @@ public class AI_Controller : CentralController
     private float randomSpeed;
 
     // action progress starts off as "finished" so that a new action can be started
-    public override void Start()
+    protected override void Start()
     {
         base.Start();
 
@@ -25,7 +25,10 @@ public class AI_Controller : CentralController
         actionProgress = "finished";
     }
 
-    // return the coordinates of a point in space in front of the AI's upper body
+    // Set the x direction of the creature's movement (1 = right, 0 = still, -1 = left)
+    public void SetDirection(int dir) => this.dirX = dir;
+
+    // Return the coordinates of a point in space in front of the AI's upper body
     public Vector3 InFrontOfAI() => shootingArm.position + new Vector3(dirX, 0, 0);
 
     // Forcefully ends the current action so that a new action can hapoen
@@ -177,7 +180,7 @@ public class AI_Controller : CentralController
 
         else if (Action.actionName == "normalJump") 
         {
-            if (isGrounded && !phaseTracker.IsPhase(Phase.DoubleJumping) && !phaseTracker.IsPhase(Phase.Jumping))
+            if (isGrounded && !phaseTracker.Is(Phase.DoubleJumping) && !phaseTracker.Is(Phase.Jumping))
                 normalJump();
 
             StartCoroutine(changeVelocityAfterDelay(Action.timeB4Change, Action.changedSpeed, Action));
@@ -189,7 +192,7 @@ public class AI_Controller : CentralController
 
     private IEnumerator executeDoubleJumpAtRightMoment(AI_ACTION currentAction)
     {
-        if (isGrounded && !phaseTracker.IsPhase(Phase.DoubleJumping))
+        if (isGrounded && !phaseTracker.Is(Phase.DoubleJumping))
             normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(Action.timeB4Change.x, Action.timeB4Change.y));
@@ -200,7 +203,7 @@ public class AI_Controller : CentralController
         dirX = Action.dirX * (int)Mathf.Sign(randomSpeed);
         speed = Mathf.Abs(randomSpeed);
 
-        if (phaseTracker.IsPhase(Phase.Jumping) && !phaseTracker.IsPhase(Phase.DoubleJumping))
+        if (phaseTracker.Is(Phase.Jumping) && !phaseTracker.Is(Phase.DoubleJumping))
             doubleJump();
 
         StartCoroutine(changeVelocityAfterDelay(Action.timeB4SecondChange, Action.secondChangedSpeed, Action));
@@ -220,7 +223,7 @@ public class AI_Controller : CentralController
         speed = Mathf.Abs(randomSpeed);
     }
 
-    public override void LateUpdate() 
+    protected override void LateUpdate() 
     {
         base.LateUpdate();
         setAlienVelocity();
@@ -230,11 +233,11 @@ public class AI_Controller : CentralController
     private void setAlienVelocity()
     {
         // nullify the slight bounce on a slope glitch when changing slopes
-        if ((!phaseTracker.IsPhaseMidAir || phaseTracker.IsPhase(Phase.Falling)) && rig.velocity.y > 0)
+        if ((!phaseTracker.IsMidAir || phaseTracker.Is(Phase.Falling)) && rig.velocity.y > 0)
             rig.velocity = new Vector2(0, 0);
 
         // when alien is on the ground, alien velocity is parallel to the slanted ground 
-        if (!phaseTracker.IsPhaseMidAir && isGrounded && isTouchingMap)
+        if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
         {
             if (actionProgress == "finished" && wallToTheLeft) 
                 dirX = 1;
@@ -244,7 +247,7 @@ public class AI_Controller : CentralController
             rig.velocity = groundSlope * speed * dirX;
             rig.gravityScale = (dirX == 0) ? 0f : maxGravity;
         }
-
+        
         // when alien is not on the ground (falling or midair after a jump)
         else 
         {

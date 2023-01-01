@@ -21,7 +21,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     private int selectedSlot; // the current inventory slot selected 
     protected const int maxSlotsInInventory = 3; 
     private HashSet<int> openInventorySlots; // inventory slots that don't have a weapon yet
-    private Dictionary<Weapon, int> inventoryWeapons; // maps equipped weapons to their inventory slot
+    protected Dictionary<Weapon, int> inventoryWeapons; // maps equipped weapons to their inventory slot
 
     private Transform allBulletPools;
     private Dictionary<Weapon, List<Transform>> bulletPools;
@@ -105,7 +105,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         }
 
         pickupWeaponIntoAvailableSlot(Weapon.ArcticPistol);
-        pickupWeaponIntoAvailableSlot(Weapon.LeafScythe);
+        pickupWeaponIntoAvailableSlot(Weapon.RocketLauncher);
     }
 
     // switch to the weapon in the specified inventory slot

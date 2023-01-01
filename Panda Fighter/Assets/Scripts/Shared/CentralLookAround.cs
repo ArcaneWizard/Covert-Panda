@@ -7,15 +7,18 @@ using UnityEngine;
 
 public abstract class CentralLookAround : MonoBehaviour
 {
+    // Note: the player looks in the direction of their mouse, the AI follows an algorithm
     public Vector2 directionToLook { get; protected set; }
-    [SerializeField] protected Transform weaponPivot;
-    
+    public abstract bool facingRight();
+
     //ideal aim coordinates when looking to the side, up or down 
     private Vector2 pointingRight, pointingUp, pointingDown, shoulderPos; 
     private float upVector, downVector, rightVector;
     private float up, right, down;
 
     [SerializeField] protected Transform head;
+    [SerializeField] protected Transform weaponPivot;
+
     protected Camera camera;
     protected Transform body;
     private Transform aimTarget;
@@ -27,7 +30,6 @@ public abstract class CentralLookAround : MonoBehaviour
     protected Health health;
     protected Animator animator;
 
-    public abstract bool facingRight();
     protected abstract void figureOutDirectionToLookIn();
     protected abstract void updateDirectionCreatureFaces();
     

@@ -53,11 +53,10 @@ public class CentralPhaseTracker : MonoBehaviour
             controller.leftGroundChecker, controller.mainCollider));
     }
 
-    // returns whether or not the creature is in a specific phase / condition
-    public bool IsPhase(Phase specificPhase) => phase == (int)specificPhase;
-    public bool IsPhaseMidAir => (2 <= phase && phase <= 4);
+    // returns whether or not the creature is in a specific phase 
+    public bool Is(Phase specificPhase) => phase == (int)specificPhase;
+    public bool IsMidAir => (2 <= phase && phase <= 4);
 
-    // sets the creature's phase as specified
     public void EnterJumpPhase()
     {
         animator.SetInteger("jump version", UnityEngine.Random.Range(0, 2));
@@ -91,16 +90,16 @@ public class CentralPhaseTracker : MonoBehaviour
             setPhase((controller.dirX == 0) ? Phase.Idle : Phase.Running);
 
         // else the creature is falling if a mid-air phase (falling, jumping, double jumping) hasn't been set yet
-        else if (!IsPhaseMidAir)
+        else if (!IsMidAir)
             setPhase(Phase.Falling);
             
         // if creature isn't jumping, reset the jump animation version 
-        if (IsPhase(Phase.Jumping))
+        if (Is(Phase.Jumping))
             animator.SetInteger("jump version", 0);
 
         // play forward or backwards running animation depending on
         // whether the creature runs forwards or backwards 
-        if (IsPhase(Phase.Running))
+        if (Is(Phase.Running))
         {
             if ((controller.dirX == 1 && lookAround.facingRight()) || controller.dirX == -1 && !lookAround.facingRight())
                 animator.SetBool("walking forwards", true);
@@ -118,16 +117,16 @@ public class CentralPhaseTracker : MonoBehaviour
     {
         yield return new WaitForSeconds(Time.deltaTime);
 
-        rightFoot.localPosition = (!IsPhaseMidAir)
+        rightFoot.localPosition = (!IsMidAir)
         ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
         : new Vector3(0.332f, rightFoot.localPosition.y, 0);
 
-        leftFoot.localPosition = (!IsPhaseMidAir)
+        leftFoot.localPosition = (!IsMidAir)
         ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
         : new Vector3(-0.157f, leftFoot.localPosition.y, 0);
 
-        float x = IsPhaseMidAir ? 0.68f : 1f;
-        float y = (IsPhase(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited) 
+        float x = IsMidAir ? 0.68f : 1f;
+        float y = (Is(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited) 
             ? initialColliderSize.y * 2f / 3f 
             : initialColliderSize.y;
         mainCollider.size = new Vector2(x, y);
