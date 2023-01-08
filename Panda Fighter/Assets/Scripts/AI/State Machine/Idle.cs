@@ -27,7 +27,7 @@ public class Idle : IState
     public void OnEnter()
     {
         timer = UnityEngine.Random.Range(duration.x, duration.y);
-        controller.SetDirection(0);
+        controller.ChangeDirection(0);
     }
 
     public void Tick()
@@ -41,7 +41,7 @@ public class Idle : IState
     public void OnExit()
     { 
         NotIdle = false;
-        controller.SetDirection(UnityEngine.Random.Range(0, 2) * 2 - 1);
+        controller.ChangeDirection(UnityEngine.Random.Range(0, 2) * 2 - 1);
     } 
 
     private IEnumerator updateWhenAiShouldGoIdle()

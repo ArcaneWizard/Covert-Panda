@@ -53,15 +53,18 @@ public class AI_FollowPath : MonoBehaviour
 
         //head towards starting path Node
         if (transform.position.x < path[0].transform.position.x)
-            controller.SetDirection(1);
+            controller.ChangeDirection(1);
         else
-            controller.SetDirection(-1);
+            controller.ChangeDirection(-1);
     }
 
     public void tick()
     {
         if (journey == Journey.InProgress && controller.ActionProgress == Status.Ended && controller.isGrounded && controller.isTouchingMap)
-            controller.SetDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
+        {
+            int dir = Math.Sign(path[pathProgress].transform.position.x - transform.position.x);
+            controller.ChangeDirection(dir);
+        }
     }
 
     public void endJourney() => journey = Journey.Ended;
@@ -96,7 +99,7 @@ public class AI_FollowPath : MonoBehaviour
 
                 if (pathProgress < path.Count - 1 && path[pathProgress + 1].transform == trajectory.getChainedZone())
                 {
-                    controller.BeginAction(trajectory.convertToAction(), col.transform);
+                    controller.StartAction(trajectory.ConvertToAction(), col.transform);
                     pathProgress++;
                     break;
                 }
@@ -115,7 +118,7 @@ public class AI_FollowPath : MonoBehaviour
 
             if (path[0].transform == trajectory.getChainedZone())
             {
-                controller.BeginAction(trajectory.convertToAction(), decisionZone);
+                controller.StartAction(trajectory.ConvertToAction(), decisionZone);
                 foundReroute = true;
                 break;
             }

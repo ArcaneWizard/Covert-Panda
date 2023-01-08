@@ -106,7 +106,7 @@ public class TestingTrajectories : MonoBehaviour
     public Transform getChainedZone() => transform.parent.parent.GetChild(chainedDecisionZone);
 
     // returns an AI_ACTION containing all the info in this set up trajectory
-    public AI_ACTION convertToAction()
+    public AI_ACTION ConvertToAction()
     {
         AI_ACTION action;
 

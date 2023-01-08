@@ -86,10 +86,10 @@ public class AI_WanderAround : MonoBehaviour
                 {
                     trajectory = decision.transform.GetComponent<TestingTrajectories>();
 
-                    if (trajectory.convertToAction().dirX == controller.dirX)
+                    if (trajectory.ConvertToAction().dirX == controller.dirX)
                     {
                         for (int i = 0; i < trajectory.considerationWeight; i++)
-                            AI_ACTIONS.Add(trajectory.convertToAction());
+                            AI_ACTIONS.Add(trajectory.ConvertToAction());
                     }
                 }
             }
@@ -100,13 +100,13 @@ public class AI_WanderAround : MonoBehaviour
                 {
                     trajectory = decision.transform.GetComponent<TestingTrajectories>();
                     for (int i = 0; i < trajectory.considerationWeight; i++)
-                        AI_ACTIONS.Add(trajectory.convertToAction());
+                        AI_ACTIONS.Add(trajectory.ConvertToAction());
                 }
             }
 
             int actionIndex = random.Next(0, AI_ACTIONS.Count);
             //DebugGUI.debugText4 = (AI_ACTIONS[actionIndex].ToString());
-            controller.BeginAction(AI_ACTIONS[actionIndex], currentDecisionZone);
+            controller.StartAction(AI_ACTIONS[actionIndex], currentDecisionZone);
         }
     }
 

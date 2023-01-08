@@ -96,7 +96,7 @@ public abstract class Health : MonoBehaviour
         if (isDead)
             return;
 
-        if (currentHP <= 0)
+        if (currentHP <= 0 || Input.GetKeyDown(KeyCode.K))
         {
             isDead = true;
             currentHP = -paddingHP;

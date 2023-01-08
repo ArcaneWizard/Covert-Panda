@@ -23,7 +23,6 @@ public class AI_Controller : CentralController
     private float randomXPos;
     private float randomSpeed;
 
-    // action progress starts off as "finished" so that a new action can be started
     protected override void Start()
     {
         base.Start();
@@ -38,44 +37,22 @@ public class AI_Controller : CentralController
     // Return the coordinates of a point in space in front of the AI's upper body
     public Vector3 InFrontOfAI() => shootingArm.position + new Vector3(dirX, 0, 0);
 
-    // Begin a new action, pending to be started when the creature is grounded
-    public void BeginAction(AI_ACTION AI_action, Transform zone)
+    // Begin executing a specified action.
+    public void StartAction(AI_ACTION AI_action, Transform zone = null)
     {
         currAction = AI_action;
         decisionZone = zone;
         ActionProgress = Status.PendingStart;
     }
 
-    // Forcefully ends the current action so that a new action can happen
+    // End the current action
     public void EndAction() => ActionProgress = Status.Ended;
 
-    // Set the direction of the creature's movement (-1 = left, 0 = still, 1 = right)
-    public void SetDirection(int dir) => dirX = dir;
-
-    // executes the initialized action and sets action progress to "in progress"
-    // to execute the action, it updates the entity's speed and directions and calls on helper methods
-    private void executeAction()
+    // Change the x direction of the creature's movement. This is still implemented using actions for consistency.
+    public void ChangeDirection(int dir)
     {
-        ActionProgress = Status.InProgress;
-
-        speed = maxSpeed;
-        dirX = currAction.dirX;
-        actionName = currAction.actionName;
-
-        if (actionName == "fallDown" || actionName == "fallDownCurve")
-            hasNotFallenYet = true;
-
-        else if (actionName == "headStraight")
-            ActionProgress = Status.Ended;
-
-        else if (actionName == "normalJump" || actionName == "doubleJump" || actionName == "launchPad")
-        {
-            leftPlatform = false;
-            StartCoroutine(executeVerticalMotionAction(currAction));
-        }
-
-        else
-            Debug.LogError($"Action {actionName} has no hard coded AI logic.");
+        AI_ACTION changeDirections = new AI_ACTION(dir);
+        StartAction(changeDirections);
     }
 
     void Update()
@@ -84,6 +61,7 @@ public class AI_Controller : CentralController
         if (health.isDead) 
         {
             isTouchingMap = false;
+            EndAction();
             return;
         }
 
@@ -94,9 +72,7 @@ public class AI_Controller : CentralController
                 speed = UnityEngine.Random.Range(currAction.speed.x, currAction.speed.y);
 
             else if (currAction.actionName == "fallDownCurve") 
-            {
                 StartCoroutine(executeFallingDownCurveMotion(currAction));
-            }
 
             hasNotFallenYet = false;
         }
@@ -107,8 +83,8 @@ public class AI_Controller : CentralController
             // the AI hasn't ventured far from that decision zone yet)
             if (ActionProgress == Status.PendingStart)
             {
-                if (decisionZonesCreatureIsTouching.Contains(decisionZone))
-                    executeAction();
+                if (decisionZonesCreatureIsTouching.Contains(decisionZone) || currAction.actionName == "change dir")
+                    executeCurrentAction();
                 else
                     EndAction();
             }
@@ -137,6 +113,31 @@ public class AI_Controller : CentralController
             leftPlatform = true;
     }
 
+    // executes the current action (ex. jumping, falling, etc.)
+    private void executeCurrentAction()
+    {
+        ActionProgress = Status.InProgress;
+
+        speed = maxSpeed;
+        dirX = currAction.dirX;
+        actionName = currAction.actionName;
+
+        if (actionName == "fallDown" || actionName == "fallDownCurve")
+            hasNotFallenYet = true;
+
+        else if (actionName == "headStraight" || actionName == "setDir")
+            ActionProgress = Status.Ended;
+
+        else if (actionName == "normalJump" || actionName == "doubleJump" || actionName == "launchPad")
+        {
+            leftPlatform = false;
+            StartCoroutine(executeVerticalMotionAction(currAction));
+        }
+
+        else
+            Debug.LogError($"Action {actionName} has no hard coded AI logic.");
+    }
+
     //------------------------------------------------------------------
     //----------Handle Falling at the right time------------------------
     //------------------------------------------------------------------
@@ -146,7 +147,7 @@ public class AI_Controller : CentralController
         speed = getRandomReasonableSpeed(currAction.speed);
         
         yield return new WaitForSeconds(UnityEngine.Random.Range(currAction.timeB4Change.x, currAction.timeB4Change.y));
-        if (!stillExecutingThisAction(action))
+        if (!isCreatureStillExecutingThisAction(action))
             yield break;
 
         randomSpeed = getRandomReasonableSpeed(currAction.changedSpeed);
@@ -154,7 +155,7 @@ public class AI_Controller : CentralController
         speed = Mathf.Abs(randomSpeed);
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(currAction.timeB4SecondChange.x, currAction.timeB4SecondChange.y));
-        if (!stillExecutingThisAction(action))
+        if (!isCreatureStillExecutingThisAction(action))
             yield break;
 
         randomSpeed = getRandomReasonableSpeed(currAction.secondChangedSpeed);
@@ -173,7 +174,7 @@ public class AI_Controller : CentralController
 
         while ((dirX == 1 && transform.position.x < randomXPos) || (dirX == -1 && transform.position.x > randomXPos)) 
             yield return null;
-        if (!stillExecutingThisAction(action))
+        if (!isCreatureStillExecutingThisAction(action))
             yield break;
 
         dirX = currAction.dirX;
@@ -200,7 +201,7 @@ public class AI_Controller : CentralController
             normalJump();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(currAction.timeB4Change.x, currAction.timeB4Change.y));
-        if (!stillExecutingThisAction(action))
+        if (!isCreatureStillExecutingThisAction(action))
             yield break;
 
         randomSpeed = getRandomReasonableSpeed(currAction.changedSpeed);
@@ -219,7 +220,7 @@ public class AI_Controller : CentralController
         jumpPadBoost();
 
         yield return new WaitForSeconds(UnityEngine.Random.Range(action.timeB4Change.x, action.timeB4Change.y));
-        if (!stillExecutingThisAction(action))
+        if (!isCreatureStillExecutingThisAction(action))
             yield break;
 
         randomSpeed = getRandomReasonableSpeed(action.changedSpeed);
@@ -280,7 +281,7 @@ public class AI_Controller : CentralController
     private IEnumerator changeVelocityAfterDelay(Vector2 delay, Vector2 velocity, AI_ACTION action)
     {
         yield return new WaitForSeconds(UnityEngine.Random.Range(delay.x, delay.y));
-        if (!stillExecutingThisAction(action))
+        if (!isCreatureStillExecutingThisAction(action))
             yield break;
 
         float randomSpeed = getRandomReasonableSpeed(velocity);
@@ -299,7 +300,7 @@ public class AI_Controller : CentralController
         return randomSpeed;
     }
 
-    private bool stillExecutingThisAction(AI_ACTION action) => currAction.Equals(action) && ActionProgress == Status.InProgress;
+    private bool isCreatureStillExecutingThisAction(AI_ACTION action) => currAction.Equals(action) && ActionProgress == Status.InProgress;
 
     private void OnTriggerEnter2D(Collider2D col)
     {

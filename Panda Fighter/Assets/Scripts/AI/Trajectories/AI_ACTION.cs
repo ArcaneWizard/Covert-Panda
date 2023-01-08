@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public struct AI_ACTION
+public class AI_ACTION
 {
     public int dirX { get; private set; }
     public Vector2 speed { get; private set; }
@@ -12,6 +12,7 @@ public struct AI_ACTION
     public string actionName { get; private set; }
     public Vector2 jumpBounds { get; private set; }
 
+    // constructs a complex action
     public AI_ACTION(string action, int direction, Vector2 speed, Vector2 timeB4Change, Vector2 changedSpeed, 
         Vector2 timeB4SecondChange, Vector2 secondChangedSpeed, Vector2 jumpBounds, Vector3 trajectoryPos)
     {
@@ -25,10 +26,16 @@ public struct AI_ACTION
         this.secondChangedSpeed = secondChangedSpeed;
     }
 
+    // constructs an action to change the movement direction
+    public AI_ACTION(int dir)
+    {
+        actionName = "changeDir";
+        dirX = dir;
+    }
+
     public override string ToString()
     {
         return $"action: {actionName}, dirX: {dirX}, speed: {speed}, timeB4CHange: {timeB4Change} + changedSpeed: {changedSpeed}" + 
             $"timeb4SecondChange: {timeB4SecondChange} + secondChangedSpeed: {secondChangedSpeed} + jumpBounds: {jumpBounds}";
     }
 }
-
