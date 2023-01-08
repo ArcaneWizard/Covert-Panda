@@ -38,12 +38,6 @@ public class AI_Controller : CentralController
     // Return the coordinates of a point in space in front of the AI's upper body
     public Vector3 InFrontOfAI() => shootingArm.position + new Vector3(dirX, 0, 0);
 
-    // Set the direction of the creature's movement (-1 = left, 0 = still, 1 = right)
-    public void SetDirection(int dir) => dirX = dir;
-
-    // Forcefully ends the current action so that a new action can happen
-    public void ForcefullyEndCurrentAction() => ActionProgress = Status.Ended;
-
     // Begin a new action, pending to be started when the creature is grounded
     public void BeginAction(AI_ACTION AI_action, Transform zone)
     {
@@ -51,6 +45,12 @@ public class AI_Controller : CentralController
         decisionZone = zone;
         ActionProgress = Status.PendingStart;
     }
+
+    // Forcefully ends the current action so that a new action can happen
+    public void EndAction() => ActionProgress = Status.Ended;
+
+    // Set the direction of the creature's movement (-1 = left, 0 = still, 1 = right)
+    public void SetDirection(int dir) => dirX = dir;
 
     // executes the initialized action and sets action progress to "in progress"
     // to execute the action, it updates the entity's speed and directions and calls on helper methods
@@ -110,7 +110,7 @@ public class AI_Controller : CentralController
                 if (decisionZonesCreatureIsTouching.Contains(decisionZone))
                     executeAction();
                 else
-                    ForcefullyEndCurrentAction();
+                    EndAction();
             }
 
             // if the AI has landed on a platform after falling, reset its speed and mark the action as finished

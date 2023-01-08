@@ -19,9 +19,9 @@ public class Needler : Bullet
         explosion.radius = 1.1f;
     }
 
-    public override void Reset()
+    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
     {
-        base.Reset();
+        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
         transform.GetComponent<ParticleSystem>().Stop();
     }
 

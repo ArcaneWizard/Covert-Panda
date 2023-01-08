@@ -18,8 +18,8 @@ public static class WeaponAction
 
         bullet.right = aim;
         bulletRig.velocity = aim * configuration.BulletSpeed;
+        bullet.GetComponent<Bullet>().ConfigureBulletBeforeFiring(aim, false, isBulletSticky);
 
-        predictTrajectoryOfFastBullets(bullet, aim, false, isBulletSticky);
         return bullet;
     }
 
@@ -36,8 +36,8 @@ public static class WeaponAction
         bullet.position += Vector3.up * UnityEngine.Random.Range(verticalOffsetRange.x, verticalOffsetRange.y);
         bullet.right = newAim;
         bulletRig.velocity = newAim * configuration.BulletSpeed;
+        bullet.GetComponent<Bullet>().ConfigureBulletBeforeFiring(aim, false, isBulletSticky);
 
-        predictTrajectoryOfFastBullets(bullet, newAim, false, isBulletSticky);
         return bullet;
     }
 
@@ -52,8 +52,8 @@ public static class WeaponAction
         bullet.right = aim;
         Vector2 unadjustedForce = configuration.BulletSpeed * 40 * aim * forceMultiplier + forceOffset;
         bulletRig.AddForce(unadjustedForce * bulletRig.mass);
+        bullet.GetComponent<Bullet>().ConfigureBulletBeforeFiring(aim, false, isBulletSticky);
 
-        predictTrajectoryOfFastBullets(bullet, aim, true, isBulletSticky);
         return bullet;
     }
 
@@ -82,7 +82,6 @@ public static class WeaponAction
         Vector2 unadjustedForce = configuration.BulletSpeed * 40 * aim;
         grenadeRig.AddForce(unadjustedForce * grenadeRig.mass);
 
-        predictTrajectoryOfFastBullets(grenade, aim, true, isGrenadeSticky);
         return grenade;
     }
 
@@ -134,7 +133,6 @@ public static class WeaponAction
 
         // reset the bullet and re-enable it
         bullet.gameObject.SetActive(true);
-        bullet.GetComponent<Bullet>().Reset();
 
         // reset the trail renderer and particle effect, if any
         if (bullet.GetComponent<TrailRenderer>())
@@ -142,13 +140,6 @@ public static class WeaponAction
 
         if (bullet.GetComponent<ParticleSystem>())
             bullet.GetComponent<ParticleSystem>().Clear();
-    }
-
-    // predicative logic ensures that super fast bullets don't pass through matter!
-    private static void predictTrajectoryOfFastBullets(Transform bullet, Vector2 aim, bool updateBulletDirContinuously, bool stickyBullet) 
-    {
-        if (bullet.parent.GetComponent<WeaponConfiguration>().BulletSpeed > 55f)
-            bullet.GetComponent<Bullet>().EnablePredictiveCollisions(aim, updateBulletDirContinuously, stickyBullet);
     }
 
     private static IEnumerator fadeBullet(Transform bullet, float delay, float duration)

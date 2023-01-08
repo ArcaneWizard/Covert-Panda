@@ -21,9 +21,9 @@ public class LavaOrb : Bullet
         impactExplosion.gameObject.SetActive(true);
     }
 
-    public override void Reset()
+    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
     {
-        base.Reset();
+        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
         impactExplosion.Stop();
     }
 

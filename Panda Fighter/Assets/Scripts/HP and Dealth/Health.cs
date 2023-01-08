@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-/* Abstract class that manages the creature's health and kicks off actions when
- * the creature dies. Handles respawning too. */
+/* Abstract class that manages the creature's health. Also tracks whether or not the creature is dead. */
 
 public abstract class Health : MonoBehaviour
 {
@@ -12,7 +11,7 @@ public abstract class Health : MonoBehaviour
     public int currentHP { get; protected set; }
     public bool isDead { get; private set; }
 
-    // pads the hp bar slightly so that low hp doesn't make the hp bar already look empty
+    // pads the hp bar slightly so that low hp doesn't make the hp bar look empty
     private int paddingHP; 
 
     protected Image hpBar;
@@ -24,7 +23,6 @@ public abstract class Health : MonoBehaviour
     private CentralDeathSequence deathSequence;
     private Side side;
 
-    protected Rigidbody2D rig;
     protected BoxCollider2D hitBox;
 
     protected virtual void Awake()
@@ -32,7 +30,6 @@ public abstract class Health : MonoBehaviour
         abilityHandler = transform.GetComponent<CentralAbilityHandler>();
         deathSequence = transform.GetComponent<CentralDeathSequence>();
 
-        rig = transform.GetComponent<Rigidbody2D>();
         hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
 
         side = transform.parent.GetComponent<Role>().side;
@@ -54,25 +51,17 @@ public abstract class Health : MonoBehaviour
         hitBox.size = new Vector2(0.13f, 2.48f);
     }
 
-    // Damage this creature and kick off the death sequence if required.
-    // Optionally takes in the attacker who damaged this creature (if known)
+    // Damage this creature
+    // Optionally takes in who damaged this creature (if known)
     public void TakeDamage(int damage, Transform attacker = null)
     {
-        if (isDead)
+        if (isDead || currentHP <= 0 || abilityHandler.IsInvulnerable)
             return;
 
         currentHP -= damage;
 
-        if (currentHP <= 0)
-        {
-            if (attacker)
-                Stats.ConfirmKillFor(attacker);
-
-            isDead = true;
-            currentHP = -paddingHP;
-            hpBar.transform.parent.gameObject.SetActive(false);
-            StartCoroutine(deathSequence.Initiate());
-        }
+        if (currentHP <= 0 && attacker)
+            Stats.ConfirmKillFor(attacker);
     }
 
     // Checks if the creature collided with a bullet or explosion
@@ -81,25 +70,8 @@ public abstract class Health : MonoBehaviour
         if (isDead || abilityHandler.IsInvulnerable)
             return;
 
-        if (col.gameObject.layer == bulletLayer)
-            hitByBullet(col.transform);
-
         else if (col.gameObject.layer == Layer.Explosion)
             hitByExplosion(col.transform);
-    }
-
-    // Takes damage from a bullet
-    private void hitByBullet(Transform physicalBullet)
-    {
-        Bullet bullet = physicalBullet.GetComponent<Bullet>();
-
-        if (!bullet.HasHitCreature)
-        {
-            bullet.ConfirmCreatureHit(transform);
-
-            Transform attacker = physicalBullet.parent.parent.parent.parent;
-            TakeDamage(bullet.Damage(), attacker);
-        }
     }
 
     // Takes damage from an explosion
@@ -119,10 +91,18 @@ public abstract class Health : MonoBehaviour
 
     // Every frame, update the hp bar to reflect the entity's current hp. Also, fix the hp
     // bar position above the entity's head as it moves
-    private void Update()
+    void Update()
     {
         if (isDead)
             return;
+
+        if (currentHP <= 0)
+        {
+            isDead = true;
+            currentHP = -paddingHP;
+            hpBar.transform.parent.gameObject.SetActive(false);
+            StartCoroutine(deathSequence.Initiate());
+        }
 
         hpBar.fillAmount = (float)(currentHP + paddingHP) / (float)maxHP;
         hpBarRect.position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);

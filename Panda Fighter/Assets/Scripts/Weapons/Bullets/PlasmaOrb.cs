@@ -18,7 +18,6 @@ public class PlasmaOrb : Bullet
     private Transform trackingSurface;
     private Transform creature;
 
-
     void Awake()
     {
         sR = transform.GetComponent<SpriteRenderer>();
@@ -29,9 +28,9 @@ public class PlasmaOrb : Bullet
         explosion.radius = 12f;
     }
 
-    public override void Reset() 
+    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
     {
-        base.Reset();
+        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
         explosionTimer = 0f;
         rig.constraints = RigidbodyConstraints2D.None;
     }

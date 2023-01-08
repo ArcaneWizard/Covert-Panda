@@ -41,7 +41,7 @@ public class AI_WanderAround : MonoBehaviour
     public void StopWandering()
     {
         shouldWander = false;
-        controller.ForcefullyEndCurrentAction();
+        controller. EndAction();
     }
 
     // called every frame. Returns early if the AI isn't in the wander state or if there

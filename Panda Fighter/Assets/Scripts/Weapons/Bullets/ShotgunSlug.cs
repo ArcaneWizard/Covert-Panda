@@ -9,9 +9,9 @@ public class ShotgunSlug : Bullet
     private float trailOffset;
     private TrailRenderer trailRenderer;
 
-    public override void Reset() 
+    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
     {
-        base.Reset();
+        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
         spawnPosition = transform.position;
 
         if (trailRenderer == null)
@@ -33,15 +33,14 @@ public class ShotgunSlug : Bullet
         }
     }
 
-    public override int Damage()
+    protected override int damage()
     {
-        int damage = transform.parent.GetComponent<WeaponConfiguration>().BulletDmg;
         float distance = squaredDistance(transform.position, spawnPosition);
 
         if (distance <= 200f)
-            return damage;
+            return base.damage();
         else if (distance > 200f && distance <= 400f)
-            return (int)Mathf.Ceil(damage * (distance * -0.005f + 2f));
+            return (int)Mathf.Ceil(base.damage() * (distance * -0.005f + 2f));
         else
             return 0;
     }

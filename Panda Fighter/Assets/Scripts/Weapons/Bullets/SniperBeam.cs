@@ -28,9 +28,9 @@ public class SniperBeam : Bullet
         color = beam.startColor;
     }
 
-    public override void Reset()
+    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
     {
-        base.Reset();
+        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
         beam.startColor = new Color(color.r, color.g, color.b, 1f);
         beam.endColor = new Color(color.r, color.g, color.b, 1f);
     }
