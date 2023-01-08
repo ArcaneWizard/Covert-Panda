@@ -40,7 +40,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected Rigidbody2D rig;
     protected Transform body;
-    protected CentralPhaseTracker phaseTracker;
+    public CentralPhaseTracker phaseTracker { get; private set; }
     protected Health health;
     protected CentralLookAround lookAround;
     protected Animator animator;

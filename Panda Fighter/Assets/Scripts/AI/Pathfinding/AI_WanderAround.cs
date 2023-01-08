@@ -75,7 +75,7 @@ public class AI_WanderAround : MonoBehaviour
         if (controller.ActionProgress == Status.Ended)
         {
             currentDecisionZone = decisionZones.Dequeue();
-            List<AI_ACTION> AI_ACTIONS = new List<AI_ACTION>();
+            List<AIAction> AI_ACTIONS = new List<AIAction>();
 
             if (currentDecisionZone.childCount == 0)
                 Debug.LogError("Empty Decision Zone");
@@ -86,7 +86,7 @@ public class AI_WanderAround : MonoBehaviour
                 {
                     trajectory = decision.transform.GetComponent<TestingTrajectories>();
 
-                    if (trajectory.ConvertToAction().dirX == controller.dirX)
+                    if (trajectory.ConvertToAction().DirX == controller.dirX)
                     {
                         for (int i = 0; i < trajectory.considerationWeight; i++)
                             AI_ACTIONS.Add(trajectory.ConvertToAction());

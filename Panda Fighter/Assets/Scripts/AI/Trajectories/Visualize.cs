@@ -4,14 +4,9 @@ using System.Net;
 using UnityEngine;
 using UnityEditor;
 
-public class TestingTrajectories : MonoBehaviour
+public class Visualize : MonoBehaviour
 {
-    [Header("Jump Type")]
-    public bool headStraight = false;
-    public bool doubleJump = false;
-    public bool fallDown = false;
-    public bool fallDownCurve = false;
-    public bool launchPad = false;
+    [field: SerializeField] public Trajectory Trajectory { get; private set; }
 
     [Header("Describe Jump")]
     public int movementDirX = 1;
@@ -50,36 +45,29 @@ public class TestingTrajectories : MonoBehaviour
         launchPadForce = CentralController.jumpPadForce;
         defaultGravity = -65f;
 
-        mass = 1f; 
+        mass = 1f;
 
-        if (headStraight)
+        if (Trajectory == Trajectory.HeadStraight)
         {
             transform.name = "Head Straight";
             drawStraightLine();
         }
 
-        else if (fallDown)
+        else if (Trajectory == Trajectory.Falling)
         {
-            transform.name = "Fall Down";
-            drawNormalJump(defaultGravity, lengthShown, 0, speedRange.x);
-            drawNormalJump(defaultGravity, lengthShown, 0, speedRange.y);
-        }
-
-        else if (fallDownCurve)
-        {
-            transform.name = "Fall Down Curve";
+            transform.name = "Falling";
             drawFallDownArc(timeB4Change.x);
             drawFallDownArc(timeB4Change.y);
         }
 
-        else if (launchPad)
+        else if (Trajectory == Trajectory.LaunchPad)
         {
             transform.name = "Launch Pad";
             drawJumpPadArc(defaultGravity, lengthShown, launchPadForce);
             showGizmoJumpBounds();
         }
 
-        else if (doubleJump)
+        else if (Trajectory == Trajectory.DoubleJump)
         {
             transform.name = "Double Jump";
             drawDoubleJump(timeB4Change.x);
@@ -87,13 +75,16 @@ public class TestingTrajectories : MonoBehaviour
             showGizmoJumpBounds();
         }
 
-        else 
+        else if (Trajectory == Trajectory.NormalJump)
         {
             transform.name = "Normal Jump";
             drawNormalJump(defaultGravity, lengthShown, jumpForce, speedRange.x);
             drawNormalJump(defaultGravity, lengthShown, jumpForce, speedRange.y);
             showGizmoJumpBounds();
         }
+
+        else
+            Debug.LogError("The specified trajectory doesn't have any visuals");
 
         //yellow rec on connected decision zone
         if (chainedDecisionZone != -1)
