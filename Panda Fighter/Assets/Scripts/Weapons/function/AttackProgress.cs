@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum Progress
+public enum AttackProgress
 {
     Started,
     Finished

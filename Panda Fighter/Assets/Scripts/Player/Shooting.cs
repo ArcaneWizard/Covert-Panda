@@ -25,7 +25,7 @@ public class Shooting : CentralShooting
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
         WeaponBehaviour behaviour = weaponSystem.CurrentWeaponBehaviour;
 
-        if (weaponSystem.CurrentAmmo <= 0 || behaviour.attackProgress != Progress.Finished || countdownBtwnShots > 0f)
+        if (weaponSystem.CurrentAmmo <= 0 || behaviour.attackProgress != AttackProgress.Finished || countdownBtwnShots > 0f)
             return;
 
         if (configuration.WeaponType == FiringModes.singleFire && Input.GetMouseButtonDown(0))

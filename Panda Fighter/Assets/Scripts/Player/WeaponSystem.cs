@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class WeaponSystem : CentralWeaponSystem
 {
+    private HashSet<GameObject> pickableWeapons = new HashSet<GameObject>();
    /* private Dictionary<string, Image> weaponIcon = new Dictionary<string, Image>();
     private Dictionary<string, Image> weaponSlot = new Dictionary<string, Image>();
     private Dictionary<string, Sprite> equipped = new Dictionary<string, Sprite>();
@@ -58,18 +59,37 @@ public class WeaponSystem : CentralWeaponSystem
             if (Input.GetKeyDown(i.ToString()))
                 switchWeapons(i-1);
         }
-    }
 
-    private void OnTriggerStay2D(Collider2D col)
-    {
-        if (col.gameObject.layer == Layer.Weapons && Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            Weapon weapon = col.transform.GetComponent<WeaponTag>().Tag;
-            pickupWeaponIntoCurrentSlot(weapon);
-            col.gameObject.SetActive(false);
-            col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
+            foreach (GameObject pickableWeapon in pickableWeapons)
+            {
+                Weapon weapon = pickableWeapon.transform.GetComponent<WeaponTag>().Tag;
+                pickupWeaponIntoCurrentSlot(weapon);
+                pickableWeapon.SetActive(false);
+                pickableWeapon.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
+                return;
+            }
         }
     }
+
+    protected override void OnTriggerEnter2D(Collider2D col)
+    {
+        base.OnTriggerEnter2D(col);
+
+        if (!col.gameObject.activeSelf)
+            return;
+
+        if (col.gameObject.layer == Layer.Weapons)
+            pickableWeapons.Add(col.gameObject);
+    }
+
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.gameObject.layer == Layer.Weapons)
+            pickableWeapons.Remove(col.gameObject);
+    }
+
 
     /* protected virtual void switchWeapons(int inventoryIdx)
      {

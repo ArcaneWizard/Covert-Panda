@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class References : MonoBehaviour
@@ -11,4 +12,15 @@ public class References : MonoBehaviour
     public GameObject Environment;
     public Transform FriendRespawnPoints;
     public Transform EnemyRespawnPoints;
+
+    private static References instance;
+    public static References Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+
+    private void Awake() =>  instance = this;
 }

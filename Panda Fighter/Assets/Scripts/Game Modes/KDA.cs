@@ -15,9 +15,9 @@ public struct KDA
         this.assists = assists;
     }
 
-    public void GotKill() => ++kills;
-    public void GotDeath() => ++deaths;
-    public void GotAssist() => ++assists;
+    public void AddKill() => ++kills;
+    public void AddDeath() => ++deaths;
+    public void AddAssist() => ++assists;
 
     public String ToString() => $"(K: {kills}, D: {deaths}, A: {assists})";
 }

@@ -13,7 +13,7 @@ public class Wander : IState
         this.lookAround = lookAround;
     }
 
-    public void OnEnter() => wanderAround.startWandering();
-    public void Tick() => wanderAround.tick();
-    public void OnExit() => wanderAround.stopWandering();
+    public void OnEnter() => wanderAround.StartWandering();
+    public void Tick() => wanderAround.Tick();
+    public void OnExit() => wanderAround.StopWandering();
 }

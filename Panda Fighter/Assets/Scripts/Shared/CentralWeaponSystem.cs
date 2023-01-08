@@ -72,7 +72,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         WeaponStats weaponStats = new WeaponStats(this);
         weaponStats.Initialize();
 
-        Reset();
+        ResetInventory();
     }
 
      // Info about the current weapon the creature is holding
@@ -82,6 +82,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     public WeaponConfiguration CurrentWeaponConfiguration => weaponConfigurations[CurrentWeapon];
     public WeaponConfiguration GetConfiguration(Weapon weapon) => weaponConfigurations[weapon];
 
+
     // Lowers current ammo by 1. Returns a physical bullet for the current weapon
     public Transform UseOneBullet()
     {
@@ -90,8 +91,8 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         return bulletPools[CurrentWeapon][bulletPoolIdx];
     }
 
-    // to be made private
-    public virtual void Reset()
+    // Reset inventory
+    public virtual void ResetInventory()
     {
         inventoryWeapons.Clear();
         openInventorySlots.Clear();
@@ -108,7 +109,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         pickupWeaponIntoAvailableSlot(Weapon.RocketLauncher);
     }
 
-    // switch to the weapon in the specified inventory slot
+    // Switch to the weapon in the specified inventory slot
     protected virtual void switchWeapons(int slot) 
     {
         // invalid inventory slot
@@ -201,9 +202,9 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
+    protected virtual void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layer.Weapons)
+        if (col.gameObject.layer == Layer.Weapons && col.gameObject.activeSelf)
         {
             Weapon weapon = col.transform.GetComponent<WeaponTag>().Tag;
             bool pickedUp = pickupWeaponIntoAvailableSlot(weapon);

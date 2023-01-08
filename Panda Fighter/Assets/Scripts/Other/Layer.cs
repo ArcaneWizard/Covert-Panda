@@ -28,7 +28,12 @@ public static class Layer
     public static int OneWayCollider = 4;
     public static int OneWayGround = 20;
 
+    // Pickable weapon
     public static int Weapons = 15;
+
+    // AI decision zones that relay them an action
+    public static int DecisionZone = 8;
+
     public static int JumpPad = 19;
 
     public static int Friend = 12;

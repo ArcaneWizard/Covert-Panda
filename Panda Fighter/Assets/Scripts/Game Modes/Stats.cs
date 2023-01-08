@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Text;
 
 public class Stats : MonoBehaviour
 {
@@ -33,24 +31,24 @@ public class Stats : MonoBehaviour
         }
     }
 
-    public static void confirmKillFor(Transform killer)
+    public static void ConfirmKillFor(Transform killer)
     {
         KDA kda = statsManager[killer];
-        kda.GotKill();
+        kda.AddKill();
         statsManager[killer] = kda;
     }
 
-    public static void confirmDeathFor(Transform victim)
+    public static void ConfirmDeathFor(Transform victim)
     {
         KDA kda = statsManager[victim];
-        kda.GotDeath();
+        kda.AddDeath();
         statsManager[victim] = kda;
     }
 
-    public static void confirmAssistfor(Transform assister)
+    public static void ConfirmAssistFor(Transform assister)
     {
         KDA kda = statsManager[assister];
-        kda.GotAssist();
+        kda.AddAssist();
         statsManager[assister] = kda;
     }
 }

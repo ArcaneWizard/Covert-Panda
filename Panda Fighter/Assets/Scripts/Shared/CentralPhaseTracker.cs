@@ -68,7 +68,7 @@ public class CentralPhaseTracker : MonoBehaviour
         setPhase(Phase.DoubleJumping);
 
         DisableLimbsDuringSomersault = true;
-        StartCoroutine(somersaultHandler.Start());
+        StartCoroutine(somersaultHandler.Begin());
         yield return new WaitForSeconds(0.5f);
         DisableLimbsDuringSomersault = false;
     }

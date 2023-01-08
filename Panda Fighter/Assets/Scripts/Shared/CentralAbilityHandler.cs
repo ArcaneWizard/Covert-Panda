@@ -34,6 +34,8 @@ public class CentralAbilityHandler : MonoBehaviour {
         hitBox = transform.GetChild(1).GetComponent<Collider2D>();
         health = transform.GetComponent<Health>();
         effectIndicator = transform.parent.GetChild(2).GetChild(0).GetComponent<Image>();
+
+        StartCoroutine(EnableSpawnProtection());
     }
 
     void Update()
@@ -50,6 +52,13 @@ public class CentralAbilityHandler : MonoBehaviour {
         effectIndicator.color = hasSpawnProtection ? new Color32(0, 255, 227, 255) : new Color32(0, 0, 0, 255);
     }
 
+    public IEnumerator EnableSpawnProtection()
+    {
+        hasSpawnProtection = true;
+        yield return new WaitForSeconds(spawnProtectionDuration);
+        hasSpawnProtection = false;
+    }
+
     private IEnumerator turnInvisible()
     {
         IsInvisible = true;
@@ -60,12 +69,5 @@ public class CentralAbilityHandler : MonoBehaviour {
 
         yield return new WaitForSeconds(invisibilityCooldown);
         canTurnInvisible = true;
-    }
-
-    public IEnumerator enableSpawnProtection()
-    {
-        hasSpawnProtection = true;
-        yield return new WaitForSeconds(spawnProtectionDuration);
-        hasSpawnProtection = false;
     }
 }

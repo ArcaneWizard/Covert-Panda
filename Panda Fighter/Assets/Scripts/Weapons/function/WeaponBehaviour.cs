@@ -10,8 +10,8 @@ using UnityEngine;
 
 public abstract class WeaponBehaviour : MonoBehaviour
 {
-    public Progress attackProgress { get; protected set; }
-    public Progress bonusAttackProgress { get; protected set; }
+    public AttackProgress attackProgress { get; protected set; }
+    public AttackProgress bonusAttackProgress { get; protected set; }
 
     protected CentralShooting shooting;
     protected CentralPhaseTracker phaseTracker;
@@ -34,26 +34,26 @@ public abstract class WeaponBehaviour : MonoBehaviour
     // default attack with this weapon. The aim direction is specified
     public virtual IEnumerator Attack(Vector2 aim)
     {
-        attackProgress = Progress.Started;
+        attackProgress = AttackProgress.Started;
         yield return null;
     }
 
     // bonus attack (if possible) with this weapon. The aim direction is specified
     public virtual IEnumerator BonusAttack(Vector2 aim)
     {
-        bonusAttackProgress = Progress.Started;
+        bonusAttackProgress = AttackProgress.Started;
         yield return null;
     }
 
     // Refactor later: referenced when you switch to a different weapons (make private in the future)
     public void ResetAttackProgress()
     {
-        attackProgress = Progress.Finished;
-        bonusAttackProgress = Progress.Finished;
+        attackProgress = AttackProgress.Finished;
+        bonusAttackProgress = AttackProgress.Finished;
     }
 
-    protected void ConfirmAttackFinished() => attackProgress = Progress.Finished;
-    protected void ConfirmBonusAttackFinished() => bonusAttackProgress = Progress.Finished;
+    protected void ConfirmAttackFinished() => attackProgress = AttackProgress.Finished;
+    protected void ConfirmBonusAttackFinished() => bonusAttackProgress = AttackProgress.Finished;
 
     void Awake()
     {

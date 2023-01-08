@@ -12,6 +12,7 @@ public class Ragdolling : MonoBehaviour
     private Animator animator;
     private CentralWeaponSystem weaponSystem;
     private CentralController controller;
+    private CentralDeathSequence deathSequence;
 
     private void Awake()
     {
@@ -20,13 +21,23 @@ public class Ragdolling : MonoBehaviour
         playerRig = transform.GetComponent<Rigidbody2D>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         controller = transform.GetComponent<CentralController>();
-
-        Disable();
+        deathSequence = transform.GetComponent<CentralDeathSequence>();
     }
 
-    // disable ragdolling. allow animations to play (ex. walking), deactives the ragdoll arms,
+    void OnEnable()
+    {
+        deathSequence.ActionsTriggeredImmediatelyUponDeath += enableRagdolling;
+        deathSequence.ActionsTriggeredWhenRespawning += disableRagdolling;
+    }
+    void OnDisable()
+    {
+        deathSequence.ActionsTriggeredImmediatelyUponDeath -= enableRagdolling;
+        deathSequence.ActionsTriggeredWhenRespawning -= disableRagdolling;
+    }
+
+    // Disable ragdolling. allow animations to play (ex. walking), deactives the ragdoll arms,
     // and makes all limbs no longer subject to physic forces and no longer able to collide with platforms.
-    public void Disable()
+    private void disableRagdolling()
     {
         animator.SetInteger("ragdolling", 0);
         animator.enabled = true;
@@ -41,10 +52,13 @@ public class Ragdolling : MonoBehaviour
         playerRig.isKinematic = false;
     }
 
-    // enable ragdolling. disables animations (ex. walking), deactivates the weapon
+    private void enableRagdolling() => StartCoroutine(enable());
+
+
+    // Enable ragdolling. disables animations (ex. walking), deactivates the weapon
     // plus current arms holding that weapon, and enables the ragdoll arms instead. Also 
     // makes all the other limbs subject to physics forces and able to collide with platforms. 
-    public IEnumerator Enable()
+    private IEnumerator enable()
     {
         animator.SetInteger("ragdolling", 1);
         yield return new WaitForSeconds(Time.deltaTime);

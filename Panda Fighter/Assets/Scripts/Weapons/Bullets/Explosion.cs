@@ -48,7 +48,7 @@ public class Explosion : MonoBehaviour
 
     // returns the dmg the explosion should do to a given entity based on how far they are from the center of 
     // the explosion
-    public int damageBasedOffDistance(Transform entity)
+    public int GetDamageBasedOffDistance(Transform entity)
     {
         BoxCollider2D entityCollider = entity.GetChild(0).GetComponent<BoxCollider2D>();
         Vector2 closestCollisionPoint = entityCollider.ClosestPoint(collider.transform.position);

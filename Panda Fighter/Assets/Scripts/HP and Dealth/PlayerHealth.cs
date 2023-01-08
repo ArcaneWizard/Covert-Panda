@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class PlayerHealth : Health
 {
-    public RespawningText respawnText;
-    public GameObject inventory;
-
     protected override void Awake()
     {
         base.Awake();
@@ -15,16 +12,4 @@ public class PlayerHealth : Health
         bulletLayer = Layer.EnemyBullet;
     }
 
-    protected override void UponDying() 
-    {
-        inventory.SetActive(false);
-        respawnText.StartRespawnCountdown(respawnTime);
-        base.UponDying();
-    }
-
-    protected override void BeforeRespawning() 
-    {
-        inventory.SetActive(true);
-        base.BeforeRespawning();
-    }
 }

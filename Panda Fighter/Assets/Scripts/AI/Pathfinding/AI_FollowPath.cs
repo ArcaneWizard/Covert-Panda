@@ -13,7 +13,7 @@ public class AI_FollowPath : MonoBehaviour
     private PathFinding pathFinding;
 
     //VALUES: pending start, started, in progress, ended, got lost
-    public string journey { get; private set; }
+    public Journey journey { get; private set; }
 
     private List<Node> path;
     private int pathProgress;
@@ -23,12 +23,12 @@ public class AI_FollowPath : MonoBehaviour
         controller = transform.GetComponent<AI_Controller>();
         pathFinding = transform.parent.GetComponent<PathFinding>();
 
-        journey = "ended";
+        journey = Journey.Ended;
     }
 
     public IEnumerator startJourney(Vector3 destination)
     {
-        journey = "pending start";
+        journey = Journey.PendingStart;
 
         //scan available routes for 2 seconds
         StartCoroutine(pathFinding.FindMultiplePaths(2f, destination));
@@ -40,17 +40,14 @@ public class AI_FollowPath : MonoBehaviour
 
         //end journey if the route is already over, ie. alien is already where it needs to be
         if (pathFinding.getChosenPath().Count == 0)
-            journey = "ended";
+            journey = Journey.Ended;
 
         //don't do anything if the AI prematurely ended its journey (ex. cuz the AI state changed)
-        if (journey == "ended")
-        {
-            Debug.Log("test ended");
+        if (journey == Journey.Ended)
             yield break;
-        }
 
         //reset variables
-        journey = "started";
+        journey = Journey.Started;
         this.path = pathFinding.getChosenPath();
         pathProgress = 0;
 
@@ -63,12 +60,12 @@ public class AI_FollowPath : MonoBehaviour
 
     public void tick()
     {
-        if (journey == "in progress" && controller.actionProgress == "finished" && controller.isGrounded && controller.isTouchingMap)
+        if (journey == Journey.InProgress && controller.ActionProgress == Status.Ended && controller.isGrounded && controller.isTouchingMap)
             controller.SetDirection(Math.Sign(path[pathProgress].transform.position.x - transform.position.x));
     }
 
-    public void endJourney() => journey = "ended";
-    public bool gotLost() => journey == "got lost";
+    public void endJourney() => journey = Journey.Ended;
+    public bool gotLost() => journey == Journey.GotLost;
 
     public Vector3 nextPathNode()
     {
@@ -83,15 +80,15 @@ public class AI_FollowPath : MonoBehaviour
         if (col.gameObject.layer != 8)
             return;
 
-        if (journey == "started")
+        if (journey == Journey.Started)
         {
             if (col.transform == path[0].transform)
-                journey = "in progress";
+                journey = Journey.InProgress;
             else
                 getBackOnIntendedPath(col.transform);
         }
 
-        if (journey == "in progress")
+        if (journey == Journey.InProgress)
         {
             foreach (Transform neighbourNode in col.transform)
             {
@@ -128,6 +125,13 @@ public class AI_FollowPath : MonoBehaviour
             transform.position = new Vector3(path[0].transform.position.x,
             path[0].transform.position.y + 0.5f, transform.position.z);
     }
+}
 
-
+public enum Journey
+{
+    PendingStart,
+    Started,
+    InProgress,
+    Ended,
+    GotLost
 }

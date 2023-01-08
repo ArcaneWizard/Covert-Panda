@@ -19,7 +19,7 @@ public class Bullet : MonoBehaviour
     public bool HasHitCreature { get; private set; }
 
     // Register that a creature was hit by this bullet
-    public void HitCreature(Transform creature)
+    public void ConfirmCreatureHit(Transform creature)
     {
         HasHitCreature = true;
         OnCreatureEnter(creature);
@@ -192,7 +192,8 @@ public class Bullet : MonoBehaviour
                 transform.position = predictedImpactLocation;
 
                 // damage the predicted enemy hit, and register said collision (the bullet may have an explosion or something)
-                predictedColliderHit.parent.GetComponent<Health>().DamagedByBullet(Damage(), transform);
+                Transform attacker = transform.parent.parent.parent.parent;
+                predictedColliderHit.parent.GetComponent<Health>().TakeDamage(Damage(), attacker);
                 OnCreatureEnter(predictedColliderHit.parent);
                 HasHitCreature = true;
             }

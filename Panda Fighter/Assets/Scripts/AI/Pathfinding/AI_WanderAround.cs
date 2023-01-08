@@ -8,21 +8,15 @@ using System.Security.Policy;
 
 public class AI_WanderAround : MonoBehaviour
 {
-    public AI_Controller controller { get; private set; }
-    private List<AI_ACTION> AI_ACTIONS = new List<AI_ACTION>();
+    private AI_Controller controller;
 
     // percent chance of considering actions that reverse direction
     private float switchDirectionOdds = 30f;
+    private System.Random random;
 
-    private AI_ACTION action;
     private TestingTrajectories trajectory;
-
     private Queue<Transform> decisionZones = new Queue<Transform>();
     private Transform currentDecisionZone;
-
-    private int headingDirX;
-    private float distance;
-    private System.Random random;
 
     private bool shouldWander;
     private bool justEnteredWanderingState;
@@ -35,17 +29,16 @@ public class AI_WanderAround : MonoBehaviour
 
     // start wandering around. Resets settings, updates that the AI should resume
     // wandering and that it just entered the wandering state 
-    public void startWandering()
+    public void StartWandering()
     {
         decisionZones.Clear();
-        AI_ACTIONS.Clear();
 
         shouldWander = true;
         justEnteredWanderingState = true;
     }
 
     // stop wandering around. Updates that the AI should stop wandering
-    public void stopWandering()
+    public void StopWandering()
     {
         shouldWander = false;
         controller.ForcefullyEndCurrentAction();
@@ -53,12 +46,12 @@ public class AI_WanderAround : MonoBehaviour
 
     // called every frame. Returns early if the AI isn't in the wander state or if there
     // are no queued decision zones to analyze
-    public void tick()
+    public void Tick()
     {
         // JUST FOR DEBUGGING
-        String listOfZones = $"creature ${transform.parent.GetSiblingIndex()} zones: \n";
-        foreach (Transform zone in decisionZones)
-            listOfZones+= zone.name + " \n";
+       //. String listOfZones = $"creature ${transform.parent.GetSiblingIndex()} zones: \n";
+       // ..foreach (Transform zone in decisionZones)
+         //   listOfZones+= zone.name + " \n";
         //.debugTexts[transform.parent.GetSiblingIndex()] = listOfZones;
 
         if (!shouldWander || decisionZones.Count == 0)
@@ -79,10 +72,10 @@ public class AI_WanderAround : MonoBehaviour
         // pick a random action to perform within the decision zone (with a preference to moving in the 
         // same direction - left or right - as opposed to switching directions). Send a call to the
         // AI controller to handle the logic of executing the chosen action 
-        if (controller.actionProgress == "finished")
+        if (controller.ActionProgress == Status.Ended)
         {
             currentDecisionZone = decisionZones.Dequeue();
-            AI_ACTIONS.Clear();
+            List<AI_ACTION> AI_ACTIONS = new List<AI_ACTION>();
 
             if (currentDecisionZone.childCount == 0)
                 Debug.LogError("Empty Decision Zone");
