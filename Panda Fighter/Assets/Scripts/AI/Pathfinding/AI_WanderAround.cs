@@ -1,10 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System;
-using UnityEngine.Assertions.Must;
-using System.Security.Policy;
 
 public class AI_WanderAround : MonoBehaviour
 {
@@ -14,7 +9,7 @@ public class AI_WanderAround : MonoBehaviour
     private float switchDirectionOdds = 30f;
     private System.Random random;
 
-    private TestingTrajectories trajectory;
+    private TrajectoryPath trajectoryPath;
     private Queue<Transform> decisionZones = new Queue<Transform>();
     private Transform currentDecisionZone;
 
@@ -72,7 +67,7 @@ public class AI_WanderAround : MonoBehaviour
         // pick a random action to perform within the decision zone (with a preference to moving in the 
         // same direction - left or right - as opposed to switching directions). Send a call to the
         // AI controller to handle the logic of executing the chosen action 
-        if (controller.ActionProgress == Status.Ended)
+        if (controller.currAction == null)
         {
             currentDecisionZone = decisionZones.Dequeue();
             List<AIAction> AI_ACTIONS = new List<AIAction>();
@@ -84,12 +79,12 @@ public class AI_WanderAround : MonoBehaviour
             {
                 foreach (Transform decision in currentDecisionZone)
                 {
-                    trajectory = decision.transform.GetComponent<TestingTrajectories>();
+                    trajectoryPath = decision.transform.GetComponent<TrajectoryPath>();
 
-                    if (trajectory.ConvertToAction().DirX == controller.dirX)
+                    if (trajectoryPath.ConvertToAction().DirX == controller.dirX)
                     {
-                        for (int i = 0; i < trajectory.considerationWeight; i++)
-                            AI_ACTIONS.Add(trajectory.ConvertToAction());
+                        for (int i = 0; i < trajectoryPath.considerationWeight; i++)
+                            AI_ACTIONS.Add(trajectoryPath.ConvertToAction());
                     }
                 }
             }
@@ -98,9 +93,9 @@ public class AI_WanderAround : MonoBehaviour
             {
                 foreach (Transform decision in currentDecisionZone)
                 {
-                    trajectory = decision.transform.GetComponent<TestingTrajectories>();
-                    for (int i = 0; i < trajectory.considerationWeight; i++)
-                        AI_ACTIONS.Add(trajectory.ConvertToAction());
+                    trajectoryPath = decision.transform.GetComponent<TrajectoryPath>();
+                    for (int i = 0; i < trajectoryPath.considerationWeight; i++)
+                        AI_ACTIONS.Add(trajectoryPath.ConvertToAction());
                 }
             }
 

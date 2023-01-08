@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 9923910}
   - component: {fileID: 9923911}
   m_Layer: 0
-  m_Name: Normal Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -167,21 +167,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 15, y: 16}
   timeB4Change: {x: 1.6, y: 1.8}
   changedSpeed: {x: -6, y: 8}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 9}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 3
+  yVelocity: 0
+  x: 15.306385
+  y: -22.464363
 --- !u!1 &12251606
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,7 +502,7 @@ GameObject:
   - component: {fileID: 25754668}
   - component: {fileID: 25754669}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -523,21 +534,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 17, y: 22}
   timeB4Change: {x: 0.3, y: 0.4}
   changedSpeed: {x: 17, y: 22}
   timeB4SecondChange: {x: 0.65, y: 0.8}
   secondChangedSpeed: {x: -5, y: 22}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 3
+  yVelocity: 0
+  x: 21.032225
+  y: -53.971195
 --- !u!1 &41002308
 GameObject:
   m_ObjectHideFlags: 0
@@ -2192,21 +2214,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 16, y: 22}
   timeB4Change: {x: 0.4, y: 0.8}
   changedSpeed: {x: -22, y: 22}
   timeB4SecondChange: {x: 0.2, y: 0.2}
   secondChangedSpeed: {x: -22, y: 22}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.1, y: 0.9}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 16
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &99821957
 GameObject:
   m_ObjectHideFlags: 0
@@ -3574,21 +3607,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 1
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 0, y: 0}
   timeB4Change: {x: 0.2, y: 0.4}
   changedSpeed: {x: 10, y: 15}
   timeB4SecondChange: {x: 0.9, y: 0.92}
   secondChangedSpeed: {x: -4, y: 22}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -1.3, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 11
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &204531270
 GameObject:
   m_ObjectHideFlags: 0
@@ -4789,7 +4833,7 @@ GameObject:
   - component: {fileID: 221563883}
   - component: {fileID: 221563884}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4821,21 +4865,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 15, y: 22}
   timeB4Change: {x: 0.33, y: 0.6}
   changedSpeed: {x: -22, y: -18}
   timeB4SecondChange: {x: 0.3, y: 0.5}
   secondChangedSpeed: {x: -22, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 0
+  yVelocity: 0
+  x: -4.709818
+  y: -51.76597
 --- !u!1 &222451077
 GameObject:
   m_ObjectHideFlags: 0
@@ -5357,7 +5412,7 @@ GameObject:
   - component: {fileID: 252284027}
   - component: {fileID: 252284028}
   m_Layer: 0
-  m_Name: Normal Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5389,21 +5444,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 15, y: 17}
   timeB4Change: {x: 1.65, y: 1.7}
   changedSpeed: {x: -3, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -7, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 0
+  yVelocity: 0
+  x: -7.372364
+  y: -25.50961
 --- !u!1 &254764478
 GameObject:
   m_ObjectHideFlags: 0
@@ -6027,21 +6093,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 13.5, y: 13.5}
   timeB4Change: {x: 0.5, y: 0.8}
   changedSpeed: {x: 13.5, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 17
+  yVelocity: 1.7678608
+  x: 45.765915
+  y: -34.01065
 --- !u!1 &319435913
 GameObject:
   m_ObjectHideFlags: 0
@@ -6170,21 +6247,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 4, y: 12}
   timeB4Change: {x: 0.4, y: 0.7}
   changedSpeed: {x: 12, y: 14.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -1, y: 2.3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 12
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &324620549
 GameObject:
   m_ObjectHideFlags: 0
@@ -6303,21 +6391,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 15, y: 15}
   timeB4Change: {x: 0.5, y: 0.5}
   changedSpeed: {x: 2, y: 7}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.1, y: 0.9}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 3
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!61 &333154559 stripped
 BoxCollider2D:
   m_CorrespondingSourceObject: {fileID: 7030806314310783155, guid: 70f294b99febc4ca987961e51eb23a84,
@@ -11795,7 +11894,7 @@ GameObject:
   - component: {fileID: 383750143}
   - component: {fileID: 383750144}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11827,21 +11926,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 12, y: 16}
   timeB4Change: {x: 0.4, y: 0.7}
   changedSpeed: {x: 13, y: 17}
   timeB4SecondChange: {x: 1.2, y: 1.32}
   secondChangedSpeed: {x: -9, y: 6}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -2, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 1
+  yVelocity: 0
+  x: -8.956663
+  y: -34.39492
 --- !u!1 &391006659
 GameObject:
   m_ObjectHideFlags: 0
@@ -12918,21 +13028,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 9}
   timeB4Change: {x: 0.3, y: 0.4}
   changedSpeed: {x: 22, y: 22}
   timeB4SecondChange: {x: 0.4, y: 0.5}
   secondChangedSpeed: {x: -4, y: 18}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 1.3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 8
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &394712428
 GameObject:
   m_ObjectHideFlags: 0
@@ -19115,21 +19236,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 3, y: 9}
   timeB4Change: {x: 0.3, y: 0.6}
   changedSpeed: {x: -4, y: 13}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 2.3}
   considerationWeight: 3
   lengthShown: 14
   chainedDecisionZone: 12
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &435006473
 GameObject:
   m_ObjectHideFlags: 0
@@ -19141,7 +19273,7 @@ GameObject:
   - component: {fileID: 435006474}
   - component: {fileID: 435006475}
   m_Layer: 0
-  m_Name: Fall Down Curve
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19173,21 +19305,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 22, y: 22}
   timeB4Change: {x: 0.4, y: 0.5}
   changedSpeed: {x: 0, y: 7}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 1.5}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 14
+  yVelocity: 0
+  x: 31.00001
+  y: -53.08625
 --- !u!1 &437115638
 GameObject:
   m_ObjectHideFlags: 0
@@ -19306,21 +19449,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 9}
   timeB4Change: {x: 0.67, y: 0.67}
   changedSpeed: {x: 8, y: 9}
   timeB4SecondChange: {x: 0.8, y: 0.9}
   secondChangedSpeed: {x: 2, y: 17}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.8, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 15
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &442780428
 GameObject:
   m_ObjectHideFlags: 0
@@ -19823,7 +19977,7 @@ GameObject:
   - component: {fileID: 470622580}
   - component: {fileID: 470622581}
   m_Layer: 0
-  m_Name: Normal Jump
+  m_Name: Double Jump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19852,23 +20006,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 470622579}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
+  m_Script: {fileID: 11500000, guid: 721bf03e122701c489e2274474e3e503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headStraight: 0
-  doubleJump: 0
-  fallDown: 0
-  fallDownCurve: 0
-  launchPad: 0
+  <ActionType>k__BackingField: 2
   movementDirX: 1
-  speedRange: {x: 16, y: 21}
-  timeB4Change: {x: 1.2, y: 1.21}
-  changedSpeed: {x: 12, y: 21}
-  timeB4SecondChange: {x: 0, y: 0}
-  secondChangedSpeed: {x: 0, y: 0}
-  jumpBounds: {x: -5, y: 2}
+  speedRange: {x: 10, y: 12}
+  timeB4Change: {x: 0.3, y: 0.6}
+  changedSpeed: {x: 12, y: 13}
+  timeB4SecondChange: {x: 3, y: 6}
+  secondChangedSpeed: {x: 3, y: 5}
+  jumpBounds: {x: -1, y: -1}
   considerationWeight: 1
-  lengthShown: 2
+  lengthShown: 14
   chainedDecisionZone: 1
 --- !u!1 &478142285
 GameObject:
@@ -19913,21 +20063,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 1
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 14.5}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 12, y: 14.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 2.4}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 13
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &490010496
 GameObject:
   m_ObjectHideFlags: 0
@@ -20111,21 +20272,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 15, y: 15}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 0, y: 0}
   timeB4SecondChange: {x: 2, y: 2}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -2, y: 1.5}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 10
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &512050879
 GameObject:
   m_ObjectHideFlags: 0
@@ -20169,21 +20341,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 13.5, y: 13.5}
   timeB4Change: {x: 0.5, y: 0.8}
   changedSpeed: {x: 13.5, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 1
+  yVelocity: 1.3635172
+  x: 5.89495
+  y: -21.435076
 --- !u!1 &514645561
 GameObject:
   m_ObjectHideFlags: 0
@@ -20312,21 +20495,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 15, y: 17}
   timeB4Change: {x: 1, y: 1.05}
   changedSpeed: {x: -3, y: 13}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -2, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 9
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &520401432
 GameObject:
   m_ObjectHideFlags: 0
@@ -21898,21 +22092,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 15, y: 17}
   timeB4Change: {x: 10, y: 0.5}
   changedSpeed: {x: 17, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0.3, y: 0.9}
   considerationWeight: 3
   lengthShown: 14
   chainedDecisionZone: 5
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &577929306
 GameObject:
   m_ObjectHideFlags: 0
@@ -22007,7 +22212,7 @@ GameObject:
   - component: {fileID: 581087062}
   - component: {fileID: 581087063}
   m_Layer: 0
-  m_Name: Normal Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22039,21 +22244,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 15.5, y: 17}
   timeB4Change: {x: 1.35, y: 1.4}
   changedSpeed: {x: -1, y: 17}
   timeB4SecondChange: {x: 1.25, y: 1.3}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -2, y: 0.6}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 4
+  yVelocity: 0
+  x: 34.782238
+  y: -25.394321
 --- !u!1 &581657454
 GameObject:
   m_ObjectHideFlags: 0
@@ -22861,21 +23077,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 14.5}
   timeB4Change: {x: 0.4, y: 0.5}
   changedSpeed: {x: -13, y: 1}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.1, y: 0.9}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 14
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!4 &650963702 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1759299754780394818, guid: cff49c69b83a44d4383dcf47c30f91d7,
@@ -23470,7 +23697,7 @@ GameObject:
   - component: {fileID: 734466204}
   - component: {fileID: 734466205}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23502,21 +23729,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 15, y: 15}
   timeB4Change: {x: 0.2, y: 0.3}
   changedSpeed: {x: 15, y: 22}
   timeB4SecondChange: {x: 0.63, y: 0.65}
   secondChangedSpeed: {x: -22, y: 16}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 10}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 0
+  yVelocity: 0
+  x: -20.894657
+  y: -51.217167
 --- !u!1 &736310492
 GameObject:
   m_ObjectHideFlags: 0
@@ -23873,21 +24111,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 13.5, y: 13.5}
   timeB4Change: {x: 0.5, y: 0.8}
   changedSpeed: {x: 13.5, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 5
+  yVelocity: -1.7678608
+  x: 24.165916
+  y: -36.839226
 --- !u!1 &751616284
 GameObject:
   m_ObjectHideFlags: 0
@@ -25093,21 +25342,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 10, y: 11}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 14.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 6}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 18
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &802089064
 GameObject:
   m_ObjectHideFlags: 0
@@ -32056,21 +32316,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 14.5}
   timeB4Change: {x: 0.4, y: 0.5}
   changedSpeed: {x: -3, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.1, y: 0.9}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 18
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1001 &878068640
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33264,21 +33535,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 1
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: -15, y: -15}
   timeB4Change: {x: 0.2, y: 0.4}
   changedSpeed: {x: 0, y: 5}
   timeB4SecondChange: {x: 1, y: 1.3}
   secondChangedSpeed: {x: 22, y: 22}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -1, y: 1.8}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 11
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1001 &931121149
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33590,7 +33872,7 @@ GameObject:
   - component: {fileID: 946435015}
   - component: {fileID: 946435016}
   m_Layer: 0
-  m_Name: Fall Down Curve
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33622,21 +33904,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 15, y: 15}
   timeB4Change: {x: 0.1, y: 0.2}
   changedSpeed: {x: 0, y: 0}
   timeB4SecondChange: {x: 0.4, y: 0.5}
   secondChangedSpeed: {x: 22, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 13
+  yVelocity: 0
+  x: 25.40001
+  y: -53.08625
 --- !u!1 &946539392
 GameObject:
   m_ObjectHideFlags: 0
@@ -33680,21 +33973,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 6, y: 9}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 2
   lengthShown: 14
   chainedDecisionZone: 9
+  yVelocity: -1.4243892
+  x: -38.323566
+  y: -53.997005
 --- !u!4 &952162223 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8431955668174829842, guid: 7012abed2161c4d41ae8d43374b18c44,
@@ -34289,21 +34593,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 13.5, y: 13.5}
   timeB4Change: {x: 0.4, y: 0.7}
   changedSpeed: {x: 13.5, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 2
+  yVelocity: 0.28370333
+  x: 14.331187
+  y: -22.089142
 --- !u!1 &983332486
 GameObject:
   m_ObjectHideFlags: 0
@@ -34555,21 +34870,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 17, y: 22}
   timeB4Change: {x: 0.2, y: 0.25}
   changedSpeed: {x: 16, y: 22}
   timeB4SecondChange: {x: 0.9, y: 1.1}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: -65
   jumpBounds: {x: 0, y: 5}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 8
+  yVelocity: 37
+  x: -46.816437
+  y: -352.51413
 --- !u!1 &990501865
 GameObject:
   m_ObjectHideFlags: 0
@@ -35208,21 +35534,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 7, y: 8}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 12, y: 14.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 2.4}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 18
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1046921136
 GameObject:
   m_ObjectHideFlags: 0
@@ -35694,7 +36031,7 @@ GameObject:
   - component: {fileID: 1078757681}
   - component: {fileID: 1078757682}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35726,21 +36063,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 0, y: 5}
   timeB4Change: {x: 0.45, y: 0.5}
   changedSpeed: {x: -18, y: 18}
   timeB4SecondChange: {x: 0.55, y: 0.6}
   secondChangedSpeed: {x: -18, y: 18}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0.2, y: 4}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 0
+  yVelocity: 0
+  x: -11.2835655
+  y: -51.76971
 --- !u!1 &1086755529
 GameObject:
   m_ObjectHideFlags: 0
@@ -35911,21 +36259,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 5.5, y: 6}
   timeB4Change: {x: 0.7, y: 0.7}
   changedSpeed: {x: 9, y: 13}
   timeB4SecondChange: {x: 1, y: 1}
   secondChangedSpeed: {x: -3, y: 13}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 2.4}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 15
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1087852668
 GameObject:
   m_ObjectHideFlags: 0
@@ -37418,21 +37777,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 14.5}
   timeB4Change: {x: 0.4, y: 0.5}
   changedSpeed: {x: 13, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.1, y: 0.9}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 14
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1121524797
 GameObject:
   m_ObjectHideFlags: 0
@@ -37676,21 +38046,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 16, y: 16}
   timeB4Change: {x: 0.2, y: 0.25}
   changedSpeed: {x: 16, y: 22}
   timeB4SecondChange: {x: 0.5, y: 0.8}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -2.7, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 10
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1141985852
 GameObject:
   m_ObjectHideFlags: 0
@@ -37894,21 +38275,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 1
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 15, y: 17}
   timeB4Change: {x: 1.45, y: 1.51}
   changedSpeed: {x: 0, y: 12}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: -65
   jumpBounds: {x: -7, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 0
+  yVelocity: 36.399998
+  x: -20.022366
+  y: -457.84088
 --- !u!1 &1156509406
 GameObject:
   m_ObjectHideFlags: 0
@@ -38048,21 +38440,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 5.5, y: 6}
   timeB4Change: {x: 0.7, y: 0.7}
   changedSpeed: {x: -10, y: -13}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 1.7}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 12
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1176952666
 GameObject:
   m_ObjectHideFlags: 0
@@ -40145,21 +40548,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 2, y: 14}
   timeB4Change: {x: 0.4, y: 0.5}
   changedSpeed: {x: -3, y: 14}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 7
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1282060588
 GameObject:
   m_ObjectHideFlags: 0
@@ -40389,7 +40803,7 @@ PrefabInstance:
     - target: {fileID: 5458226237092584899, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.8761573
+      value: -0.8761572
       objectReference: {fileID: 0}
     - target: {fileID: 5458226237092584899, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -40439,52 +40853,52 @@ PrefabInstance:
     - target: {fileID: 7733928211693410040, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.87806517
+      value: 0.87806463
       objectReference: {fileID: 0}
     - target: {fileID: 7733928211693410040, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.47854102
+      value: -0.47854203
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212692212478, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.4753762
+      value: -0.47537613
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212692212478, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 3.4861076e-11
+      value: 3.4861083e-11
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212692212478, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 5.3700572e-11
+      value: 5.3700575e-11
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212692212478, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.8797826
+      value: -0.87978274
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212931118244, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8353669
+      value: 0.8353662
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212931118244, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 4.1945846e-11
+      value: 4.1945798e-11
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212931118244, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 4.5626e-11
+      value: 4.562607e-11
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212931118244, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.5496928
+      value: 0.5496939
       objectReference: {fileID: 0}
     - target: {fileID: 7733928213113224630, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -40599,12 +41013,12 @@ PrefabInstance:
     - target: {fileID: 8082534869181539878, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 3.9485581e-10
+      value: 3.9485584e-10
       objectReference: {fileID: 0}
     - target: {fileID: 8082534869181539878, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 5.251815e-10
+      value: 5.2518145e-10
       objectReference: {fileID: 0}
     - target: {fileID: 8082534869181539878, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -41000,21 +41414,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 7, y: 8}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 12, y: 14.5}
   timeB4SecondChange: {x: 1, y: 1.5}
   secondChangedSpeed: {x: -7, y: 4}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 2.4}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 6
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1311304089 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7733928212166135266, guid: 70f294b99febc4ca987961e51eb23a84,
@@ -41520,21 +41945,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 10, y: 13}
   timeB4Change: {x: 0.8, y: 0.9}
   changedSpeed: {x: -13, y: -11}
   timeB4SecondChange: {x: 0, y: 1}
   secondChangedSpeed: {x: -13, y: 4}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 2.4}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 15
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1345404846
 GameObject:
   m_ObjectHideFlags: 0
@@ -41578,21 +42014,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 0, y: 0}
   timeB4Change: {x: 0.4, y: 0.5}
   changedSpeed: {x: 20, y: 20}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.8, y: 1.8}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 15
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1356962242
 GameObject:
   m_ObjectHideFlags: 0
@@ -41721,21 +42168,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 3
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 9, y: 16}
   timeB4Change: {x: 0.3, y: 0.9}
   changedSpeed: {x: -10, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: -65
   jumpBounds: {x: 0, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 6
+  yVelocity: 0
+  x: -78.63966
+  y: -1796.2472
 --- !u!1 &1368317039
 GameObject:
   m_ObjectHideFlags: 0
@@ -41779,21 +42237,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 2, y: 13.5}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: -10, y: 5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 6
+  yVelocity: 0.12653796
+  x: 1.5862678
+  y: -52.879887
 --- !u!1 &1369905683 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7733928213408264536, guid: 70f294b99febc4ca987961e51eb23a84,
@@ -43884,21 +44353,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 17, y: 22}
   timeB4Change: {x: 0.6, y: 0.8}
   changedSpeed: {x: 0, y: 22}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 15
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1412960183
 GameObject:
   m_ObjectHideFlags: 0
@@ -44093,21 +44573,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 6, y: 9}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 3
   lengthShown: 14
   chainedDecisionZone: 5
+  yVelocity: 0.28430378
+  x: 3.438283
+  y: -51.626457
 --- !u!1 &1436881493
 GameObject:
   m_ObjectHideFlags: 0
@@ -44255,21 +44746,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 12}
   timeB4Change: {x: 0.4, y: 0.65}
   changedSpeed: {x: -11, y: -7}
   timeB4SecondChange: {x: 1, y: 1.05}
   secondChangedSpeed: {x: -9, y: 5.2}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -0.1, y: 0.9}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 4
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1451420276
 GameObject:
   m_ObjectHideFlags: 0
@@ -44681,21 +45183,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 15, y: 22}
   timeB4Change: {x: 0.1, y: 0.26}
   changedSpeed: {x: 0, y: 0}
   timeB4SecondChange: {x: 0.3, y: 0.4}
   secondChangedSpeed: {x: 17, y: 22}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -2.3, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 9
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1480108275
 GameObject:
   m_ObjectHideFlags: 0
@@ -45075,21 +45588,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 2, y: 11}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 9
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1486221984
 GameObject:
   m_ObjectHideFlags: 0
@@ -45133,21 +45657,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 16, y: 22}
   timeB4Change: {x: 0.2, y: 0.25}
   changedSpeed: {x: 16, y: 22}
   timeB4SecondChange: {x: 0.85, y: 1.1}
   secondChangedSpeed: {x: -22, y: 22}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: -65
   jumpBounds: {x: -5, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 8
+  yVelocity: 37
+  x: 15.833559
+  y: -342.42038
 --- !u!1001 &1489190320
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -46126,21 +46661,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 14, y: 17}
   timeB4Change: {x: 1.55, y: 1.6}
   changedSpeed: {x: 4, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -3, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 2
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1495232027
 GameObject:
   m_ObjectHideFlags: 0
@@ -46152,7 +46698,7 @@ GameObject:
   - component: {fileID: 1495232028}
   - component: {fileID: 1495232029}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46184,21 +46730,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 5, y: 7}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 10, y: 12}
   timeB4SecondChange: {x: 0.9, y: 1}
   secondChangedSpeed: {x: -1, y: 15}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 1, y: 5}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 4
+  yVelocity: 0
+  x: 36.770996
+  y: -37.65553
 --- !u!4 &1499728855 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8025231702789707839, guid: 70f294b99febc4ca987961e51eb23a84,
@@ -46248,21 +46805,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 2, y: 3}
   timeB4Change: {x: 0.5, y: 0.5}
   changedSpeed: {x: 2, y: 7}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 10
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1505909654
 GameObject:
   m_ObjectHideFlags: 0
@@ -47591,7 +48159,7 @@ GameObject:
   - component: {fileID: 1547659131}
   - component: {fileID: 1547659132}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47623,21 +48191,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 16, y: 17}
   timeB4Change: {x: 0.4, y: 0.7}
   changedSpeed: {x: 13, y: 17}
   timeB4SecondChange: {x: 1.3, y: 1.4}
   secondChangedSpeed: {x: -2, y: 17}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -2, y: 2}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 2
+  yVelocity: 0
+  x: -11.109115
+  y: -31.410076
 --- !u!1 &1552468692
 GameObject:
   m_ObjectHideFlags: 0
@@ -48767,21 +49346,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 14, y: 22}
   timeB4Change: {x: 2, y: 2}
   changedSpeed: {x: -3, y: 9}
   timeB4SecondChange: {x: 0, y: 1}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 5}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 5
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1602144321
 GameObject:
   m_ObjectHideFlags: 0
@@ -48793,7 +49383,7 @@ GameObject:
   - component: {fileID: 1602144322}
   - component: {fileID: 1602144323}
   m_Layer: 0
-  m_Name: Fall Down Curve
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48825,21 +49415,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 4, y: 4}
   timeB4Change: {x: 0.5, y: 0.6}
   changedSpeed: {x: -13.5, y: -12.2}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 17
+  yVelocity: 0
+  x: 63.276318
+  y: -17.635311
 --- !u!1 &1611514866
 GameObject:
   m_ObjectHideFlags: 0
@@ -48883,21 +49484,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 10, y: 13}
   timeB4Change: {x: 0.6, y: 4}
   changedSpeed: {x: -4, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 10
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1616473379
 GameObject:
   m_ObjectHideFlags: 0
@@ -48994,7 +49606,7 @@ GameObject:
   - component: {fileID: 1631347518}
   - component: {fileID: 1631347519}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49026,21 +49638,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 7, y: 7}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 11, y: 13}
   timeB4SecondChange: {x: 1, y: 1.1}
   secondChangedSpeed: {x: -2, y: 17}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: 0, y: 8}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 2
+  yVelocity: 0
+  x: 26.25352
+  y: -37.255184
 --- !u!1 &1632400960
 GameObject:
   m_ObjectHideFlags: 0
@@ -50007,7 +50630,7 @@ GameObject:
   - component: {fileID: 1677003889}
   - component: {fileID: 1677003890}
   m_Layer: 0
-  m_Name: Normal Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50039,21 +50662,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 18, y: 22}
   timeB4Change: {x: 2, y: 2}
   changedSpeed: {x: -6, y: 12}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -2, y: -0.2}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 15
+  yVelocity: 0
+  x: 28.28335
+  y: -53.207012
 --- !u!1 &1681145474
 GameObject:
   m_ObjectHideFlags: 0
@@ -50097,21 +50731,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 2, y: 11}
   timeB4Change: {x: 0, y: 0.7}
   changedSpeed: {x: 13, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 3
   lengthShown: 14
   chainedDecisionZone: 7
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!4 &1701280972 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1759299754780394818, guid: cff49c69b83a44d4383dcf47c30f91d7,
@@ -50301,7 +50946,7 @@ GameObject:
   - component: {fileID: 1723618996}
   - component: {fileID: 1723618997}
   m_Layer: 0
-  m_Name: Double Jump
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50333,21 +50978,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 16, y: 17}
   timeB4Change: {x: 1, y: 1.4}
   changedSpeed: {x: 13.5, y: 17}
   timeB4SecondChange: {x: 1.75, y: 1.9}
   secondChangedSpeed: {x: -8, y: 17}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 0
+  yVelocity: 0
+  x: 3.89495
+  y: -22.52589
 --- !u!61 &1725469828 stripped
 BoxCollider2D:
   m_CorrespondingSourceObject: {fileID: 7030806314310783155, guid: 70f294b99febc4ca987961e51eb23a84,
@@ -50403,21 +51059,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 5.5, y: 6}
   timeB4Change: {x: 0.7, y: 0.7}
   changedSpeed: {x: -10, y: -13}
   timeB4SecondChange: {x: 1, y: 1.1}
   secondChangedSpeed: {x: -15, y: 1}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 1.7}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 5
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1732189566
 GameObject:
   m_ObjectHideFlags: 0
@@ -50461,21 +51128,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 12, y: 13.5}
   timeB4Change: {x: 0, y: 0.7}
   changedSpeed: {x: 13.5, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -2, y: 2}
   considerationWeight: 1
   lengthShown: 4
   chainedDecisionZone: 11
+  yVelocity: 4.95173
+  x: -27.579374
+  y: -27.941574
 --- !u!4 &1733089830 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2801544845104637914, guid: 70f294b99febc4ca987961e51eb23a84,
@@ -50551,9 +51229,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1754249982}
-  - component: {fileID: 1754249983}
   m_Layer: 0
-  m_Name: Fall Down Curve
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50573,33 +51250,6 @@ Transform:
   m_Father: {fileID: 356994829}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1754249983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754249981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  headStraight: 0
-  doubleJump: 0
-  fallDown: 0
-  fallDownCurve: 1
-  launchPad: 0
-  movementDirX: -1
-  speedRange: {x: 1, y: 6}
-  timeB4Change: {x: 0.6, y: 0.6}
-  changedSpeed: {x: -9, y: 12}
-  timeB4SecondChange: {x: 0, y: 0}
-  secondChangedSpeed: {x: 0, y: 0}
-  jumpBounds: {x: 0, y: 0}
-  considerationWeight: 1
-  lengthShown: 14
-  chainedDecisionZone: 6
 --- !u!1 &1755743702
 GameObject:
   m_ObjectHideFlags: 0
@@ -50829,7 +51479,7 @@ GameObject:
   - component: {fileID: 1765849151}
   - component: {fileID: 1765849152}
   m_Layer: 0
-  m_Name: Fall Down Curve
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50861,21 +51511,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 1, y: 13.5}
   timeB4Change: {x: 0, y: 0.8}
   changedSpeed: {x: 13.5, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 3
+  yVelocity: 0
+  x: 40.64474
+  y: -21.973598
 --- !u!4 &1775817248 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1759299754780394818, guid: cff49c69b83a44d4383dcf47c30f91d7,
@@ -51195,21 +51856,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 10, y: 14}
   timeB4Change: {x: 0.8, y: 0.5}
   changedSpeed: {x: 3, y: 17}
   timeB4SecondChange: {x: 4, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 1.3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 8
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1794635814
 GameObject:
   m_ObjectHideFlags: 0
@@ -51337,21 +52009,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 6, y: 9}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 3
   lengthShown: 14
   chainedDecisionZone: 7
+  yVelocity: -0.28430378
+  x: -23.802345
+  y: -52.52594
 --- !u!1 &1797479073
 GameObject:
   m_ObjectHideFlags: 0
@@ -52709,21 +53392,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 2, y: 3}
   timeB4Change: {x: 0.5, y: 0.5}
   changedSpeed: {x: 2, y: 7}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 0
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1858151506
 GameObject:
   m_ObjectHideFlags: 0
@@ -52767,21 +53461,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 10, y: 11}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 14.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 6}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 14
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!4 &1862155080 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8431955668174829842, guid: 7012abed2161c4d41ae8d43374b18c44,
@@ -52930,21 +53635,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 8, y: 9}
   timeB4Change: {x: 0.5, y: 0.5}
   changedSpeed: {x: 5, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -3, y: 1}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 14
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1870939833
 GameObject:
   m_ObjectHideFlags: 0
@@ -53696,21 +54412,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 10, y: 11}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 14.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 6}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 16
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &1948405916
 GameObject:
   m_ObjectHideFlags: 0
@@ -55032,7 +55759,7 @@ GameObject:
   - component: {fileID: 2037863270}
   - component: {fileID: 2037863271}
   m_Layer: 0
-  m_Name: Fall Down Curve
+  m_Name: Head Straight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55064,21 +55791,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 1
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 6, y: 13.5}
   timeB4Change: {x: 0.4, y: 0.7}
   changedSpeed: {x: -10, y: 17}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -1.5, y: 0.6}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 3
+  yVelocity: 0
+  x: 29.504162
+  y: -25.099277
 --- !u!1 &2038200932
 GameObject:
   m_ObjectHideFlags: 0
@@ -55152,21 +55890,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 1
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: 1
+  jumpForce: 1820
+  doubleJumpForce: 1850
+  launchPadForce: 3400
   speedRange: {x: 6, y: 9}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 13.5}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -65
+  gravity: 0
   jumpBounds: {x: -4, y: 3}
   considerationWeight: 2
   lengthShown: 14
   chainedDecisionZone: 6
+  yVelocity: 1.4243892
+  x: -19.133196
+  y: -50.11957
 --- !u!1 &2051391981
 GameObject:
   m_ObjectHideFlags: 0
@@ -55644,21 +56393,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 6, y: 9}
   timeB4Change: {x: 1.8, y: 1.81}
   changedSpeed: {x: -8, y: 10}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: -1.5, y: 0}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 3
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &2078847442
 GameObject:
   m_ObjectHideFlags: 0
@@ -55849,21 +56609,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 1
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 10, y: 11}
   timeB4Change: {x: 0.5, y: 0.7}
   changedSpeed: {x: 13, y: 14.5}
   timeB4SecondChange: {x: 1, y: 1.1}
   secondChangedSpeed: {x: -6, y: 15}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 6}
   considerationWeight: 1
   lengthShown: 14
   chainedDecisionZone: 17
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &2086343811
 GameObject:
   m_ObjectHideFlags: 0
@@ -56247,21 +57018,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02592c1bb99e74ec9a7627d51649723a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Trajectory>k__BackingField: 0
   headStraight: 0
   doubleJump: 0
   fallDown: 0
   fallDownCurve: 0
   launchPad: 0
   movementDirX: -1
+  jumpForce: 0
+  doubleJumpForce: 0
+  launchPadForce: 0
   speedRange: {x: 16, y: 17}
   timeB4Change: {x: 0.65, y: 0.7}
   changedSpeed: {x: 2, y: 9}
   timeB4SecondChange: {x: 0, y: 0}
   secondChangedSpeed: {x: 0, y: 0}
+  lastYVelocity: 0
+  mass: 1
+  defaultGravity: -32.5
+  gravity: 0
   jumpBounds: {x: 0, y: 2.3}
   considerationWeight: 3
   lengthShown: 14
   chainedDecisionZone: 10
+  yVelocity: 0
+  x: 0
+  y: 0
 --- !u!1 &2109638235
 GameObject:
   m_ObjectHideFlags: 0
@@ -57284,7 +58066,7 @@ PrefabInstance:
     - target: {fileID: 5458226237092584899, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.48202434
+      value: 0.48202425
       objectReference: {fileID: 0}
     - target: {fileID: 5955338976060406874, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -57299,12 +58081,12 @@ PrefabInstance:
     - target: {fileID: 7733928211693410040, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.87806505
+      value: 0.8780651
       objectReference: {fileID: 0}
     - target: {fileID: 7733928211693410040, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.4785413
+      value: -0.47854128
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212692212478, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -57334,12 +58116,12 @@ PrefabInstance:
     - target: {fileID: 7733928212931118244, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 4.1945798e-11
+      value: 4.19458e-11
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212931118244, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 4.5626076e-11
+      value: 4.5626072e-11
       objectReference: {fileID: 0}
     - target: {fileID: 7733928212931118244, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -57379,7 +58161,7 @@ PrefabInstance:
     - target: {fileID: 8025231702160958220, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.40386763
+      value: -0.4038676
       objectReference: {fileID: 0}
     - target: {fileID: 8025231702163390534, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -57429,12 +58211,12 @@ PrefabInstance:
     - target: {fileID: 8025231703213390421, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.00000010201775
+      value: -0.00000010201776
       objectReference: {fileID: 0}
     - target: {fileID: 8025231703213390421, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000076865426
+      value: -0.00000007686542
       objectReference: {fileID: 0}
     - target: {fileID: 8025231703213390421, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -57469,7 +58251,7 @@ PrefabInstance:
     - target: {fileID: 8082534869181539878, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7771255
+      value: -0.77712554
       objectReference: {fileID: 0}
     - target: {fileID: 8082534869181539878, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
@@ -57484,7 +58266,7 @@ PrefabInstance:
     - target: {fileID: 8082534869181539878, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.6293458
+      value: -0.62934566
       objectReference: {fileID: 0}
     - target: {fileID: 9045926645296259314, guid: 70f294b99febc4ca987961e51eb23a84,
         type: 3}

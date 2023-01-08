@@ -26,6 +26,8 @@ public class AIActionInfo : MonoBehaviour
         SecondChangedSpeed = secondChangedSpeed;
     }
 
+    public AIActionInfo(int dir) { DirX = dir; }
+
     public override string ToString()
     {
         return $"dirX: {DirX}, speed: {Speed}, timeB4CHange: {TimeB4Change} + changedSpeed: {ChangedSpeed}" +

@@ -1,36 +1,59 @@
+using System.Collections;
 using UnityEngine;
 
 [System.Serializable]
 
-// An AI Action contains what the AI should do and how the AI should do it. The
-// Action Type is the what, such as a double jump. The Action Info is the how,
-// such as information to execute a double jump properly
+// An AI Action takes in an Action type (what type of action the AI should do)
+// and an Action info (specifics about how the AI should execute that action). 
+// There are several methods to then simulate the execution of the Action,
+// which update the variables registered "outputs" below. 
 
 public abstract class AIAction
 {
     public AIActionType ActionType { get; private set; }
     public AIActionInfo Info { get; private set; }
 
+    // returns whether the action is finished 
+    public bool Finished { get; protected set; }
+
+    // outputs
+    public float Speed { get; protected set; }
+    public int DirX { get; protected set; }
+    public bool ExecuteNormalJumpNow;
+    public bool ExecuteDoubleJumpNow;
+    public bool ExecuteJumpBoostNow;
+
     protected AI_Controller controller;
     protected Transform creature;
+    protected CentralPhaseTracker phaseTracker;
 
-    public AIAction(AIActionType action, AIActionInfo info, AI_Controller controller)
+    public AIAction(AIActionType action, AIActionInfo info)
     {
         ActionType = action;
         Info = info;
 
-        this.controller = controller;
-        creature = controller.transform;
+        phaseTracker = creature.GetComponent<CentralPhaseTracker>();
     }
 
-    // invoked when starting to execute this action
-    public abstract void StartExecution();
+    public virtual void Begin(AI_Controller controller)
+    {
+        this.controller = controller;
+        creature = controller.transform;
 
-    // invoked every frame when executing this action
-    public abstract void Execute();
+        ExecuteNormalJumpNow = false;
+        ExecuteDoubleJumpNow = false;
+        ExecuteJumpBoostNow = false;
+    }
 
-    // returns whether the action is finished executing
-    public bool FinishedExecuting;
+    public virtual void Run() { }
+    
+    // returns a simple AI action for changing the direction the creature is heading in
+    public static AIAction ChangeDirection(int dir)
+    {
+        AIActionType type = AIActionType.ChangeDirections;
+        AIActionInfo info = new AIActionInfo(dir);
+        return new ChangeDirectionsAction(type, info);
+    }
 
     protected float getRandomSpeed(Vector2 speedRange)
     {
@@ -42,4 +65,16 @@ public abstract class AIAction
 
         return randomSpeed;
     }
+
+    protected IEnumerator changeVelocityAfterDelay(Vector2 delay, Vector2 velocity)
+    {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(delay.x, delay.y));
+        if (!controller.IsActionBeingExecuted(this))
+            yield break;
+
+        float randomSpeed = getRandomSpeed(velocity);
+        DirX = Info.DirX * (int)Mathf.Sign(randomSpeed);
+        Speed = Mathf.Abs(randomSpeed);
+    }
+
 }

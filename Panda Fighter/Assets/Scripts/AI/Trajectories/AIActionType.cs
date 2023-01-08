@@ -5,5 +5,6 @@ public enum AIActionType
     NormalJump,
     DoubleJump,
     Falling,
-    LaunchPad
+    LaunchPad,
+    None
 }

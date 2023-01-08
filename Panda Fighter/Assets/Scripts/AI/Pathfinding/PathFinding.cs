@@ -32,8 +32,8 @@ public class PathFinding : MonoBehaviour
         universalClosedSet.Clear();
         chosenPath = null;
 
-        Node startNode = grid.getClosestNodeToWorldPosition(seeker.position, 5);
-        Node targetNode = grid.getClosestNodeToWorldPosition(target, 5);
+        Node startNode = grid.GetClosestNodeToWorldPosition(seeker.position, 5);
+        Node targetNode = grid.GetClosestNodeToWorldPosition(target, 5);
 
         //search for a bunch of potential paths (note: paths are stored as end nodes)
         float time = Time.time + searchTime;
@@ -76,7 +76,7 @@ public class PathFinding : MonoBehaviour
                 return;
             }
 
-            foreach (Node neighbour in grid.getNeighbors(currentNode))
+            foreach (Node neighbour in grid.GetNeighborsOfNode(currentNode))
             {
                 if (closedSet.Contains(neighbour))
                     continue;

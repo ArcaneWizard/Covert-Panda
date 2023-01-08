@@ -3,15 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 using UnityEditor;
+using System;
 
-public class TestingTrajectories : MonoBehaviour
+public class TrajectoryPath : MonoBehaviour
 {
-    [Header("Jump Type")]
-    public bool headStraight = false;
-    public bool doubleJump = false;
-    public bool fallDown = false;
-    public bool fallDownCurve = false;
-    public bool launchPad = false;
+    [field: SerializeField] public AIActionType ActionType { get; private set; }
 
     [Header("Describe Jump")]
     public int movementDirX = 1;
@@ -43,6 +39,7 @@ public class TestingTrajectories : MonoBehaviour
     //private Vector2 lastPointPlotted;
     //private Vector2 lastP_b4DirSwitch;
 
+    #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         jumpForce = CentralController.jumpForce;
@@ -50,36 +47,29 @@ public class TestingTrajectories : MonoBehaviour
         launchPadForce = CentralController.jumpPadForce;
         defaultGravity = -65f;
 
-        mass = 1f; 
+        mass = 1f;
 
-        if (headStraight)
+        if (ActionType == AIActionType.ChangeDirections)
         {
-            transform.name = "Head Straight";
+            transform.name = "Change Directions";
             drawStraightLine();
         }
 
-        else if (fallDown)
+        else if (ActionType == AIActionType.Falling)
         {
-            transform.name = "Fall Down";
-            drawNormalJump(defaultGravity, lengthShown, 0, speedRange.x);
-            drawNormalJump(defaultGravity, lengthShown, 0, speedRange.y);
-        }
-
-        else if (fallDownCurve)
-        {
-            transform.name = "Fall Down Curve";
+            transform.name = "Falling";
             drawFallDownArc(timeB4Change.x);
             drawFallDownArc(timeB4Change.y);
         }
 
-        else if (launchPad)
+        else if (ActionType == AIActionType.LaunchPad)
         {
             transform.name = "Launch Pad";
             drawJumpPadArc(defaultGravity, lengthShown, launchPadForce);
             showGizmoJumpBounds();
         }
 
-        else if (doubleJump)
+        else if (ActionType == AIActionType.DoubleJump)
         {
             transform.name = "Double Jump";
             drawDoubleJump(timeB4Change.x);
@@ -87,7 +77,7 @@ public class TestingTrajectories : MonoBehaviour
             showGizmoJumpBounds();
         }
 
-        else 
+        else if (ActionType == AIActionType.NormalJump)
         {
             transform.name = "Normal Jump";
             drawNormalJump(defaultGravity, lengthShown, jumpForce, speedRange.x);
@@ -95,39 +85,45 @@ public class TestingTrajectories : MonoBehaviour
             showGizmoJumpBounds();
         }
 
-        //yellow rec on connected decision zone
+        else
+            Debug.LogError("The specified trajectory doesn't have any visuals");
+
+        // put a green dot on neighboring decision zones
         if (chainedDecisionZone != -1)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(getChainedZone().position, 0.5f);
         }
     }
+    #endif
 
     public Transform getChainedZone() => transform.parent.parent.GetChild(chainedDecisionZone);
 
-    // returns an AI_ACTION containing all the info in this set up trajectory
+    // converts the trajectory into a performable AI Action
     public AIAction ConvertToAction()
     {
-        AIAction action;
+        AIAction action = null;
 
-        if (headStraight)
-            action = defineAction("headStraight");
-        else if (fallDown)
-            action = defineAction("fallDown");
-        else if (fallDownCurve)
-            action = defineAction("fallDownCurve");
-        else if (doubleJump)
-            action = defineAction("doubleJump");
-        else if (launchPad)
-            action = defineAction("launchPad");
-        else
-            action = defineAction("normalJump");
+        if (ActionType == AIActionType.ChangeDirections)
+            action = new ChangeDirectionsAction(ActionType, actionInfo);
+
+        else if (ActionType == AIActionType.NormalJump)
+            action = new NormalJumpAction(ActionType, actionInfo);
+
+        else if (ActionType == AIActionType.DoubleJump)
+            action = new DoubleJumpAction(ActionType, actionInfo);
+
+       else if (ActionType == AIActionType.Falling)
+            action = new FallingAction(ActionType, actionInfo);
+
+       else if (ActionType == AIActionType.LaunchPad)
+            action = new LaunchPadAction(ActionType, actionInfo);
 
         return action;
     }
 
-    // helper method for storing all of this trajectory's info into an AI_ACTION 
-    private AIAction defineAction(string actionName) => new AI_ACTION(actionName, movementDirX,
+    // Stores all of this trajectory's info into an Action Info object
+    private AIActionInfo actionInfo => new AIActionInfo(movementDirX,
             speedRange, timeB4Change, changedSpeed, timeB4SecondChange, secondChangedSpeed, jumpBounds, transform.position);
 
 
@@ -216,7 +212,9 @@ public class TestingTrajectories : MonoBehaviour
     {
         x = start.x + speed * time * movementDirX;
 
-        yVelocity = !headStraight ? (jumpForce * 0.02f / mass) : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
+        yVelocity = !(ActionType == AIActionType.ChangeDirections) 
+            ? (jumpForce * 0.02f / mass) 
+            : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
         y = start.y + yVelocity * time + 0.5f * gravity * time * time;
         return new Vector2(x, y);
     }
@@ -228,7 +226,9 @@ public class TestingTrajectories : MonoBehaviour
     {
         x = start.x + movementDirX * (speed * time + speed2 * time2);
 
-        yVelocity = !headStraight ? (jumpForce * 0.02f / mass) : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
+        yVelocity = !(ActionType == AIActionType.ChangeDirections) 
+            ? (jumpForce * 0.02f / mass) 
+            : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
         y = start.y + yVelocity * (time + time2) + 0.5f * gravity * (time + time2) * (time + time2);
         return new Vector2(x, y);
     }
@@ -241,7 +241,9 @@ public class TestingTrajectories : MonoBehaviour
     {
         x = start.x + movementDirX * (speed * time + speed2 * time2 + speed3 * time3);
 
-        yVelocity = !headStraight ? (jumpForce * 0.02f / mass) : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
+        yVelocity = !(ActionType == AIActionType.ChangeDirections) 
+            ? (jumpForce * 0.02f / mass) 
+            : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
         y = start.y + yVelocity * (time + time2 + time3) + 0.5f * gravity * (time + time2 + time3) * (time + time2 + time3);
         return new Vector2(x, y);
     }

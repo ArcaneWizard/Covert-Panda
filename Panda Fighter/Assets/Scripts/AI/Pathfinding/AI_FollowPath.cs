@@ -53,17 +53,17 @@ public class AI_FollowPath : MonoBehaviour
 
         //head towards starting path Node
         if (transform.position.x < path[0].transform.position.x)
-            controller.ChangeDirection(1);
+            controller.SetDirection(1);
         else
-            controller.ChangeDirection(-1);
+            controller.SetDirection(-1);
     }
 
     public void tick()
     {
-        if (journey == Journey.InProgress && controller.ActionProgress == Status.Ended && controller.isGrounded && controller.isTouchingMap)
+        if (journey == Journey.InProgress && controller.currAction == null && controller.isGrounded && controller.isTouchingMap)
         {
             int dir = Math.Sign(path[pathProgress].transform.position.x - transform.position.x);
-            controller.ChangeDirection(dir);
+            controller.SetDirection(dir);
         }
     }
 
@@ -95,7 +95,7 @@ public class AI_FollowPath : MonoBehaviour
         {
             foreach (Transform neighbourNode in col.transform)
             {
-                TestingTrajectories trajectory = neighbourNode.GetComponent<TestingTrajectories>();
+                TrajectoryPath trajectory = neighbourNode.GetComponent<TrajectoryPath>();
 
                 if (pathProgress < path.Count - 1 && path[pathProgress + 1].transform == trajectory.getChainedZone())
                 {
@@ -114,7 +114,7 @@ public class AI_FollowPath : MonoBehaviour
         bool foundReroute = false;
         foreach (Transform neighborZone in decisionZone)
         {
-            TestingTrajectories trajectory = neighborZone.transform.GetComponent<TestingTrajectories>();
+            TrajectoryPath trajectory = neighborZone.transform.GetComponent<TrajectoryPath>();
 
             if (path[0].transform == trajectory.getChainedZone())
             {

@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/* This class contains useful info about all the node regions on the map. 
+   It can provide the closest node to a specific world position, 
+   and provide a list of all neighboring nodes to any specified node */
+
 public class Grid : MonoBehaviour
 {
     private Dictionary<Transform, Node> grid = new Dictionary<Transform, Node>();
@@ -10,7 +14,7 @@ public class Grid : MonoBehaviour
     [SerializeField]
     private LayerMask decisionZoneMask;
 
-    private float leastDistanceSoFar, colliderDistance;
+    private float smallestDistanceFoundSoFar, colliderDistance;
     private Transform closestNode;
 
     void Awake()
@@ -19,18 +23,18 @@ public class Grid : MonoBehaviour
             grid.Add(transform, new Node(transform));
     }
 
-    public Node getClosestNodeToWorldPosition(Vector2 entityPos, float radiusCheck)
+    public Node GetClosestNodeToWorldPosition(Vector2 entityPos, float radiusCheck)
     {
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(entityPos, radiusCheck, decisionZoneMask);
-        leastDistanceSoFar = 400;
+        smallestDistanceFoundSoFar = 400;
 
         foreach (Collider2D hitCollider in hitColliders)
         {
             colliderDistance = getSquaredDistanceBtwnVectors(hitCollider.transform.position, entityPos);
 
-            if (colliderDistance < leastDistanceSoFar)
+            if (colliderDistance < smallestDistanceFoundSoFar)
             {
-                leastDistanceSoFar = colliderDistance;
+                smallestDistanceFoundSoFar = colliderDistance;
                 closestNode = hitCollider.transform;
             }
         }
@@ -39,8 +43,8 @@ public class Grid : MonoBehaviour
         if (radiusCheck == 90)
             Debug.LogError("bruh stack over flow exception incoming");
 
-        if (leastDistanceSoFar == 400)
-            return getClosestNodeToWorldPosition(entityPos, radiusCheck + 10);
+        if (smallestDistanceFoundSoFar == 400)
+            return GetClosestNodeToWorldPosition(entityPos, radiusCheck + 10);
         else
         {
             if (grid.ContainsKey(closestNode.transform))
@@ -50,13 +54,13 @@ public class Grid : MonoBehaviour
         }
     }
 
-    public List<Node> getNeighbors(Node node)
+    public List<Node> GetNeighborsOfNode(Node node)
     {
         List<Node> connectedNodes = new List<Node>();
         foreach (Transform child in node.transform)
         {
             if (child.gameObject.activeSelf)
-                connectedNodes.Add(grid[child.transform.GetComponent<TestingTrajectories>().getChainedZone()]);
+                connectedNodes.Add(grid[child.transform.GetComponent<TrajectoryPath>().getChainedZone()]);
         }
 
         return connectedNodes;

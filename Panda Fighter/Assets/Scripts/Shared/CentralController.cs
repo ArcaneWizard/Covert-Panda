@@ -60,7 +60,7 @@ public abstract class CentralController : MonoBehaviour
 
     private bool updateTiltInstantly;
 
-    void Awake()
+    protected virtual void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
         body = transform.GetChild(0).transform;
@@ -296,7 +296,7 @@ public abstract class CentralController : MonoBehaviour
             isTouchingMap = false;
     }
 
-    private void FixedUpdate() => oneWayCollider.enabled = rig.velocity.y < 0.1f;
+    protected virtual void FixedUpdate() => oneWayCollider.enabled = rig.velocity.y < 0.1f;
 
     private IEnumerator RecentlyJumpedOffGround()
     {
