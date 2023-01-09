@@ -70,6 +70,34 @@ public class AI_Controller : CentralController
         handleExecutionOfCurrentAction();
     }
 
+    protected override void FixedUpdate()
+    {
+        if (currAction == null)
+            return;
+
+        if (currAction.ExecuteNormalJumpNow)
+        {
+            normalJump();
+            currAction.ExecuteNormalJumpNow = false;
+        }
+        if (currAction.ExecuteDoubleJumpNow)
+        {
+            doubleJump();
+            currAction.ExecuteDoubleJumpNow = false;
+        }
+        if (currAction.ExecuteJumpBoostNow)
+        {
+            jumpPadBoost();
+            currAction.ExecuteJumpBoostNow = false;
+        }
+    }
+
+    protected override void LateUpdate()
+    {
+        base.LateUpdate();
+        setAlienVelocity();
+    }
+
     private void handleExecutionOfCurrentAction()
     {
         // When the AI is grounded, start executing the action
@@ -101,30 +129,6 @@ public class AI_Controller : CentralController
         }
     }
 
-    protected override void FixedUpdate()
-    {
-        if (currAction.ExecuteNormalJumpNow)
-        {
-            normalJump();
-            currAction.ExecuteNormalJumpNow = false;
-        }
-        if (currAction.ExecuteDoubleJumpNow)
-        {
-            doubleJump();
-            currAction.ExecuteDoubleJumpNow = false;
-        }
-        if (currAction.ExecuteJumpBoostNow)
-        {
-            jumpPadBoost();
-            currAction.ExecuteJumpBoostNow = false;
-        }
-    }
-
-    protected override void LateUpdate()
-    {
-        base.LateUpdate();
-        setAlienVelocity();
-    }
 
     // handles setting the alien velocity on slopes, while falling, etc.
     private void setAlienVelocity()
