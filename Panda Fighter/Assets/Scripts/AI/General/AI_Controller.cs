@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class AI_Controller : CentralController
 {
-    // the current action the AI is executing (if null, creature is begin to get a new action) 
+    // the current action the AI is executing (null if no action is being executed right now) 
     public AIAction currAction { get; private set; }
 
     // the decision zone that provided the current action the AI should execute
@@ -118,6 +118,12 @@ public class AI_Controller : CentralController
             jumpPadBoost();
             currAction.ExecuteJumpBoostNow = false;
         }
+    }
+
+    protected override void LateUpdate()
+    {
+        base.LateUpdate();
+        setAlienVelocity();
     }
 
     // handles setting the alien velocity on slopes, while falling, etc.
