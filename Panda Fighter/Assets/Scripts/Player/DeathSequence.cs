@@ -7,9 +7,9 @@ public class DeathSequence : CentralDeathSequence
 
     protected override void actionsTriggeredImmediatelyUponDeath()
     {
+        base.actionsTriggeredImmediatelyUponDeath();
         inventory.SetActive(false);
         respawnText.StartRespawnCountdown(respawnTime);
-        base.actionsTriggeredImmediatelyUponDeath();
     }
 
     protected override void actionsTriggeredWhenRespawning()

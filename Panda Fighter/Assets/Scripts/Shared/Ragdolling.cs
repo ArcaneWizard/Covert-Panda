@@ -61,7 +61,6 @@ public class Ragdolling : MonoBehaviour
     private IEnumerator enable()
     {
         animator.SetInteger("ragdolling", 1);
-        yield break;
         yield return new WaitForSeconds(Time.deltaTime);
         animator.enabled = false;
         playerRig.isKinematic = true;
