@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 public class LimbSwapper : MonoBehaviour
 {
     //what limb this gameobject should be
-    public limbTypes limbType; 
+    public LimbTypes limbType; 
 
     //collection of all limbs
     public LimbCollection limbCollection; 
@@ -41,7 +41,7 @@ public class LimbSwapper : MonoBehaviour
     // Also reattache the bone rigged to that limb (ex. head bone) to this new sprite 
     private void updateSpriteAndBoneTransforms()
     {   
-        sR.sprite = limbCollection.returnLimb(limbType);
+        sR.sprite = limbCollection.ReturnLimb(limbType);
         if (spriteSkin.boneTransforms.Length > 0)
             spriteSkin.boneTransforms[0] = spriteSkin.rootBone;
     }
@@ -53,7 +53,7 @@ public class LimbSwapper : MonoBehaviour
     // 1) when this limb is updated in the editor and needs to be retrieved (ex. left arm changed to right arm)
     // 2) when the editor scene is first loaded so all limbs need to be retrieved. Note: the 1 sec delay ensures 
     // the creature type was registered first as the limb collection is dependent on the creature type
-    /*async void OnValidate() 
+    async void OnValidate() 
     {
         await Task.Delay(1000);
         if (!findlimbCollection())
@@ -69,7 +69,7 @@ public class LimbSwapper : MonoBehaviour
         
         initializeComponents();
         updateSpriteAndBoneTransforms();
-    }*/
+    }
     
     // Retrieve all limbs from the limb collection and update them. Runs whenever
     // whnever the editor detects a change was made in the hierarchy (ie. creature type was changed)
@@ -83,7 +83,7 @@ public class LimbSwapper : MonoBehaviour
             Debug.LogError(("Limb Collection has not been set for " + transform.name));
 
         initializeComponents();
-        if (sR.sprite != limbCollection.returnLimb(limbType))
+        if (sR.sprite != limbCollection.ReturnLimb(limbType))
             updateSpriteAndBoneTransforms();
     }
     
@@ -93,7 +93,6 @@ public class LimbSwapper : MonoBehaviour
     private bool findlimbCollection()
     {
         counter =  0;
-        Transform problem = transform;
         armBones = transform;
  
         while (!limbCollection && counter <= 8)

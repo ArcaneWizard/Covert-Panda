@@ -14,13 +14,13 @@ public class Role : MonoBehaviour
     void OnAwake() 
     {
         transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().creature = creature;
-        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().updateLimbs();
+        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().UpdateLimbs();
     }
 
 #if (UNITY_EDITOR)
     void OnValidate() {
         transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().creature = creature;
-        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().updateLimbs();
+        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().UpdateLimbs();
 
         transform.name = creature.ToString().Split(' ')[0];
     }

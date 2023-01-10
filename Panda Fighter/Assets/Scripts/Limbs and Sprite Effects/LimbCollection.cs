@@ -6,41 +6,41 @@ using UnityEngine;
 public class LimbCollection : MonoBehaviour
 {
     public Creatures creature;
-    public Dictionary<limbTypes, Sprite> limbs = new Dictionary<limbTypes, Sprite>();
+    public Dictionary<LimbTypes, Sprite> limbs = new Dictionary<LimbTypes, Sprite>();
 
     //update the collection of limbs for this creature type, stored in a dictionary by limb name
-    public void updateLimbs()
+    public void UpdateLimbs()
     {
         limbs.Clear();
 
-        limbs.Add(limbTypes.chest, creature.chest);
-        limbs.Add(limbTypes.leftThigh, creature.leftThigh);
-        limbs.Add(limbTypes.rightThigh, creature.rightThigh);
-        limbs.Add(limbTypes.leftFoot, creature.leftFoot);
-        limbs.Add(limbTypes.rightFoot, creature.rightFoot);
-        limbs.Add(limbTypes.leftLeg, creature.leftLeg);
-        limbs.Add(limbTypes.rightLeg, creature.rightLeg);
-        limbs.Add(limbTypes.mainArm, creature.mainArm);
-        limbs.Add(limbTypes.backArm, creature.backArm);
-        limbs.Add(limbTypes.mainArmPad, creature.mainArmPad);
-        limbs.Add(limbTypes.backArmPad, creature.backArmPad);
-        limbs.Add(limbTypes.mainHand, creature.mainHand);
-        limbs.Add(limbTypes.backHand, creature.backHand);
-        limbs.Add(limbTypes.head, creature.head);
+        limbs.Add(LimbTypes.chest, creature.chest);
+        limbs.Add(LimbTypes.leftThigh, creature.leftThigh);
+        limbs.Add(LimbTypes.rightThigh, creature.rightThigh);
+        limbs.Add(LimbTypes.leftFoot, creature.leftFoot);
+        limbs.Add(LimbTypes.rightFoot, creature.rightFoot);
+        limbs.Add(LimbTypes.leftLeg, creature.leftLeg);
+        limbs.Add(LimbTypes.rightLeg, creature.rightLeg);
+        limbs.Add(LimbTypes.mainArm, creature.mainArm);
+        limbs.Add(LimbTypes.backArm, creature.backArm);
+        limbs.Add(LimbTypes.mainArmPad, creature.mainArmPad);
+        limbs.Add(LimbTypes.backArmPad, creature.backArmPad);
+        limbs.Add(LimbTypes.mainHand, creature.mainHand);
+        limbs.Add(LimbTypes.backHand, creature.backHand);
+        limbs.Add(LimbTypes.head, creature.head);
     }
 
     //return a limb based off limb name
-    public Sprite returnLimb(limbTypes limbType)
+    public Sprite ReturnLimb(LimbTypes limbType)
     {
         if (limbs.Count == 0)
-            updateLimbs();
+            UpdateLimbs();
 
         return limbs[limbType];
     }
 
 }
 
-public enum limbTypes
+public enum LimbTypes
 {
     chest,
     mainArmPad,
