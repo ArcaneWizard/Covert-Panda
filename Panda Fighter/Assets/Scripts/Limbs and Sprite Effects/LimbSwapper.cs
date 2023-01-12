@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEditor;
 using System.Threading.Tasks;
 
-//[ExecuteAlways]
 public class LimbSwapper : MonoBehaviour
 {
     //what limb this gameobject should be
@@ -22,7 +21,8 @@ public class LimbSwapper : MonoBehaviour
     {
         initializeComponents();
         updateSpriteAndBoneTransforms();
-        Orderer.UpdateSpriteOrder(transform, limbCollection.transform.parent.parent);
+        
+        Orderer.UpdateSpriteOrder(transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
 
         Destroy(this);
     }
@@ -53,23 +53,24 @@ public class LimbSwapper : MonoBehaviour
     // 1) when this limb is updated in the editor and needs to be retrieved (ex. left arm changed to right arm)
     // 2) when the editor scene is first loaded so all limbs need to be retrieved. Note: the 1 sec delay ensures 
     // the creature type was registered first as the limb collection is dependent on the creature type
-  /*  async void OnValidate() 
+    async void OnValidate()
     {
+        //  don't run this code when in play mode; only run during edit mode
+        if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        Orderer.UpdateLimbOrder(limbType, transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
+
         await Task.Delay(1000);
         if (!findlimbCollection())
             return;
 
-        // prefabs don't have a parent, so the editor will never update them
         if (!limbCollection || !limbCollection.transform.parent)
-            return;
-        
-        //  don't run this code when in play mode; only run during edit mode
-        if (EditorApplication.isPlayingOrWillChangePlaymode)
             return;
         
         initializeComponents();
         updateSpriteAndBoneTransforms();
-    }*/
+    }
     
     // Retrieve all limbs from the limb collection and update them. Runs whenever
     // whnever the editor detects a change was made in the hierarchy (ie. creature type was changed)

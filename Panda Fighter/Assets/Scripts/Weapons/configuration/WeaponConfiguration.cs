@@ -64,6 +64,6 @@ public class WeaponConfiguration : MonoBehaviour
         BulletSpawnPoint = (PhysicalWeapon.transform.childCount > 0) ? PhysicalWeapon.transform.GetChild(0) : null;
 
         // update the sprite order of the weapon so it shows in front of / behind the creature's limbs as intended
-        Orderer.UpdateSpriteOrder(PhysicalWeapon.transform, transform.parent.parent.parent);
+        Orderer.UpdateSpriteOrder(PhysicalWeapon.transform.GetComponent<SpriteRenderer>(), transform.parent.parent.parent);
     }
 }

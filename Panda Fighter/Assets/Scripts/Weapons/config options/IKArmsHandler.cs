@@ -59,7 +59,7 @@ public class IKArmsHandler : MonoBehaviour
         if (getMainArm)
         {
             if (arms == ShortBarrel)
-                return IKAimingCoordinates.ShortBarrelMainArm;
+                return IKAimingCoordinates.ShortBarrelMainArmCoordinates;
             else if (arms == MeeleGrip)
                 return IKAimingCoordinates.MeeleeGripCoordinates;
             else if (arms == PistolGrip)
@@ -70,7 +70,7 @@ public class IKArmsHandler : MonoBehaviour
         else
         {
             if (arms == ShortBarrel)
-                return IKAimingCoordinates.ShortBarrelOtherArm;
+                return IKAimingCoordinates.ShortBarrelOtherArmCoordinates;
         }
 
         return IKAimingCoordinates.DefaultCoordinates;

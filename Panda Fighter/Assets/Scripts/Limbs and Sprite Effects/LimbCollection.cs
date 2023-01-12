@@ -13,20 +13,20 @@ public class LimbCollection : MonoBehaviour
     {
         limbs.Clear();
 
-        limbs.Add(LimbTypes.chest, creature.chest);
-        limbs.Add(LimbTypes.leftThigh, creature.leftThigh);
-        limbs.Add(LimbTypes.rightThigh, creature.rightThigh);
-        limbs.Add(LimbTypes.leftFoot, creature.leftFoot);
-        limbs.Add(LimbTypes.rightFoot, creature.rightFoot);
-        limbs.Add(LimbTypes.leftLeg, creature.leftLeg);
-        limbs.Add(LimbTypes.rightLeg, creature.rightLeg);
-        limbs.Add(LimbTypes.mainArm, creature.mainArm);
-        limbs.Add(LimbTypes.backArm, creature.backArm);
-        limbs.Add(LimbTypes.mainArmPad, creature.mainArmPad);
-        limbs.Add(LimbTypes.backArmPad, creature.backArmPad);
-        limbs.Add(LimbTypes.mainHand, creature.mainHand);
-        limbs.Add(LimbTypes.backHand, creature.backHand);
-        limbs.Add(LimbTypes.head, creature.head);
+        limbs.Add(LimbTypes.Chest, creature.chest);
+        limbs.Add(LimbTypes.FrontThigh, creature.leftThigh);
+        limbs.Add(LimbTypes.BackThigh, creature.rightThigh);
+        limbs.Add(LimbTypes.FrontFoot, creature.leftFoot);
+        limbs.Add(LimbTypes.BackFoot, creature.rightFoot);
+        limbs.Add(LimbTypes.FrontLeg, creature.leftLeg);
+        limbs.Add(LimbTypes.BackLeg, creature.rightLeg);
+        limbs.Add(LimbTypes.FrontLowerArm, creature.mainArm);
+        limbs.Add(LimbTypes.BackLowerArm, creature.backArm);
+        limbs.Add(LimbTypes.FrontUpperArm, creature.mainArmPad);
+        limbs.Add(LimbTypes.BackUpperArm, creature.backArmPad);
+        limbs.Add(LimbTypes.FrontHand, creature.mainHand);
+        limbs.Add(LimbTypes.BackHand, creature.backHand);
+        limbs.Add(LimbTypes.Head, creature.head);
     }
 
     //return a limb based off limb name
@@ -42,18 +42,18 @@ public class LimbCollection : MonoBehaviour
 
 public enum LimbTypes
 {
-    chest,
-    mainArmPad,
-    mainArm,
-    mainHand,
-    backArmPad,
-    backArm,
-    backHand,
-    leftThigh,
-    leftLeg,
-    leftFoot,
-    rightThigh,
-    rightLeg,
-    rightFoot,
-    head
+    Chest,
+    FrontUpperArm,
+    FrontLowerArm,
+    FrontHand,
+    BackUpperArm,
+    BackLowerArm,
+    BackHand,
+    FrontThigh,
+    FrontLeg,
+    FrontFoot,
+    BackThigh,
+    BackLeg,
+    BackFoot,
+    Head
 }

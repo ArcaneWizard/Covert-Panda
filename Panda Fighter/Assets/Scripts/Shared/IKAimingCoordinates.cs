@@ -28,22 +28,22 @@ public static class IKAimingCoordinates
     { meeleePointingRight, meeleePointingUp, meeleePointingDown, meeleeShoulderPos, meeleeAttackPos };
 
     //ideal shortBarrel coordinates when looking to the side, up or down with right arm
-    private static Vector2 shortBarrelPointingRight = new Vector2(1.17f, -0.22f);
-    private static Vector2 shortBarrelPointingUp = new Vector2(-0.13f, 1.55f);
-    private static Vector2 shortBarrelPointingDown = new Vector2(-0.39f, -1.62f);
-    private static Vector2 shortBarrelShoulderPos = new Vector2(-0.35f, -0.15f);
+    private static Vector2 shortBarrelPointingRight = new Vector2(0.278f, -1.456f);
+    private static Vector2 shortBarrelPointingUp = new Vector2(-1.02f, 0.19f);
+    private static Vector2 shortBarrelPointingDown = new Vector2(-1.35f, -3.04f);
+    private static Vector2 shortBarrelShoulderPos = new Vector2(-1.33f, -1.4f);
 
-    public static List<Vector2> ShortBarrelMainArm = new List<Vector2>()
+    public static List<Vector2> ShortBarrelMainArmCoordinates = new List<Vector2>()
     { shortBarrelPointingRight, shortBarrelPointingUp, shortBarrelPointingDown, shortBarrelShoulderPos };
 
 
     //ideal shortBarrel coordinates when looking to the side, up or down wih left arm
-    private static Vector2 shortBarrelPointingRight2 = new Vector2(1.96f, 0.82f);
-    private static Vector2 shortBarrelPointingUp2 = new Vector2(0.53f, 2.35f);
-    private static Vector2 shortBarrelPointingDown2 = new Vector2(0.69f, -0.81f);
-    private static Vector2 shortBarrelShoulderPos2 = new Vector2(0.37f, 0.71f);
+    private static Vector2 shortBarrelPointingRight2 = new Vector2(1.95f, 0.845f);
+    private static Vector2 shortBarrelPointingUp2 = new Vector2(0.41f, 2.34f);
+    private static Vector2 shortBarrelPointingDown2 = new Vector2(0.78f, 0.38f);
+    private static Vector2 shortBarrelShoulderPos2 = new Vector2(0.36f, 0.67f);
 
-    public static List<Vector2> ShortBarrelOtherArm = new List<Vector2>()
+    public static List<Vector2> ShortBarrelOtherArmCoordinates = new List<Vector2>()
     { shortBarrelPointingRight2, shortBarrelPointingUp2, shortBarrelPointingDown2, shortBarrelShoulderPos2 };
 
     //ideal  pistol coordinates when looking to the side, up or down 
