@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AimTargets : MonoBehaviour
+public class IKTargets : MonoBehaviour
 {
     public Transform MeeleePoleAim;
-    public Transform ShortBarrelAim;
+    public Transform ShortBarrelMainArm;
+    public Transform ShortBarrelOtherArm;
     public Transform MediumBarrelAim;
     public Transform LongBarrelAim;
     public Transform PistolGripAim;

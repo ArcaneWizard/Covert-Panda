@@ -101,7 +101,7 @@ public class CentralPhaseTracker : MonoBehaviour
         // whether the creature runs forwards or backwards 
         if (Is(Phase.Running))
         {
-            if ((controller.dirX == 1 && lookAround.facingRight()) || controller.dirX == -1 && !lookAround.facingRight())
+            if ((controller.dirX == 1 && lookAround.IsLookingRight()) || controller.dirX == -1 && !lookAround.IsLookingRight())
                 animator.SetBool("walking forwards", true);
             else if (controller.dirX != 0)
                 animator.SetBool("walking forwards", false);

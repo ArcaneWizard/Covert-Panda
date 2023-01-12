@@ -11,7 +11,7 @@ public class wScythe : WeaponBehaviour
         StartCoroutine(base.Attack(aim));
 
         weaponConfiguration.Animator.SetInteger("Arms Phase", 11);
-        weaponConfiguration.WeaponAimTracker.gameObject.SetActive(false);
+        weaponConfiguration.MainArmIKTracker.gameObject.SetActive(false);
 
         while (weaponConfiguration.Animator.GetInteger("Arms Phase") == 11)
             yield return null;

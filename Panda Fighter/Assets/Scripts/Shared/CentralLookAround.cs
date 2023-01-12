@@ -3,25 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // When the the creature looks around with their weapon, update the arm limbs/weapon
-// to aim in the correct direction and update the head to look in the correct direction 
+// to aim in the correct direction and update the head to look in the correct direction.
+// Note: the player will look in the direction of their mouse, while the AI follows an algorithm
 
 public abstract class CentralLookAround : MonoBehaviour
 {
-    // Note: the player looks in the direction of their mouse, the AI follows an algorithm
     public Vector2 directionToLook { get; protected set; }
-    public abstract bool facingRight();
+    public abstract bool IsLookingRight();
 
-    //ideal aim coordinates when looking to the side, up or down 
-    private Vector2 pointingRight, pointingUp, pointingDown, shoulderPos; 
+    // IK coordinates for main arm when looking up, down or to the side
     private float upVector, downVector, rightVector;
     private float up, right, down;
+
+    // IK coordinates for other arm when looking up, down or to the side (optional)
+    private float upVector2, downVector2, rightVector2;
+    private float up2, right2, down2;
 
     [SerializeField] protected Transform head;
     [SerializeField] protected Transform weaponPivot;
 
     protected Camera camera;
     protected Transform body;
-    private Transform aimTarget;
+    private Transform mainArmIKTarget;
+    private Transform otherArmIKTarget;
 
     protected CentralPhaseTracker phaseTracker;
     protected CentralController controller;
@@ -45,26 +49,50 @@ public abstract class CentralLookAround : MonoBehaviour
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
     }
 
-    // updates the weapon's IK aim target 
-    public void setAimTarget(Transform aimTarget) => this.aimTarget = aimTarget;
-
-    public void calculateShoulderAngles(List<Vector2> aiming)
+    // Update the main arm and back arm's Inverse Kinematic settings
+    public void UpdateArmInverseKinematics()
     {
-        //get where the weapon's aiming target should be positioned when pointing the gun right, up or down
-        pointingRight = aiming[0];
-        pointingUp = aiming[1];
-        pointingDown = aiming[2];
-        shoulderPos = aiming[3];
+        WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
+        mainArmIKTarget = configuration.MainArmIKTracker;
+        otherArmIKTarget = configuration.OtherArmIKTracker;    
 
-        //get the aim target's angle relative to the shoulder when pointing the gun right, up or down
-        right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
-        up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
-        down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+        if (mainArmIKTarget != null)
+        {
+            // Store this arm's IK target coordinates (when pointing the gun right, up or down)
+            Vector2 pointingRight = configuration.MainArmIKCoordinates[0];
+            Vector2 pointingUp = configuration.MainArmIKCoordinates[1];
+            Vector2 pointingDown = configuration.MainArmIKCoordinates[2];
+            Vector2 shoulderPos = configuration.MainArmIKCoordinates[3];
 
-        //get the aim target's distance from the shoulder when pointing the gun right, up or down
-        rightVector = (pointingRight - shoulderPos).magnitude;
-        upVector = (pointingUp - shoulderPos).magnitude;
-        downVector = (pointingDown - shoulderPos).magnitude;
+            // Get the IK target's angle relative to the shoulder (when pointing the gun right, up or down)
+            right = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+            up = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+            down = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+
+            // Get the IK target's distance from the shoulder (when pointing the gun right, up or down)
+            rightVector = (pointingRight - shoulderPos).magnitude;
+            upVector = (pointingUp - shoulderPos).magnitude;
+            downVector = (pointingDown - shoulderPos).magnitude;
+        }
+
+        if (otherArmIKTarget != null)
+        {
+            // Get this arm's IK target coordinates (when pointing the gun right, up or down)
+            Vector2 pointingRight = configuration.OtherArmIKCoordinates[0];
+            Vector2 pointingUp = configuration.OtherArmIKCoordinates[1];
+            Vector2 pointingDown = configuration.OtherArmIKCoordinates[2];
+            Vector2 shoulderPos = configuration.OtherArmIKCoordinates[3];
+
+            // Get the IK target's angle relative to the shoulder (when pointing the gun right, up or down)
+            right2 = Mathf.Atan2(pointingRight.y - shoulderPos.y, pointingRight.x - shoulderPos.x) * 180 / Mathf.PI;
+            up2 = Mathf.Atan2(pointingUp.y - shoulderPos.y, pointingUp.x - shoulderPos.x) * 180 / Mathf.PI;
+            down2 = Mathf.Atan2(pointingDown.y - shoulderPos.y, pointingDown.x - shoulderPos.x) * 180 / Mathf.PI;
+
+            // Get the IK target's distance from the shoulder (when pointing the gun right, up or down)
+            rightVector2 = (pointingRight - shoulderPos).magnitude;
+            upVector2 = (pointingUp - shoulderPos).magnitude;
+            downVector2 = (pointingDown - shoulderPos).magnitude;
+        }
     }
 
     protected virtual void LateUpdate() 
@@ -74,23 +102,23 @@ public abstract class CentralLookAround : MonoBehaviour
         
         figureOutDirectionToLookIn();
         updateDirectionCreatureFaces();
-        updateGunAndHeadRotation();
+        updateHeadMovementAndArmPosition();
     }
 
-    private void updateGunAndHeadRotation() 
+    private void updateHeadMovementAndArmPosition() 
     {
-        //calculate the angle btwn mouse cursor and player's shooting arm
+        // calculate the angle of sight based off vector direction looked in
         float angleOfSight = Mathf.Atan2(directionToLook.y, Mathf.Abs(directionToLook.x)) * 180 / Mathf.PI;
 
-        //adjust the angle of sight correspondingly when the player body is tilted on sloped ground/ramps:
+        // adjust the angle of sight correspondingly when the creature's body is tilted on sloped ground/ramps:
         float zAngle = (transform.eulerAngles.z > 180f) ? 360 - transform.eulerAngles.z : transform.eulerAngles.z;
         zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
         angleOfSight -= zAngle;
 
         rotateHead(angleOfSight);
-        rotateWeapon(angleOfSight);
+        updateArmPosition(angleOfSight);
     }
-
+    
     private void rotateHead(float angleOfSight) 
     {
         float headSlope, headRotation;
@@ -104,28 +132,56 @@ public abstract class CentralLookAround : MonoBehaviour
         head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headRotation);
     }
 
-    private void rotateWeapon(float angleOfSight)
+    private void updateArmPosition(float angleOfSight)
     {
         float aimTargetDistanceFromShoulder, aimTargetAngle;
-        if (directionToLook.y >= 0)
+
+        if (mainArmIKTarget != null)
         {
-            float slope = (up - right) / 90f;
-            aimTargetAngle = angleOfSight * slope + right;
+            if (directionToLook.y >= 0)
+            {
+                float slope = (up - right) / 90f;
+                aimTargetAngle = angleOfSight * slope + right;
 
-            float dirSlope = (upVector - rightVector) / 90f;
-            aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+                float dirSlope = (upVector - rightVector) / 90f;
+                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+            }
+            else
+            {
+                float slope = (down - right) / -90f;
+                aimTargetAngle = angleOfSight * slope + right;
+
+                float dirSlope = (downVector - rightVector) / -90f;
+                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+            }
+
+            Vector2 shoulderPos = weaponSystem.CurrentWeaponConfiguration.MainArmIKCoordinates[3];
+            mainArmIKTarget.transform.localPosition = aimTargetDistanceFromShoulder
+                    * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
         }
-        else 
+
+        if (otherArmIKTarget != null)
         {
-            float slope = (down - right) / -90f;
-            aimTargetAngle = angleOfSight * slope + right;
+            if (directionToLook.y >= 0)
+            {
+                float slope = (up2 - right2) / 90f;
+                aimTargetAngle = angleOfSight * slope + right2;
 
-            float dirSlope = (downVector - rightVector) / -90f;
-            aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+                float dirSlope = (upVector2 - rightVector2) / 90f;
+                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector2;
+            }
+            else
+            {
+                float slope = (down2 - right2) / -90f;
+                aimTargetAngle = angleOfSight * slope + right2;
+
+                float dirSlope = (downVector2 - rightVector2) / -90f;
+                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector2;
+            }
+
+            Vector2 shoulderPos = weaponSystem.CurrentWeaponConfiguration.OtherArmIKCoordinates[3];
+            otherArmIKTarget.transform.localPosition = aimTargetDistanceFromShoulder
+                    * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
         }
-
-        if (aimTarget)
-            aimTarget.transform.localPosition = aimTargetDistanceFromShoulder 
-                * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
     }
 }

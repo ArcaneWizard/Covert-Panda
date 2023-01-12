@@ -17,14 +17,16 @@ public class WeaponConfiguration : MonoBehaviour
     public float FireRateInfo { get; private set; }  // max attacks or fired shots per second
 
     public Transform BulletSpawnPoint { get; private set; }
-    public List<GameObject> WeaponSpecificArms { get; private set; }
+    public List<GameObject> Arms { get; private set; }
     public GameObject PhysicalWeapon { get; private set; }
     public Transform WeaponPivot { get; private set; }
     public Animator Animator { get; private set; }
 
-    // Required for configuring a weapon's aim to be very precise when using a mouse
-    public List<Vector2> WeaponIKCoordinates { get; private set; } 
-    public Transform WeaponAimTracker { get; private set; }  
+    // Inverse Kinematics (IK) is used to sync the elbow/shoulder rotation with the direction the weapon's aimed:
+    public Transform MainArmIKTracker { get; private set; }
+    public List<Vector2> MainArmIKCoordinates { get; private set; }
+    public Transform OtherArmIKTracker { get; private set; }
+    public List<Vector2> OtherArmIKCoordinates { get; private set; }
 
     public void Initialize(float fireRateInfo, string combatMode, string weaponType, float weaponRange, int bulletSpeed, int startingAmmo,
         int bulletDmg, int explosionDmg, List<GameObject> arms, GameObject weapon)
@@ -37,7 +39,7 @@ public class WeaponConfiguration : MonoBehaviour
         this.StartingAmmo = startingAmmo;
         this.BulletDmg = bulletDmg;
         this.ExplosionDmg = explosionDmg;
-        this.WeaponSpecificArms = arms;
+        this.Arms = arms;
         this.PhysicalWeapon = weapon;
 
         setup();
@@ -48,12 +50,15 @@ public class WeaponConfiguration : MonoBehaviour
         Transform creature = transform.parent.parent.parent.transform.GetChild(0);
         Animator = creature.GetComponent<Animator>();
 
-        ArmsHandler armsHandler = creature.GetChild(0).GetChild(0).GetComponent<ArmsHandler>();
-        WeaponAimTracker = armsHandler.GetIK_WeaponAimTracker(WeaponSpecificArms);
-        WeaponIKCoordinates = armsHandler.GetIK_WeaponCoordinates(WeaponSpecificArms);
+        IKArmsHandler armsHandler = creature.GetChild(0).GetChild(0).GetComponent<IKArmsHandler>();
+
+        MainArmIKTracker = armsHandler.GetIKTarget(Arms, true);
+        MainArmIKCoordinates = armsHandler.GetIKCoordinates(Arms, true);
+        OtherArmIKTracker = armsHandler.GetIKTarget(Arms, false);
+        OtherArmIKCoordinates = armsHandler.GetIKCoordinates(Arms, false);
 
         // if weapon pivot point exists for this weapon, store it
-        WeaponPivot = WeaponAimTracker ? WeaponAimTracker.parent.GetChild(1) : null;
+        WeaponPivot = MainArmIKTracker ? MainArmIKTracker.parent.GetChild(1) : null;
 
         // if bullet spawn point exists for this weapon, store it
         BulletSpawnPoint = (PhysicalWeapon.transform.childCount > 0) ? PhysicalWeapon.transform.GetChild(0) : null;

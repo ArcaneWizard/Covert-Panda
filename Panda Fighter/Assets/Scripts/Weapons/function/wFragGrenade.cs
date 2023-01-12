@@ -13,8 +13,8 @@ public class wFragGrenade : WeaponBehaviour
     {
         StartCoroutine(base.Attack(aim));
 
-        weaponConfiguration.WeaponSpecificArms[1].transform.parent.GetComponent<Animator>().Play(0, -1);
-        weaponConfiguration.WeaponSpecificArms[1].SetActive(true);
+        weaponConfiguration.Arms[1].transform.parent.GetComponent<Animator>().Play(0, -1);
+        weaponConfiguration.Arms[1].SetActive(true);
 
         float wait = WeaponAction.CalculateTimeB4ReleasingGrenade(0.02f, 0.2f, aim);
         yield return new WaitForSeconds(wait);
@@ -30,7 +30,7 @@ public class wFragGrenade : WeaponBehaviour
         rig.AddForce(unadjustedForce * rig.mass);
 
         yield return new WaitForSeconds(0.6f - wait);
-        weaponConfiguration.WeaponSpecificArms[1].SetActive(false);
+        weaponConfiguration.Arms[1].SetActive(false);
 
         ConfirmAttackFinished();
     } 

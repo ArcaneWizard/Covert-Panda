@@ -4,21 +4,13 @@ using UnityEngine;
 
 public class LookAround : CentralLookAround
 {
-    private Shooting playerShooting;
-
-    protected override void Awake()
-    {
-        base.Awake();
-        playerShooting = transform.GetComponent<Shooting>();
-    }
-
-    public override bool facingRight() => directionToLook.x >= 0; 
-
-    protected override void figureOutDirectionToLookIn() 
+    protected override void figureOutDirectionToLookIn()
     {
         Vector3 weaponPivotPos = weaponSystem.CurrentWeaponConfiguration.WeaponPivot.position;
         directionToLook = (Input.mousePosition - camera.WorldToScreenPoint(weaponPivotPos)).normalized;
     }
+
+    public override bool IsLookingRight() => directionToLook.x >= 0;
 
     protected override void updateDirectionCreatureFaces() 
     {
@@ -33,4 +25,5 @@ public class LookAround : CentralLookAround
             controller.UpdateTiltInstantly();
         }
     }
+
 }

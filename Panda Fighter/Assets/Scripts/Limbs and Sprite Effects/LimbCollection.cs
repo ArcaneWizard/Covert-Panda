@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteAlways]
 public class LimbCollection : MonoBehaviour
 {
-    public Creatures creature;
+    [HideInInspector] public Creatures creature;
     public Dictionary<LimbTypes, Sprite> limbs = new Dictionary<LimbTypes, Sprite>();
 
     //update the collection of limbs for this creature type, stored in a dictionary by limb name

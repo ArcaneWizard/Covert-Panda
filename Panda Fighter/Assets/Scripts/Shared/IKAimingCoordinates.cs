@@ -27,14 +27,24 @@ public static class IKAimingCoordinates
     public static List<Vector2> MeeleeGripCoordinates = new List<Vector2>()
     { meeleePointingRight, meeleePointingUp, meeleePointingDown, meeleeShoulderPos, meeleeAttackPos };
 
-    //ideal shortBarrel coordinates when looking to the side, up or down 
-    private static Vector2 shortBarrelPointingRight = new Vector2(1.65f, 1.54f);
-    private static Vector2 shortBarrelPointingUp = new Vector2(-0.0715f, 2.728f);
-    private static Vector2 shortBarrelPointingDown = new Vector2(0.65f, -0.14f);
-    private static Vector2 shortBarrelShoulderPos = new Vector2(0.13f, 1.18f);
+    //ideal shortBarrel coordinates when looking to the side, up or down with right arm
+    private static Vector2 shortBarrelPointingRight = new Vector2(1.17f, -0.22f);
+    private static Vector2 shortBarrelPointingUp = new Vector2(-0.13f, 1.55f);
+    private static Vector2 shortBarrelPointingDown = new Vector2(-0.39f, -1.62f);
+    private static Vector2 shortBarrelShoulderPos = new Vector2(-0.35f, -0.15f);
 
-    public static List<Vector2> ShortBarrelCoordinates = new List<Vector2>()
+    public static List<Vector2> ShortBarrelMainArm = new List<Vector2>()
     { shortBarrelPointingRight, shortBarrelPointingUp, shortBarrelPointingDown, shortBarrelShoulderPos };
+
+
+    //ideal shortBarrel coordinates when looking to the side, up or down wih left arm
+    private static Vector2 shortBarrelPointingRight2 = new Vector2(1.96f, 0.82f);
+    private static Vector2 shortBarrelPointingUp2 = new Vector2(0.53f, 2.35f);
+    private static Vector2 shortBarrelPointingDown2 = new Vector2(0.69f, -0.81f);
+    private static Vector2 shortBarrelShoulderPos2 = new Vector2(0.37f, 0.71f);
+
+    public static List<Vector2> ShortBarrelOtherArm = new List<Vector2>()
+    { shortBarrelPointingRight2, shortBarrelPointingUp2, shortBarrelPointingDown2, shortBarrelShoulderPos2 };
 
     //ideal  pistol coordinates when looking to the side, up or down 
     private static Vector2 pistolPointingRight = new Vector2(1.98f, 2.49f);

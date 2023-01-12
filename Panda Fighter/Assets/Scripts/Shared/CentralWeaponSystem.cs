@@ -73,6 +73,8 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         weaponStats.Initialize();
 
         ResetInventory();
+        Debug.Log(("started"));
+        Debug.Log(CurrentWeapon);
     }
 
      // Info about the current weapon the creature is holding
@@ -179,8 +181,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         weaponBehaviours[CurrentWeapon].UponEquippingWeapon();
         weaponBehaviours[CurrentWeapon].ResetAttackProgress();
 
-        lookAround.setAimTarget(CurrentWeaponConfiguration.WeaponAimTracker);
-        lookAround.calculateShoulderAngles(CurrentWeaponConfiguration.WeaponIKCoordinates);
+        lookAround.UpdateArmInverseKinematics();
 
         // note that not all weapons have bullet pools (ex. meelee weapons)
         if (bulletPools.ContainsKey(CurrentWeapon))
@@ -195,7 +196,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         physicalWeaponAndLimbs.Add(CurrentWeaponConfiguration.PhysicalWeapon);
         CurrentWeaponConfiguration.PhysicalWeapon.SetActive(true);
 
-        foreach (GameObject limb in CurrentWeaponConfiguration.WeaponSpecificArms)
+        foreach (GameObject limb in CurrentWeaponConfiguration.Arms)
         {
             physicalWeaponAndLimbs.Add(limb);
             limb.SetActive(true);

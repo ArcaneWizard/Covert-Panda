@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GrenadeStats
 {
-    private ArmsHandler armsHandler;
+    private IKArmsHandler armsHandler;
     private PhysicalWeapons equip;
 
     private CentralGrenadeSystem grenadeSystem;
@@ -12,7 +12,7 @@ public class GrenadeStats
     public GrenadeStats(CentralGrenadeSystem grenadeSystem)
     {
         Transform options = grenadeSystem.transform.GetChild(0).GetChild(0);
-        armsHandler = options.GetComponent<ArmsHandler>();
+        armsHandler = options.GetComponent<IKArmsHandler>();
         equip = options.GetComponent<PhysicalWeapons>();
 
         this.grenadeSystem = grenadeSystem;

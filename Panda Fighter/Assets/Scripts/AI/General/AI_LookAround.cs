@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class AI_LookAround : CentralLookAround
 {
-    private AI_Shooting shootingAI;
     private Side side;  
 
     public GameObject EnemySpotted { get; private set; }
@@ -13,14 +12,13 @@ public class AI_LookAround : CentralLookAround
     protected override void Awake()
     {
         base.Awake();
-        shootingAI = transform.GetComponent<AI_Shooting>();
         side = transform.parent.GetComponent<Role>().side;
+        randomizeLookingAround = Random.Range(0f, 10f);
 
-        randomizeLookingAround = UnityEngine.Random.Range(0f, 10f);
         StartCoroutine(scanForNearbyEnemies());
     }
 
-    public override bool facingRight() => directionToLook.x >= 0;
+    public override bool IsLookingRight() => directionToLook.x >= 0;
 
     protected override void figureOutDirectionToLookIn() 
     {
@@ -43,6 +41,7 @@ public class AI_LookAround : CentralLookAround
         }
     }
 
+    // AI creature faces direction of enemy spotted, of direction of movement if no enemy is spotted
     protected override void updateDirectionCreatureFaces() 
     {
         if (EnemySpotted)
