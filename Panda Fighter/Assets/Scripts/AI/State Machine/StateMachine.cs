@@ -17,11 +17,8 @@ public class StateMachine : MonoBehaviour
     private List<Transition> currentStateTransitions = new List<Transition>();
     //transitions to a specified state | called whenever applicable
     private List<Transition> alwaysCalledTransitions = new List<Transition>();
-
     //empty list of transitions 
     private static List<Transition> EmptyTransitions = new List<Transition>();
-
-    private string IStateName;
 
     public void Tick()
     {

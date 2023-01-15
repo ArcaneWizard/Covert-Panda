@@ -2432,6 +2432,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8610267616840922827}
   - component: {fileID: 2595367789495454637}
+  - component: {fileID: 5194089156316542710}
   m_Layer: 5
   m_Name: lava pistol
   m_TagString: Lava Pistol
@@ -2452,7 +2453,7 @@ Transform:
   m_Children:
   - {fileID: 6407710924832783877}
   m_Father: {fileID: 5383488769776984468}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -18.988}
 --- !u!212 &2595367789495454637
 SpriteRenderer:
@@ -2506,6 +2507,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5194089156316542710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3308694834317065668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 2
+  body: {fileID: 5383488768505915599}
 --- !u!1 &3345590248907200714
 GameObject:
   m_ObjectHideFlags: 0
@@ -9484,6 +9499,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5383488768204541719}
   - component: {fileID: 5383488768204541716}
+  - component: {fileID: 8123764411113936688}
   m_Layer: 5
   m_Name: focus beamer
   m_TagString: Untagged
@@ -9560,6 +9576,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8123764411113936688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5383488768204541718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 8
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5383488768216769925
 GameObject:
   m_ObjectHideFlags: 0
@@ -9854,7 +9884,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5383488768270714279}
-  m_LocalRotation: {x: 0, y: 0, z: -0.66484576, w: 0.7469807}
+  m_LocalRotation: {x: 0, y: 0, z: -0.66484636, w: 0.7469802}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8709822, y: 0.9121589, z: 1}
   m_Children:
@@ -10224,7 +10254,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5383488768391083188}
-  m_LocalRotation: {x: -0.000000008926484, y: -0.00000000572912, z: -0.6260235, w: -0.7798042}
+  m_LocalRotation: {x: -0.0000000089264836, y: -0.000000005729121, z: -0.6260235,
+    w: -0.7798042}
   m_LocalPosition: {x: 0.7211448, y: 0.006822089, z: 0}
   m_LocalScale: {x: 1.2000307, y: 1.200037, z: 1}
   m_Children:
@@ -10712,7 +10743,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5383488768550028930}
-  m_LocalRotation: {x: -1.3567458e-10, y: -2.0731554e-10, z: 0.8899135, w: 0.45612937}
+  m_LocalRotation: {x: -1.3567407e-10, y: -2.0731583e-10, z: 0.8899138, w: 0.45612884}
   m_LocalPosition: {x: 0.7506173, y: 0.062031806, z: 0}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1}
   m_Children:
@@ -16274,6 +16305,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5383488768923210072}
   - component: {fileID: 5383488768923210073}
+  - component: {fileID: 5546356536034066787}
   m_Layer: 5
   m_Name: arctic pistol
   m_TagString: Untagged
@@ -16348,6 +16380,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5546356536034066787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5383488768923210075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 6
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5383488768927733780
 GameObject:
   m_ObjectHideFlags: 0
@@ -18232,7 +18278,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5383488769493839343}
-  m_LocalRotation: {x: 0, y: 0, z: -0.34450448, w: 0.9387847}
+  m_LocalRotation: {x: 0, y: 0, z: -0.3445045, w: 0.9387847}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8709822, y: 0.9121589, z: 1}
   m_Children:
@@ -18275,90 +18321,6 @@ PolygonCollider2D:
       - {x: -0.1977311, y: -0.19146815}
       - {x: 0.121842384, y: -0.3118239}
       - {x: 0.8643379, y: -0.18749931}
---- !u!1 &5383488769510309087
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5383488769510309084}
-  - component: {fileID: 5383488769510309085}
-  m_Layer: 5
-  m_Name: lava pistol
-  m_TagString: Lava Pistol
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &5383488769510309084
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5383488769510309087}
-  m_LocalRotation: {x: 2.8818145e-20, y: -5.275877e-18, z: -0.16494514, w: 0.98630273}
-  m_LocalPosition: {x: -0.212, y: -0.102, z: 0}
-  m_LocalScale: {x: 1.3, y: 1.2, z: 1}
-  m_Children:
-  - {fileID: 5383488769789281890}
-  m_Father: {fileID: 5383488769776984468}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -18.988}
---- !u!212 &5383488769510309085
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5383488769510309087}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1612381571
-  m_SortingLayer: 1
-  m_SortingOrder: 16
-  m_Sprite: {fileID: 21300000, guid: f610d73e6b84e4f478574b0475352dc4, type: 3}
-  m_Color: {r: 0.509434, g: 0.0744927, b: 0.0744927, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1.13, y: 0.69}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!1 &5383488769519738858
 GameObject:
   m_ObjectHideFlags: 0
@@ -18524,7 +18486,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 41
+  m_SortingOrder: 43
   m_Sprite: {fileID: -6769217420018456797, guid: b6b9d695ce72f4515bbcf456ae3858b4,
     type: 3}
   m_Color: {r: 0.6431373, g: 0.75686276, b: 0.90588236, a: 1}
@@ -19151,41 +19113,10 @@ Transform:
   m_LocalScale: {x: 1.3, y: 1.3, z: 0.91838974}
   m_Children:
   - {fileID: 5383488768923210072}
-  - {fileID: 5383488769510309084}
   - {fileID: 8610267616840922827}
   m_Father: {fileID: 5383488768550028931}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -379.551}
---- !u!1 &5383488769789281893
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5383488769789281890}
-  m_Layer: 5
-  m_Name: icicle spawnpoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5383488769789281890
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5383488769789281893}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.397, y: 0.053, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 5383488769510309084}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5383488769832759413
 GameObject:
   m_ObjectHideFlags: 0
@@ -19675,6 +19606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5383488770036530778}
   - component: {fileID: 5383488770036530781}
+  - component: {fileID: 3240750700156469835}
   m_Layer: 5
   m_Name: rocket launcher
   m_TagString: Untagged
@@ -19737,9 +19669,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 24
   m_Sprite: {fileID: 21300000, guid: 30ab48f3f26d64872b210c8e85464bbc, type: 3}
-  m_Color: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
+  m_Color: {r: 0.11949676, g: 0.8225085, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -19749,6 +19681,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3240750700156469835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5383488770036530780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 10
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5383488770052670802
 GameObject:
   m_ObjectHideFlags: 0
@@ -19794,6 +19740,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5383488770096271321}
   - component: {fileID: 5383488770096271319}
+  - component: {fileID: 2005405324250161292}
   m_Layer: 5
   m_Name: arctic sprayer
   m_TagString: Untagged
@@ -19858,7 +19805,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: ed2589ce1c0124f6fad896aa6f168f49, type: 3}
-  m_Color: {r: 0.6666667, g: 0.6666667, b: 1, a: 1}
+  m_Color: {r: 0.50112724, g: 0.9119157, b: 0.9716981, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -19868,6 +19815,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2005405324250161292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5383488770096271320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 11
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5383488770114311552
 GameObject:
   m_ObjectHideFlags: 0
@@ -21228,6 +21189,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5674194192338780089}
   - component: {fileID: 5674194192338780090}
+  - component: {fileID: 7710668877097324374}
   m_Layer: 5
   m_Name: laser gun
   m_TagString: Untagged
@@ -21302,6 +21264,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7710668877097324374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5674194192338780088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 1
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5674194192360595284
 GameObject:
   m_ObjectHideFlags: 0
@@ -21514,7 +21490,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5674194192595988930}
   m_Layer: 5
-  m_Name: scythe
+  m_Name: meelee grip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -22524,7 +22500,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5674194192933079627}
-  m_LocalRotation: {x: 3.872055e-11, y: 4.4808237e-11, z: 0.5751179, w: 0.81807053}
+  m_LocalRotation: {x: 3.872055e-11, y: 4.4808237e-11, z: 0.57511795, w: 0.81807053}
   m_LocalPosition: {x: 0.7506173, y: 0.062031806, z: 0}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1}
   m_Children:
@@ -22872,7 +22848,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5674194193170428758
 Transform:
   m_ObjectHideFlags: 0
@@ -22880,7 +22856,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5674194193170428757}
-  m_LocalRotation: {x: 0, y: 0, z: 0.39708078, w: 0.9177837}
+  m_LocalRotation: {x: 0, y: 0, z: 0.39708072, w: 0.91778374}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8709822, y: 0.9121589, z: 1}
   m_Children:
@@ -27950,6 +27926,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5674194193271207613}
   - component: {fileID: 5674194193271207614}
+  - component: {fileID: 7963849668192588884}
   m_Layer: 5
   m_Name: leafy scythe (2)
   m_TagString: Untagged
@@ -28023,6 +28000,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7963849668192588884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5674194193271207612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 4
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5674194193271754518
 GameObject:
   m_ObjectHideFlags: 0
@@ -28033,6 +28024,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5674194193271754519}
   - component: {fileID: 5674194193271754512}
+  - component: {fileID: 8933278199629136753}
   m_Layer: 5
   m_Name: needler
   m_TagString: Untagged
@@ -28107,6 +28099,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8933278199629136753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5674194193271754518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 7
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5674194193279110642
 GameObject:
   m_ObjectHideFlags: 0
@@ -28692,7 +28698,7 @@ MonoBehaviour:
   LongBarrel:
   - {fileID: 5674194193902622751}
   MeeleGrip:
-  - {fileID: 5383488768270714279}
+  - {fileID: 5674194192595988929}
   PistolGrip:
   - {fileID: 5383488768270714279}
   ShoulderRest:
@@ -29491,7 +29497,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5674194193658257162}
-  m_LocalRotation: {x: 0, y: 0, z: -0.059442863, w: 0.9982317}
+  m_LocalRotation: {x: 0, y: 0, z: -0.059444126, w: 0.9982317}
   m_LocalPosition: {x: 0.10896065, y: 0.07567253, z: 0}
   m_LocalScale: {x: 0.97927094, y: 1.0211078, z: 1}
   m_Children:
@@ -29855,7 +29861,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5674194193759196189}
-  m_LocalRotation: {x: -0.00000055936715, y: -0.0000001189853, z: -0.36264053, w: -0.9319291}
+  m_LocalRotation: {x: -0.00000055936715, y: -0.00000011898541, z: -0.36264062, w: -0.9319291}
   m_LocalPosition: {x: 0.76032794, y: 0.083543316, z: 0}
   m_LocalScale: {x: 1.2, y: 1.2, z: 1}
   m_Children:
@@ -30330,6 +30336,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5674194193905248495}
   - component: {fileID: 5674194193905248488}
+  - component: {fileID: 5582145251062327626}
   m_Layer: 5
   m_Name: sniper
   m_TagString: Untagged
@@ -30404,6 +30411,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5582145251062327626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5674194193905248494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 9
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5674194193924128214
 GameObject:
   m_ObjectHideFlags: 0
@@ -31019,7 +31040,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5674194194210358221}
-  m_LocalRotation: {x: 5.94599e-10, y: 2.219222e-10, z: -0.30351678, w: -0.95282614}
+  m_LocalRotation: {x: 5.9459854e-10, y: 2.2192334e-10, z: -0.30351892, w: -0.95282537}
   m_LocalPosition: {x: 0.8350284, y: 0.07674352, z: 0}
   m_LocalScale: {x: 1.3205438, y: 1.1995316, z: 1}
   m_Children:
@@ -31097,6 +31118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5674194194298191368}
   - component: {fileID: 5674194194298191369}
+  - component: {fileID: 5776353821025981138}
   m_Layer: 5
   m_Name: shotgun
   m_TagString: Untagged
@@ -31173,6 +31195,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5776353821025981138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5674194194298191375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 5
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5674194194356942730
 GameObject:
   m_ObjectHideFlags: 0
@@ -31318,6 +31354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5674194194385928963}
   - component: {fileID: 5674194194385928988}
+  - component: {fileID: 4168344264240784555}
   m_Layer: 5
   m_Name: plasma orb launcher
   m_TagString: Untagged
@@ -31394,6 +31431,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4168344264240784555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5674194194385928962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca572a109a32256418e688e8f6a8c418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: 3
+  body: {fileID: 5383488768505915599}
 --- !u!1 &5711587729699091783
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.SceneManagement;
 
 public class LimbSwapper : MonoBehaviour
 {
@@ -21,9 +22,7 @@ public class LimbSwapper : MonoBehaviour
     {
         initializeComponents();
         updateSpriteAndBoneTransforms();
-        
         Orderer.UpdateSpriteOrder(transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
-
         Destroy(this);
     }
 
@@ -55,8 +54,15 @@ public class LimbSwapper : MonoBehaviour
     // the creature type was registered first as the limb collection is dependent on the creature type
     async void OnValidate()
     {
-        //  don't run this code when in play mode; only run during edit mode
+        // don't do anything in play mode
         if (EditorApplication.isPlayingOrWillChangePlaymode)
+            return;
+
+        // don't do anything if in prefab-mode
+        PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        bool isValidPrefabStage = prefabStage != null && prefabStage.stageHandle.IsValid();
+        bool prefabConnected = PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.Connected;
+        if (isValidPrefabStage || !prefabConnected)
             return;
 
         Orderer.UpdateLimbOrder(limbType, transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
@@ -67,12 +73,12 @@ public class LimbSwapper : MonoBehaviour
 
         if (!limbCollection || !limbCollection.transform.parent)
             return;
-        
+
         initializeComponents();
         updateSpriteAndBoneTransforms();
     }
     
-    // Retrieve all limbs from the limb collection and update them. Runs whenever
+    /* Retrieve all limbs from the limb collection and update them. Runs whenever
     // whnever the editor detects a change was made in the hierarchy (ie. creature type was changed)
     // Only updates limbs that were actually changed 
     void Update()
@@ -86,7 +92,7 @@ public class LimbSwapper : MonoBehaviour
         initializeComponents();
         if (sR.sprite != limbCollection.ReturnLimb(limbType))
             updateSpriteAndBoneTransforms();
-    }
+    }*/
     
 
     // Automates the task of manually dragging in the limb collection to this object's hierarchy. 
