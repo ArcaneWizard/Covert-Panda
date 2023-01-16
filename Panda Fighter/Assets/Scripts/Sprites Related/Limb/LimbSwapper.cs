@@ -22,7 +22,7 @@ public class LimbSwapper : MonoBehaviour
     {
         initializeComponents();
         updateSpriteAndBoneTransforms();
-        Orderer.UpdateSpriteOrder(transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
+        Orderer.UpdateLimbOrder(limbType, transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
         Destroy(this);
     }
 

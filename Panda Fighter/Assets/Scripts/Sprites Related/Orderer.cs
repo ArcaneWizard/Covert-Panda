@@ -60,7 +60,7 @@ public static class Orderer
     private static int getUniqueOrderForThisCreature(int order, Transform creature)
     {
         if (order < 0 || order >= 100)
-            Debug.LogError("order should always be betweeen 0-99 inclusive before creature offset is applied.");
+            order %= 100;
 
         if (creature.tag.Equals("Player"))
             return order + 10000;
@@ -79,7 +79,7 @@ public static class Orderer
             return defaultWeaponInfo;
     }
 
-    private static OrderInfo defaultWeaponInfo = new OrderInfo(SortingLayer.Default, 82);
+    private static OrderInfo defaultWeaponInfo = new OrderInfo(SortingLayer.Default, 78);
 
     private static void setRelativeOrderOfWeapons()
     {
@@ -92,9 +92,9 @@ public static class Orderer
     {
         relativeLimbOrder = new Dictionary<LimbTypes, int>();
 
-        relativeLimbOrder[LimbTypes.FrontUpperArm] = 81;
-        relativeLimbOrder[LimbTypes.FrontLowerArm] = 83;
-        relativeLimbOrder[LimbTypes.FrontHand] = 80;
+        relativeLimbOrder[LimbTypes.FrontUpperArm] = 83;
+        relativeLimbOrder[LimbTypes.FrontLowerArm] = 81;
+        relativeLimbOrder[LimbTypes.FrontHand] = 99;
 
         relativeLimbOrder[LimbTypes.FrontThigh] = 72;
         relativeLimbOrder[LimbTypes.FrontLeg] = 71;
