@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/* Can return any sprite or Polygon2D collider points associated with a specified limb of
+ * a creature. Ex. retrieve the front shoulder sprite + collider points/shape of an Amphelot creature. */
+
 public class LimbSettings : MonoBehaviour
 {
     private Creatures sprite;
@@ -16,6 +19,15 @@ public class LimbSettings : MonoBehaviour
         sprite = transform.parent.parent.GetComponent<Role>().sprites;
         collider = transform.parent.parent.GetComponent<Role>().colliders;
 
+        // Quick error check
+        #if (UNITY_EDITOR)
+        if (!sprite || !collider)
+            Debug.LogError("This creature is missing some specified limb sprites or collider coordinates");
+
+        else if (sprite.rightLeg == null || collider.FrontUpperArm == null || collider.FrontUpperArm.Length == 0)
+            Debug.LogError("This creature is missing some specified limb sprites or collider coordinates");
+        # endif
+
         sprites.Clear();
         colliders.Clear();
 
@@ -23,7 +35,7 @@ public class LimbSettings : MonoBehaviour
         sprites.Add(LimbTypes.Head, sprite.head);
         sprites.Add(LimbTypes.FrontThigh, sprite.leftThigh);
         sprites.Add(LimbTypes.BackThigh, sprite.rightThigh);
-        sprites.Add(LimbTypes.FrontFoot, sprite.leftFoot);
+        sprites.Add(LimbTypes.FrontFoot, sprite.leftFoot); 
         sprites.Add(LimbTypes.BackFoot, sprite.rightFoot);
         sprites.Add(LimbTypes.FrontLeg, sprite.leftLeg);
         sprites.Add(LimbTypes.BackLeg, sprite.rightLeg);
@@ -48,10 +60,6 @@ public class LimbSettings : MonoBehaviour
         colliders.Add(LimbTypes.BackUpperArm, collider.BackUpperArm);
         colliders.Add(LimbTypes.FrontHand, collider.FrontHand);
         colliders.Add(LimbTypes.BackHand, collider.BackHand);
-
-        // Quick error check
-        if (sprite.rightLeg == null || collider.FrontUpperArm == null || collider.FrontUpperArm.Length == 0)
-            Debug.LogError("This creature is missing some specified limb sprites or collider coordinates");
     }
 
     // Return a limb based off limb type
@@ -63,7 +71,7 @@ public class LimbSettings : MonoBehaviour
         return sprites[limbType];
     }
 
-    // Return a limb's collider coordinates based off limb type
+    // Return a limb's Polygon2D collider points based off limb type
     public Vector2[] ReturnCollider(LimbTypes limbType)
     {
         if (colliders.Count == 0)
