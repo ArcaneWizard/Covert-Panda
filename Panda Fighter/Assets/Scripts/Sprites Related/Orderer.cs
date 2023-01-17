@@ -59,8 +59,7 @@ public static class Orderer
     // applies offset to the provided order to prevent overlap glitches across different creatures
     private static int getUniqueOrderForThisCreature(int order, Transform creature)
     {
-        if (order < 0 || order >= 100)
-            order %= 100;
+        order = order % 100 + 100;
 
         if (creature.tag.Equals("Player"))
             return order + 10000;

@@ -11,7 +11,7 @@ public class LimbSwapper : MonoBehaviour
     public LimbTypes limbType; 
 
     //collection of all limbs
-    public LimbCollection limbCollection; 
+    public LimbSettings limbSettings; 
 
     private Transform armBones;
     private int counter;
@@ -22,7 +22,11 @@ public class LimbSwapper : MonoBehaviour
     {
         initializeComponents();
         updateSpriteAndBoneTransforms();
-        Orderer.UpdateLimbOrder(limbType, transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
+
+        Transform creature = limbSettings.transform.parent.parent;
+        Orderer.UpdateLimbOrder(limbType, sR, creature);
+        Colorer.UpdateLimbColor(limbType, sR, creature);
+
         Destroy(this);
     }
 
@@ -40,9 +44,15 @@ public class LimbSwapper : MonoBehaviour
     // Also reattache the bone rigged to that limb (ex. head bone) to this new sprite 
     private void updateSpriteAndBoneTransforms()
     {   
-        sR.sprite = limbCollection.ReturnLimb(limbType);
+        sR.sprite = limbSettings.ReturnLimb(limbType);
         if (spriteSkin.boneTransforms.Length > 0)
             spriteSkin.boneTransforms[0] = spriteSkin.rootBone;
+
+        PolygonCollider2D col = spriteSkin.rootBone.GetComponent<PolygonCollider2D>();
+        if (col)
+            col.points = limbSettings.ReturnCollider(limbType);
+        else
+            Debug.LogError("Limb bone doesn't have a polygon collider 2D attached");
     }
 
 
@@ -65,17 +75,19 @@ public class LimbSwapper : MonoBehaviour
         if (isValidPrefabStage || !prefabConnected)
             return;
 
-        Orderer.UpdateLimbOrder(limbType, transform.GetComponent<SpriteRenderer>(), limbCollection.transform.parent.parent);
-
-        await Task.Delay(1000);
+        await Task.Delay(10);
         if (!findlimbCollection())
             return;
 
-        if (!limbCollection || !limbCollection.transform.parent)
+        if (!limbSettings || !limbSettings.transform.parent)
             return;
 
         initializeComponents();
         updateSpriteAndBoneTransforms();
+
+        Transform creature = limbSettings.transform.parent.parent;
+        Orderer.UpdateLimbOrder(limbType, sR, creature);
+        Colorer.UpdateLimbColor(limbType, sR, creature);
     }
     
     /* Retrieve all limbs from the limb collection and update them. Runs whenever
@@ -102,15 +114,15 @@ public class LimbSwapper : MonoBehaviour
         counter =  0;
         armBones = transform;
  
-        while (!limbCollection && counter <= 8)
+        while (!limbSettings && counter <= 8)
         {
             counter++;
 
             if (armBones != null)
                 armBones = armBones.parent;
 
-            if (armBones != null && armBones.GetComponent<LimbCollection>())
-                limbCollection = armBones.GetComponent<LimbCollection>();
+            if (armBones != null && armBones.GetComponent<LimbSettings>())
+                limbSettings = armBones.GetComponent<LimbSettings>();
             else
                 return false;
         }

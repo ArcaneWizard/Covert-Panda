@@ -9,22 +9,9 @@ using UnityEngine;
 public class Role : MonoBehaviour
 {
     public Side side;
-    public Creatures creature;
 
-    void OnAwake() 
-    {
-        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().creature = creature;
-        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().UpdateLimbs();
-    }
-
-#if (UNITY_EDITOR)
-    void OnValidate() {
-        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().creature = creature;
-        transform.GetChild(0).GetChild(0).GetComponent<LimbCollection>().UpdateLimbs();
-
-        transform.name = creature.ToString().Split(' ')[0];
-    }
-#endif
+    [field: SerializeField] public Creatures sprites { get; private set; }
+    [field: SerializeField] public CreatureColliders colliders { get; private set; }
 }
 
 public enum Side 
