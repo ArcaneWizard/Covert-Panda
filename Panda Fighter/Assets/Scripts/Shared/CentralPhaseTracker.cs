@@ -10,7 +10,7 @@ using UnityEngine;
 
 public class CentralPhaseTracker : MonoBehaviour
 {
-    public bool DisableLimbsDuringSomersault { get; private set; }
+    public bool IsDoingSomersault { get; private set; }
 
     protected CentralController controller;
     protected CentralLookAround lookAround;
@@ -21,7 +21,6 @@ public class CentralPhaseTracker : MonoBehaviour
     private Somersault somersaultHandler;
 
     [SerializeField] private Collider2D doubleJumpCollider;
-    private Vector2 initialColliderSize;
 
     void Awake() 
     {
@@ -37,7 +36,6 @@ public class CentralPhaseTracker : MonoBehaviour
         doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
         doubleJumpCollider.enabled = false;
         controller.mainCollider.enabled = true;
-        initialColliderSize = controller.mainCollider.size;
 
         somersaultHandler = new Somersault(transform, this, controller.mainCollider, doubleJumpCollider, 
             animator, controller);
@@ -49,17 +47,17 @@ public class CentralPhaseTracker : MonoBehaviour
         if (health.isDead)
             return;
 
-        StartCoroutine(adjustFeetAndColliders(controller.rightGroundChecker, 
-            controller.leftGroundChecker, controller.mainCollider));
+        adjustFeetAndColliders(controller.rightGroundChecker,controller.leftGroundChecker, controller.mainCollider);
     }
 
     // returns whether or not the creature is in a specific phase 
     public bool Is(Phase specificPhase) => phase == (int)specificPhase;
-    public bool IsMidAir => (2 <= phase && phase <= 4);
+    public bool IsMidAir => 2 <= phase && phase <= 4;
+    public bool IsSomersaulting => Is(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited;
 
     public void EnterJumpPhase()
     {
-        animator.SetInteger("jump version", UnityEngine.Random.Range(0, 2));
+        animator.SetInteger("jump version", Random.Range(0, 2));
         setPhase(Phase.Jumping);
     }
 
@@ -67,13 +65,12 @@ public class CentralPhaseTracker : MonoBehaviour
     {
         setPhase(Phase.DoubleJumping);
 
-        DisableLimbsDuringSomersault = true;
+        IsDoingSomersault = true;
         StartCoroutine(somersaultHandler.Begin());
-        yield return new WaitForSeconds(0.5f);
-        DisableLimbsDuringSomersault = false;
+        yield return new WaitForSeconds(0.31f);
+        IsDoingSomersault = false;
     }
 
-    // get + set the creature's phase
     private int phase => animator.GetInteger("Phase");
     private void setPhase(Phase p) => animator.SetInteger("Phase", (int)p);
 
@@ -101,7 +98,8 @@ public class CentralPhaseTracker : MonoBehaviour
         // whether the creature runs forwards or backwards 
         if (Is(Phase.Running))
         {
-            if ((controller.dirX == 1 && lookAround.IsLookingRight()) || controller.dirX == -1 && !lookAround.IsLookingRight())
+            if ((controller.dirX == 1 && lookAround.IsLookingRight()) 
+                || controller.dirX == -1 && !lookAround.IsLookingRight())
                 animator.SetBool("walking forwards", true);
             else if (controller.dirX != 0)
                 animator.SetBool("walking forwards", false);
@@ -113,10 +111,8 @@ public class CentralPhaseTracker : MonoBehaviour
 
     // Entity's feet, which detect ground, become closer together when jumping. Also, the main collider
     // becomes thinner when the entiy is jumping, and shorter when the entity is double jumping
-    protected IEnumerator adjustFeetAndColliders(Transform rightFoot, Transform leftFoot, BoxCollider2D mainCollider) 
+    protected void adjustFeetAndColliders(Transform rightFoot, Transform leftFoot, BoxCollider2D mainCollider) 
     {
-        yield return new WaitForSeconds(Time.deltaTime);
-
         rightFoot.localPosition = (!IsMidAir)
         ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
         : new Vector3(0.332f, rightFoot.localPosition.y, 0);
@@ -125,10 +121,10 @@ public class CentralPhaseTracker : MonoBehaviour
         ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
         : new Vector3(-0.157f, leftFoot.localPosition.y, 0);
 
+        mainCollider.enabled = !IsSomersaulting;
+        doubleJumpCollider.enabled = IsSomersaulting;
+
         float x = IsMidAir ? 0.68f : 1f;
-        float y = (Is(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited) 
-            ? initialColliderSize.y * 2f / 3f 
-            : initialColliderSize.y;
-        mainCollider.size = new Vector2(x, y);
+        mainCollider.size = new Vector2(x, mainCollider.size.y);
     }
 }

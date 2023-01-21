@@ -5,7 +5,9 @@ using UnityEditor;
 using System.Threading.Tasks;
 using UnityEditor.Experimental.SceneManagement;
 using UnityEngine.Rendering;
+using System;
 
+[ExecuteAlways]
 public class LimbSwapper : MonoBehaviour
 {
     // what type of limb to swap in
@@ -19,10 +21,13 @@ public class LimbSwapper : MonoBehaviour
     
     void Start()
     {
+        if (!Application.isPlaying)
+            return;
+
         if (!limbSettings)
             Debug.LogError("No limb settings found");
 
-        updateSpriteAndBoneTransforms();
+        updateSpriteAndBoneTransforms(true);
 
         Transform creature = limbSettings.transform.parent.parent;
         Orderer.UpdateLimbOrder(limbType, sR, creature);
@@ -32,7 +37,7 @@ public class LimbSwapper : MonoBehaviour
     }
     // Updates a given limb to be what it's set to. Ie. update the sprite to be a left arm, or a right foot, or a head, etc.
     // Also reattache the bone rigged to that limb (ex. head bone) to this new sprite 
-    private void updateSpriteAndBoneTransforms()
+    private void updateSpriteAndBoneTransforms(bool forceRefresh)
     {
         if (!sR)
             sR = transform.GetComponent<SpriteRenderer>();
@@ -40,13 +45,13 @@ public class LimbSwapper : MonoBehaviour
         if (!spriteSkin)
             spriteSkin = transform.GetComponent<UnityEngine.U2D.Animation.SpriteSkin>();
 
-        sR.sprite = limbSettings.ReturnLimb(limbType);
+        sR.sprite = limbSettings.ReturnLimb(limbType, forceRefresh);
         if (spriteSkin.boneTransforms.Length > 0)
             spriteSkin.boneTransforms[0] = spriteSkin.rootBone;
 
         PolygonCollider2D col = spriteSkin.rootBone.GetComponent<PolygonCollider2D>();
         if (col)
-            col.points = limbSettings.ReturnCollider(limbType);
+            col.points = limbSettings.ReturnCollider(limbType, forceRefresh);
         else
             Debug.LogError("Limb bone doesn't have a polygon collider 2D attached");
     }
@@ -55,13 +60,14 @@ public class LimbSwapper : MonoBehaviour
 #if (UNITY_EDITOR)
 
     // update the limb sprites and colliders in the editor when a limb is changed
-    void OnValidate() => updateLimbsInEditor();
+    void OnValidate() => updateLimbsInEditor(false);
 
     // update the limb sprites and colliders in the editor when a creature is toggled on/off
-    void OnEnable() => updateLimbsInEditor();
+    void OnEnable() => updateLimbsInEditor(true);
 
-    private void updateLimbsInEditor()
+    private void updateLimbsInEditor(bool forceRefresh)
     {
+        Debug.Log("ay?");
         // don't do anything in play mode
         if (Application.isPlaying || !gameObject.activeInHierarchy)
             return;
@@ -73,10 +79,12 @@ public class LimbSwapper : MonoBehaviour
         if (isValidPrefabStage || !prefabConnected)
             return;
 
+        Debug.Log("yadf?");
         if (!findLimbSettings())
             return;
 
-        updateSpriteAndBoneTransforms();
+        Debug.Log("yay?");
+        updateSpriteAndBoneTransforms(forceRefresh);
 
         Transform creature = limbSettings.transform.parent.parent;
         Orderer.UpdateLimbOrder(limbType, sR, creature);

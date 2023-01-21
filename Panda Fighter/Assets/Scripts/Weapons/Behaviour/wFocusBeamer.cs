@@ -10,7 +10,7 @@ public class wFocusBeamer : WeaponBehaviour
 
         Transform bullet = WeaponAction.SpawnBullet(aim, weaponSystem, weaponConfiguration, side, false);
         bullet.GetComponent<FocusBeam>().Beam(weaponConfiguration.BulletSpawnPoint,
-            weaponConfiguration.PhysicalWeapon.transform, phaseTracker.DisableLimbsDuringSomersault);
+            weaponConfiguration.PhysicalWeapon.transform, phaseTracker.IsDoingSomersault);
 
         ConfirmAttackFinished();
         yield return null;

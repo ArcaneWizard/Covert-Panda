@@ -63,18 +63,18 @@ public class LimbSettings : MonoBehaviour
     }
 
     // Return a limb based off limb type
-    public Sprite ReturnLimb(LimbTypes limbType)
+    public Sprite ReturnLimb(LimbTypes limbType, bool forceRefresh)
     {
-        if (sprites.Count == 0)
+        if (forceRefresh || sprites.Count == 0)
             initialize();
 
         return sprites[limbType];
     }
 
     // Return a limb's Polygon2D collider points based off limb type
-    public Vector2[] ReturnCollider(LimbTypes limbType)
+    public Vector2[] ReturnCollider(LimbTypes limbType, bool forceRefresh)
     {
-        if (colliders.Count == 0)
+        if (forceRefresh || colliders.Count == 0)
             initialize();
 
         return colliders[limbType];

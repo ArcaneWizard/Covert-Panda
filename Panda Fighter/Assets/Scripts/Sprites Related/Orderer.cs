@@ -85,6 +85,7 @@ public static class Orderer
         relativeWeaponOrder = new Dictionary<Weapon, OrderInfo>();
         relativeWeaponOrder[Weapon.RocketLauncher] = new OrderInfo(SortingLayer.Default, 40);
         relativeWeaponOrder[Weapon.ArcticSprayer] = new OrderInfo(SortingLayer.Default, 40);
+        relativeWeaponOrder[Weapon.PlasmaSniper] = new OrderInfo(SortingLayer.Default, 90);
     }
 
     private static void setRelativeOrderOfLimbs()

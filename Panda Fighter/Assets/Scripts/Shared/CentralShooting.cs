@@ -9,6 +9,7 @@ public abstract class CentralShooting : MonoBehaviour
     protected CentralLookAround lookAround;
     protected CentralWeaponSystem weaponSystem;
     protected CentralGrenadeSystem grenadeSystem;
+    protected CentralPhaseTracker phaseTracker;
     protected Health health;
 
     private Transform bullet;
@@ -19,10 +20,16 @@ public abstract class CentralShooting : MonoBehaviour
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         grenadeSystem = transform.GetComponent<CentralGrenadeSystem>();
         lookAround = transform.GetComponent<CentralLookAround>();
+        phaseTracker = transform.GetComponent<CentralPhaseTracker>();
         health = transform.GetComponent<Health>();
         
         //grenadeHeld = null;
     }
+
+   // protected virtual void FixedUpdate()
+    //{
+      //  weaponSystem.CurrentWeaponConfiguration.MainArmIKTracker.gameObject.SetActive(!phaseTracker.IsDoingSomersault);
+    //}
 
     /*private void LateUpdate()
     {
@@ -46,7 +53,18 @@ public abstract class CentralShooting : MonoBehaviour
 
     protected void DeployGrenade() => StartCoroutine(grenadeSystem.CurrentGrenadeImplementation.Attack(GetAim()));
 
-    protected void AttackWithWeapon() => StartCoroutine(weaponSystem.CurrentWeaponBehaviour.Attack(GetAim()));
+    // Attack. Use current weapon aim if not mid-somersault. Else, use rotation of gun 
+    protected void AttackWithWeapon()
+    {
+        
+            StartCoroutine(weaponSystem.CurrentWeaponBehaviour.Attack(GetAim()));
+        /*else
+        {
+            Transform bulletSpawnPoint = weaponSystem.CurrentWeaponConfiguration.BulletSpawnPoint;
+            Vector3 dir = (bulletSpawnPoint.position - bulletSpawnPoint.parent.GetChild(1).position);
+            StartCoroutine(weaponSystem.CurrentWeaponBehaviour.Attack(((Vector2)dir).normalized));
+        }*/
+    }
     
    /* protected void RightClickAttack()
     {

@@ -25,7 +25,7 @@ public class AI_Shooting : CentralShooting
         AI_lookAround = transform.GetComponent<AI_LookAround>();
     }
 
-    void Update()
+    private void Update()
     {
         timeSinceLastShot += Time.deltaTime;
 
@@ -34,9 +34,6 @@ public class AI_Shooting : CentralShooting
             countdownBtwnShots = 0f;
             return;
         }
-
-        if (countdownBtwnShots > 0f)
-            countdownBtwnShots -= Time.deltaTime;
 
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
         WeaponBehaviour behaviour = weaponSystem.CurrentWeaponBehaviour;
@@ -49,12 +46,18 @@ public class AI_Shooting : CentralShooting
 
         if (configuration.WeaponType != FiringModes.holdFire)
         {
-            countdownBtwnShots = configuration.FireRateInfo + reactionDelay;
+            countdownBtwnShots = 1 / configuration.FireRateInfo + reactionDelay;
             timeSinceLastShot = 0f;
             AttackWithWeapon();
         }
         else 
             AttackWithWeapon();
+    }
+
+    private void FixedUpdate()
+    {
+        if (countdownBtwnShots > 0f)
+            countdownBtwnShots -= Time.fixedDeltaTime;
     }
 
     private float reactionDelay => (timeSinceLastShot > 1f) 

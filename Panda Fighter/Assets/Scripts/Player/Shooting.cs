@@ -19,9 +19,6 @@ public class Shooting : CentralShooting
         if (Input.GetKeyDown(KeyCode.Tab) && grenadeSystem.GrenadesLeft > 0)
             DeployGrenade();
 
-        if (countdownBtwnShots > 0f)
-            countdownBtwnShots -= Time.deltaTime;
-
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
         WeaponBehaviour behaviour = weaponSystem.CurrentWeaponBehaviour;
 
@@ -30,17 +27,23 @@ public class Shooting : CentralShooting
 
         if (configuration.WeaponType == FiringModes.singleFire && Input.GetMouseButtonDown(0))
         {
-            countdownBtwnShots = configuration.FireRateInfo;
+            countdownBtwnShots = 1 / configuration.FireRateInfo;
             AttackWithWeapon();
         }
 
         else if (configuration.WeaponType == FiringModes.spamFire && Input.GetMouseButton(0))
         {
-            countdownBtwnShots = configuration.FireRateInfo;
+            countdownBtwnShots = 1 / configuration.FireRateInfo;
             AttackWithWeapon();
         }
 
         else if (configuration.WeaponType == FiringModes.holdFire && Input.GetMouseButton(0))
             AttackWithWeapon();
+    }
+
+    private void FixedUpdate()
+    {
+        if (countdownBtwnShots > 0f)
+            countdownBtwnShots -= Time.fixedDeltaTime;
     }
 }

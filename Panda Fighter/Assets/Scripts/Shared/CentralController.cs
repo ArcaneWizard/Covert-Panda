@@ -18,10 +18,10 @@ public abstract class CentralController : MonoBehaviour
     public int dirX { get; protected set; } 
 
     // Important movement constants:
-    public const float jumpForce = 1820f; 
-    public const float doubleJumpForce = 1850f; 
+    public const float jumpForce = 1850f; 
+    public const float doubleJumpForce = 2270f; 
     public const float jumpPadForce = 3400; 
-    public const float maxGravity = 5f;
+    public const float maxGravity = 7f;
    
     [Header("Limbs and colliders")]
     public Transform shootingArm;
@@ -164,7 +164,7 @@ public abstract class CentralController : MonoBehaviour
             checkForAngle = true;
 
         // determine if creature is grounded if either foot raycast hit the ground
-        if (!phaseTracker.DisableLimbsDuringSomersault)
+        if (!phaseTracker.IsDoingSomersault)
             isGrounded = leftFootGround || rightFootGround;
 
         // register the angle of the ground
@@ -251,7 +251,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected void normalJump()
     {
-        StartCoroutine(RecentlyJumpedOffGround());
+        StartCoroutine(updateRecentlyJumpingOffGround());
         phaseTracker.EnterJumpPhase();
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
@@ -270,7 +270,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected void jumpPadBoost()
     {
-        StartCoroutine(RecentlyJumpedOffGround());
+        StartCoroutine(updateRecentlyJumpingOffGround());
         phaseTracker.EnterJumpPhase();
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
@@ -298,7 +298,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected virtual void FixedUpdate() => oneWayCollider.enabled = rig.velocity.y < 0.1f;
 
-    private IEnumerator RecentlyJumpedOffGround()
+    private IEnumerator updateRecentlyJumpingOffGround()
     {
         recentlyJumpedOffGround = true;
         yield return new WaitForSeconds(0.2f);

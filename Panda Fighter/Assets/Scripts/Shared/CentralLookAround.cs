@@ -97,7 +97,7 @@ public abstract class CentralLookAround : MonoBehaviour
 
     protected virtual void LateUpdate() 
     {
-        if (health.isDead || phaseTracker.DisableLimbsDuringSomersault)
+        if (health.isDead || phaseTracker.IsDoingSomersault)
             return;
         
         figureOutDirectionToLookIn();
