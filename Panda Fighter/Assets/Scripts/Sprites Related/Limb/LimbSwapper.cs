@@ -67,7 +67,6 @@ public class LimbSwapper : MonoBehaviour
 
     private void updateLimbsInEditor(bool forceRefresh)
     {
-        Debug.Log("ay?");
         // don't do anything in play mode
         if (Application.isPlaying || !gameObject.activeInHierarchy)
             return;
@@ -79,11 +78,9 @@ public class LimbSwapper : MonoBehaviour
         if (isValidPrefabStage || !prefabConnected)
             return;
 
-        Debug.Log("yadf?");
         if (!findLimbSettings())
             return;
 
-        Debug.Log("yay?");
         updateSpriteAndBoneTransforms(forceRefresh);
 
         Transform creature = limbSettings.transform.parent.parent;
