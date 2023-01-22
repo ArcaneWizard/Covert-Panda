@@ -19,9 +19,9 @@ public abstract class CentralController : MonoBehaviour
 
     // Important movement constants:
     public const float jumpForce = 1850f; 
-    public const float doubleJumpForce = 2270f; 
+    public const float doubleJumpForce = 2220f; 
     public const float jumpPadForce = 3400; 
-    public const float maxGravity = 7f;
+    public const float maxGravity = 6.3f;
    
     [Header("Limbs and colliders")]
     public Transform shootingArm;

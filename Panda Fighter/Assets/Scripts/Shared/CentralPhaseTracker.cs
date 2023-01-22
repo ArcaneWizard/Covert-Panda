@@ -5,7 +5,7 @@ using UnityEngine;
 
 // A phase is the action the creature is doing right now (jumping, being idle, etc.)
 // This class manages the phase the creature is in, and updates the creature's animations,
-// colliders and feet position accordingly. Note: the animation controller
+// colliders and ground detectors' position accordingly. Note: the animation controller
 // is already setup to change animations according to the creature's phase
 
 public class CentralPhaseTracker : MonoBehaviour
@@ -18,6 +18,7 @@ public class CentralPhaseTracker : MonoBehaviour
     private Health health;
     protected Camera camera;
     protected Transform body;
+
     private Somersault somersaultHandler;
 
     [SerializeField] private Collider2D doubleJumpCollider;
@@ -33,10 +34,12 @@ public class CentralPhaseTracker : MonoBehaviour
 
         Side side = transform.parent.GetComponent<Role>().side;
 
+        // colliders
         doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
         doubleJumpCollider.enabled = false;
         controller.mainCollider.enabled = true;
 
+        // somersault handler
         somersaultHandler = new Somersault(transform, this, controller.mainCollider, doubleJumpCollider, 
             animator, controller);
         somersaultHandler.Reset();
@@ -47,7 +50,8 @@ public class CentralPhaseTracker : MonoBehaviour
         if (health.isDead)
             return;
 
-        adjustFeetAndColliders(controller.rightGroundChecker,controller.leftGroundChecker, controller.mainCollider);
+        adjustCollidersAndDetectors(controller.leftGroundChecker, controller.rightGroundChecker, 
+            controller.mainCollider);
     }
 
     // returns whether or not the creature is in a specific phase 
@@ -109,22 +113,25 @@ public class CentralPhaseTracker : MonoBehaviour
         somersaultHandler.Tick();
     }
 
-    // Entity's feet, which detect ground, become closer together when jumping. Also, the main collider
-    // becomes thinner when the entiy is jumping, and shorter when the entity is double jumping
-    protected void adjustFeetAndColliders(Transform rightFoot, Transform leftFoot, BoxCollider2D mainCollider) 
+    // Adjust creature's colliders and ground detectors as required 
+    protected void adjustCollidersAndDetectors(Transform frontGroundRaycaster, 
+        Transform backGroundRaycaster, BoxCollider2D mainCollider) 
     {
-        rightFoot.localPosition = (!IsMidAir)
-        ? new Vector3(0.99f, rightFoot.localPosition.y, 0)
-        : new Vector3(0.332f, rightFoot.localPosition.y, 0);
+        // if creature is mid-air, bring ground raycasters closer to creature's centerline
+        frontGroundRaycaster.localPosition = (!IsMidAir)
+        ? new Vector3(-0.124f, frontGroundRaycaster.localPosition.y, 0)
+        : new Vector3(-0.124f, frontGroundRaycaster.localPosition.y, 0);
 
-        leftFoot.localPosition = (!IsMidAir)
-        ? new Vector3(-0.357f, leftFoot.localPosition.y, 0)
-        : new Vector3(-0.157f, leftFoot.localPosition.y, 0);
+        backGroundRaycaster.localPosition = (!IsMidAir)
+        ? new Vector3(0.365f, backGroundRaycaster.localPosition.y, 0)
+        : new Vector3(0.365f, backGroundRaycaster.localPosition.y, 0);
 
-        mainCollider.enabled = !IsSomersaulting;
-        doubleJumpCollider.enabled = IsSomersaulting;
-
+        // if creature is mid-air, main collider becomes thinner 
         float x = IsMidAir ? 0.68f : 1f;
         mainCollider.size = new Vector2(x, mainCollider.size.y);
+
+        // creature's collider depends on it's current phase
+        mainCollider.enabled = !IsSomersaulting;
+        doubleJumpCollider.enabled = IsSomersaulting;
     }
 }
