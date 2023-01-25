@@ -349,7 +349,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -703,7 +703,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -834,7 +834,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -904,7 +904,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -1248,7 +1248,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -1602,7 +1602,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -1796,7 +1796,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -1857,7 +1857,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
   m_ScaleCurves:
   - curve:
       serializedVersion: 2
@@ -1883,7 +1883,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
   m_FloatCurves: []
   m_PPtrCurves: []
   m_SampleRate: 60
@@ -1915,7 +1915,7 @@ AnimationClip:
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 4172469346
+      path: 1900750
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -1936,7 +1936,7 @@ AnimationClip:
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 1148181864
+      path: 4220176395
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -1950,14 +1950,14 @@ AnimationClip:
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 447928045
+      path: 2400963478
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 955179285
+      path: 2187092049
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -1978,7 +1978,7 @@ AnimationClip:
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 4172469346
+      path: 1900750
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -1999,7 +1999,7 @@ AnimationClip:
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 1148181864
+      path: 4220176395
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -2013,21 +2013,21 @@ AnimationClip:
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 447928045
+      path: 2400963478
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 955179285
+      path: 2187092049
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 4172469346
+      path: 1900750
       attribute: 3
       script: {fileID: 0}
       typeID: 4
@@ -3580,7 +3580,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3662,7 +3662,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3744,7 +3744,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -3880,7 +3880,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -4016,7 +4016,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -4152,7 +4152,91 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: back thigh bone/back leg bone
+    path: back thigh bone/base/back leg bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 1.8333334
+        value: 1.0568962
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 3.1666667
+        value: 1.0568962
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalScale.x
+    path: back thigh bone/base/back leg bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 1.8333334
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 3.1666667
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalScale.y
+    path: back thigh bone/base/back leg bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 1.8333334
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 3.1666667
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalScale.z
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -5686,7 +5770,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -5804,7 +5888,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -5922,7 +6006,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -6058,7 +6142,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -6194,7 +6278,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -6330,7 +6414,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: front thigh bone/front leg bone
+    path: front thigh bone/base/front leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -6938,90 +7022,6 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 1.8333334
-        value: 1.0568962
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 3.1666667
-        value: 1.0568962
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalScale.x
-    path: back thigh bone/back leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 1.8333334
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 3.1666667
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalScale.y
-    path: back thigh bone/back leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 1.8333334
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 3.1666667
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 136
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalScale.z
-    path: back thigh bone/back leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 1.8333334
         value: 0.89206445
         inSlope: 0
         outSlope: 0
@@ -7078,7 +7078,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7142,7 +7142,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7206,7 +7206,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7279,7 +7279,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7352,7 +7352,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7425,7 +7425,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: back thigh bone/back leg bone/back foot bone
+    path: back thigh bone/base/back leg bone/base/back foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7489,7 +7489,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7553,7 +7553,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7617,7 +7617,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7690,7 +7690,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7763,7 +7763,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7836,7 +7836,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -7847,6 +7847,36 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
+    path: arm bones
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: arm bones
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: arm bones
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
     path: front thigh bone
     classID: 4
     script: {fileID: 0}
@@ -7877,7 +7907,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: arm bones
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7887,7 +7917,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: arm bones
+    path: back thigh bone/base/back leg bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7897,7 +7927,97 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: arm bones
+    path: back thigh bone/base/back leg bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: front thigh bone/base/front leg bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: front thigh bone/base/front leg bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: front thigh bone/base/front leg bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: chest bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: chest bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: chest bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: back thigh bone/base/back leg bone/base/back foot bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: back thigh bone/base/back leg bone/base/back foot bone
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: back thigh bone/base/back leg bone/base/back foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7966,8 +8086,8 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: back thigh bone/back leg bone/back foot bone
+    attribute: m_LocalEulerAngles.x
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7977,17 +8097,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: back thigh bone/back leg bone/back foot bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: back thigh bone/back leg bone/back foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -7997,117 +8107,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: chest bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: chest bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: chest bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: back thigh bone/back leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: back thigh bone/back leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: back thigh bone/back leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: front thigh bone/front leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: front thigh bone/front leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: front thigh bone/front leg bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: front thigh bone/front leg bone/front foot bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: front thigh bone/front leg bone/front foot bone
-    classID: 4
-    script: {fileID: 0}
-  - curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: front thigh bone/front leg bone/front foot bone
+    path: front thigh bone/base/front leg bone/base/front foot bone
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 1
