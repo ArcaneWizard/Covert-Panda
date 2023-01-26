@@ -19,7 +19,6 @@ public class TrajectoryPath : MonoBehaviour
     public Vector2 changedSpeed = new Vector2(0f, 0f);
     public Vector2 timeB4SecondChange = new Vector2(0f, 0f);
     public Vector2 secondChangedSpeed = new Vector2(0f, 0f);
-    private float lastYVelocity;
 
     private float mass = 1f;
     private float defaultGravity = -32.5f;
@@ -45,7 +44,7 @@ public class TrajectoryPath : MonoBehaviour
         jumpForce = CentralController.jumpForce;
         doubleJumpForce = CentralController.doubleJumpForce;
         launchPadForce = CentralController.jumpPadForce;
-        defaultGravity = -65f;
+        defaultGravity = CentralController.maxGravity * -9.81f;
 
         mass = 1f;
 
