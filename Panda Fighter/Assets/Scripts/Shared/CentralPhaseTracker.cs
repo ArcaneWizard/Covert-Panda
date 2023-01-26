@@ -68,6 +68,7 @@ public class CentralPhaseTracker : MonoBehaviour
     public bool Is(Phase specificPhase) => phase == (int)specificPhase;
     public bool IsMidAir => 2 <= phase && phase <= 4;
     public bool IsSomersaulting => Is(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited;
+    public bool IsWalkingBackwards => Is(Phase.Running) && !animator.GetBool("walking forwards");
 
     // set phase to jumping, and play any random one of the jump animations
     public void EnterJumpPhase()

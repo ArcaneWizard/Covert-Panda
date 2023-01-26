@@ -36,7 +36,7 @@ public class WeaponStats
             500, 0, 
             WeaponTypes.meelee, FiringModes.singleFire, limbs.MeeleGrip, equip.LeafScythe);
 
-        set(Weapon.Shotgun, 1.1f,  10,  300, 50,
+        set(Weapon.Shotgun, 1.15f,  10,  300, 50,
             600, 0, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.ShortBarrel, equip.GoldenShotgun);
 
@@ -44,7 +44,7 @@ public class WeaponStats
             90,  0, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.PistolGrip, equip.ArcticCannon);
 
-        set(Weapon.PlasmaSniper, 1.5f,  38,  -1, 50, 
+        set(Weapon.PlasmaSniper, 1.42f,  38,  -1, 50, 
             200, 20, 
             WeaponTypes.gun, FiringModes.singleFire, limbs.LongBarrel, equip.Sniper);
 

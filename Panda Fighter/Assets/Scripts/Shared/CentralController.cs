@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 // Implements the creature's movement (for running, jumping, double
 // jumping, and getting a jump boost off jump pads). Stores useful
@@ -34,10 +35,6 @@ public abstract class CentralController : MonoBehaviour
     public Transform physicalLeftFoot;
     public Transform physicalRightFoot;
 
-    // Immediately correct the creature's tilt on the sloped ground it's standing on
-    public void UpdateTiltInstantly() => updateTiltInstantly = true;
-
-
     protected Rigidbody2D rig;
     protected Transform body;
     public CentralPhaseTracker phaseTracker { get; private set; }
@@ -58,8 +55,6 @@ public abstract class CentralController : MonoBehaviour
     protected float groundAngle;
     private float lastGroundAngle;
 
-    private bool updateTiltInstantly;
-
     protected virtual void Awake()
     {
         rig = transform.GetComponent<Rigidbody2D>();
@@ -73,8 +68,18 @@ public abstract class CentralController : MonoBehaviour
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
         mainCollider.offset = new Vector2(0, 1.45f);
 
-        maxSpeed = 22f;
+        maxSpeed = 25f;
         speed = maxSpeed;
+    }
+
+    // Immediately correct the creature's tilt on the sloped ground it's standing on
+    public void UpdateTiltInstantly()
+    {
+        updateGroundAngle();
+        float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.9f : ((groundAngle - 360) / 1.9f);
+
+        if (!float.IsNaN(groundAngle))
+            transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
     }
 
     protected virtual void Start()
@@ -94,11 +99,6 @@ public abstract class CentralController : MonoBehaviour
     // Update the creature's standing tilt and feet rotation depending on the ground angle
     private void updateTilt()
     {
-        if (updateTiltInstantly) {
-            updateGroundAngle();
-            updateTiltInstantly = false;
-        }
-
         if (float.IsNaN(groundAngle)) 
             return;
 
@@ -120,19 +120,6 @@ public abstract class CentralController : MonoBehaviour
 
         if (updateTiltInstantly) 
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
-
-        /*float tempGroundAngle = (groundAngle <= 180f) ? groundAngle : groundAngle - 360;
-        
-        if (phaseManager.IsIdle) 
-        {
-            float shoeAngle = tempGroundAngle / 1.9f - 9f;
-            float xTheta = lookAround.facingRight() ? 0f : -180f;
-            float zTheta = lookAround.facingRight() ? shoeAngle
-                : 180 + shoeAngle -  2 * zAngle;
-
-            physicalLeftFoot.transform.eulerAngles = new Vector3(xTheta, 0f, zTheta);
-            physicalRightFoot.transform.eulerAngles = new Vector3(xTheta, 0f, zTheta);
-        }*/
     }
     
     //check if the creature is on the ground + update the groundAngle

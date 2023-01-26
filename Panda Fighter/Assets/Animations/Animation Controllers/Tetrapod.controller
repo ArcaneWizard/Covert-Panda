@@ -392,6 +392,32 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!1102 &-5110709233890571053
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: jumping v3
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: 4c7f074465c6b4b168d9491a26eed3c5, type: 2}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1101 &-4989680238835682773
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -637,6 +663,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: 6834983876522162424}
     m_Position: {x: 95, y: -115, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -5110709233890571053}
+    m_Position: {x: 932.1876, y: 459.2708, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -1064953941155322678}
@@ -898,7 +927,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: double jump
-  m_Speed: 1.1
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8748082887903812320}
@@ -1315,7 +1344,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: backwards walking
-  m_Speed: 3.5
+  m_Speed: 2.67
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -487362546456653264}

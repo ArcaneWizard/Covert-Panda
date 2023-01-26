@@ -21,14 +21,14 @@ public class Controller : CentralController
             return;
         }
 
-        // use A and D keys for left or right movement
+        //use A and D keys for left or right movement
         dirX = 0;
         if (Input.GetKey(KeyCode.D)) 
             dirX++;
         if (Input.GetKey(KeyCode.A)) 
             dirX--;
         
-        // always move left/right for at least a full step instead of jittering after quick button taps
+        //always move left/right for at least a full step instead of jittering after quick button taps
         takeFullStep();
 
         //use W and S keys for jumping up or thrusting downwards + allow double jump
@@ -72,8 +72,11 @@ public class Controller : CentralController
                 rig.velocity = new Vector2(0, 0);
 
             //player velocity is parallel to the slanted ground
-            else
-                rig.velocity = groundSlope * speed * dirX;
+            else 
+            {
+                float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
+                rig.velocity = groundSlope * speed * dirX * speedMultiplier;
+            }
 
             //don't slip on steep slopes
             rig.gravityScale = (dirX == 0) ? 0f : maxGravity;

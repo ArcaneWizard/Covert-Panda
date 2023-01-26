@@ -8,9 +8,9 @@ public class Somersault
 {
     public SomersaultState state {get; private set;}
 
-    private const float initSomersaultSpeed = 1000f;
+    private const float initSomersaultSpeed = 600f;
     private const float endSomersaultSpeed = 600f;
-    private const float somersaultDuration = 0.35f;
+    private const float somersaultDuration = 0.4f;
     protected int somersaultDirection;
 
     private Transform transform;
