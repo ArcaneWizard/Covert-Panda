@@ -20,7 +20,10 @@ public class CentralPhaseTracker : MonoBehaviour
     protected Transform body;
 
     private Somersault somersaultHandler;
+    private AnimatorOverrideController animatorOverrideController;
+    private AnimationClipOverrides clipOverrides;
 
+    [SerializeField] private AnimationClip[] jumpClips;
     [SerializeField] private Collider2D doubleJumpCollider;
 
     void Awake() 
@@ -43,6 +46,13 @@ public class CentralPhaseTracker : MonoBehaviour
         somersaultHandler = new Somersault(transform, this, controller.mainCollider, doubleJumpCollider, 
             animator, controller);
         somersaultHandler.Reset();
+
+        // setup animation clip overrides so different jump animations, falling animations, etc. can be used
+        animatorOverrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
+        animator.runtimeAnimatorController = animatorOverrideController;
+
+        clipOverrides = new AnimationClipOverrides(animatorOverrideController.overridesCount);
+        animatorOverrideController.GetOverrides(clipOverrides);
     }
 
     void Update() 
@@ -59,12 +69,20 @@ public class CentralPhaseTracker : MonoBehaviour
     public bool IsMidAir => 2 <= phase && phase <= 4;
     public bool IsSomersaulting => Is(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited;
 
+    // set phase to jumping, and play any random one of the jump animations
     public void EnterJumpPhase()
     {
-        animator.SetInteger("jump version", Random.Range(0, 2));
+        // if creature is still, use the default idle jump animation. else use any
+        if (controller.dirX == 0)
+            clipOverrides["jumping"] = jumpClips[0];
+        else
+            clipOverrides["jumping"] = jumpClips[Random.Range(0, jumpClips.Length)];
+
+        animatorOverrideController.ApplyOverrides(clipOverrides);
         setPhase(Phase.Jumping);
     }
 
+    // set phase to double jumping, and execute a mid-air somersault
     public IEnumerator EnterDoubleJumpPhase()
     {
         setPhase(Phase.DoubleJumping);
@@ -93,10 +111,6 @@ public class CentralPhaseTracker : MonoBehaviour
         // else the creature is falling if a mid-air phase (falling, jumping, double jumping) hasn't been set yet
         else if (!IsMidAir)
             setPhase(Phase.Falling);
-            
-        // if creature isn't jumping, reset the jump animation version 
-        if (Is(Phase.Jumping))
-            animator.SetInteger("jump version", 0);
 
         // play forward or backwards running animation depending on
         // whether the creature runs forwards or backwards 

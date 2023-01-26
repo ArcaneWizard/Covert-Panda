@@ -70,13 +70,17 @@ public class LimbSwapper : MonoBehaviour
         // don't do anything in play mode
         if (Application.isPlaying || !gameObject.activeInHierarchy)
             return;
-         
+
         // don't do anything if in prefab-mode
         PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
-        bool isValidPrefabStage = prefabStage != null && prefabStage.stageHandle.IsValid();
-        bool prefabConnected = PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.Connected;
-        if (isValidPrefabStage || !prefabConnected)
-            return;
+
+        if (prefabStage != null)
+        {
+            bool isValidPrefabStage = prefabStage != null && prefabStage.stageHandle.IsValid();
+            bool prefabConnected = PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.Connected;
+            if (isValidPrefabStage || !prefabConnected)
+                return;
+        }
 
         if (!findLimbSettings())
             return;
