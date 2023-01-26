@@ -72,7 +72,8 @@ public abstract class CentralController : MonoBehaviour
         speed = maxSpeed;
     }
 
-    // Immediately correct the creature's tilt on the sloped ground it's standing on
+    // Update the creature's body tilt to match the sloped platform it's currently standing on
+    // To be invoked whenever the creature teleports to a new platform (ex. respawning)
     public void UpdateTiltInstantly()
     {
         updateGroundAngle();
@@ -96,7 +97,7 @@ public abstract class CentralController : MonoBehaviour
         updateTilt();
     }
 
-    // Update the creature's standing tilt and feet rotation depending on the ground angle
+    // Update the creature's body tilt depending on the ground angle
     private void updateTilt()
     {
         if (float.IsNaN(groundAngle)) 
@@ -117,9 +118,6 @@ public abstract class CentralController : MonoBehaviour
 
         else if (!isGrounded && Mathf.Abs(transform.eulerAngles.z) > 0.5f && !phaseTracker.Is(Phase.DoubleJumping))
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
-
-        if (updateTiltInstantly) 
-            transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
     }
     
     //check if the creature is on the ground + update the groundAngle

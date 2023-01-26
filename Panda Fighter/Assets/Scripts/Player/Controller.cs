@@ -29,7 +29,7 @@ public class Controller : CentralController
             dirX--;
         
         //always move left/right for at least a full step instead of jittering after quick button taps
-        takeFullStep();
+       // takeFullStep();
 
         //use W and S keys for jumping up or thrusting downwards + allow double jump
         if (Input.GetKeyDown(KeyCode.W)) 
