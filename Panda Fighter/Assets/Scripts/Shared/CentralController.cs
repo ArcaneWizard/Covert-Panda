@@ -42,7 +42,7 @@ public abstract class CentralController : MonoBehaviour
     protected CentralLookAround lookAround;
     protected Animator animator;
 
-    protected float maxSpeed;
+    public const float MaxSpeed = 25f;
     protected float speed;
 
     // Info about the ground or walls detected:
@@ -68,8 +68,7 @@ public abstract class CentralController : MonoBehaviour
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
         mainCollider.offset = new Vector2(0, 1.45f);
 
-        maxSpeed = 25f;
-        speed = maxSpeed;
+        speed = MaxSpeed;
     }
 
     // Update the creature's body tilt to match the sloped platform it's currently standing on

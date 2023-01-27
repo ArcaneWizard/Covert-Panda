@@ -63,7 +63,7 @@ public class AI_Controller : CentralController
         // AI moves at max speed when not executing an action
         if (currAction == null)
         {
-            speed = maxSpeed;
+            speed = MaxSpeed;
             return;
         }
 
@@ -109,7 +109,7 @@ public class AI_Controller : CentralController
             {
                 if (decisionZonesNearby.Contains(decisionZone))
                 {
-                    speed = maxSpeed;
+                    speed = MaxSpeed;
                     dirX = currAction.Info.DirX;
                     currAction.Begin(this);
                 }

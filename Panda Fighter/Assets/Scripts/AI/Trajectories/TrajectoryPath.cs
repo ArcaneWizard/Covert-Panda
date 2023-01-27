@@ -10,7 +10,7 @@ public class TrajectoryPath : MonoBehaviour
     [field: SerializeField] public AIActionType ActionType { get; private set; }
 
     [Header("Describe Jump")]
-    public int movementDirX = 1;
+    public int dirX = 1;
     public Vector2 speedRange = new Vector2(25f, 25f);
     public Vector2 timeB4Change = new Vector2(1f, 1f);
     public Vector2 changedSpeed = new Vector2(25f, 25f);
@@ -24,19 +24,14 @@ public class TrajectoryPath : MonoBehaviour
     [Header("Other Settings")]
     public Vector2 jumpBounds = new Vector2(-1f, -1f);
     public int considerationWeight = 1;
-    public float timeShown = 3f;
+    public float lingerTime = 3f;
 
     [Header("Connected Zone")]
     public int chainedDecisionZone = -1;
 
-    private float yVelocity;
-    private float x;
-    private float y;
-
     private const float epsilon = 0.001f;
-    //private Vector2 lastPointPlotted;
-    //private Vector2 lastP_b4DirSwitch;
 
+    // visually display AI trajectories in the scene view
     #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
@@ -90,7 +85,17 @@ public class TrajectoryPath : MonoBehaviour
         }
     }
     #endif
+    
+    // visually display AI trajectory even if it's child object is selected (note: this could be removed)
+    #if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (Selection.transforms.Length != 0 && Selection.transforms[0].parent == this.transform)
+                OnDrawGizmosSelected();
+        }
+    #endif
 
+    // gets the Transform of the specified chained zone (each zone is a node with its own trajectories)
     public Transform getChainedZone() => transform.parent.parent.GetChild(chainedDecisionZone);
 
     // converts the trajectory into a performable AI Action
@@ -116,18 +121,9 @@ public class TrajectoryPath : MonoBehaviour
         return action;
     }
 
-    // Stores all of this trajectory's info into an Action Info object
-    private AIActionInfo actionInfo => new AIActionInfo(movementDirX,
+    // Stores all of this trajectory's info in a form that the AI could execute
+    private AIActionInfo actionInfo => new AIActionInfo(dirX,
             speedRange, timeB4Change, changedSpeed, timeB4SecondChange, secondChangedSpeed, jumpBounds, transform.position);
-
-
-    #if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        if (Selection.transforms.Length != 0 && Selection.transforms[0].parent == this.transform)
-            OnDrawGizmosSelected();
-    }
-    #endif
 
     // draw spheres on jump bounds in the scene editor
     private void showGizmoJumpBounds()
@@ -140,23 +136,22 @@ public class TrajectoryPath : MonoBehaviour
             transform.right.y / transform.right.x * jumpBounds.y, 0), 0.3f);
     }
 
-
     //----------------------------------------------------------------------------------------------------------------
     //---------------------------------- DRAW DIFF TYPES OF TRAJECTORIES ---------------------------------------------
     //----------------------------------------------------------------------------------------------------------------
     
-    // draws a straight line journey on the scene view
+    // draws a straight line trajectory on the scene view
     private void drawStraightLine()
     {
         gravity = 0;
 
-        float yVelocity = transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speedRange.x;
+        float yVelocity = transform.parent.right.y / transform.parent.right.x * (float)dirX * speedRange.x;
         VerticalInfo v = new VerticalInfo(transform.position.y, 0, yVelocity, 0);
 
         drawTrajectory(5f, new Info(transform.position, 0.8f, speedRange.x, v));
     }
 
-    // draws two normal jump trajectories on the scene view, one for each end of the speedRange
+    // draws normal jump trajectories on the scene view
     private void drawNormalJump()
     {
         gravity = defaultGravity;
@@ -165,34 +160,46 @@ public class TrajectoryPath : MonoBehaviour
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange.x, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, timeShown, changedSpeed.x, v));
+        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, changedSpeed.x, v));
     }
 
-    // draws the double jump journey on the scene view. first draws the normal jump up till right b4 
+    // draws the double jump trajectory on the scene view. first draws the normal jump up till right b4 
     // the double jump happens, then draws the double jump
     private void drawDoubleJump(float timeB4Change)
     {
         gravity = defaultGravity;
+         gravity = defaultGravity;
 
-       // Vector2 pointRightB4DoubleJumping = drawTrajectory(timeB4DoubleJump, 20f, transform.position, speedRange.x, jumpForce);
-        //Vector2 pointRightB4VelocityChange = drawTrajectory(timeB4SecondChange.x, 20f, pointRightB4DoubleJumping, changedSpeed.x, doubleJumpForce);
-       // plotJourneyAfterChangingSpeedOnce(timeShown, pointRightB4VelocityChange, pointRightB4DoubleJumping, changedSpeed.x, timeB4SecondChange.x, secondChangedSpeed.x, doubleJumpForce);
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JumpForce);
+        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change, speedRange.x, v));
+
+        v = new VerticalInfo(midwayInfo.Pos.y, 0, 0, CentralController.DoubleJumpForce);
+        midwayInfo = drawTrajectory(20f, new Info(midwayInfo.Pos, timeB4SecondChange.x, changedSpeed.x, v));
+
+        v.TimeElapsed = midwayInfo.Y.TimeElapsed;
+        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, secondChangedSpeed.x, v));
     }
-    
-    // draws the fall down arc journey on the scene view. first draws the fall down path till right b4
-    // the AI changes its x velocity, then it draws the new fall down path
+
+    // draws the falling down trajectory on the scene view. first draws the fall down path till right b4
+    // the AI changes its x velocity, then it updates the fall path. Likewise when speed is changed a 2nd time
     private void drawFallDownArc(float timeB4Change)
     {
         this.gravity = defaultGravity;
 
-        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, 0);
+        // initial y velocity depends on slope of platform which is indicated by this object's right vector
+        float yVelocity = CentralController.MaxSpeed * transform.right.y * dirX;
+
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, yVelocity, 0);
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change, speedRange.x, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, timeShown, changedSpeed.x, v));
+        midwayInfo = drawTrajectory(20f, new Info(midwayInfo.Pos, timeB4SecondChange.x, changedSpeed.x, v));
+
+        v.TimeElapsed = midwayInfo.Y.TimeElapsed;
+        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, secondChangedSpeed.x, v));
     }
 
-    // draws the jump pad boost journey on the scene view. first draws the upwards path till right b4 the
+    // draws the jump pad boost trajectory on the scene view. first draws the upwards path till right b4 the
     // AI changes its x velocity, then it draws this new path
     private void drawJumpPadArc()
     {
@@ -202,37 +209,40 @@ public class TrajectoryPath : MonoBehaviour
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange.x, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, timeShown, changedSpeed.x, v));
+        drawTrajectory(20f, new Info(midwayInfo.Pos, timeB4SecondChange.x, changedSpeed.x, v));
+
+        v.TimeElapsed = midwayInfo.Y.TimeElapsed;
+        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, secondChangedSpeed.x, v));
     }
 
     //----------------------------------------------------------------------------------------------------------------
     //--------------------------- HELPER METHODS TO MATHEMATICALLY CALCULATE THE ARC  --------------------------------
     //----------------------------------------------------------------------------------------------------------------
 
-    // returns the position the AI will be at the given time assuming the AI started at the initial position
-    // with the given horizontal speed, vertical speed and initial jump force
+    // returns the position the AI will be at the specified time elapsed assuming the AI started at the initial position,
+    // horizontal and vertical speed, etc. all defined by the provided info
     private Vector2 calculatePosition(Info info, float timeElapsed)
     {
         float xPos = info.Pos.x;
         float speed = info.XVelocity;
         float time = timeElapsed;
 
-        x = xPos + movementDirX * (speed * time);
+        float x = xPos + dirX * (speed * time);
 
         float yPos = info.Y.InitPos;
         speed = info.Y.Velocity + info.Y.Force * 0.02f / mass;
         time = info.Y.TimeElapsed + timeElapsed;
 
-        y =  yPos + speed * time + 0.5f * gravity * time * time;
+        float y =  yPos + speed * time + 0.5f * gravity * time * time;
 
         return new Vector2(x, y);
     }
 
-    // Draws trajectory on scene view quite accurately by using line segments. The trajectory requires info including 
+    // Draws trajectory on scene view quite accurately by using line segments. The trajectory requires info about 
     // the creature's initial x and y position, initial horizontal and vertical speed, initial vertical force, etc.
     // This function also requires how many line segments to draw per second of trajectory time
-    // (more line segments used = better curves drawn). Returns information about the end position and
-    // total time elapsed 
+    // (more line segments used = better curves drawn). Returns info containing the position of the
+    // last drawn point on the trajectory, and total duration of the trajectory so far
     private Info drawTrajectory(float linesPerSecond, Info info)
     {
         float increment = 1f / linesPerSecond;
@@ -241,7 +251,7 @@ public class TrajectoryPath : MonoBehaviour
         float time = 0;
         for (;time <= info.Duration + epsilon; time += increment)
         {
-            if (movementDirX == 1)
+            if (dirX == 1)
                 Gizmos.color = time % (2 * increment) < epsilon ? Color.blue : Color.green;
             else
                 Gizmos.color = time % (2 * increment) < epsilon ? Color.red : Color.magenta;
