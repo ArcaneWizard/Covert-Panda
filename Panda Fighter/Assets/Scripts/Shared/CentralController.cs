@@ -19,10 +19,10 @@ public abstract class CentralController : MonoBehaviour
     public int dirX { get; protected set; } 
 
     // Important movement constants:
-    public const float jumpForce = 1850f; 
-    public const float doubleJumpForce = 2220f; 
-    public const float jumpPadForce = 3400; 
-    public const float maxGravity = 6.3f;
+    public const float JumpForce = 1850f; 
+    public const float DoubleJumpForce = 2220f; 
+    public const float JumpPadForce = 3400; 
+    public const float Gravity = 6.3f;
    
     [Header("Limbs and colliders")]
     public Transform shootingArm;
@@ -240,8 +240,8 @@ public abstract class CentralController : MonoBehaviour
         phaseTracker.EnterJumpPhase();
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
-        rig.gravityScale = maxGravity;
-        rig.AddForce(new Vector2(0, jumpForce));
+        rig.gravityScale = Gravity;
+        rig.AddForce(new Vector2(0, JumpForce));
     }
 
     protected void doubleJump()
@@ -249,8 +249,8 @@ public abstract class CentralController : MonoBehaviour
         StartCoroutine(phaseTracker.EnterDoubleJumpPhase());
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
-        rig.gravityScale = maxGravity;
-        rig.AddForce(new Vector2(0, doubleJumpForce));
+        rig.gravityScale = Gravity;
+        rig.AddForce(new Vector2(0, DoubleJumpForce));
     }
 
     protected void jumpPadBoost()
@@ -259,8 +259,8 @@ public abstract class CentralController : MonoBehaviour
         phaseTracker.EnterJumpPhase();
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
-        rig.gravityScale = maxGravity;
-        rig.AddForce(new Vector2(0, jumpPadForce));
+        rig.gravityScale = Gravity;
+        rig.AddForce(new Vector2(0, JumpPadForce));
     }
 
     private void OnCollisionEnter2D(Collision2D col)

@@ -47,7 +47,7 @@ public class Controller : CentralController
         if (Input.GetKeyDown(KeyCode.S) && canThrustDown)
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, -jumpForce));
+            rig.AddForce(new Vector2(0, -JumpForce));
             canThrustDown = false;
         }
 
@@ -79,7 +79,7 @@ public class Controller : CentralController
             }
 
             //don't slip on steep slopes
-            rig.gravityScale = (dirX == 0) ? 0f : maxGravity;
+            rig.gravityScale = (dirX == 0) ? 0f : Gravity;
 
             //allow player to thrust themselves downwards the next time they jump
             canThrustDown = true;
@@ -100,7 +100,7 @@ public class Controller : CentralController
             else
                 rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
 
-            rig.gravityScale = maxGravity;
+            rig.gravityScale = Gravity;
         }
     }
 

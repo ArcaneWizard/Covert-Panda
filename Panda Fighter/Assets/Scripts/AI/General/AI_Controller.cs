@@ -146,7 +146,7 @@ public class AI_Controller : CentralController
                 dirX = -1;
 
             rig.velocity = groundSlope * speed * dirX;
-            rig.gravityScale = (dirX == 0) ? 0f : maxGravity;
+            rig.gravityScale = (dirX == 0) ? 0f : Gravity;
         }
 
         // when alien is not on the ground (falling or midair after a jump)
@@ -169,7 +169,7 @@ public class AI_Controller : CentralController
             else
                 rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
 
-            rig.gravityScale = maxGravity;
+            rig.gravityScale = Gravity;
         }
     }
 

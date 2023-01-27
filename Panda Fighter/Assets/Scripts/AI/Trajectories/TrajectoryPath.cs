@@ -11,14 +11,11 @@ public class TrajectoryPath : MonoBehaviour
 
     [Header("Describe Jump")]
     public int movementDirX = 1;
-    private float jumpForce;
-    private float doubleJumpForce;
-    private float launchPadForce;
-    public Vector2 speedRange = new Vector2(10f, 10f);
-    public Vector2 timeB4Change = new Vector2(0f, 0f);
-    public Vector2 changedSpeed = new Vector2(0f, 0f);
-    public Vector2 timeB4SecondChange = new Vector2(0f, 0f);
-    public Vector2 secondChangedSpeed = new Vector2(0f, 0f);
+    public Vector2 speedRange = new Vector2(25f, 25f);
+    public Vector2 timeB4Change = new Vector2(1f, 1f);
+    public Vector2 changedSpeed = new Vector2(25f, 25f);
+    public Vector2 timeB4SecondChange = new Vector2(1f, 1f);
+    public Vector2 secondChangedSpeed = new Vector2(25f, 25f);
 
     private float mass = 1f;
     private float defaultGravity = -32.5f;
@@ -27,7 +24,7 @@ public class TrajectoryPath : MonoBehaviour
     [Header("Other Settings")]
     public Vector2 jumpBounds = new Vector2(-1f, -1f);
     public int considerationWeight = 1;
-    public float timeShown = 2.8f;
+    public float timeShown = 3f;
 
     [Header("Connected Zone")]
     public int chainedDecisionZone = -1;
@@ -43,10 +40,7 @@ public class TrajectoryPath : MonoBehaviour
     #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        jumpForce = CentralController.jumpForce;
-        doubleJumpForce = CentralController.doubleJumpForce;
-        launchPadForce = CentralController.jumpPadForce;
-        defaultGravity = CentralController.maxGravity * -9.81f;
+        defaultGravity = CentralController.Gravity * -13f;
 
         mass = 1f;
 
@@ -66,7 +60,7 @@ public class TrajectoryPath : MonoBehaviour
         else if (ActionType == AIActionType.LaunchPad)
         {
             transform.name = "Launch Pad";
-            drawJumpPadArc(defaultGravity, timeShown, launchPadForce);
+            drawJumpPadArc();
             showGizmoJumpBounds();
         }
 
@@ -81,8 +75,7 @@ public class TrajectoryPath : MonoBehaviour
         else if (ActionType == AIActionType.NormalJump)
         {
             transform.name = "Normal Jump";
-            drawNormalJump(defaultGravity, jumpForce, speedRange.x);
-            drawNormalJump(defaultGravity, jumpForce, speedRange.y);
+            drawNormalJump();
             showGizmoJumpBounds();
         }
 
@@ -156,194 +149,148 @@ public class TrajectoryPath : MonoBehaviour
     private void drawStraightLine()
     {
         gravity = 0;
-        Vector2 pointRightB4VelocityChange = drawTrajectory(0.8f, 5f, transform.position, speedRange.x, 0);
+
+        float yVelocity = transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speedRange.x;
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, yVelocity, 0);
+
+        drawTrajectory(5f, new Info(transform.position, 0.8f, speedRange.x, v));
     }
 
-    // draws a normal jump journey on the scene view
-    private void drawNormalJump(float gravity, float jumpForce, float speed)
+    // draws two normal jump trajectories on the scene view, one for each end of the speedRange
+    private void drawNormalJump()
     {
-        this.gravity = gravity;
+        gravity = defaultGravity;
 
-        Vector2 pointRightB4VelocityChange = drawTrajectory(timeB4Change.x, 20f, transform.position, speed, jumpForce);
-        plotJourneyAfterChangingSpeedOnce(timeShown, pointRightB4VelocityChange, transform.position, speed, timeB4Change.x, changedSpeed.x, jumpForce);
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JumpForce);
+        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange.x, v));
+
+        v.TimeElapsed = midwayInfo.Y.TimeElapsed;
+        drawTrajectory(20f, new Info(midwayInfo.Pos, timeShown, changedSpeed.x, v));
     }
 
     // draws the double jump journey on the scene view. first draws the normal jump up till right b4 
     // the double jump happens, then draws the double jump
-    private void drawDoubleJump(float timeB4DoubleJump)
+    private void drawDoubleJump(float timeB4Change)
     {
-        this.gravity = defaultGravity;
+        gravity = defaultGravity;
 
-        Vector2 pointRightB4DoubleJumping = drawTrajectory(timeB4DoubleJump, 20f, transform.position, speedRange.x, jumpForce);
-        Vector2 pointRightB4VelocityChange = drawTrajectory(timeB4SecondChange.x, 20f, pointRightB4DoubleJumping, changedSpeed.x, doubleJumpForce);
-        plotJourneyAfterChangingSpeedOnce(timeShown, pointRightB4VelocityChange, pointRightB4DoubleJumping, changedSpeed.x, timeB4SecondChange.x, secondChangedSpeed.x, doubleJumpForce);
+       // Vector2 pointRightB4DoubleJumping = drawTrajectory(timeB4DoubleJump, 20f, transform.position, speedRange.x, jumpForce);
+        //Vector2 pointRightB4VelocityChange = drawTrajectory(timeB4SecondChange.x, 20f, pointRightB4DoubleJumping, changedSpeed.x, doubleJumpForce);
+       // plotJourneyAfterChangingSpeedOnce(timeShown, pointRightB4VelocityChange, pointRightB4DoubleJumping, changedSpeed.x, timeB4SecondChange.x, secondChangedSpeed.x, doubleJumpForce);
     }
     
     // draws the fall down arc journey on the scene view. first draws the fall down path till right b4
     // the AI changes its x velocity, then it draws the new fall down path
-    private void drawFallDownArc(float timeB4DirSwitch)
+    private void drawFallDownArc(float timeB4Change)
     {
         this.gravity = defaultGravity;
 
-        Vector2 pointRightB4ChangingSpeedHorizontally = drawTrajectory(timeB4DirSwitch, 20f, transform.position, speedRange.x, 0);
-        plotJourneyWithTimeOffset(timeShown, pointRightB4ChangingSpeedHorizontally, changedSpeed.x, 0, timeB4DirSwitch * 5f);
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, 0);
+        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change, speedRange.x, v));
+
+        v.TimeElapsed = midwayInfo.Y.TimeElapsed;
+        drawTrajectory(20f, new Info(midwayInfo.Pos, timeShown, changedSpeed.x, v));
     }
 
     // draws the jump pad boost journey on the scene view. first draws the upwards path till right b4 the
     // AI changes its x velocity, then it draws this new path
-    private void drawJumpPadArc(float gravity, float lengthShown, float jumpForce)
+    private void drawJumpPadArc()
     {
-        this.gravity = gravity;
+        gravity = defaultGravity;
 
-        Vector2 pointB4ChangingSpeedOnce = drawTrajectory(timeB4Change.x, 20f, transform.position, speedRange.x, jumpForce);
-        Vector2 pointB4ChangingSpeedTwice = plotJourneyAfterChangingSpeedOnce(timeB4SecondChange.x * 5, pointB4ChangingSpeedOnce, transform.position, speedRange.x,
-            timeB4Change.x, changedSpeed.x, jumpForce);
-        plotJourneyAfterChangingSpeedTwice(lengthShown, pointB4ChangingSpeedTwice, transform.position, speedRange.x, timeB4Change.x, changedSpeed.x, timeB4SecondChange.x,
-            secondChangedSpeed.x, jumpForce);
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JumpPadForce);
+        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange.x, v));
+
+        v.TimeElapsed = midwayInfo.Y.TimeElapsed;
+        drawTrajectory(20f, new Info(midwayInfo.Pos, timeShown, changedSpeed.x, v));
     }
 
     //----------------------------------------------------------------------------------------------------------------
     //--------------------------- HELPER METHODS TO MATHEMATICALLY CALCULATE THE ARC  --------------------------------
     //----------------------------------------------------------------------------------------------------------------
-    
-    // returns the position the AI assuming the AI had the given horizontal speed and jump force at
-     // the given start position, and traveled at that speed for some time 
-    private Vector2 calculatePosition(float time, Vector2 start, float speed, float jumpForce)
-    {
-        x = start.x + speed * time * movementDirX;
 
-        yVelocity = !(ActionType == AIActionType.ChangeDirections) 
-            ? (jumpForce * 0.02f / mass) 
-            : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
-        y = start.y + yVelocity * time + 0.5f * gravity * time * time;
+    // returns the position the AI will be at the given time assuming the AI started at the initial position
+    // with the given horizontal speed, vertical speed and initial jump force
+    private Vector2 calculatePosition(Info info, float timeElapsed)
+    {
+        float xPos = info.Pos.x;
+        float speed = info.XVelocity;
+        float time = timeElapsed;
+
+        x = xPos + movementDirX * (speed * time);
+
+        float yPos = info.Y.InitPos;
+        speed = info.Y.Velocity + info.Y.Force * 0.02f / mass;
+        time = info.Y.TimeElapsed + timeElapsed;
+
+        y =  yPos + speed * time + 0.5f * gravity * time * time;
+
         return new Vector2(x, y);
     }
 
-    // returns the position the AI will be assuming the AI had the given horizontal speed and jump force at
-    // the given start position, traveled at that speed for some time (speed / time), changed it's speed midair and
-    // continued at that for a few seconds (speed 2 / time 2)
-    private Vector2 calculatePosition(float time, Vector2 start, float speed, float time2, float speed2, float jumpForce)
-    {
-        x = start.x + movementDirX * (speed * time + speed2 * time2);
-
-        yVelocity = !(ActionType == AIActionType.ChangeDirections) 
-            ? (jumpForce * 0.02f / mass) 
-            : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
-        y = start.y + yVelocity * (time + time2) + 0.5f * gravity * (time + time2) * (time + time2);
-        return new Vector2(x, y);
-    }
-
-     // returns the position the AI will be at after a given time, assuming the AI had the given horizontal speed and jump force at
-     // the given start position,  traveled at that speed for some time (speed / time), changed it's speed midair and continued
-     // at that for an additional few seconds (speed 2 / time 2), and later changed it's speed for a second time + continued at that 
-     // for a few seconds (speed 3 / time 3)
-    private Vector2 calculatePosition(float time, Vector2 start, float speed, float time2, float speed2, float time3, float speed3, float jumpForce)
-    {
-        x = start.x + movementDirX * (speed * time + speed2 * time2 + speed3 * time3);
-
-        yVelocity = !(ActionType == AIActionType.ChangeDirections) 
-            ? (jumpForce * 0.02f / mass) 
-            : transform.parent.right.y / transform.parent.right.x * (float)movementDirX * speed;
-        y = start.y + yVelocity * (time + time2 + time3) + 0.5f * gravity * (time + time2 + time3) * (time + time2 + time3);
-        return new Vector2(x, y);
-    }
-
-    //----------------------------------------------------------------------------------------------------------------
-    //----------------------------- HELPER METHODS TO DRAW THE TRAJECTORY ON THE SCENE VIEW  ---------------------------------
-    //----------------------------------------------------------------------------------------------------------------
-
-    // Draws trajectory on scene view quite accurately by using line segments. The trajectory requires an initial
-    // position, initial X velocity, and initial vertical force. This function also requires the duration of the trajectory
-    // drawn (seconds), and how many line segments to draw per second of trajectory time (more line segments used = better curves drawn).
-    private Vector2 drawTrajectory(float seconds, float linesPerSecond, Vector2 initPos, float initXVelocity, float initYForce)
+    // Draws trajectory on scene view quite accurately by using line segments. The trajectory requires info including 
+    // the creature's initial x and y position, initial horizontal and vertical speed, initial vertical force, etc.
+    // This function also requires how many line segments to draw per second of trajectory time
+    // (more line segments used = better curves drawn). Returns information about the end position and
+    // total time elapsed 
+    private Info drawTrajectory(float linesPerSecond, Info info)
     {
         float increment = 1f / linesPerSecond;
+        Vector2 prevPointPosition = info.Pos;
 
-        Vector2 prevPointPosition = initPos;
-        for (float i = 0; i <= seconds; i += increment)
+        float time = 0;
+        for (;time <= info.Duration + epsilon; time += increment)
         {
             if (movementDirX == 1)
-                Gizmos.color = i % (2*increment) < epsilon ? Color.blue : Color.green;
+                Gizmos.color = time % (2 * increment) < epsilon ? Color.blue : Color.green;
             else
-                Gizmos.color = i % (2*increment) < epsilon ? Color.red : Color.magenta;
+                Gizmos.color = time % (2 * increment) < epsilon ? Color.red : Color.magenta;
 
-            Vector2 currPointPosition = calculatePosition(i, initPos, initXVelocity, initYForce);
+            Vector2 currPointPosition = calculatePosition(info, time);
             Gizmos.DrawLine(prevPointPosition, currPointPosition);
             prevPointPosition = currPointPosition;
         }
 
-        return prevPointPosition;
+        VerticalInfo v = info.Y;
+        v.TimeElapsed = info.Y.TimeElapsed + time - increment;
+        return new Info(prevPointPosition, 0, 0, v);
     }
 
-    // draws journey on scene view, given a start position, initial velocity, initial jump force, and
-    // how many segments to draw b4 stopping. Takes into account the time already fallen to figure out
-    // the AI's vertical velocity at the start. Segments will be blue/green if the journey heads right 
-    // or red/magenta if the journey heads Returns the point it stopped plotting at
-    private Vector2 plotJourneyWithTimeOffset(float seconds, Vector2 start, float speed, float jumpForce, float timeAlreadyFallen)
+    private struct Info
     {
-        float increment = 0.05f;
+        public VerticalInfo Y;
+        public Vector2 Pos;
+        public float Duration;
+        public float XVelocity;
 
-        Vector2 prevPointPosition = start;
-        for (float i = 0; i <= seconds; i += increment)
+        public Info(Vector2 pos, float duration, float xVelocity, VerticalInfo y)
         {
-            if (movementDirX == 1)
-                Gizmos.color = i % (2 * increment) < epsilon ? Color.blue : Color.green;
-            else
-                Gizmos.color = i % (2 * increment) < epsilon ? Color.red : Color.magenta;
-
-            Vector2 currPointPosition = calculatePosition(timeAlreadyFallen + i, start, speed, jumpForce);
-            Gizmos.DrawLine(prevPointPosition, currPointPosition);
-            prevPointPosition = currPointPosition;
+            Y = y;
+            Duration = duration;
+            Pos = pos;
+            XVelocity = xVelocity;
         }
-
-        return prevPointPosition;
     }
 
-    // draws journey on scene view using medium length line segments. Takes in a how many segments to draw b4 stopping,
-    // the point to continue plotting from and parameters of the pointAlongMediumJourney() method. Segements will be blue/green 
-    // if the journey heads right or red/magenta if the journey heads left. Returns the point it stopped plotting at
-    private Vector2 plotJourneyAfterChangingSpeedOnce(float seconds, Vector2 lastPointPosition, Vector2 start, float speed, float time, float speed2,
-        float jumpForce)
+    private struct VerticalInfo
     {
-        float increment = 0.05f;
+        public float InitPos;
+        public float TimeElapsed;
+        public float Velocity;
+        public float Force;
 
-        Vector2 prevPointPosition = lastPointPosition;
-        for (float i = 0; i <= seconds; i += increment)
+        public VerticalInfo(float initPos, float timeElapsed, float yVelocity, float yForce)
         {
-            if (movementDirX == 1)
-                Gizmos.color = i % (2 * increment) < epsilon ? Color.blue : Color.green;
-            else
-                Gizmos.color = i % (2 * increment) < epsilon ? Color.red : Color.magenta;
-
-            Vector2 currPointPosition = calculatePosition(time, start, speed, i, speed2, jumpForce);
-            Gizmos.DrawLine(prevPointPosition, currPointPosition);
-            prevPointPosition = currPointPosition;
+            InitPos = initPos;
+            TimeElapsed = timeElapsed;
+            Velocity = yVelocity;
+            Force = yForce;
         }
-
-        return prevPointPosition;
     }
 
-    // draws journey on scene view using medium length line segments. Takes in a how many segments to draw b4 stopping,
-    // the point to continue plotting from and parameters of the pointAlongLongJourney() method. Segements will be blue/green 
-    // if the journey heads right or red/magenta if the journey heads left. Returns the point it stopped plotting at
-    private Vector2 plotJourneyAfterChangingSpeedTwice(float seconds, Vector2 lastPointPosition, Vector2 start, float speed, float time, float speed2, 
-        float time2, float speed3, float jumpForce)
+    private struct SpeedTime
     {
-        float increment = 0.05f;
-
-        Vector2 prevPointPosition = lastPointPosition;
-        for (float i = 0; i <= seconds; i += increment)
-        {
-            if (movementDirX == 1)
-                Gizmos.color = i % (2 * increment) < epsilon ? Color.blue : Color.green;
-            else
-                Gizmos.color = i % (2 * increment) < epsilon ? Color.red : Color.magenta;
-
-            Vector2 currPointPosition = calculatePosition(time, start, speed, time2, speed2, i, speed3, jumpForce);
-            Gizmos.DrawLine(prevPointPosition, currPointPosition);
-            prevPointPosition = currPointPosition;
-        }
-
-        return prevPointPosition;
+        public float Time;
+        public float Speed;
     }
 }
