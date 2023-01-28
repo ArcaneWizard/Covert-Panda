@@ -99,6 +99,14 @@ public abstract class CentralController : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (health.IsDead)
+        {
+            mainCollider.enabled = false;
+            oneWayCollider.enabled = false;
+            somersaultCollider.enabled = false;
+            return;
+        }
+
         adjustCollidersAndDetectors();
     }
 
@@ -318,7 +326,7 @@ public abstract class CentralController : MonoBehaviour
     }
 
     // Adjust creature's colliders and ground detectors as required 
-    protected void adjustCollidersAndDetectors()
+    private void adjustCollidersAndDetectors()
     {
         // if creature is mid-air, bring ground raycasters closer to creature's centerline
         frontGroundRaycaster.localPosition = (!phaseTracker.IsMidAir)
@@ -335,6 +343,7 @@ public abstract class CentralController : MonoBehaviour
 
         // creature's collider depends on it's current phase
         mainCollider.enabled = !phaseTracker.IsSomersaulting;
+        oneWayCollider.enabled = !phaseTracker.IsSomersaulting;
         somersaultCollider.enabled = phaseTracker.IsSomersaulting;
     }
 }

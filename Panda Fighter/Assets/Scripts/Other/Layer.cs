@@ -16,8 +16,8 @@ public static class Layer
     public static int InvulnerableHitBox = 1;
 
     // exact "outline" of a creature 
-    public static int ArmorOrLimb = 5;
-    public static int ArmorOrLimbInRagdoll = 0;
+    public static int Limb = 5;
+    public static int LimbInRagdoll = 0;
 
     // any part of the map (ex. platforms)
     public static int DefaultGround = 11;

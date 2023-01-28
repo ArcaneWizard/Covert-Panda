@@ -45,7 +45,7 @@ public abstract class Health : MonoBehaviour
         currentHP = maxHP;
         paddingHP = (int)(2.5f * maxHP / 100f);
         IsDead = false;
-     // hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
+        // hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
 
         hitBox.offset = new Vector2(0, -0.15f);
         hitBox.size = new Vector2(0.13f, 2.48f);
@@ -126,9 +126,8 @@ public abstract class Health : MonoBehaviour
         IsDead = false;
     }
 
-    public void enableHealthBar()
+    private void enableHealthBar()
     {
         hpBar.transform.parent.gameObject.SetActive(true);
     }
-
 }

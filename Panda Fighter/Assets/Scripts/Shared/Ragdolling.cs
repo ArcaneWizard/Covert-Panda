@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Ragdolling : MonoBehaviour
 {
+    // Note: the hip and chest should always be the 0th and 1st entry
     public Rigidbody2D[] ragdollParts;
     public GameObject ragdollArms;
 
@@ -20,22 +21,13 @@ public class Ragdolling : MonoBehaviour
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         controller = transform.GetComponent<CentralController>();
         deathSequence = transform.GetComponent<CentralDeathSequence>();
+
+        DisableRagdolling();
     }
 
-    void OnEnable()
-    {
-        deathSequence.UponDying += enableRagdolling;
-        deathSequence.RightBeforeRespawning += disableRagdolling;
-    }
-    void OnDisable()
-    {
-        deathSequence.UponDying -= enableRagdolling;
-        deathSequence.RightBeforeRespawning -= disableRagdolling;
-    }
-
-    // Disable ragdolling. allow animations to play (ex. walking), deactives the ragdoll arms,
-    // and makes all limbs no longer subject to physic forces and no longer able to collide with platforms.
-    private void disableRagdolling()
+    // Disable ragdolling. Allow animations to play and makes all limbs no longer subject
+    // to physic forces and no longer able to collide with platforms.
+    public void DisableRagdolling()
     {
         animator.SetInteger("ragdolling", 0);
         animator.enabled = true;
@@ -44,23 +36,23 @@ public class Ragdolling : MonoBehaviour
         foreach (Rigidbody2D rig in ragdollParts)
         {
             rig.isKinematic = true;
-            rig.gameObject.layer = Layer.ArmorOrLimb;
+            rig.gameObject.layer = Layer.Limb;
         }
 
         playerRig.isKinematic = false;
     }
 
-    private void enableRagdolling() => StartCoroutine(enable());
+    // Enables ragdolling: makes all limbs subject to physics forces and collidable with platforms.
+    public void EnableRagdolling() => StartCoroutine(enableRagdolling());
 
-
-    // Enable ragdolling. disables animations (ex. walking), deactivates the weapon
-    // plus current arms holding that weapon, and enables the ragdoll arms instead. Also 
-    // makes all the other limbs subject to physics forces and able to collide with platforms. 
-    private IEnumerator enable()
+    private IEnumerator enableRagdolling()
     {
+        Vector2 velocityBeforeDeath = playerRig.velocity;
         animator.SetInteger("ragdolling", 1);
-        yield return new WaitForSeconds(Time.deltaTime);
+        yield return null;
+
         animator.enabled = false;
+        ragdollArms.SetActive(true);
         playerRig.isKinematic = true;
 
         weaponSystem.CurrentWeaponConfiguration.PhysicalWeapon.SetActive(false);
@@ -69,16 +61,14 @@ public class Ragdolling : MonoBehaviour
 
         foreach (Rigidbody2D rig in ragdollParts)
         {
+            rig.velocity = Vector2.zero;
+            rig.gravityScale = CentralController.Gravity;
+            rig.gameObject.layer = Layer.LimbInRagdoll;
             rig.isKinematic = false;
-            rig.gameObject.layer = Layer.ArmorOrLimbInRagdoll;
-        }  
+            rig.velocity = velocityBeforeDeath;
+        }
 
-        ragdollArms.SetActive(true);
-        
-       // Sets the velocity of the ragdoll hip equal to the player's velocity b4 they died
-        ragdollParts[0].AddForce(playerRig.velocity * UnityEngine.Random.Range(120, 200));
-
-        if (controller.DirX != 0 && controller.isGrounded)
-            ragdollParts[7].AddTorque(-Mathf.Sign(playerRig.velocity.x) * UnityEngine.Random.Range(2, 5.4f) * 800f);
+        ragdollParts[0].AddTorque(velocityBeforeDeath.magnitude * Random.Range(-20f, 20f));
+        ragdollParts[1].AddTorque(velocityBeforeDeath.magnitude * Random.Range(-20f, 20f));
     }
 }

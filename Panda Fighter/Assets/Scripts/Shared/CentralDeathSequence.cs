@@ -15,10 +15,10 @@ public class CentralDeathSequence : MonoBehaviour
     public Action UponRespawning;
 
     private Side side;
-    private BoxCollider2D mainCollider;
     private CentralWeaponSystem weaponSystem;
     protected CentralController controller;
     protected CentralAbilityHandler abilityHandler;
+    protected Ragdolling ragdolling;
 
     void Awake()
     {
@@ -26,8 +26,7 @@ public class CentralDeathSequence : MonoBehaviour
         abilityHandler = transform.GetComponent<CentralAbilityHandler>();
         side = transform.parent.GetComponent<Role>().side;
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
-
-        mainCollider = transform.GetChild(0).GetComponent<BoxCollider2D>();
+        ragdolling = transform.GetComponent<Ragdolling>();
 
         respawnLocations = (side == Side.Friendly)
             ? transform.parent.parent.parent.GetComponent<References>().FriendRespawnPoints
@@ -54,13 +53,13 @@ public class CentralDeathSequence : MonoBehaviour
 
     protected virtual void uponDying()
     {
-        mainCollider.enabled = false;
+        ragdolling.EnableRagdolling();
         Stats.ConfirmDeathFor(transform.parent);
     }
 
     protected virtual void rightBeforeRespawning()
     {
-        mainCollider.enabled = true;
+        ragdolling.DisableRagdolling();
         weaponSystem.ResetInventory();
 
         Transform respawnLocation = respawnLocations.GetChild(

@@ -53,6 +53,8 @@ public class AI_Controller : CentralController
 
     protected override void Update()
     {
+        base.Update();
+
         // don't do anything if dead
         if (health.IsDead)
         {
@@ -65,8 +67,6 @@ public class AI_Controller : CentralController
 
             return;
         }
-
-        base.Update();
 
         // AI moves at max speed when not executing an action
         if (currAction == null)
