@@ -4,24 +4,21 @@ using UnityEngine;
 
 public class LookAround : CentralLookAround
 {
+    [SerializeField] private Transform bodyMidLine;
+
     protected override void figureOutDirectionToLookIn()
     {
         Vector3 weaponPivotPos = weaponSystem.CurrentWeaponConfiguration.WeaponPivot.position;
         directionToLook = (Input.mousePosition - camera.WorldToScreenPoint(weaponPivotPos)).normalized;
     }
 
-    protected override void updateDirectionCreatureFaces() 
+    // Note: the pivot (in this case the body) should be fixed regardless of which direction the creature faces
+    // this ensures body flickering won't occur when looking up with the mouse directly
+    protected override void updateDirectionBodyFaces()
     {
-        if (Input.mousePosition.x >= camera.WorldToScreenPoint(transform.position).x && body.localRotation.y != 0) 
-        {
+        if (Input.mousePosition.x >= camera.WorldToScreenPoint(bodyMidLine.position).x)
             body.localRotation = Quaternion.Euler(0, 0, 0);
-            controller.UpdateTiltInstantly();
-        }
-        else if (Input.mousePosition.x < camera.WorldToScreenPoint(transform.position).x && body.localRotation.y == 0) 
-        {
+        else
             body.localRotation = Quaternion.Euler(0, 180, 0);
-            controller.UpdateTiltInstantly();
-        }
     }
-
 }

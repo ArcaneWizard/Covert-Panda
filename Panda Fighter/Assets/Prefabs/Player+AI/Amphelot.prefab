@@ -3398,6 +3398,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   head: {fileID: 8025231702163390533}
   weaponPivot: {fileID: 2801544845104637914}
+  bodyMidLine: {fileID: 0}
 --- !u!114 &2732179973243828991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3476,13 +3477,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd8dd5d1d21584143a6dc73196b867dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootingArm: {fileID: 5458226237092584899}
-  mainCollider: {fileID: 8025231703266321965}
   oneWayCollider: {fileID: 7030806314310783155}
-  leftGroundChecker: {fileID: 8025231702874257865}
-  rightGroundChecker: {fileID: 8025231701959861733}
-  physicalLeftFoot: {fileID: 8025231701375706661}
-  physicalRightFoot: {fileID: 8025231702789707839}
+  somersaultCollider: {fileID: 0}
+  <shootingArm>k__BackingField: {fileID: 0}
+  <mainCollider>k__BackingField: {fileID: 0}
+  frontGroundRaycaster: {fileID: 0}
+  backGroundRaycaster: {fileID: 0}
 --- !u!50 &1982344294
 Rigidbody2D:
   serializedVersion: 4
@@ -14558,7 +14558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0b4f85c25124ca8b965325473bd212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbType: 6
+  limbType: 0
   limbSettings: {fileID: 0}
 --- !u!114 &8025231701712676165
 MonoBehaviour:

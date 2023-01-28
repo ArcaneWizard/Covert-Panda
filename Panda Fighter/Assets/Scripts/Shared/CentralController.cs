@@ -16,7 +16,7 @@ public abstract class CentralController : MonoBehaviour
     public bool recentlyJumpedOffGround {get; private set; }
     
     // Current direction of creature's movement (-1 = left, 0 = idle, 1 = right)
-    public int dirX { get; protected set; } 
+    public int DirX { get; protected set; } 
 
     // Important movement constants:
     public const float JumpForce = 1850f; 
@@ -25,25 +25,24 @@ public abstract class CentralController : MonoBehaviour
     public const float Gravity = 6.3f;
    
     [Header("Limbs and colliders")]
-    public Transform shootingArm;
-    public BoxCollider2D mainCollider;
-    public BoxCollider2D oneWayCollider;
+    [SerializeField] private BoxCollider2D oneWayCollider;
+    [SerializeField] private CircleCollider2D somersaultCollider;
+    [field: SerializeField] public Transform shootingArm { get; private set; }
+    [field: SerializeField] public BoxCollider2D mainCollider { get; private set; }
 
     [Header("Ground detection")]
-    public Transform leftGroundChecker;
-    public Transform rightGroundChecker;
-    public Transform physicalLeftFoot;
-    public Transform physicalRightFoot;
+    [SerializeField] private Transform frontGroundRaycaster;
+    [SerializeField] private Transform backGroundRaycaster;
 
     protected Rigidbody2D rig;
     protected Transform body;
-    public CentralPhaseTracker phaseTracker { get; private set; }
+    protected CentralPhaseTracker phaseTracker;
     protected Health health;
     protected CentralLookAround lookAround;
     protected Animator animator;
 
-    public const float MaxSpeed = 25f;
-    public const float MinSpeed = 17f;
+    public const float MaxSpeed = 22f;
+    public const float MinSpeed = 16f;
     protected float speed;
 
     // Info about the ground or walls detected:
@@ -66,8 +65,17 @@ public abstract class CentralController : MonoBehaviour
         health = transform.GetComponent<Health>();
 
         Side side = transform.parent.GetComponent<Role>().side;
+
+        // configuring colliders
+        oneWayCollider.gameObject.layer = Layer.OneWayCollider;
+        mainCollider.offset = new Vector2(0.05f, 1.45f);
+        mainCollider.size = new Vector2(1.1f, 3.77f);
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
-        mainCollider.offset = new Vector2(0, 1.45f);
+        somersaultCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
+
+        mainCollider.enabled = true;
+        oneWayCollider.enabled = true;
+        somersaultCollider.enabled = false;
 
         speed = MaxSpeed;
     }
@@ -89,12 +97,27 @@ public abstract class CentralController : MonoBehaviour
         StartCoroutine(repeatedlyCheckIfGrounded());
     }
 
+    protected virtual void Update()
+    {
+        adjustCollidersAndDetectors();
+    }
+
     protected virtual void LateUpdate() 
     {
         if (health.IsDead)
             return;
 
         updateTilt();
+    }
+
+    protected virtual void FixedUpdate()
+    {
+        if (health.IsDead)
+            return;
+
+        oneWayCollider.enabled = rig.velocity.y < 0.1f;
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        body.position = new Vector3(body.position.x, body.position.y, 0);
     }
 
     // Update the creature's body tilt depending on the ground angle
@@ -110,7 +133,7 @@ public abstract class CentralController : MonoBehaviour
 
         float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.9f : ((groundAngle - 360) / 1.9f);
 
-        if (isGrounded && (dirX != 0 || (dirX == 0 && groundAngle == lastGroundAngle)))
+        if (isGrounded && (DirX != 0 || (DirX == 0 && groundAngle == lastGroundAngle)))
         {
             if (Mathf.Abs(groundAngle - transform.eulerAngles.z) > 0.5f)
                 transform.eulerAngles = new Vector3(0, 0, zAngle + (newGroundAngle - zAngle) * 20 * Time.deltaTime);
@@ -131,21 +154,24 @@ public abstract class CentralController : MonoBehaviour
     // update the ground angle
     private void updateGroundAngle() 
     {
-        // use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
-        leftGroundHit = Physics2D.Raycast(leftGroundChecker.position, Vector2.down, 2f, LayerMasks.map);
-        if (leftGroundHit.collider != null)
-            leftGroundHit = Physics2D.Raycast(leftGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, LayerMasks.map);
+        if (health.IsDead)
+            return;
 
-        rightGroundHit = Physics2D.Raycast(rightGroundChecker.position, Vector2.down, 2f, LayerMasks.map);
+        // use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
+        leftGroundHit = Physics2D.Raycast(frontGroundRaycaster.position, Vector2.down, 2f, LayerMasks.map);
+        if (leftGroundHit.collider != null)
+            leftGroundHit = Physics2D.Raycast(frontGroundRaycaster.position + 3 * Vector3.up, Vector2.down, 5f, LayerMasks.map);
+
+        rightGroundHit = Physics2D.Raycast(backGroundRaycaster.position, Vector2.down, 2f, LayerMasks.map);
         if (rightGroundHit.collider != null)
-            rightGroundHit = Physics2D.Raycast(rightGroundChecker.position + 3 * Vector3.up, Vector2.down, 5f, LayerMasks.map);
+            rightGroundHit = Physics2D.Raycast(backGroundRaycaster.position + 3 * Vector3.up, Vector2.down, 5f, LayerMasks.map);
 
         leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
         rightFootGround = (rightGroundHit.collider != null && rightGroundHit.normal.y >= 0.3f) ? rightGroundHit.collider.gameObject : null;
 
         // if the creature was just grounded after falling OR the player been moving on the ground, enable this bool (used later to prevent bug)
         bool checkForAngle = false;
-        if ((!isGrounded || dirX != 0) && (leftFootGround || rightFootGround))
+        if ((!isGrounded || DirX != 0) && (leftFootGround || rightFootGround))
             checkForAngle = true;
 
         // determine if creature is grounded if either foot raycast hit the ground
@@ -156,7 +182,7 @@ public abstract class CentralController : MonoBehaviour
         if (isGrounded)
         {
             // moving right while facing right or moving left while facing left -> use "right foot" gameobject
-            if (((dirX == 1 && body.localEulerAngles.y == 0) || (dirX == -1 && body.localEulerAngles.y == 180)) && rightFootGround)
+            if (((DirX == 1 && body.localEulerAngles.y == 0) || (DirX == -1 && body.localEulerAngles.y == 180)) && rightFootGround)
             {
                 groundSlope = new Vector2(rightGroundHit.normal.y, -rightGroundHit.normal.x);
                 float f = groundSlope.y / groundSlope.x;
@@ -164,7 +190,7 @@ public abstract class CentralController : MonoBehaviour
             }
 
             // moving left while facing right or moving right facing left -> use "left foot" gameobject
-            else if (((dirX == -1 && body.localEulerAngles.y == 0) || (dirX == 1 && body.localEulerAngles.y == 180)) && leftFootGround)
+            else if (((DirX == -1 && body.localEulerAngles.y == 0) || (DirX == 1 && body.localEulerAngles.y == 180)) && leftFootGround)
             {
                 groundSlope = new Vector2(leftGroundHit.normal.y, -leftGroundHit.normal.x);
                 float f = groundSlope.y / groundSlope.x;
@@ -209,23 +235,26 @@ public abstract class CentralController : MonoBehaviour
 
     private IEnumerator performWallChecks()
     {
+        while (health.IsDead)
+            yield return null;
+
         if (body.localEulerAngles.y == 0)
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(leftGroundChecker.position, -groundSlope, 2f, LayerMasks.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(frontGroundRaycaster.position, -groundSlope, 2f, LayerMasks.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(rightGroundChecker.position, groundSlope, 2f, LayerMasks.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(backGroundRaycaster.position, groundSlope, 2f, LayerMasks.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
         else
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(rightGroundChecker.position, -groundSlope, 2f, LayerMasks.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(backGroundRaycaster.position, -groundSlope, 2f, LayerMasks.map);
             wallToTheLeft = (leftWallHit.collider != null && leftWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * -groundDir, Color.blue, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(leftGroundChecker.position, groundSlope, 2f, LayerMasks.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(frontGroundRaycaster.position, groundSlope, 2f, LayerMasks.map);
             wallToTheRight = (rightWallHit.collider != null && rightWallHit.normal.y < 0.3f) ? true : false;
             //Debug.DrawRay(leftGroundChecker.position, 2 * groundDir, Color.red, 2f);
         }
@@ -281,13 +310,6 @@ public abstract class CentralController : MonoBehaviour
             isTouchingMap = false;
     }
 
-    protected virtual void FixedUpdate()
-    {
-        oneWayCollider.enabled = rig.velocity.y < 0.1f;
-        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        body.position = new Vector3(body.position.x, body.position.y, 0);
-    }
-
     private IEnumerator updateRecentlyJumpingOffGround()
     {
         recentlyJumpedOffGround = true;
@@ -295,4 +317,24 @@ public abstract class CentralController : MonoBehaviour
         recentlyJumpedOffGround = false;
     }
 
+    // Adjust creature's colliders and ground detectors as required 
+    protected void adjustCollidersAndDetectors()
+    {
+        // if creature is mid-air, bring ground raycasters closer to creature's centerline
+        frontGroundRaycaster.localPosition = (!phaseTracker.IsMidAir)
+        ? new Vector3(-0.167f, frontGroundRaycaster.localPosition.y, 0)
+        : new Vector3(-0.167f, frontGroundRaycaster.localPosition.y, 0);
+
+        backGroundRaycaster.localPosition = (!phaseTracker.IsMidAir)
+        ? new Vector3(0.6f, backGroundRaycaster.localPosition.y, 0)
+        : new Vector3(0.27f, backGroundRaycaster.localPosition.y, 0);
+
+        // if creature is mid-air, main collider becomes thinner 
+        float x = phaseTracker.IsMidAir ? 0.68f : 1.1f;
+        mainCollider.size = new Vector2(x, mainCollider.size.y);
+
+        // creature's collider depends on it's current phase
+        mainCollider.enabled = !phaseTracker.IsSomersaulting;
+        somersaultCollider.enabled = phaseTracker.IsSomersaulting;
+    }
 }

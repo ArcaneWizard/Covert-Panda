@@ -8,7 +8,6 @@ public class Ragdolling : MonoBehaviour
     public GameObject ragdollArms;
 
     private Rigidbody2D playerRig;
-    private Collider2D mainCollider;
     private Animator animator;
     private CentralWeaponSystem weaponSystem;
     private CentralController controller;
@@ -17,7 +16,6 @@ public class Ragdolling : MonoBehaviour
     private void Awake()
     {
         animator = transform.GetChild(0).GetComponent<Animator>();
-        mainCollider = transform.GetChild(0).GetComponent<Collider2D>();
         playerRig = transform.GetComponent<Rigidbody2D>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         controller = transform.GetComponent<CentralController>();
@@ -26,13 +24,13 @@ public class Ragdolling : MonoBehaviour
 
     void OnEnable()
     {
-        deathSequence.ActionsTriggeredImmediatelyUponDeath += enableRagdolling;
-        deathSequence.ActionsTriggeredWhenRespawning += disableRagdolling;
+        deathSequence.UponDying += enableRagdolling;
+        deathSequence.RightBeforeRespawning += disableRagdolling;
     }
     void OnDisable()
     {
-        deathSequence.ActionsTriggeredImmediatelyUponDeath -= enableRagdolling;
-        deathSequence.ActionsTriggeredWhenRespawning -= disableRagdolling;
+        deathSequence.UponDying -= enableRagdolling;
+        deathSequence.RightBeforeRespawning -= disableRagdolling;
     }
 
     // Disable ragdolling. allow animations to play (ex. walking), deactives the ragdoll arms,
@@ -80,7 +78,7 @@ public class Ragdolling : MonoBehaviour
        // Sets the velocity of the ragdoll hip equal to the player's velocity b4 they died
         ragdollParts[0].AddForce(playerRig.velocity * UnityEngine.Random.Range(120, 200));
 
-        if (controller.dirX != 0 && controller.isGrounded)
+        if (controller.DirX != 0 && controller.isGrounded)
             ragdollParts[7].AddTorque(-Mathf.Sign(playerRig.velocity.x) * UnityEngine.Random.Range(2, 5.4f) * 800f);
     }
 }

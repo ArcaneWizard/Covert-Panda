@@ -7,49 +7,80 @@ public class AI_LookAround : CentralLookAround
     private Side side;  
 
     public GameObject EnemySpotted { get; private set; }
-    private float randomizeLookingAround;
+
+    // random value for setting up perlin noise
+    private float random;
+
+    // whether or not the creature looks backwards 
+    private bool lookBackwards; 
+
+    // the most recent direction the creature headed in when it was moving (left = -1, right = 1)
+    private int lastKnownDirX;
 
     protected override void Awake()
     {
         base.Awake();
         side = transform.parent.GetComponent<Role>().side;
-        randomizeLookingAround = Random.Range(0f, 10f);
+
+        resetUponSpawning();
+        deathSequence.RightBeforeRespawning += resetUponSpawning;
 
         StartCoroutine(scanForNearbyEnemies());
+        StartCoroutine(sometimesLookBackwards());
     }
 
+    private void resetUponSpawning()
+    {
+        random = Random.Range(0f, 10f);
+        lookBackwards = false;
+        lastKnownDirX = -1 + Random.Range(0, 2) * 2; // either -1 or 1
+    }  
+    
+    // Sets the direction the AI should look in. If an enemy has been spotted, the direction to look in
+    // is the vector from the AI's shoulder to said enemy. If no enemy is spotted, the AI looks around randomly
+    // to give the appearance of scanning the environment 
     protected override void figureOutDirectionToLookIn() 
     {
-        // if an enemy has been spotted, the direction this AI looks is the vector from the weapon to the enemy 
-        if (EnemySpotted) 
-            directionToLook = EnemySpotted.transform.position - weaponPivot.position; 
-
-        // otherwise the direction this AI looks varies randomly to give the appearance of scanning the environment 
-        else if (controller.isGrounded && controller.isTouchingMap) 
+        if (EnemySpotted)
         {
-            // favor looking up slightly more than looking down
+            directionToLook = EnemySpotted.transform.position - weaponPivot.position;
+            lookBackwards = false;
+        }
+
+        else if (controller.isGrounded && controller.isTouchingMap)
+        {
+            // favor looking up more than looking down
             directionToLook = new Vector2(
-                Mathf.PerlinNoise(Time.time/2f, randomizeLookingAround/2f) * 2f - 1f, 
-                Mathf.PerlinNoise(Time.time/2f, randomizeLookingAround) * 2f - 0.96f
+                Mathf.PerlinNoise(Time.time / 2f, random / 2f) * 2f - 1f,
+                Mathf.PerlinNoise(Time.time / 2f, random) * 2f - 0.96f
             );
 
             // favor looking to the side more than looking up/down
-            if (Mathf.Abs(directionToLook.x) < 0.45f) 
+            if (Mathf.Abs(directionToLook.x) < 0.45f)
                 directionToLook = new Vector2(Mathf.Sign(directionToLook.x) * 0.45f, directionToLook.y);
+
+            // decide whether AI looks left/right depending on the direction they are moving in
+            int dirX = (controller.DirX != 0) ? controller.DirX : lastKnownDirX;
+            int sign = dirX * (lookBackwards ? -1 : 1);
+            directionToLook = new Vector2(sign * Mathf.Abs(directionToLook.x), directionToLook.y);
         }
+
+        directionToLook = directionToLook.normalized;
+
+        if (controller.DirX != 0)
+            lastKnownDirX = controller.DirX;
     }
 
-    // AI creature faces direction of enemy spotted, of direction of movement if no enemy is spotted
-    protected override void updateDirectionCreatureFaces() 
+    // updates the direction the creature's body faces
+    protected override void updateDirectionBodyFaces()
     {
-        if (EnemySpotted)
-            body.localRotation = (directionToLook.x > 0) ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 180, 0);
-        else if (controller.dirX >= 0)
+        if (directionToLook.x >= 0)
             body.localRotation = Quaternion.Euler(0, 0, 0);
         else
             body.localRotation = Quaternion.Euler(0, 180, 0);
     }
 
+    // updates the Enemy Spotted GameObject if an enemy creature is spotted in the AI's vision to shoot at
     private IEnumerator scanForNearbyEnemies()
     {
         yield return new WaitForSeconds(0.3f);
@@ -84,6 +115,22 @@ public class AI_LookAround : CentralLookAround
         }
 
         StartCoroutine(scanForNearbyEnemies());
+    }
+
+    // Decide whether the creature should look backwards (relative to movement) or not
+    private IEnumerator sometimesLookBackwards()
+    {
+        yield return new WaitForSeconds(Random.Range(3f, 5f));
+
+        // 10% chance the creature looks backwards when an enemy isn't spotted
+        if (!EnemySpotted && Random.Range(0, 100) < 10)
+        {
+            lookBackwards = true;
+            yield return new WaitForSeconds(Random.Range(2f, 6f));
+        }
+
+        lookBackwards = false;
+        StartCoroutine(sometimesLookBackwards());
     }
 
     private float sqrDistance(Vector2 a, Vector2 b) 

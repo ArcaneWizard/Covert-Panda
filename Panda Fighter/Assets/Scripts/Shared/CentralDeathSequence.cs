@@ -10,9 +10,9 @@ public class CentralDeathSequence : MonoBehaviour
     protected const float respawnTime = 4.22f;
     private Transform respawnLocations;
 
-    public Action ActionsTriggeredImmediatelyUponDeath;
-    public Action ActionsTriggeredWhenRespawning;
-    public Action ActionsTriggeredAfterRespawning;
+    public Action UponDying;
+    public Action RightBeforeRespawning;
+    public Action UponRespawning;
 
     private Side side;
     private BoxCollider2D mainCollider;
@@ -40,25 +40,25 @@ public class CentralDeathSequence : MonoBehaviour
     // 3) Actions after the player has respawned on the map
     public IEnumerator Initiate()
     {
-        actionsTriggeredImmediatelyUponDeath();
-        ActionsTriggeredImmediatelyUponDeath?.Invoke();
+        uponDying();
+        UponDying?.Invoke();
 
         yield return new WaitForSeconds(respawnTime);
-        ActionsTriggeredWhenRespawning?.Invoke();
-        actionsTriggeredWhenRespawning();
+        RightBeforeRespawning?.Invoke();
+        rightBeforeRespawning();
 
         yield return new WaitForSeconds(Time.deltaTime);
-        ActionsTriggeredAfterRespawning?.Invoke();
-        actionsTriggeredAfterRespawning();
+        UponRespawning?.Invoke();
+        uponRespawning();
     }
 
-    protected virtual void actionsTriggeredImmediatelyUponDeath()
+    protected virtual void uponDying()
     {
         mainCollider.enabled = false;
         Stats.ConfirmDeathFor(transform.parent);
     }
 
-    protected virtual void actionsTriggeredWhenRespawning()
+    protected virtual void rightBeforeRespawning()
     {
         mainCollider.enabled = true;
         weaponSystem.ResetInventory();
@@ -71,7 +71,7 @@ public class CentralDeathSequence : MonoBehaviour
         controller.UpdateTiltInstantly();
     }
 
-    protected virtual void actionsTriggeredAfterRespawning()
+    protected virtual void uponRespawning()
     {
         StartCoroutine(abilityHandler.EnableSpawnProtection());
     }

@@ -13,6 +13,7 @@ public class NormalJumpAction : AIAction
     public override void Begin(AI_Controller controller)
     {
         base.Begin(controller);
+
         executeCoroutine(normalJump());
         hasJumped = false;
     }
@@ -28,11 +29,11 @@ public class NormalJumpAction : AIAction
 
     private IEnumerator normalJump()
     {
-        float randomXPos = UnityEngine.Random.Range(Info.JumpBounds.x, Info.JumpBounds.y);
+        float randomXPos = UnityEngine.Random.Range(Info.Bounds.x, Info.Bounds.y);
         DirX = Math.Sign(randomXPos - creature.position.x);
         Speed = CentralController.MaxSpeed;
 
-        while ((controller.dirX == 1 && creature.position.x < randomXPos) || (controller.dirX == -1 && creature.position.x > randomXPos))
+        while ((DirX == 1 && creature.position.x < randomXPos) || (DirX == -1 && creature.position.x > randomXPos))
             yield return null;
 
         DirX = Info.DirX;

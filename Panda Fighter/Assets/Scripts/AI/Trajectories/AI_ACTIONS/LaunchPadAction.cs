@@ -29,11 +29,11 @@ public class LaunchPadAction : AIAction
 
     private IEnumerator launchPadBoost()
     {
-        float randomXPos = UnityEngine.Random.Range(Info.JumpBounds.x, Info.JumpBounds.y);
+        float randomXPos = UnityEngine.Random.Range(Info.Bounds.x, Info.Bounds.y);
         DirX = Math.Sign(randomXPos - creature.position.x);
         Speed = CentralController.MaxSpeed;
 
-        while ((controller.dirX == 1 && creature.position.x < randomXPos) || (controller.dirX == -1 && creature.position.x > randomXPos))
+        while ((DirX == 1 && creature.position.x < randomXPos) || (DirX == -1 && creature.position.x > randomXPos))
             yield return null;
 
         DirX = Info.DirX;

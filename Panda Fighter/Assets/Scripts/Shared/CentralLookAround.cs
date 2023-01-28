@@ -9,7 +9,9 @@ using UnityEngine;
 public abstract class CentralLookAround : MonoBehaviour
 {
     public Vector2 directionToLook { get; protected set; }
-    public bool IsLookingRight() => directionToLook.x >= 0;
+    public bool IsLookingRight => directionToLook.x >= 0;
+    protected abstract void figureOutDirectionToLookIn();
+    protected abstract void updateDirectionBodyFaces();
 
     // IK coordinates for main arm when looking up, down or to the side
     private float upVector, downVector, rightVector;
@@ -31,17 +33,16 @@ public abstract class CentralLookAround : MonoBehaviour
     protected CentralController controller;
     protected CentralShooting shooting;
     protected CentralWeaponSystem weaponSystem;
+    protected CentralDeathSequence deathSequence;
     protected Health health;
     protected Animator animator;
-
-    protected abstract void figureOutDirectionToLookIn();
-    protected abstract void updateDirectionCreatureFaces();
     
     protected virtual void Awake()
     {
         controller = transform.GetComponent<CentralController>();
         phaseTracker = transform.GetComponent<CentralPhaseTracker>();
         shooting = transform.GetComponent<CentralShooting>();
+        deathSequence = transform.GetComponent<CentralDeathSequence>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         health = transform.GetComponent<Health>();
         body = transform.GetChild(0);
@@ -101,7 +102,7 @@ public abstract class CentralLookAround : MonoBehaviour
             return;
         
         figureOutDirectionToLookIn();
-        updateDirectionCreatureFaces();
+        updateDirectionBodyFaces();
         updateHeadMovementAndArmPosition();
     }
 

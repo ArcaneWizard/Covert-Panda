@@ -75,7 +75,7 @@ public class AI_WanderAround : MonoBehaviour
                     if (trajectoryPath == null)
                         continue;
 
-                    if (trajectoryPath.ConvertToAction().DirX == controller.dirX)
+                    if (trajectoryPath.ConvertToAction().DirX == controller.DirX)
                     {
                         for (int i = 0; i < trajectoryPath.considerationWeight; i++)
                             AI_ACTIONS.Add(trajectoryPath.ConvertToAction());

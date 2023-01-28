@@ -45,9 +45,6 @@ public class AIAction
         creature = controller.transform;
         phaseTracker = creature.GetComponent<CentralPhaseTracker>();
 
-        Speed = CentralController.MaxSpeed;
-        DirX = Info.DirX;
-
         ExecuteNormalJumpNow = false;
         ExecuteDoubleJumpNow = false;
         ExecuteJumpBoostNow = false;

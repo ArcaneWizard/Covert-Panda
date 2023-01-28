@@ -35,16 +35,8 @@ public class CentralPhaseTracker : MonoBehaviour
         health = transform.GetComponent<Health>();
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
-        Side side = transform.parent.GetComponent<Role>().side;
-
-        // colliders
-        doubleJumpCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
-        doubleJumpCollider.enabled = false;
-        controller.mainCollider.enabled = true;
-
         // somersault handler
-        somersaultHandler = new Somersault(transform, this, controller.mainCollider, doubleJumpCollider, 
-            animator, controller);
+        somersaultHandler = new Somersault(transform, this, animator, controller);
         somersaultHandler.Reset();
 
         // setup animation clip overrides so different jump animations, falling animations, etc. can be used
@@ -53,15 +45,6 @@ public class CentralPhaseTracker : MonoBehaviour
 
         clipOverrides = new AnimationClipOverrides(animatorOverrideController.overridesCount);
         animatorOverrideController.GetOverrides(clipOverrides);
-    }
-
-    void Update() 
-    {
-        if (health.IsDead)
-            return;
-
-        adjustCollidersAndDetectors(controller.leftGroundChecker, controller.rightGroundChecker, 
-            controller.mainCollider);
     }
 
     // returns whether or not the creature is in a specific phase 
@@ -74,7 +57,7 @@ public class CentralPhaseTracker : MonoBehaviour
     public void EnterJumpPhase()
     {
         // if creature is still, use the default idle jump animation. else use any
-        if (controller.dirX == 0)
+        if (controller.DirX == 0)
             clipOverrides["jumping"] = jumpClips[0];
         else
             clipOverrides["jumping"] = jumpClips[Random.Range(0, jumpClips.Length)];
@@ -107,7 +90,7 @@ public class CentralPhaseTracker : MonoBehaviour
         
         // the creature is idle or running if it's grounded and hasn't jumped recently
         if (controller.isGrounded && !controller.recentlyJumpedOffGround)
-            setPhase((controller.dirX == 0) ? Phase.Idle : Phase.Running);
+            setPhase((controller.DirX == 0) ? Phase.Idle : Phase.Running);
 
         // else the creature is falling if a mid-air phase (falling, jumping, double jumping) hasn't been set yet
         else if (!IsMidAir)
@@ -117,36 +100,14 @@ public class CentralPhaseTracker : MonoBehaviour
         // whether the creature runs forwards or backwards 
         if (Is(Phase.Running))
         {
-            if ((controller.dirX == 1 && lookAround.IsLookingRight()) 
-                || controller.dirX == -1 && !lookAround.IsLookingRight())
+            if ((controller.DirX == 1 && lookAround.IsLookingRight) 
+                || controller.DirX == -1 && !lookAround.IsLookingRight)
                 animator.SetBool("walking forwards", true);
-            else if (controller.dirX != 0)
+            else if (controller.DirX != 0)
                 animator.SetBool("walking forwards", false);
         }
 
         // creature does a somersault during double jumps
         somersaultHandler.Tick();
-    }
-
-    // Adjust creature's colliders and ground detectors as required 
-    protected void adjustCollidersAndDetectors(Transform frontGroundRaycaster, 
-        Transform backGroundRaycaster, BoxCollider2D mainCollider) 
-    {
-        // if creature is mid-air, bring ground raycasters closer to creature's centerline
-        frontGroundRaycaster.localPosition = (!IsMidAir)
-        ? new Vector3(-0.124f, frontGroundRaycaster.localPosition.y, 0)
-        : new Vector3(-0.124f, frontGroundRaycaster.localPosition.y, 0);
-
-        backGroundRaycaster.localPosition = (!IsMidAir)
-        ? new Vector3(0.365f, backGroundRaycaster.localPosition.y, 0)
-        : new Vector3(0.365f, backGroundRaycaster.localPosition.y, 0);
-
-        // if creature is mid-air, main collider becomes thinner 
-        float x = IsMidAir ? 0.68f : 1f;
-        mainCollider.size = new Vector2(x, mainCollider.size.y);
-
-        // creature's collider depends on it's current phase
-        mainCollider.enabled = !IsSomersaulting;
-        doubleJumpCollider.enabled = IsSomersaulting;
     }
 }

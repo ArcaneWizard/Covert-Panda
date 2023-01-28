@@ -17,18 +17,14 @@ public class Somersault
     private Transform body;
     private CentralController controller;
     private CentralPhaseTracker phaseTracker;
-    private Collider2D mainCollider;
-    private Collider2D somersaultCollider;
     private Animator animator;
 
-    public Somersault(Transform transform, CentralPhaseTracker phaseTracker, Collider2D mainCollider,
-        Collider2D somersaultCollider, Animator animator, CentralController controller) 
+    public Somersault(Transform transform, CentralPhaseTracker phaseTracker, 
+        Animator animator, CentralController controller) 
     {
         this.transform = transform;
         this.body = transform.GetChild(0);
         this.phaseTracker = phaseTracker;
-        this.mainCollider = mainCollider;
-        this.somersaultCollider = somersaultCollider;
         this.animator = animator;
         this.controller = controller;
     }
@@ -41,17 +37,14 @@ public class Somersault
     public IEnumerator Begin()
     {
         // setup 
-        somersaultDirection = controller.dirX != 0 ? -controller.dirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
+        somersaultDirection = controller.DirX != 0 ? -controller.DirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
 
-        if (controller.dirX == -1 && body.localEulerAngles.y == 0)
+        if (controller.DirX == -1 && body.localEulerAngles.y == 0)
             animator.SetBool("somersault forwards", false);
-        else if (controller.dirX == 1 && body.localEulerAngles.y == 180)
+        else if (controller.DirX == 1 && body.localEulerAngles.y == 180)
             animator.SetBool("somersault forwards", false);
         else
             animator.SetBool("somersault forwards", true);
-
-        mainCollider.enabled = false;
-        somersaultCollider.enabled = true;
 
         // start somersault
         state = SomersaultState.Started;
@@ -111,8 +104,6 @@ public class Somersault
 
         if (Mathf.Abs(z - 360) < 2 || Mathf.Abs(z) < 2)
         {
-            somersaultCollider.enabled = false;
-            mainCollider.enabled = true;
             state = SomersaultState.Exited;
             transform.localEulerAngles = new Vector3(0f, 0f, 0f);
         }

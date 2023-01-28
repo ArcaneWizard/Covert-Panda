@@ -5,16 +5,16 @@ public class DeathSequence : CentralDeathSequence
     public RespawningText respawnText;
     public GameObject inventory;
 
-    protected override void actionsTriggeredImmediatelyUponDeath()
+    protected override void uponDying()
     {
-        base.actionsTriggeredImmediatelyUponDeath();
+        base.uponDying();
         inventory.SetActive(false);
         respawnText.StartRespawnCountdown(respawnTime);
     }
 
-    protected override void actionsTriggeredWhenRespawning()
+    protected override void rightBeforeRespawning()
     {
         inventory.SetActive(true);
-        base.actionsTriggeredWhenRespawning();
+        base.rightBeforeRespawning();
     }
 }

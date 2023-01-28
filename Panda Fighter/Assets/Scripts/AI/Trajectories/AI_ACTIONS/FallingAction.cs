@@ -15,7 +15,7 @@ public class FallingAction : AIAction
         base.Begin(controller);
 
         DirX = Info.DirX;
-        Speed = getRandomSpeed(Info.Speed);
+        Speed = CentralController.MaxSpeed;
         hasFallen = false;
     }
 
@@ -33,6 +33,9 @@ public class FallingAction : AIAction
 
     private IEnumerator fall()
     {
+        DirX = Info.DirX;
+        Speed = getRandomSpeed(Info.Speed);
+
         yield return new WaitForSeconds(UnityEngine.Random.Range(Info.TimeB4Change.x, Info.TimeB4Change.y));
 
         float randomSpeed = getRandomSpeed(Info.ChangedSpeed);

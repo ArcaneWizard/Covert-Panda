@@ -22,7 +22,6 @@ public class TrajectoryPath : MonoBehaviour
     private float gravity;
 
     [Header("Other Settings")]
-    public Vector2 jumpBounds = new Vector2(-1f, -1f);
     public Vector2 Bounds = new Vector2(-1f, -1f);
     public int considerationWeight = 1;
     public float lingerTime = 3f;
@@ -47,7 +46,7 @@ public class TrajectoryPath : MonoBehaviour
         {
             transform.name = "Change Directions";
             drawStraightLine();
-            showGizmoJumpBounds();
+            showGizmoBounds();
         }
 
         else if (ActionType == AIActionType.Falling)
@@ -63,7 +62,7 @@ public class TrajectoryPath : MonoBehaviour
         {
             transform.name = "Launch Pad";
             drawJumpPadArc();
-            showGizmoJumpBounds();
+            showGizmoBounds();
         }
 
         else if (ActionType == AIActionType.DoubleJump)
@@ -85,7 +84,7 @@ public class TrajectoryPath : MonoBehaviour
             drawDoubleJump(speedRange.y, timeB4Change.x, changedSpeed.y);
             colorIndex = 4;
             drawDoubleJump(speedRange.y, timeB4Change.y, changedSpeed.y);
-            showGizmoJumpBounds();
+            showGizmoBounds();
         }
 
         else if (ActionType == AIActionType.NormalJump)
@@ -99,7 +98,7 @@ public class TrajectoryPath : MonoBehaviour
             drawNormalJump(speedRange.x, changedSpeed.y);
             colorIndex = 1;
             drawNormalJump(speedRange.y, changedSpeed.y);
-            showGizmoJumpBounds();
+            showGizmoBounds();
         }
 
         else
@@ -151,17 +150,17 @@ public class TrajectoryPath : MonoBehaviour
 
     // Stores all of this trajectory's info in a form that the AI could execute
     private AIActionInfo actionInfo => new AIActionInfo(dirX,
-            speedRange, timeB4Change, changedSpeed, timeB4SecondChange, secondChangedSpeed, jumpBounds, transform.position);
+            speedRange, timeB4Change, changedSpeed, timeB4SecondChange, secondChangedSpeed, Bounds, transform.position);
 
     // draw spheres on jump bounds in the scene editor
-    private void showGizmoJumpBounds()
+    private void showGizmoBounds()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawSphere(transform.position + new Vector3(jumpBounds.x,
-            transform.right.y / transform.right.x * jumpBounds.x, 0), 0.3f);
+        Gizmos.DrawSphere(transform.position + new Vector3(Bounds.x,
+            transform.right.y / transform.right.x * Bounds.x, 0), 0.3f);
         Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(transform.position + new Vector3(jumpBounds.y,
-            transform.right.y / transform.right.x * jumpBounds.y, 0), 0.3f);
+        Gizmos.DrawSphere(transform.position + new Vector3(Bounds.y,
+            transform.right.y / transform.right.x * Bounds.y, 0), 0.3f);
     }
 
     //----------------------------------------------------------------------------------------------------------------
@@ -173,7 +172,7 @@ public class TrajectoryPath : MonoBehaviour
     {
         gravity = 0;
 
-        float yVelocity = transform.parent.right.y / transform.parent.right.x * (float)dirX * speedRange.x;
+        float yVelocity = transform.right.y / transform.right.x * (float)dirX * speedRange.x;
         VerticalInfo v = new VerticalInfo(transform.position.y, 0, yVelocity, 0);
 
         drawTrajectory(5f, new Info(transform.position, 0.8f, speedRange.x, v));

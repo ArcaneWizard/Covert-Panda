@@ -12,7 +12,7 @@ public class Controller : CentralController
     private bool standingOnJumpPad;
     private bool canThrustDown;
 
-    void Update()
+    protected override void Update()
     {
         if (health.IsDead) 
         {
@@ -21,15 +21,14 @@ public class Controller : CentralController
             return;
         }
 
+        base.Update();
+
         //use A and D keys for left or right movement
-        dirX = 0;
+        DirX = 0;
         if (Input.GetKey(KeyCode.D)) 
-            dirX++;
+            DirX++;
         if (Input.GetKey(KeyCode.A)) 
-            dirX--;
-        
-        //always move left/right for at least a full step instead of jittering after quick button taps
-       // takeFullStep();
+            DirX--;
 
         //use W and S keys for jumping up or thrusting downwards + allow double jump
         if (Input.GetKeyDown(KeyCode.W)) 
@@ -64,22 +63,22 @@ public class Controller : CentralController
         if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
         {
             //no x velocity when running into a wall to avoid bounce/fall glitch
-            if (dirX == 1 && wallToTheRight)
+            if (DirX == 1 && wallToTheRight)
                 rig.velocity = new Vector2(0, 0);
 
             //no x velocity when running into a wall to avoid bounce/fall glitch
-            else if (dirX == -1 && wallToTheLeft)
+            else if (DirX == -1 && wallToTheLeft)
                 rig.velocity = new Vector2(0, 0);
 
             //player velocity is parallel to the slanted ground
             else 
             {
                 float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
-                rig.velocity = groundSlope * speed * dirX * speedMultiplier;
+                rig.velocity = groundSlope * speed * DirX * speedMultiplier;
             }
 
             //don't slip on steep slopes
-            rig.gravityScale = (dirX == 0) ? 0f : Gravity;
+            rig.gravityScale = (DirX == 0) ? 0f : Gravity;
 
             //allow player to thrust themselves downwards the next time they jump
             canThrustDown = true;
@@ -89,16 +88,16 @@ public class Controller : CentralController
         else
         {
             //no x velocity when running into a wall mid-air to avoid clipping glitch
-            if (dirX == 1 && wallToTheRight)
+            if (DirX == 1 && wallToTheRight)
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             //no x velocity when running into a wall mid-air to avoid clipping glitch
-            else if (dirX == -1 && wallToTheLeft)
+            else if (DirX == -1 && wallToTheLeft)
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             //player velocity is just left or right (with gravity pulling the player down)
             else
-                rig.velocity = new Vector2(speed * dirX, rig.velocity.y);
+                rig.velocity = new Vector2(speed * DirX, rig.velocity.y);
 
             rig.gravityScale = Gravity;
         }
@@ -109,17 +108,17 @@ public class Controller : CentralController
     {
         // when the player suddenly chooses to head left or right and this is different from their last input (idle or diff direction),
         // update that the player needs to walk some minimum distance and set the last input to be the current input
-        if (dirX != 0 && lastDirX != dirX)  {
+        if (DirX != 0 && lastDirX != DirX)  {
             StartCoroutine(waitForStepToComplete());
-            lastDirX = dirX;
+            lastDirX = DirX;
         }
 
         // as long as the player needs to walk some minimum distance, force the direction of movement to be to the last input they gave
         if (needToWalkMinimumDistance) 
-            dirX = lastDirX;
+            DirX = lastDirX;
         
         // otherwise reset the last input to be not moving
-        else if (dirX == 0)
+        else if (DirX == 0)
             lastDirX = 0;
     }
 

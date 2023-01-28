@@ -88,7 +88,6 @@ public static class WeaponAction
     // spawns in a new greande that is still (doesn't thorw it)
     public static Transform SpawnGrenade(Vector2 aim, CentralGrenadeSystem grenadeSystem,
         WeaponConfiguration configuration, Side side, bool isBulletSticky)
-
     {
         Transform grenade = grenadeSystem.UseOneGrenade();
         Rigidbody2D grenadeRig = grenade.GetComponent<Rigidbody2D>();

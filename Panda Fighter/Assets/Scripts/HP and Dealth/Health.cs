@@ -110,14 +110,14 @@ public abstract class Health : MonoBehaviour
 
     void OnEnable()
     {
-        deathSequence.ActionsTriggeredWhenRespawning += resetHealthWhenRespawning;
-        deathSequence.ActionsTriggeredAfterRespawning += enableHealthBar;
+        deathSequence.RightBeforeRespawning += resetHealthWhenRespawning;
+        deathSequence.UponRespawning += enableHealthBar;
     }
 
     void OnDisable()
     {
-        deathSequence.ActionsTriggeredWhenRespawning -= resetHealthWhenRespawning;
-        deathSequence.ActionsTriggeredAfterRespawning -= enableHealthBar;
+        deathSequence.RightBeforeRespawning -= resetHealthWhenRespawning;
+        deathSequence.UponRespawning -= enableHealthBar;
     }
 
     private void resetHealthWhenRespawning()
