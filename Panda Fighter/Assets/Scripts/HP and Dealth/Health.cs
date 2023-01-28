@@ -9,7 +9,7 @@ public abstract class Health : MonoBehaviour
 {
     public int maxHP { get; protected set; }
     public int currentHP { get; protected set; }
-    public bool isDead { get; private set; }
+    public bool IsDead { get; private set; }
 
     // pads the hp bar slightly so that low hp doesn't make the hp bar look empty
     private int paddingHP; 
@@ -44,7 +44,7 @@ public abstract class Health : MonoBehaviour
     {
         currentHP = maxHP;
         paddingHP = (int)(2.5f * maxHP / 100f);
-        isDead = false;
+        IsDead = false;
      // hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
 
         hitBox.offset = new Vector2(0, -0.15f);
@@ -55,7 +55,7 @@ public abstract class Health : MonoBehaviour
     // Optionally takes in who damaged this creature (if known)
     public void TakeDamage(int damage, Transform attacker = null)
     {
-        if (isDead || currentHP <= 0 || abilityHandler.IsInvulnerable)
+        if (IsDead || currentHP <= 0 || abilityHandler.IsInvulnerable)
             return;
 
         currentHP -= damage;
@@ -67,7 +67,7 @@ public abstract class Health : MonoBehaviour
     // Checks if the creature collided with a bullet or explosion
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (isDead || abilityHandler.IsInvulnerable)
+        if (IsDead || abilityHandler.IsInvulnerable)
             return;
 
         else if (col.gameObject.layer == Layer.Explosion)
@@ -93,12 +93,12 @@ public abstract class Health : MonoBehaviour
     // bar position above the entity's head as it moves
     void Update()
     {
-        if (isDead)
+        if (IsDead)
             return;
 
         if (currentHP <= 0 || Input.GetKeyDown(KeyCode.K))
         {
-            isDead = true;
+            IsDead = true;
             currentHP = -paddingHP;
             hpBar.transform.parent.gameObject.SetActive(false);
             StartCoroutine(deathSequence.Initiate());
@@ -123,7 +123,7 @@ public abstract class Health : MonoBehaviour
     private void resetHealthWhenRespawning()
     {
         currentHP = maxHP;
-        isDead = false;
+        IsDead = false;
     }
 
     public void enableHealthBar()

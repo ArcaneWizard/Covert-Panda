@@ -18,8 +18,6 @@ public class AI_LookAround : CentralLookAround
         StartCoroutine(scanForNearbyEnemies());
     }
 
-    public override bool IsLookingRight() => directionToLook.x >= 0;
-
     protected override void figureOutDirectionToLookIn() 
     {
         // if an enemy has been spotted, the direction this AI looks is the vector from the weapon to the enemy 

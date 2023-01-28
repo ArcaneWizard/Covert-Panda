@@ -27,7 +27,7 @@ public class CameraMovement : MonoBehaviour
     
     void Update() 
     {
-        if (health.isDead)
+        if (health.IsDead)
             cameraTarget = cameraTargetAfterPlayerDeath;
     }
 

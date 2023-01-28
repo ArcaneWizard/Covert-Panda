@@ -14,7 +14,7 @@ public class Controller : CentralController
 
     void Update()
     {
-        if (health.isDead) 
+        if (health.IsDead) 
         {
             isTouchingMap = false;
             standingOnJumpPad = false;

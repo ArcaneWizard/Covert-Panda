@@ -9,7 +9,7 @@ using UnityEngine;
 public abstract class CentralLookAround : MonoBehaviour
 {
     public Vector2 directionToLook { get; protected set; }
-    public abstract bool IsLookingRight();
+    public bool IsLookingRight() => directionToLook.x >= 0;
 
     // IK coordinates for main arm when looking up, down or to the side
     private float upVector, downVector, rightVector;
@@ -97,7 +97,7 @@ public abstract class CentralLookAround : MonoBehaviour
 
     protected virtual void LateUpdate() 
     {
-        if (health.isDead || phaseTracker.IsDoingSomersault)
+        if (health.IsDead || phaseTracker.IsDoingSomersault)
             return;
         
         figureOutDirectionToLookIn();

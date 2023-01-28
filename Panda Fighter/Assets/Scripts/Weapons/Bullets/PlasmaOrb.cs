@@ -53,7 +53,7 @@ public class PlasmaOrb : Bullet
         }
 
         // update the sticky orb's position if it's clinging to a creature (that's alive)
-        if (trackingSurface != null && creature != null && !creature.GetComponent<Health>().isDead)
+        if (trackingSurface != null && creature != null && !creature.GetComponent<Health>().IsDead)
             transform.position = trackingSurface.position - surfaceContactLocation + contactLocation;
     }
 

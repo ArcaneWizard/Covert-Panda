@@ -39,16 +39,10 @@ public class AI_WanderAround : MonoBehaviour
         controller. EndAction();
     }
 
-    // called every frame. Returns early if the AI isn't in the wander state or if there
+    // Called every frame. Returns early if the AI isn't in the wander state or if there
     // are no queued decision zones to analyze
     public void Tick()
     {
-        // JUST FOR DEBUGGING
-       //. String listOfZones = $"creature ${transform.parent.GetSiblingIndex()} zones: \n";
-       // ..foreach (Transform zone in decisionZones)
-         //   listOfZones+= zone.name + " \n";
-        //.debugTexts[transform.parent.GetSiblingIndex()] = listOfZones;
-
         if (!shouldWander || decisionZones.Count == 0)
             return;
 
@@ -57,16 +51,13 @@ public class AI_WanderAround : MonoBehaviour
         if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900
         || Mathf.Abs(decisionZones.Peek().position.y - transform.position.y) > 9f)
         {
-            //DebugGUI.debugText5 = ("Discarded " + decisionZones.Peek() + " " +
-            //getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position));
             decisionZones.Dequeue();
             return;
         }
 
-        // retrive the next pending decision zone once the bot finishes performing it's last action.
-        // pick a random action to perform within the decision zone (with a preference to moving in the 
-        // same direction - left or right - as opposed to switching directions). Send a call to the
-        // AI controller to handle the logic of executing the chosen action 
+        // retrive the next, pending decision zone if the bot isn't performing an action.
+        // pick a random action to perform within this new decision zone (with a preference to moving in the 
+        // same direction - left or right - as opposed to switching directions). 
         if (controller.currAction == null)
         {
             currentDecisionZone = decisionZones.Dequeue();
@@ -75,11 +66,14 @@ public class AI_WanderAround : MonoBehaviour
             if (currentDecisionZone.childCount == 0)
                 Debug.LogError("Empty Decision Zone");
 
-            if (UnityEngine.Random.Range(0, 100) > switchDirectionOdds)
+            // AI is picky and chooses actions it prefers
+            if (Random.Range(0, 100) > switchDirectionOdds)
             {
                 foreach (Transform decision in currentDecisionZone)
                 {
                     trajectoryPath = decision.transform.GetComponent<TrajectoryPath>();
+                    if (trajectoryPath == null)
+                        continue;
 
                     if (trajectoryPath.ConvertToAction().DirX == controller.dirX)
                     {
@@ -89,18 +83,25 @@ public class AI_WanderAround : MonoBehaviour
                 }
             }
 
+            // If the AI was too picky and didn't choose an action, just consider all actions
             if (AI_ACTIONS.Count == 0)
             {
                 foreach (Transform decision in currentDecisionZone)
                 {
                     trajectoryPath = decision.transform.GetComponent<TrajectoryPath>();
+                    if (trajectoryPath == null)
+                        continue;
+
                     for (int i = 0; i < trajectoryPath.considerationWeight; i++)
                         AI_ACTIONS.Add(trajectoryPath.ConvertToAction());
                 }
             }
 
+            // Don't do anything if there are still no available actions (decision zone configured incorrectly)
+            if (AI_ACTIONS.Count == 0)
+                return;
+
             int actionIndex = random.Next(0, AI_ACTIONS.Count);
-            //DebugGUI.debugText4 = (AI_ACTIONS[actionIndex].ToString());
             controller.StartAction(AI_ACTIONS[actionIndex], currentDecisionZone);
         }
     }

@@ -71,10 +71,11 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
         WeaponStats weaponStats = new WeaponStats(this);
         weaponStats.Initialize();
+    }
 
+    protected virtual void Start()
+    {
         ResetInventory();
-        Debug.Log(("started"));
-        Debug.Log(CurrentWeapon);
     }
 
      // Info about the current weapon the creature is holding

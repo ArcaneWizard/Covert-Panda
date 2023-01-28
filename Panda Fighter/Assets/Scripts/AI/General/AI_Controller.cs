@@ -7,12 +7,12 @@ using UnityEngine;
 public class AI_Controller : CentralController
 {
     // the current action the AI is executing (null if no action is being executed right now) 
-    public AIAction currAction { get; private set; }
+    [field: SerializeField] public AIAction currAction { get; private set; }
 
     // the decision zone that provided the current action the AI should execute
     private Transform decisionZone;
 
-    private bool hasStartedAction;
+    private bool hasBegunAction;
     private HashSet<Transform> decisionZonesNearby;
 
     protected override void Start()
@@ -20,6 +20,7 @@ public class AI_Controller : CentralController
         base.Start();
 
         dirX = UnityEngine.Random.Range(0, 2) * 2 - 1;
+        speed = MaxSpeed;
         currAction = null;
         decisionZone = null;
         decisionZonesNearby= new HashSet<Transform>();
@@ -33,7 +34,7 @@ public class AI_Controller : CentralController
     {
         currAction = AI_action;
         decisionZone = zone;
-        hasStartedAction = false;
+        hasBegunAction = false;
     }
 
     // End the current action
@@ -48,18 +49,15 @@ public class AI_Controller : CentralController
     void Update()
     {
         // don't do anything if dead
-        if (health.isDead)
+        if (health.IsDead)
         {
             isTouchingMap = false;
+            currAction.Exit();
             currAction = null;
             decisionZone = null;
             decisionZonesNearby.Clear();
             return;
         }
-
-        if (currAction.Finished)
-            currAction = null;
-
         // AI moves at max speed when not executing an action
         if (currAction == null)
         {
@@ -68,11 +66,17 @@ public class AI_Controller : CentralController
         }
 
         handleExecutionOfCurrentAction();
+
+        if (hasBegunAction && currAction.Finished)
+        {
+            currAction.Exit();
+            currAction = null;
+        }
     }
 
     protected override void FixedUpdate()
     {
-        if (currAction == null)
+        if (currAction == null || currAction.Finished)
             return;
 
         if (currAction.ExecuteNormalJumpNow)
@@ -100,28 +104,25 @@ public class AI_Controller : CentralController
 
     private void handleExecutionOfCurrentAction()
     {
-        // When the AI is grounded, start executing the action
-        if (isGrounded && isTouchingMap)
-        {
-            // Invoke the start of the action once (assuming the creature hasn't ventured 
-            // too far from that action's decision zone)
-            if (!hasStartedAction)
-            {
-                if (decisionZonesNearby.Contains(decisionZone))
-                {
-                    speed = MaxSpeed;
-                    dirX = currAction.Info.DirX;
-                    currAction.Begin(this);
-                }
-                else
-                    EndAction();
+        if (currAction == null || currAction.Finished)
+            return;
 
-                hasStartedAction = true;
+        // When the AI is grounded, begin executing it's current action.
+        if (isGrounded && isTouchingMap && !hasBegunAction)
+        {
+            // Do ignore the action if the creature is too far from its decision zone
+            if (!decisionZonesNearby.Contains(decisionZone))
+            {
+                EndAction();
+                return;
             }
+            
+            currAction.Begin(this);
+            hasBegunAction = true;
         }
 
         // run/execute an action until it's finished
-        if (!currAction.Finished)
+        if (hasBegunAction)
         {
             currAction.Run();
             dirX = currAction.DirX;

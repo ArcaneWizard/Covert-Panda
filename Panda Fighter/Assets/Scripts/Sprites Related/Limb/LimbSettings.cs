@@ -65,7 +65,6 @@ public class LimbSettings : MonoBehaviour
     // Return a limb based off limb type
     public Sprite ReturnLimb(LimbTypes limbType, bool forceRefresh)
     {
-        Debug.Log("A" + forceRefresh);
         if (forceRefresh || sprites.Count == 0)
             initialize();
 

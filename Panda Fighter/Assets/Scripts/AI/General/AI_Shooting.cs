@@ -29,7 +29,7 @@ public class AI_Shooting : CentralShooting
     {
         timeSinceLastShot += Time.deltaTime;
 
-        if (health.isDead)
+        if (health.IsDead)
         {
             countdownBtwnShots = 0f;
             return;

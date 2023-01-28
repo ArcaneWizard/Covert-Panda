@@ -40,7 +40,7 @@ public class CentralAbilityHandler : MonoBehaviour {
 
     void Update()
     {
-        if (health.isDead)
+        if (health.IsDead)
             return;
 
         if (Input.GetKey(KeyCode.T) && canTurnInvisible && transform.parent.tag == "Player")

@@ -10,8 +10,6 @@ public class LookAround : CentralLookAround
         directionToLook = (Input.mousePosition - camera.WorldToScreenPoint(weaponPivotPos)).normalized;
     }
 
-    public override bool IsLookingRight() => directionToLook.x >= 0;
-
     protected override void updateDirectionCreatureFaces() 
     {
         if (Input.mousePosition.x >= camera.WorldToScreenPoint(transform.position).x && body.localRotation.y != 0) 

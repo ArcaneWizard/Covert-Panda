@@ -43,6 +43,7 @@ public abstract class CentralController : MonoBehaviour
     protected Animator animator;
 
     public const float MaxSpeed = 25f;
+    public const float MinSpeed = 17f;
     protected float speed;
 
     // Info about the ground or walls detected:
@@ -90,7 +91,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected virtual void LateUpdate() 
     {
-        if (health.isDead)
+        if (health.IsDead)
             return;
 
         updateTilt();
@@ -280,7 +281,12 @@ public abstract class CentralController : MonoBehaviour
             isTouchingMap = false;
     }
 
-    protected virtual void FixedUpdate() => oneWayCollider.enabled = rig.velocity.y < 0.1f;
+    protected virtual void FixedUpdate()
+    {
+        oneWayCollider.enabled = rig.velocity.y < 0.1f;
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        body.position = new Vector3(body.position.x, body.position.y, 0);
+    }
 
     private IEnumerator updateRecentlyJumpingOffGround()
     {

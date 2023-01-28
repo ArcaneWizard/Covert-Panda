@@ -57,7 +57,7 @@ public class CentralPhaseTracker : MonoBehaviour
 
     void Update() 
     {
-        if (health.isDead)
+        if (health.IsDead)
             return;
 
         adjustCollidersAndDetectors(controller.leftGroundChecker, controller.rightGroundChecker, 
@@ -99,7 +99,7 @@ public class CentralPhaseTracker : MonoBehaviour
 
     private void FixedUpdate() 
     {
-        if (health.isDead) 
+        if (health.IsDead) 
         {
             somersaultHandler.Reset();
             return;

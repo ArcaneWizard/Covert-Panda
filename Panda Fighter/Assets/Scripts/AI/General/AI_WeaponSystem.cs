@@ -10,7 +10,11 @@ public class AI_WeaponSystem : CentralWeaponSystem
     private const float timeB4MoodChange = 4f;
     private const float percentChanceOfPickingUpWeapon = 40;
 
-    void Start() => StartCoroutine(updateMood());
+    protected override void Start()
+    {
+        base.Start();
+        StartCoroutine(updateMood());
+    }
 
     // every few seconds, the creature makes its mind whether it feels like picking up weapons or not
     private IEnumerator updateMood()
@@ -21,7 +25,7 @@ public class AI_WeaponSystem : CentralWeaponSystem
 
     void Update()
     {
-        if (health.isDead)
+        if (health.IsDead)
             return;
 
         // switch to another inventory weapon if the ammo is 0

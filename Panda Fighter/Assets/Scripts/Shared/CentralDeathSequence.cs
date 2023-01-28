@@ -65,8 +65,8 @@ public class CentralDeathSequence : MonoBehaviour
 
         Transform respawnLocation = respawnLocations.GetChild(
             UnityEngine.Random.Range(0, respawnLocations.childCount));
-        transform.position = respawnLocation.position;
 
+        transform.position = new Vector3(respawnLocation.position.x, respawnLocation.position.y, 0);
         transform.localEulerAngles = new Vector3(0, 0, 0);
         controller.UpdateTiltInstantly();
     }

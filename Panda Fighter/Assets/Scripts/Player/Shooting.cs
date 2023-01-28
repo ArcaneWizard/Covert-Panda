@@ -10,7 +10,7 @@ public class Shooting : CentralShooting
 
     private void Update()
     {
-        if (health.isDead)
+        if (health.IsDead)
         {
             countdownBtwnShots = 0f;
             return;

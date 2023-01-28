@@ -4,6 +4,7 @@ using UnityEngine;
 
 // Houses the information required to execute any type of complex AI action. Not all parameters need to be filled
 
+[System.Serializable]
 public class AIActionInfo : MonoBehaviour
 {
     public int DirX { get; private set; }

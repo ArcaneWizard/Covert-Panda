@@ -50,7 +50,7 @@ public class WeaponSystem : CentralWeaponSystem
 
     void Update()
     {
-        if (health.isDead)
+        if (health.IsDead)
             return;
 
         // use number keys to switch between weapons in your inventory

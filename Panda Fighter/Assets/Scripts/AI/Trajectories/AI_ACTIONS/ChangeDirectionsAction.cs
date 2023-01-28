@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class ChangeDirectionsAction : AIAction
 {
     public ChangeDirectionsAction(AIActionType action, AIActionInfo info) : base(action, info) { }
@@ -9,6 +10,8 @@ public class ChangeDirectionsAction : AIAction
     public override void Begin(AI_Controller controller)
     {
         base.Begin(controller);
+        DirX = controller.dirX;
+        Speed = CentralController.MaxSpeed;
         Finished = true;
     }
 }
