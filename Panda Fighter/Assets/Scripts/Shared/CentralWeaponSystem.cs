@@ -32,11 +32,13 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
     private List<GameObject> physicalWeaponAndLimbs;
     private CentralLookAround lookAround;
+    private CentralShooting centralShooting;
     protected Health health;
 
     protected virtual void Awake()
     {
         lookAround = transform.GetComponent<CentralLookAround>();
+        centralShooting = transform.GetComponent<CentralShooting>();
         health = transform.GetComponent<Health>();
 
         bulletPools = new Dictionary<Weapon, List<Transform>>();
@@ -109,7 +111,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         }
 
         pickupWeaponIntoAvailableSlot(Weapon.ArcticPistol);
-        pickupWeaponIntoAvailableSlot(Weapon.RocketLauncher);
+        pickupWeaponIntoAvailableSlot(Weapon.Railgun);
     }
 
     // Switch to the weapon in the specified inventory slot
@@ -178,9 +180,10 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     // switches to the new weapon at the specified slot, which becomes the selected inventory slot 
     private void switchToNewWeapon(int slot)
     {
+        CurrentWeaponBehaviour.TerminateAttack();
         selectedSlot = slot;
-        weaponBehaviours[CurrentWeapon].UponEquippingWeapon();
-        weaponBehaviours[CurrentWeapon].ResetAttackProgress();
+        CurrentWeaponBehaviour.ConfigureUponSwitchingToWeapon();
+        centralShooting.ResetUponSwitchingToNewWeapon();
 
         lookAround.UpdateArmInverseKinematics();
 

@@ -4,11 +4,15 @@ using System.Collections.Generic;
 
 public class wScythe : WeaponBehaviour
 {
-    public override void UponEquippingWeapon() => weaponConfiguration.Animator.SetInteger("Arms Phase", 10);
-
-    public override IEnumerator Attack(Vector2 aim)
+    public override void ConfigureUponSwitchingToWeapon()
     {
-        StartCoroutine(base.Attack(aim));
+        base.ConfigureUponSwitchingToWeapon();
+        weaponConfiguration.Animator.SetInteger("Arms Phase", 10);
+    }
+
+    protected override IEnumerator attack(Vector2 aim)
+    {
+        StartCoroutine(base.attack(aim));
 
         weaponConfiguration.Animator.SetInteger("Arms Phase", 11);
         weaponConfiguration.MainArmIKTracker.gameObject.SetActive(false);
@@ -16,7 +20,7 @@ public class wScythe : WeaponBehaviour
         while (weaponConfiguration.Animator.GetInteger("Arms Phase") == 11)
             yield return null;
 
-        ConfirmAttackFinished();
+        confirmAttackFinished();
     }
 
    /* public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)

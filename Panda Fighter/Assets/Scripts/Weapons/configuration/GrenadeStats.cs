@@ -22,13 +22,13 @@ public class GrenadeStats
     {
         initialize(Grenade.Frag, 0.3f, 32, 52, 5000,
             0, 600,
-            WeaponTypes.handheld, FiringModes.singleFire, armsHandler.Hands, equip.GrenadeHands);
+            CombatType.Handheld, FiringMode.SingleFire, armsHandler.Hands, equip.GrenadeHands);
     }
 
     private void initialize(Grenade grenade, float fireRateInfo, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
-        int explosionDmg, string combatMode, string weaponType, List<GameObject> limbs, GameObject physicalWeapon)
+        int explosionDmg, CombatType combatType, FiringMode firingMode, List<GameObject> limbs, GameObject physicalWeapon)
     {
-        grenadeSystem.GetConfiguration(grenade).Initialize(fireRateInfo, combatMode, weaponType, weaponRange,
+        grenadeSystem.GetConfiguration(grenade).Initialize(fireRateInfo, combatType, firingMode, weaponRange,
             bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, physicalWeapon);
     }
 }

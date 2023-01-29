@@ -7,12 +7,15 @@ public class wFragGrenade : WeaponBehaviour
     protected float grenadeThrowForce = 2200;
     protected float grenadeYForce = -20;
 
-    public override void UponEquippingWeapon() => weaponConfiguration.Animator.SetInteger("Arms Phase", 0);
-
-    public override IEnumerator Attack(Vector2 aim)
+    public override void ConfigureUponSwitchingToWeapon()
     {
-        StartCoroutine(base.Attack(aim));
+        base.ConfigureUponSwitchingToWeapon();
+        weaponConfiguration.Animator.SetInteger("Arms Phase", 0);
+    }
 
+    protected override IEnumerator attack(Vector2 aim)
+    {
+        StartCoroutine(base.attack(aim));
         weaponConfiguration.Arms[1].transform.parent.GetComponent<Animator>().Play(0, -1);
         weaponConfiguration.Arms[1].SetActive(true);
 
@@ -31,7 +34,6 @@ public class wFragGrenade : WeaponBehaviour
 
         yield return new WaitForSeconds(0.6f - wait);
         weaponConfiguration.Arms[1].SetActive(false);
-
-        ConfirmAttackFinished();
+        confirmAttackFinished();
     } 
 }

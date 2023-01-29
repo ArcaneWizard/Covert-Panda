@@ -7,9 +7,9 @@ public class wShotgun : WeaponBehaviour
     private static Vector2 bulletSpawnOffsetRange = new Vector2(0.1f, 0.4f);
     private static Vector2 bulletSpreadAngleRange = new Vector2(2f, 8f);
 
-    public override IEnumerator Attack(Vector2 aim)
+    protected override IEnumerator attack(Vector2 aim)
     {
-        StartCoroutine(base.Attack(aim));
+        StartCoroutine(base.attack(aim));
 
         float bulletSpread = Random.Range(bulletSpreadAngleRange.x, bulletSpreadAngleRange.y);
 
@@ -21,7 +21,7 @@ public class wShotgun : WeaponBehaviour
         WeaponAction.SpawnAndShootBulletDiagonally(aim, -bulletSpread, bulletSpawnOffsetRange,
              weaponSystem, weaponConfiguration, side, false);
 
-        ConfirmAttackFinished();
+        confirmAttackFinished();
         yield return null;
     }
 }

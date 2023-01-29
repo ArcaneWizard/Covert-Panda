@@ -22,53 +22,53 @@ public class WeaponStats
     {
         set(Weapon.LavaPistol, 7f, 32,  200, 50,
             90,  30,
-            WeaponTypes.gun, FiringModes.singleFire, limbs.PistolGrip, equip.LavaOrbLauncher);
+            CombatType.Gun, FiringMode.SingleFire, limbs.PistolGrip, equip.LavaOrbLauncher);
 
         set(Weapon.PlasmaOrb, 4f, 32,  90, 50,
             0, 140, 
-            WeaponTypes.gun, FiringModes.spamFire, limbs.ShortBarrel, equip.PlasmaOrbLauncher);
+            CombatType.Gun, FiringMode.SpamFire, limbs.ShortBarrel, equip.PlasmaOrbLauncher);
 
-        set(Weapon.Railgun, 5f, 32, 200, 50,
+        set(Weapon.Railgun, 1.0f, 32, 200, 50,
             30, 110, 
-            WeaponTypes.gun, FiringModes.singleFire, limbs.MiddleBarrel, equip.Shielder);
+            CombatType.Gun, FiringMode.ChargeUpFire, limbs.MiddleBarrel, equip.Shielder);
 
         set(Weapon.LeafScythe, 3f, 10,  -1, 50,
             500, 0, 
-            WeaponTypes.meelee, FiringModes.singleFire, limbs.MeeleGrip, equip.LeafScythe);
+            CombatType.Meelee, FiringMode.SingleFire, limbs.MeeleGrip, equip.LeafScythe);
 
         set(Weapon.Shotgun, 1.15f,  10,  300, 50,
             600, 0, 
-            WeaponTypes.gun, FiringModes.singleFire, limbs.ShortBarrel, equip.GoldenShotgun);
+            CombatType.Gun, FiringMode.SingleFire, limbs.ShortBarrel, equip.GoldenShotgun);
 
         set(Weapon.ArcticPistol, 6f,  32,  200, 50,  
             90,  0, 
-            WeaponTypes.gun, FiringModes.singleFire, limbs.PistolGrip, equip.ArcticCannon);
+            CombatType.Gun, FiringMode.SingleFire, limbs.PistolGrip, equip.ArcticCannon);
 
         set(Weapon.PlasmaSniper, 1.42f,  38,  -1, 50, 
             200, 20, 
-            WeaponTypes.gun, FiringModes.singleFire, limbs.LongBarrel, equip.Sniper);
+            CombatType.Gun, FiringMode.SingleFire, limbs.LongBarrel, equip.Sniper);
 
         set(Weapon.Needler, 6.5f, 32,  200, 200, 
             30,  0, 
-            WeaponTypes.gun, FiringModes.spamFire, limbs.MiddleBarrel, equip.Needler);
+            CombatType.Gun, FiringMode.SpamFire, limbs.MiddleBarrel, equip.Needler);
 
         set(Weapon.FocusBeamer, 0.00f, 34,  -1, 2000,
             7,   0, 
-            WeaponTypes.gun, FiringModes.holdFire, limbs.ShortBarrel, equip.FocusBeamer);
+            CombatType.Gun, FiringMode.ContinousBeam, limbs.ShortBarrel, equip.FocusBeamer);
             
         set(Weapon.RocketLauncher, 1.2f,  34,  140, 50,
             0, 300, 
-            WeaponTypes.gun, FiringModes.singleFire, limbs.ShoulderRest, equip.RocketLauncher);
+            CombatType.Gun, FiringMode.SingleFire, limbs.ShoulderRest, equip.RocketLauncher);
 
         set(Weapon.ArcticSprayer, 7f, 32,  100, 50, 
             60,  140, 
-            WeaponTypes.gun, FiringModes.singleFire, limbs.ShoulderRest, equip.ArcticSprayer);
+            CombatType.Gun, FiringMode.SingleFire, limbs.ShoulderRest, equip.ArcticSprayer);
     }
 
     private void set(Weapon weapon, float maxAttacksPerSecond, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
-        int explosionDmg, string combatMode, string weaponType, List<GameObject> limbs, GameObject physicalWeapon)
+        int explosionDmg, CombatType combatType, FiringMode firingMode, List<GameObject> limbs, GameObject physicalWeapon)
     {
-        weaponSystem.GetConfiguration(weapon).Initialize(maxAttacksPerSecond, combatMode, weaponType, weaponRange, 
+        weaponSystem.GetConfiguration(weapon).Initialize(maxAttacksPerSecond, combatType, firingMode, weaponRange, 
             bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, physicalWeapon);
     }
 }

@@ -158,13 +158,6 @@ public class Bullet : MonoBehaviour
             // if the bullet was predicted to hit a creature (as opposed to the environment)
             if (predictedColliderHit != null && predictedColliderHit.parent.GetComponent<Health>())
             {
-                // since we were predicted a frame ahead, it would make sense to teleport the bullet ot the impact location
-                // however apply an offset PARALLEL to the direction the bullet is traveling, so that the bullet teleports to the 
-                // creature instead (who may have moved from the impact location since the last frame)
-                /*float xDiff = predictedColliderHit.position.x - predictedImpactLocation.x;
-                Vector2 predictedOffset = new Vector2(xDiff + UnityEngine.Random.Range(-0.1f, 0.1f), aim.y / aim.x * xDiff);
-                predictedImpactLocation += predictedOffset;*/
-
                 // if the bullet should stick to the creature, it needs to teleport to a leg if it lands near the lower body
                 if (sticksToCreatures)
                 {

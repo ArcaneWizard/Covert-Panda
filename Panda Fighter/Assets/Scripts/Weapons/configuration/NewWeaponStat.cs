@@ -10,8 +10,8 @@ using UnityEngine;
 public class NewWeaponStat : ScriptableObject
 {
     public float fireRateInfo;
-    public WeaponTypes combatMode;
-    public FiringModes weaponType;
+    public CombatType combatMode;
+    public FiringMode weaponType;
     public float weaponRange;
     public int bulletSpeed;
     public int startingAmmo;

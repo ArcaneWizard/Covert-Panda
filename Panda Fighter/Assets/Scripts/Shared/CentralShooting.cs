@@ -15,6 +15,8 @@ public abstract class CentralShooting : MonoBehaviour
     private Transform bullet;
     private Rigidbody2D bulletRig;
 
+    private Coroutine attack;
+
     protected virtual void Awake()
     {
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
@@ -50,28 +52,22 @@ public abstract class CentralShooting : MonoBehaviour
     public abstract Vector2 GetAim();
 
     //public void ReleasedGrenade() => grenadeHeld = null;
-
-    protected void DeployGrenade() => StartCoroutine(grenadeSystem.CurrentGrenadeImplementation.Attack(GetAim()));
+    //protected void DeployGrenade() => grenadeSystem.CurrentGrenadeImplementation.attack(GetAim()));
 
     // Attack. Use current weapon aim if not mid-somersault. Else, use rotation of gun 
     protected void AttackWithWeapon()
     {
-        
-            StartCoroutine(weaponSystem.CurrentWeaponBehaviour.Attack(GetAim()));
-        /*else
-        {
-            Transform bulletSpawnPoint = weaponSystem.CurrentWeaponConfiguration.BulletSpawnPoint;
-            Vector3 dir = (bulletSpawnPoint.position - bulletSpawnPoint.parent.GetChild(1).position);
-            StartCoroutine(weaponSystem.CurrentWeaponBehaviour.Attack(((Vector2)dir).normalized));
-        }*/
+        weaponSystem.CurrentWeaponBehaviour.Attack(GetAim());
     }
-    
-   /* protected void RightClickAttack()
-    {
-        bullet = weaponSystem.getLastBullet().transform;
-        bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
 
-        weaponSystem.CurrentWeapon.DoBonusSetupAttack(GetAim(), bullet, bulletRig);
-    }*/
+    public virtual void ResetUponSwitchingToNewWeapon() { }
+
+    /* protected void RightClickAttack()
+     {
+         bullet = weaponSystem.getLastBullet().transform;
+         bulletRig = bullet.transform.GetComponent<Rigidbody2D>();
+
+         weaponSystem.CurrentWeapon.DoBonusSetupAttack(GetAim(), bullet, bulletRig);
+     }*/
 
 }

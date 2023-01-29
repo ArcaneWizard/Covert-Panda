@@ -44,12 +44,19 @@ public class AI_Shooting : CentralShooting
         if (behaviour.attackProgress != AttackProgress.Finished)
             return;
 
-        if (configuration.WeaponType != FiringModes.holdFire)
+        if (configuration.FiringMode == FiringMode.SingleFire || configuration.FiringMode == FiringMode.SpamFire)
         {
             countdownBtwnShots = 1 / configuration.FireRateInfo + reactionDelay;
             timeSinceLastShot = 0f;
             AttackWithWeapon();
         }
+        else if (configuration.FiringMode == FiringMode.ChargeUpFire) 
+        {
+            countdownBtwnShots = configuration.FireRateInfo + reactionDelay;
+            timeSinceLastShot = 0f;
+            AttackWithWeapon();
+        }
+
         else 
             AttackWithWeapon();
     }

@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class WeaponConfiguration : MonoBehaviour
 {
-    public string CombatMode { get; private set; }
-    public string WeaponType { get; private set; }
+    public CombatType CombatType { get; private set; }
+    public FiringMode FiringMode { get; private set; }
     public int BulletDmg { get; private set; }
     public int ExplosionDmg { get; private set; }
     public int StartingAmmo { get; private set; }
@@ -28,12 +28,12 @@ public class WeaponConfiguration : MonoBehaviour
     public Transform OtherArmIKTracker { get; private set; }
     public List<Vector2> OtherArmIKCoordinates { get; private set; }
 
-    public void Initialize(float fireRateInfo, string combatMode, string weaponType, float weaponRange, int bulletSpeed, int startingAmmo,
+    public void Initialize(float fireRateInfo, CombatType combatType, FiringMode firingMode, float weaponRange, int bulletSpeed, int startingAmmo,
         int bulletDmg, int explosionDmg, List<GameObject> arms, GameObject weapon)
     {
         this.FireRateInfo = fireRateInfo;
-        this.CombatMode = combatMode;
-        this.WeaponType = weaponType;
+        this.CombatType = combatType;
+        this.FiringMode = firingMode;
         this.WeaponRange = weaponRange;
         this.BulletSpeed = bulletSpeed;
         this.StartingAmmo = startingAmmo;

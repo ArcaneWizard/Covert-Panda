@@ -6,22 +6,22 @@ public class wRailgun : WeaponBehaviour
 {
     private ParticleSystem chargeParticles;
 
-    public override IEnumerator Attack(Vector2 aim)
+    public override void StartChargingUp() => chargeParticles.Play();
+    public override void StopChargingUp() => chargeParticles.Clear();
+
+    protected override IEnumerator attack(Vector2 aim)
     {
-        StartCoroutine(base.Attack(aim));
+        StartCoroutine(base.attack(aim));
 
-        showVisualChargingUp();
-        WeaponAction.SpawnAndShootBulletForward(aim,weaponSystem, weaponConfiguration, side, false);
+        WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
 
-        ConfirmAttackFinished();
+        confirmAttackFinished();
         yield return null;
     }
 
-    private void Start()
+    void Start()
     {
         chargeParticles = weaponConfiguration.BulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         chargeParticles.Clear();
     }
-
-    private void showVisualChargingUp() => chargeParticles.Play();
 }

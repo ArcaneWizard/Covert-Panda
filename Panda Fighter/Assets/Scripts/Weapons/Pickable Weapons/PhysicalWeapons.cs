@@ -19,19 +19,19 @@ public class PhysicalWeapons : MonoBehaviour
 }
 
 //combat Modes
-public class WeaponTypes
+public enum CombatType
 {
-    public const string gun = "gun";
-    public const string meelee = "meelee";
-    public const string handheld = "handheld";
+    Gun,
+    Meelee,
+    Handheld
 }
 
 //gun types
-public class FiringModes
+public enum FiringMode
 {
-    public const string singleFire = "single fire";
-    public const string spamFire = "spam fire";
-    public const string holdFire = "hold fire";
-    public const string chargeUpFire = "charge up fire";
+    SingleFire,
+    SpamFire,
+    ContinousBeam,
+    ChargeUpFire
 }
 

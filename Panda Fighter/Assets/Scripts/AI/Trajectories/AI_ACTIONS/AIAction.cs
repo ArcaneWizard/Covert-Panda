@@ -57,6 +57,8 @@ public class AIAction
     {
         foreach (IEnumerator c in coroutinesRunning)
             controller.StopCoroutine(c);
+
+        coroutinesRunning.Clear();
     }
 
     // returns a simple AI action for changing the IEnumeratorhe creature is heading in

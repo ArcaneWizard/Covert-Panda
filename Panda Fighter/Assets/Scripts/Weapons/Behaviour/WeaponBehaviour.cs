@@ -13,6 +13,9 @@ public abstract class WeaponBehaviour : MonoBehaviour
     public AttackProgress attackProgress { get; protected set; }
     public AttackProgress bonusAttackProgress { get; protected set; }
 
+    private Coroutine cAttack;
+    private Coroutine cBonusAttack;
+
     protected CentralShooting shooting;
     protected CentralPhaseTracker phaseTracker;
     protected WeaponConfiguration weaponConfiguration;
@@ -28,40 +31,58 @@ public abstract class WeaponBehaviour : MonoBehaviour
         this.weaponSystem = weaponSystem;
     }
 
-    // what happens right when the weapon is equipped
-    public virtual void UponEquippingWeapon() { return; }
+    // Execute an attack with this weapon. Requires the aim direction
+    public void Attack(Vector2 aim) =>  cAttack = StartCoroutine(attack(aim));
 
-    // default attack with this weapon. The aim direction is specified
-    public virtual IEnumerator Attack(Vector2 aim)
+    // Execute a bonus attack with this weapon. Requires the aim direction
+    public void BonusAttack(Vector2 aim) => cBonusAttack = StartCoroutine(attack(aim));
+
+    // Terminates current attack(s).
+    public void TerminateAttack() 
     {
-        attackProgress = AttackProgress.Started;
-        yield return null;
+        if (cAttack != null)
+            StopCoroutine(cAttack); 
+        if (cBonusAttack != null)
+            StopCoroutine(cBonusAttack);
+
+        attackProgress = AttackProgress.Finished;
+        bonusAttackProgress = AttackProgress.Finished;
+        StopChargingUp();
     }
 
-    // bonus attack (if possible) with this weapon. The aim direction is specified
-    public virtual IEnumerator BonusAttack(Vector2 aim)
-    {
-        bonusAttackProgress = AttackProgress.Started;
-        yield return null;
-    }
-
-    // Refactor later: referenced when you switch to a different weapons (make private in the future)
-    public void ResetAttackProgress()
+    // Invoked when the creature switches to a new weapon. 
+    public virtual void ConfigureUponSwitchingToWeapon() 
     {
         attackProgress = AttackProgress.Finished;
         bonusAttackProgress = AttackProgress.Finished;
     }
 
-    protected void ConfirmAttackFinished() => attackProgress = AttackProgress.Finished;
-    protected void ConfirmBonusAttackFinished() => bonusAttackProgress = AttackProgress.Finished;
+    // Invoked when a charge-up-fire weapon starts charging up it's attack
+    public virtual void StartChargingUp() { }
+
+    // Invoked when a charge-up-fire weapon stops charging it's attack prematurely, before it can fire/execute the attack
+    public virtual void StopChargingUp() { }
+
+    // Invoked for a default attack with this weapon. The aim direction is provided
+    protected virtual IEnumerator attack(Vector2 aim)
+    {
+        attackProgress = AttackProgress.Started;
+        yield return null;
+    }
+
+    // Invoked for a bonus attack with this weapon. The aim direction is specified
+    protected virtual IEnumerator bonusAttack(Vector2 aim)
+    {
+        bonusAttackProgress = AttackProgress.Started;
+        yield return null;
+    }
+
+    protected void confirmAttackFinished() => attackProgress = AttackProgress.Finished;
+    protected void confirmBonusAttackFinished() => bonusAttackProgress = AttackProgress.Finished;
 
     void Awake()
     {
         phaseTracker = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralPhaseTracker>();
         side = transform.parent.parent.parent.GetComponent<Role>().side;
-
-        ResetAttackProgress();
     }
 }
-
-
