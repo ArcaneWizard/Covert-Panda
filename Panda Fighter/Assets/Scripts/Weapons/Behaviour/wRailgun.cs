@@ -6,7 +6,11 @@ public class wRailgun : WeaponBehaviour
 {
     private ParticleSystem chargeParticles;
 
-    public override void StartChargingUp() => chargeParticles.Play();
+    public override void StartChargingUp()
+    {
+        chargeParticles.Stop();
+        chargeParticles.Play();
+    }
     public override void StopChargingUp() => chargeParticles.Clear();
 
     protected override IEnumerator attack(Vector2 aim)
@@ -23,5 +27,9 @@ public class wRailgun : WeaponBehaviour
     {
         chargeParticles = weaponConfiguration.BulletSpawnPoint.transform.GetChild(0).transform.GetComponent<ParticleSystem>();
         chargeParticles.Clear();
+        chargeParticles.Stop();
+
+        var main = chargeParticles.main;
+        main.playOnAwake = false;
     }
 }

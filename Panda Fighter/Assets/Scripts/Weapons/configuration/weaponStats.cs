@@ -28,8 +28,8 @@ public class WeaponStats
             0, 140, 
             CombatType.Gun, FiringMode.SpamFire, limbs.ShortBarrel, equip.PlasmaOrbLauncher);
 
-        set(Weapon.Railgun, 1.0f, 32, 200, 50,
-            30, 110, 
+        set(Weapon.Railgun, 0.6f, 32, 1000, 50,
+            800, 110, 
             CombatType.Gun, FiringMode.ChargeUpFire, limbs.MiddleBarrel, equip.Shielder);
 
         set(Weapon.LeafScythe, 3f, 10,  -1, 50,
@@ -40,20 +40,20 @@ public class WeaponStats
             600, 0, 
             CombatType.Gun, FiringMode.SingleFire, limbs.ShortBarrel, equip.GoldenShotgun);
 
-        set(Weapon.ArcticPistol, 6f,  32,  200, 50,  
+        set(Weapon.ArcticPistol, 10f,  32,  350, 50,  
             90,  0, 
             CombatType.Gun, FiringMode.SingleFire, limbs.PistolGrip, equip.ArcticCannon);
 
-        set(Weapon.PlasmaSniper, 1.42f,  38,  -1, 50, 
+        set(Weapon.PlasmaSniper, 1.42f, 1000,  -1, 50, 
             200, 20, 
             CombatType.Gun, FiringMode.SingleFire, limbs.LongBarrel, equip.Sniper);
 
         set(Weapon.Needler, 6.5f, 32,  200, 200, 
-            30,  0, 
+            50,  0, 
             CombatType.Gun, FiringMode.SpamFire, limbs.MiddleBarrel, equip.Needler);
 
         set(Weapon.FocusBeamer, 0.00f, 34,  -1, 2000,
-            7,   0, 
+            210,   0, 
             CombatType.Gun, FiringMode.ContinousBeam, limbs.ShortBarrel, equip.FocusBeamer);
             
         set(Weapon.RocketLauncher, 1.2f,  34,  140, 50,

@@ -14,7 +14,7 @@ public class Railgun : Bullet
         sR = transform.GetComponent<SpriteRenderer>();
         rig = transform.GetComponent<Rigidbody2D>();
 
-        impactExplosion = transform.GetComponent<ParticleSystem>();
+        impactExplosion = transform.GetChild(0).GetComponent<ParticleSystem>();
         explosion = transform.GetComponent<Explosion>();
         explosion.radius = 1.1f;
     }
@@ -22,7 +22,7 @@ public class Railgun : Bullet
     public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
     {
         base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
-        transform.GetComponent<ParticleSystem>().Stop();
+        impactExplosion.GetComponent<ParticleSystem>().Stop();
     }
 
     protected override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
