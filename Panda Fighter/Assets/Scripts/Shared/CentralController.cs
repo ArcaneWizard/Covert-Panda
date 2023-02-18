@@ -29,7 +29,8 @@ public abstract class CentralController : MonoBehaviour
     [SerializeField] private CircleCollider2D somersaultCollider;
     [field: SerializeField] public Transform shootingArm { get; private set; }
     [field: SerializeField] public BoxCollider2D mainCollider { get; private set; }
-
+    private Vector2 initialMainColliderSize;
+         
     [Header("Ground detection")]
     [SerializeField] private Transform frontGroundRaycaster;
     [SerializeField] private Transform backGroundRaycaster;
@@ -68,8 +69,6 @@ public abstract class CentralController : MonoBehaviour
 
         // configuring colliders
         oneWayCollider.gameObject.layer = Layer.OneWayCollider;
-        mainCollider.offset = new Vector2(0.05f, 1.45f);
-        mainCollider.size = new Vector2(1.1f, 3.77f);
         mainCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
         somersaultCollider.gameObject.layer = (side == Side.Friendly) ? Layer.Friend : Layer.Enemy;
 
@@ -77,6 +76,7 @@ public abstract class CentralController : MonoBehaviour
         oneWayCollider.enabled = true;
         somersaultCollider.enabled = false;
 
+        initialMainColliderSize = mainCollider.size;
         speed = MaxSpeed;
     }
 
@@ -85,7 +85,7 @@ public abstract class CentralController : MonoBehaviour
     public void UpdateTiltInstantly()
     {
         updateGroundAngle();
-        float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.9f : ((groundAngle - 360) / 1.9f);
+        float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.7f : ((groundAngle - 360) / 1.7f);
 
         if (!float.IsNaN(groundAngle))
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
@@ -165,14 +165,18 @@ public abstract class CentralController : MonoBehaviour
         if (health.IsDead)
             return;
 
-        // use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
-        leftGroundHit = Physics2D.Raycast(frontGroundRaycaster.position, Vector2.down, 2f, LayerMasks.map);
-        if (leftGroundHit.collider != null)
-            leftGroundHit = Physics2D.Raycast(frontGroundRaycaster.position + 3 * Vector3.up, Vector2.down, 5f, LayerMasks.map);
+        // you need to be leave further from the ground to get ungrounded then you need to be close
+        // to the ground to be grounded
+        float raycastLength = isGrounded ? 2.6f : 2.0f;
 
-        rightGroundHit = Physics2D.Raycast(backGroundRaycaster.position, Vector2.down, 2f, LayerMasks.map);
-        if (rightGroundHit.collider != null)
-            rightGroundHit = Physics2D.Raycast(backGroundRaycaster.position + 3 * Vector3.up, Vector2.down, 5f, LayerMasks.map);
+        // use raycasts to check for ground below the left foot and right foot (+ draw raycasts for debugging)
+        leftGroundHit = Physics2D.Raycast(frontGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.map);
+       // if (leftGroundHit.collider != null)
+       //     leftGroundHit = Physics2D.Raycast(frontGroundRaycaster.position + 3 * Vector3.up, Vector2.down, 3f + raycastLength, LayerMasks.map);
+
+        rightGroundHit = Physics2D.Raycast(backGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.map);
+       // if (rightGroundHit.collider != null)
+       //     rightGroundHit = Physics2D.Raycast(backGroundRaycaster.position + 3 * Vector3.up, Vector2.down, 3f + raycastLength, LayerMasks.map);
 
         leftFootGround = (leftGroundHit.collider != null && leftGroundHit.normal.y >= 0.3f) ? leftGroundHit.collider.gameObject : null;
         rightFootGround = (rightGroundHit.collider != null && rightGroundHit.normal.y >= 0.3f) ? rightGroundHit.collider.gameObject : null;
@@ -338,7 +342,7 @@ public abstract class CentralController : MonoBehaviour
         : new Vector3(0.27f, backGroundRaycaster.localPosition.y, 0);
 
         // if creature is mid-air, main collider becomes thinner 
-        float x = phaseTracker.IsMidAir ? 0.68f : 1.1f;
+        float x = phaseTracker.IsMidAir ? initialMainColliderSize.x * 0.62f : initialMainColliderSize.x;
         mainCollider.size = new Vector2(x, mainCollider.size.y);
 
         // creature's collider depends on it's current phase

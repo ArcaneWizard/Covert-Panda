@@ -12,7 +12,7 @@ public static class Colorer
     private static Dictionary<Weapon, Color32> relativeWeaponColors;
 
     private static Color32 defaultColor = new Color32(255, 255, 255, 255);
-    private static Color32 AmphelotColor = new Color32(173, 215, 255, 255);
+    private static Color32 AmphelotColor = new Color32(182, 200, 217, 255);
 
     // Update specified limb's color
     public static void UpdateLimbColor(LimbTypes limb, SpriteRenderer renderer, Transform creature)

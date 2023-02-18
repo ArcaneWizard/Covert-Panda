@@ -4,13 +4,18 @@ using UnityEngine;
 
 // When the the creature looks around with their weapon, update the arm limbs/weapon
 // to aim in the correct direction and update the head to look in the correct direction.
-// Note: the player will look in the direction of their mouse, while the AI follows an algorithm
+// Note: the player will look in the direction of their mouse cursor, while the
+// AI's sight follows an algorithm
 
 public abstract class CentralLookAround : MonoBehaviour
 {
     public Vector2 directionToLook { get; protected set; }
     public bool IsLookingRight => directionToLook.x >= 0;
+
+    // update the direction to look in
     protected abstract void figureOutDirectionToLookIn();
+
+    // update the direction the creature's body faces
     protected abstract void updateDirectionBodyFaces();
 
     // IK coordinates for main arm when looking up, down or to the side
@@ -116,6 +121,7 @@ public abstract class CentralLookAround : MonoBehaviour
         zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
         angleOfSight -= zAngle;
 
+        Debug.Log(angleOfSight);
         rotateHead(angleOfSight);
         updateArmPosition(angleOfSight);
     }
@@ -123,14 +129,26 @@ public abstract class CentralLookAround : MonoBehaviour
     private void rotateHead(float angleOfSight) 
     {
         float headSlope, headRotation;
+        float defaultHeadAngle = 90f;
+
+        // rotate head based on angle of sight
         if (directionToLook.y >= 0)
-            headSlope = (135f - 92.4f) / 90f;
+            headSlope = (153f - defaultHeadAngle) / 90f;
         else
-            headSlope = (40f - 92.4f) / -90f;
-        
-        headRotation = headSlope * angleOfSight + 92.4f;
-        headRotation += Mathf.Sign(directionToLook.x) * transform.localEulerAngles.z;
-        head.eulerAngles = new Vector3(head.eulerAngles.x, head.eulerAngles.y, headRotation);
+            headSlope = (50f - defaultHeadAngle) / -90f;
+
+        headRotation = headSlope * angleOfSight + defaultHeadAngle;
+        //headRotation += Mathf.Sign(directionToLook.x) * transform.localEulerAngles.z;
+        head.localEulerAngles = new Vector3(head.localEulerAngles.x, head.localEulerAngles.y, headRotation);
+
+        // move head forward slightly when looking downwards
+        float headPos;
+        if (directionToLook.y >= 0)
+            headPos = 0.05f;
+        else
+            headPos = 0.05f + angleOfSight * (0.142f - 0.05f) / -90f;
+
+        head.localPosition = new Vector3(headPos, head.localPosition.y, Mathf.Sign(directionToLook.x) * head.localPosition.z);
     }
 
     private void updateArmPosition(float angleOfSight)
