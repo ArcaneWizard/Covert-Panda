@@ -66,7 +66,7 @@ public class WeaponStats
     }
 
     private void set(Weapon weapon, float maxAttacksPerSecond, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
-        int explosionDmg, CombatType combatType, FiringMode firingMode, List<GameObject> limbs, GameObject physicalWeapon)
+        int explosionDmg, CombatType combatType, FiringMode firingMode, GameObject limbs, GameObject physicalWeapon)
     {
         weaponSystem.GetConfiguration(weapon).Initialize(maxAttacksPerSecond, combatType, firingMode, weaponRange, 
             bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, physicalWeapon);

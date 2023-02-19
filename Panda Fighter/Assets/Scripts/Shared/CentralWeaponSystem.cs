@@ -200,11 +200,8 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         physicalWeaponAndLimbs.Add(CurrentWeaponConfiguration.PhysicalWeapon);
         CurrentWeaponConfiguration.PhysicalWeapon.SetActive(true);
 
-        foreach (GameObject limb in CurrentWeaponConfiguration.Arms)
-        {
-            physicalWeaponAndLimbs.Add(limb);
-            limb.SetActive(true);
-        }
+        physicalWeaponAndLimbs.Add(CurrentWeaponConfiguration.Arms);
+        CurrentWeaponConfiguration.Arms.SetActive(true);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D col)

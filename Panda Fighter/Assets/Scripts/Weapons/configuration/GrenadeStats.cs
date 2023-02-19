@@ -18,11 +18,11 @@ public class GrenadeStats
         this.grenadeSystem = grenadeSystem;
     }
 
-    public void Initialize()
+   /* public void Initialize()
     {
         initialize(Grenade.Frag, 0.3f, 32, 52, 5000,
             0, 600,
-            CombatType.Handheld, FiringMode.SingleFire, armsHandler.Hands, equip.GrenadeHands);
+            CombatType.Handheld, FiringMode.SingleFire, armsHandler., equip.GrenadeHands);
     }
 
     private void initialize(Grenade grenade, float fireRateInfo, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
@@ -30,5 +30,5 @@ public class GrenadeStats
     {
         grenadeSystem.GetConfiguration(grenade).Initialize(fireRateInfo, combatType, firingMode, weaponRange,
             bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, physicalWeapon);
-    }
+    }*/
 }

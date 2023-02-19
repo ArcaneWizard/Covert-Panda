@@ -60,7 +60,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
         }
 
         GrenadeStats grenadeStats = new GrenadeStats(this);
-        grenadeStats.Initialize();
+        //grenadeStats.Initialize();
     }
 
     private void Start() => Reset();

@@ -17,7 +17,7 @@ public class WeaponConfiguration : MonoBehaviour
     public float FireRateInfo { get; private set; }  // max attacks or fired shots per second
 
     public Transform BulletSpawnPoint { get; private set; }
-    public List<GameObject> Arms { get; private set; }
+    public GameObject Arms { get; private set; }
     public GameObject PhysicalWeapon { get; private set; }
     public Transform WeaponPivot { get; private set; }
     public Animator Animator { get; private set; }
@@ -29,7 +29,7 @@ public class WeaponConfiguration : MonoBehaviour
     public List<Vector2> OtherArmIKCoordinates { get; private set; }
 
     public void Initialize(float fireRateInfo, CombatType combatType, FiringMode firingMode, float weaponRange, int bulletSpeed, int startingAmmo,
-        int bulletDmg, int explosionDmg, List<GameObject> arms, GameObject weapon)
+        int bulletDmg, int explosionDmg, GameObject arms, GameObject weapon)
     {
         this.FireRateInfo = fireRateInfo;
         this.CombatType = combatType;

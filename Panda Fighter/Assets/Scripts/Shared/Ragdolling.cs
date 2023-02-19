@@ -56,8 +56,7 @@ public class Ragdolling : MonoBehaviour
         playerRig.isKinematic = true;
 
         weaponSystem.CurrentWeaponConfiguration.PhysicalWeapon.SetActive(false);
-        foreach (GameObject armLimb in weaponSystem.CurrentWeaponConfiguration.Arms) 
-            armLimb.SetActive(false);
+        weaponSystem.CurrentWeaponConfiguration.Arms.SetActive(false);
 
         foreach (Rigidbody2D rig in ragdollParts)
         {

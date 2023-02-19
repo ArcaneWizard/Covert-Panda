@@ -121,7 +121,6 @@ public abstract class CentralLookAround : MonoBehaviour
         zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
         angleOfSight -= zAngle;
 
-        Debug.Log(angleOfSight);
         rotateHead(angleOfSight);
         updateArmPosition(angleOfSight);
     }

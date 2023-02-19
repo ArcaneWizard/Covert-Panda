@@ -5,8 +5,8 @@ using UnityEngine;
 public class IKTargets : MonoBehaviour
 {
     public Transform MeeleePoleAim;
-    public Transform ShortBarrelMainArm;
-    public Transform ShortBarrelOtherArm;
+    public Transform ShortBarrelMainAim;
+    public Transform ShortBarrelOtherAim;
     public Transform MediumBarrelAim;
     public Transform LongBarrelAim;
     public Transform PistolGripAim;

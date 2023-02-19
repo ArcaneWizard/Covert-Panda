@@ -13237,8 +13237,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeeleePoleAim: {fileID: 7733928212761011487}
-  ShortBarrelMainArm: {fileID: 7733928212684769869}
-  ShortBarrelOtherArm: {fileID: 1516330950148353332}
+  ShortBarrelMainAim: {fileID: 0}
+  ShortBarrelOtherAim: {fileID: 0}
   MediumBarrelAim: {fileID: 7733928211943616033}
   LongBarrelAim: {fileID: 7733928212888500026}
   PistolGripAim: {fileID: 8025231701850919387}
@@ -13255,20 +13255,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 837f5861efe1c83469e36152a49b523b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hands:
-  - {fileID: 5809907649877806066}
-  ShortBarrel:
-  - {fileID: 7733928213113224629}
-  MiddleBarrel:
-  - {fileID: 4467119892333441515}
-  LongBarrel:
-  - {fileID: 7733928211693410047}
-  MeeleGrip:
-  - {fileID: 7733928213670887201}
-  PistolGrip:
-  - {fileID: 8025231703098854215}
-  ShoulderRest:
-  - {fileID: 8025231702160958223}
+  ShortBarrel: {fileID: 0}
+  MiddleBarrel: {fileID: 0}
+  LongBarrel: {fileID: 0}
+  MeeleGrip: {fileID: 0}
+  PistolGrip: {fileID: 0}
+  ShoulderRest: {fileID: 0}
 --- !u!1 &7733928212299240243
 GameObject:
   m_ObjectHideFlags: 0
