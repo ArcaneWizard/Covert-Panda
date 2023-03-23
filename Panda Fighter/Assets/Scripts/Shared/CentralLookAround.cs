@@ -43,21 +43,21 @@ public abstract class CentralLookAround : MonoBehaviour
     protected CentralDeathSequence deathSequence;
     protected Health health;
     protected Animator animator;
-    
-    protected virtual void Awake()
+
+    // Get the angle the creature's body tilt on sloped ground. Returns a value between -180 and 180
+    public float GetAngleOfBodyTilt() => MathX.StandardizeAngle(transform.eulerAngles.z);
+
+    // Get the angle the creature is looking in relative to the positive x-axis in world space.
+    // Returns a value between -180 and 180
+    public float GetAngleOfSight()
     {
-        controller = transform.GetComponent<CentralController>();
-        phaseTracker = transform.GetComponent<CentralPhaseTracker>();
-        shooting = transform.GetComponent<CentralShooting>();
-        deathSequence = transform.GetComponent<CentralDeathSequence>();
-        weaponSystem = transform.GetComponent<CentralWeaponSystem>();
-        health = transform.GetComponent<Health>();
-        body = transform.GetChild(0);
-        animator = body.GetComponent<Animator>();
-        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
+        float angleOfSight = Mathf.Atan2(directionToLook.y, Mathf.Abs(directionToLook.x)) * 180 / Mathf.PI;
+        return MathX.StandardizeAngle(angleOfSight);
     }
 
-    // Update the main arm and back arm's Inverse Kinematic settings
+    // Update the main arm and back arm's Inverse Kinematic (IK) settings so they aim the current
+    // equipped weapon correctly. Afterall, different weapon types (long barrel, pistol grip, etc.) have
+    // different IK configurations
     public void UpdateArmInverseKinematics()
     {
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
@@ -103,6 +103,19 @@ public abstract class CentralLookAround : MonoBehaviour
         }
     }
 
+    protected virtual void Awake()
+    {
+        controller = transform.GetComponent<CentralController>();
+        phaseTracker = transform.GetComponent<CentralPhaseTracker>();
+        shooting = transform.GetComponent<CentralShooting>();
+        deathSequence = transform.GetComponent<CentralDeathSequence>();
+        weaponSystem = transform.GetComponent<CentralWeaponSystem>();
+        health = transform.GetComponent<Health>();
+        body = transform.GetChild(0);
+        animator = body.GetComponent<Animator>();
+        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
+    }
+
     protected virtual void LateUpdate() 
     {
         if (health.IsDead || phaseTracker.IsDoingSomersault)
@@ -112,6 +125,10 @@ public abstract class CentralLookAround : MonoBehaviour
         updateDirectionBodyFaces();
         updateHeadMovementAndArmPosition();
     }
+    
+    // Get the angle the creature is looking in relative to the direction the creature's front chest/body is facing.
+    // Accounts for body tilt on sloped ground. Returns a value btwn -180 and 180
+    private float getPOVAngle => MathX.StandardizeAngle(GetAngleOfSight() - GetAngleOfBodyTilt());
 
     private void updateHeadMovementAndArmPosition() 
     {
@@ -123,8 +140,10 @@ public abstract class CentralLookAround : MonoBehaviour
         zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
         angleOfSight -= zAngle;
 
-        rotateHead(angleOfSight);
-        updateArmPosition(angleOfSight);
+        Debug.Log(getPOVAngle);
+        //Debug.Log(Mathf.Cos(angleOfSight * Mathf.PI / 180f) +", " + Mathf.Sin(angleOfSight * Mathf.PI / 180f));
+        rotateHead(getPOVAngle);
+        updateArmPosition(getPOVAngle);
     }
     
     private void rotateHead(float angleOfSight) 
@@ -176,6 +195,7 @@ public abstract class CentralLookAround : MonoBehaviour
             }
 
             Vector2 shoulderPos = weaponSystem.CurrentWeaponConfiguration.MainArmIKCoordinates[3];
+
             mainArmIKTarget.transform.localPosition = aimTargetDistanceFromShoulder
                     * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
         }
