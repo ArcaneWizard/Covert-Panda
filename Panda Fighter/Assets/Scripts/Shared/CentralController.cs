@@ -85,7 +85,7 @@ public abstract class CentralController : MonoBehaviour
     public void UpdateTiltInstantly()
     {
         updateGroundAngle();
-        float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.7f : ((groundAngle - 360) / 1.7f);
+        float newGroundAngle = groundAngle <= 180 ? groundAngle / 3f : ((groundAngle - 360) / 3f);
 
         if (!float.IsNaN(groundAngle))
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
@@ -139,7 +139,7 @@ public abstract class CentralController : MonoBehaviour
         if (zAngle > 180)
             zAngle -= 360;
 
-        float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.9f : ((groundAngle - 360) / 1.9f);
+        float newGroundAngle = groundAngle <= 180 ? groundAngle / 1.6f : ((groundAngle - 360) / 1.6f);
 
         if (isGrounded && (DirX != 0 || (DirX == 0 && groundAngle == lastGroundAngle)))
         {

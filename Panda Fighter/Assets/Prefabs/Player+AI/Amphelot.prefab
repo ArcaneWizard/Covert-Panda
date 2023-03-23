@@ -5027,7 +5027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82aa0e839d6964fbcbf5d062fc3607af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  centralAbilityHandler: {fileID: 2732179973243828990}
+  centralAbilityHandler: {fileID: 0}
 --- !u!1 &4703287397319179080
 GameObject:
   m_ObjectHideFlags: 0
@@ -13261,6 +13261,7 @@ MonoBehaviour:
   MeeleGrip: {fileID: 0}
   PistolGrip: {fileID: 0}
   ShoulderRest: {fileID: 0}
+  armTranslationSpeed: {x: 0.15, y: 0.12}
 --- !u!1 &7733928212299240243
 GameObject:
   m_ObjectHideFlags: 0

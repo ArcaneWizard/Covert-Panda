@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 // When the the creature looks around with their weapon, update the arm limbs/weapon
@@ -137,7 +139,6 @@ public abstract class CentralLookAround : MonoBehaviour
             headSlope = (50f - defaultHeadAngle) / -90f;
 
         headRotation = headSlope * angleOfSight + defaultHeadAngle;
-        //headRotation += Mathf.Sign(directionToLook.x) * transform.localEulerAngles.z;
         head.localEulerAngles = new Vector3(head.localEulerAngles.x, head.localEulerAngles.y, headRotation);
 
         // move head forward slightly when looking downwards
@@ -154,6 +155,7 @@ public abstract class CentralLookAround : MonoBehaviour
     {
         float aimTargetDistanceFromShoulder, aimTargetAngle;
 
+        // rotate main arm to aim in the right direction
         if (mainArmIKTarget != null)
         {
             if (directionToLook.y >= 0)
@@ -178,6 +180,7 @@ public abstract class CentralLookAround : MonoBehaviour
                     * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
         }
 
+        // rotate secondary arm (if applicable) to aim in the right direction
         if (otherArmIKTarget != null)
         {
             if (directionToLook.y >= 0)
@@ -200,6 +203,21 @@ public abstract class CentralLookAround : MonoBehaviour
             Vector2 shoulderPos = weaponSystem.CurrentWeaponConfiguration.OtherArmIKCoordinates[3];
             otherArmIKTarget.transform.localPosition = aimTargetDistanceFromShoulder
                     * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
+        }
+
+        // ensure all bones on the creature's arms have their x and y rotation always equal to 0
+        // prevents IK glitch where these arm rotations somehow can change by accident
+        Transform arm = weaponSystem.CurrentWeaponConfiguration.Arms.transform;
+        Queue<Transform> armBones = new Queue<Transform>();
+        armBones.Enqueue(arm);
+
+        while (armBones.Count > 0)
+        {
+            foreach (Transform child in armBones.Peek())
+                armBones.Enqueue(child);
+
+            Transform temp = armBones.Dequeue();
+            temp.localEulerAngles = new Vector3(0f, 0f, temp.localEulerAngles.z);
         }
     }
 }

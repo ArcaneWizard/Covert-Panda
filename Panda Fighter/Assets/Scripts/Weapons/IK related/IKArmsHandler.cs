@@ -87,7 +87,7 @@ public class IKArmsHandler : MonoBehaviour
 
 
     private Dictionary<GameObject, Vector3> InitialPositionOfArm;
-    private const float armTranslationSpeed = 0.12f;
+    public Vector2 armTranslationSpeed = new Vector2(0.15f, 0.12f);
 
     private int childCount;
     private CentralLookAround lookAround;
@@ -121,14 +121,17 @@ public class IKArmsHandler : MonoBehaviour
             transform.GetChild(i).localEulerAngles = new Vector3(0, 0, localAngle.z);
         }
 
-        // Arm pads should move forward when aiming down. Otherwise creature arms don't look right when
-        // the arm pad always rotates around a single pivot point
-        float xOffset = 0f;
+        // Arms should adjust their position a little when the creature is aiming a gun towards the ground
+        // This is because the arms don't always look right when the arm pad solely rotates around a single pivot point
+        Vector3 offset = Vector3.zero;
         if (lookAround.directionToLook.y < 0)
-            xOffset += armTranslationSpeed * Mathf.Abs(lookAround.directionToLook.y);
+        {
+            offset = new Vector3(armTranslationSpeed.x * Mathf.Abs(lookAround.directionToLook.y),
+                armTranslationSpeed.y * Mathf.Abs(lookAround.directionToLook.y), 0);
+        }
 
         GameObject currentArm = weaponSystem.CurrentWeaponConfiguration.Arms;
-        currentArm.transform.localPosition = InitialPositionOfArm[currentArm] + new Vector3(xOffset, 0, 0);
+        currentArm.transform.localPosition = InitialPositionOfArm[currentArm] + offset;
     }
 }
 
