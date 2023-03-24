@@ -71,15 +71,6 @@ public class AI_LookAround : CentralLookAround
             lastKnownDirX = controller.DirX;
     }
 
-    // updates the direction the creature's body faces
-    protected override void updateDirectionBodyFaces()
-    {
-        if (directionToLook.x >= 0)
-            body.localRotation = Quaternion.Euler(0, 0, 0);
-        else
-            body.localRotation = Quaternion.Euler(0, 180, 0);
-    }
-
     // updates the Enemy Spotted GameObject if an enemy creature is spotted in the AI's vision to shoot at
     private IEnumerator scanForNearbyEnemies()
     {

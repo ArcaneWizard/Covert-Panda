@@ -11,7 +11,7 @@ public class Shooting : CentralShooting
 
     public override Vector2 GetAim() => lookAround.directionToLook;
 
-    public override void ResetUponSwitchingToNewWeapon()
+    public override void ResetForNewlySwitchedWeapon()
     {
         timerBtwnShots = 0f;
         chargeUpTimer = 0f;

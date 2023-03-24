@@ -11,14 +11,18 @@ using UnityEngine;
 
 public abstract class CentralLookAround : MonoBehaviour
 {
+    // the direction the creature is looking at (in world space)
     public Vector2 directionToLook { get; protected set; }
-    public bool IsLookingRight => directionToLook.x >= 0;
 
-    // update the direction to look in
+    // whether or not the creature is facing right
+    public bool IsFacingRight => body.localEulerAngles.y == 0;
+
+    // calculate and set the direction the creature is looking at
     protected abstract void figureOutDirectionToLookIn();
 
-    // update the direction the creature's body faces
-    protected abstract void updateDirectionBodyFaces();
+    // the direction and angle the creature is looking at (relative to their tilt/local x-axis)
+    private Vector2 povVector;
+    private float povAngle;
 
     // IK coordinates for main arm when looking up, down or to the side
     private float upVector, downVector, rightVector;
@@ -29,7 +33,7 @@ public abstract class CentralLookAround : MonoBehaviour
     private float up2, right2, down2;
 
     [SerializeField] protected Transform head;
-    [SerializeField] protected Transform weaponPivot;
+    [SerializeField] protected Transform weaponPivot; // used to calculate direction looked at
 
     protected Camera camera;
     protected Transform body;
@@ -43,9 +47,6 @@ public abstract class CentralLookAround : MonoBehaviour
     protected CentralDeathSequence deathSequence;
     protected Health health;
     protected Animator animator;
-
-    // Get the angle the creature's body tilt on sloped ground. Returns a value between -180 and 180
-    public float GetAngleOfBodyTilt() => MathX.StandardizeAngle(transform.eulerAngles.z);
 
     // Get the angle the creature is looking in relative to the positive x-axis in world space.
     // Returns a value between -180 and 180
@@ -123,75 +124,79 @@ public abstract class CentralLookAround : MonoBehaviour
         
         figureOutDirectionToLookIn();
         updateDirectionBodyFaces();
-        updateHeadMovementAndArmPosition();
-    }
-    
-    // Get the angle the creature is looking in relative to the direction the creature's front chest/body is facing.
-    // Accounts for body tilt on sloped ground. Returns a value btwn -180 and 180
-    private float getPOVAngle => MathX.StandardizeAngle(GetAngleOfSight() - GetAngleOfBodyTilt());
 
-    private void updateHeadMovementAndArmPosition() 
+        calculatePOV();
+        rotateHead();
+        updateArmPosition();
+
+        Debug.Log(povVector.x + ", " + povVector.y);
+    }
+
+    // calculate and set whether the creature's body faces left or right
+    private void updateDirectionBodyFaces()
     {
-        // calculate the angle of sight based off vector direction looked in
-        float angleOfSight = Mathf.Atan2(directionToLook.y, Mathf.Abs(directionToLook.x)) * 180 / Mathf.PI;
+        if (povVector.x >= 0)
+            body.localRotation = Quaternion.Euler(0, 0, 0);
+        else
+            body.localRotation = Quaternion.Euler(0, 180, 0);
+    }
 
-        // adjust the angle of sight correspondingly when the creature's body is tilted on sloped ground/ramps:
-        float zAngle = (transform.eulerAngles.z > 180f) ? 360 - transform.eulerAngles.z : transform.eulerAngles.z;
-        zAngle *= (body.localEulerAngles.y / 90 - 1) * Mathf.Sign(transform.eulerAngles.z - 180);
-        angleOfSight -= zAngle;
-
-        Debug.Log(getPOVAngle);
-        //Debug.Log(Mathf.Cos(angleOfSight * Mathf.PI / 180f) +", " + Mathf.Sin(angleOfSight * Mathf.PI / 180f));
-        rotateHead(getPOVAngle);
-        updateArmPosition(getPOVAngle);
+    // Calculate the direction and angle the creature is looking at from their POV. The vector and angle are defined in a coordinate plane
+    // where the vector (1,0) corresponds to the creature's local x-axis/tilt. Ex. if the creature's body is tilted 20 degrees on a super steep
+    // slope, a POV angle of 90 degrees represents looking "upwards" from their perspective, or 110 degrees in world space.
+    private void calculatePOV()
+    {
+        povVector = MathX.RotateVector(directionToLook, -controller.GetAngleOfBodyTilt() * Mathf.Deg2Rad);
+        float temp = Mathf.Atan2(povVector.y, Mathf.Abs(povVector.x)) * Mathf.Rad2Deg;
+        povAngle = MathX.StandardizeAngle(temp);
     }
     
-    private void rotateHead(float angleOfSight) 
+    private void rotateHead()
     {
         float headSlope, headRotation;
         float defaultHeadAngle = 90f;
 
         // rotate head based on angle of sight
-        if (directionToLook.y >= 0)
+        if (povVector.y >= 0)
             headSlope = (153f - defaultHeadAngle) / 90f;
         else
             headSlope = (50f - defaultHeadAngle) / -90f;
 
-        headRotation = headSlope * angleOfSight + defaultHeadAngle;
+        headRotation = headSlope * povAngle + defaultHeadAngle;
         head.localEulerAngles = new Vector3(head.localEulerAngles.x, head.localEulerAngles.y, headRotation);
 
         // move head forward slightly when looking downwards
         float headPos;
-        if (directionToLook.y >= 0)
+        if (povVector.y >= 0)
             headPos = 0.05f;
         else
-            headPos = 0.05f + angleOfSight * (0.142f - 0.05f) / -90f;
+            headPos = 0.05f + povAngle * (0.142f - 0.05f) / -90f;
 
         head.localPosition = new Vector3(headPos, head.localPosition.y, Mathf.Sign(directionToLook.x) * head.localPosition.z);
     }
 
-    private void updateArmPosition(float angleOfSight)
+    private void updateArmPosition()
     {
         float aimTargetDistanceFromShoulder, aimTargetAngle;
 
         // rotate main arm to aim in the right direction
         if (mainArmIKTarget != null)
         {
-            if (directionToLook.y >= 0)
+            if (povVector.y >= 0)
             {
                 float slope = (up - right) / 90f;
-                aimTargetAngle = angleOfSight * slope + right;
+                aimTargetAngle = povAngle * slope + right;
 
                 float dirSlope = (upVector - rightVector) / 90f;
-                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+                aimTargetDistanceFromShoulder = povAngle * dirSlope + rightVector;
             }
             else
             {
                 float slope = (down - right) / -90f;
-                aimTargetAngle = angleOfSight * slope + right;
+                aimTargetAngle = povAngle * slope + right;
 
                 float dirSlope = (downVector - rightVector) / -90f;
-                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector;
+                aimTargetDistanceFromShoulder = povAngle * dirSlope + rightVector;
             }
 
             Vector2 shoulderPos = weaponSystem.CurrentWeaponConfiguration.MainArmIKCoordinates[3];
@@ -203,21 +208,21 @@ public abstract class CentralLookAround : MonoBehaviour
         // rotate secondary arm (if applicable) to aim in the right direction
         if (otherArmIKTarget != null)
         {
-            if (directionToLook.y >= 0)
+            if (povVector.y >= 0)
             {
                 float slope = (up2 - right2) / 90f;
-                aimTargetAngle = angleOfSight * slope + right2;
+                aimTargetAngle = povAngle * slope + right2;
 
                 float dirSlope = (upVector2 - rightVector2) / 90f;
-                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector2;
+                aimTargetDistanceFromShoulder = povAngle * dirSlope + rightVector2;
             }
             else
             {
                 float slope = (down2 - right2) / -90f;
-                aimTargetAngle = angleOfSight * slope + right2;
+                aimTargetAngle = povAngle * slope + right2;
 
                 float dirSlope = (downVector2 - rightVector2) / -90f;
-                aimTargetDistanceFromShoulder = angleOfSight * dirSlope + rightVector2;
+                aimTargetDistanceFromShoulder = povAngle * dirSlope + rightVector2;
             }
 
             Vector2 shoulderPos = weaponSystem.CurrentWeaponConfiguration.OtherArmIKCoordinates[3];

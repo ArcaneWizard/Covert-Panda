@@ -60,7 +60,7 @@ public abstract class CentralShooting : MonoBehaviour
         weaponSystem.CurrentWeaponBehaviour.Attack(GetAim());
     }
 
-    public virtual void ResetUponSwitchingToNewWeapon() { }
+    public virtual void ResetForNewlySwitchedWeapon() { }
 
     /* protected void RightClickAttack()
      {

@@ -91,6 +91,9 @@ public abstract class CentralController : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
     }
 
+    // Get the angle the creature's body tilt on sloped ground. Returns a value between -180 and 180
+    public float GetAngleOfBodyTilt() => MathX.StandardizeAngle(transform.eulerAngles.z);
+
     protected virtual void Start()
     {
         StartCoroutine(performWallChecks());

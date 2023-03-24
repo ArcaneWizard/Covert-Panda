@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class wScythe : WeaponBehaviour
 {
-    public override void ConfigureUponSwitchingToWeapon()
+    public override void UponSwitchingToWeapon()
     {
-        base.ConfigureUponSwitchingToWeapon();
+        base.UponSwitchingToWeapon();
         weaponConfiguration.Animator.SetInteger("Arms Phase", 10);
     }
 

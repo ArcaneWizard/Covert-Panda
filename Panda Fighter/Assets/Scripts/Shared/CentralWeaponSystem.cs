@@ -80,15 +80,16 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         ResetInventory();
     }
 
-     // Info about the current weapon the creature is holding
+     // Methods for retrieving useful info about the current weapon equipped
     public Weapon CurrentWeapon => inventory[selectedSlot].Weapon;
     public int CurrentAmmo => inventory[selectedSlot].Ammo;
     public WeaponBehaviour CurrentWeaponBehaviour => weaponBehaviours[CurrentWeapon];
     public WeaponConfiguration CurrentWeaponConfiguration => weaponConfigurations[CurrentWeapon];
+
+    // Get the weapon configuration for a specified weapon
     public WeaponConfiguration GetConfiguration(Weapon weapon) => weaponConfigurations[weapon];
 
-
-    // Lowers current ammo by 1. Returns a physical bullet for the current weapon
+    // Lowers current ammo by 1. Returns a physical bullet for the current weapon equipped
     public Transform UseOneBullet()
     {
         inventory[selectedSlot].Ammo--;
@@ -96,7 +97,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         return bulletPools[CurrentWeapon][bulletPoolIdx];
     }
 
-    // Reset inventory
+    // Resets inventory back to the starting inventory
     public virtual void ResetInventory()
     {
         inventoryWeapons.Clear();
@@ -182,8 +183,8 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     {
         CurrentWeaponBehaviour.TerminateAttack();
         selectedSlot = slot;
-        CurrentWeaponBehaviour.ConfigureUponSwitchingToWeapon();
-        centralShooting.ResetUponSwitchingToNewWeapon();
+        CurrentWeaponBehaviour.UponSwitchingToWeapon();
+        centralShooting.ResetForNewlySwitchedWeapon();
 
         lookAround.UpdateArmInverseKinematics();
 
