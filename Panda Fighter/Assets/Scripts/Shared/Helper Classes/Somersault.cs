@@ -8,25 +8,27 @@ public class Somersault
 {
     public SomersaultState state {get; private set;}
 
-    private const float initSomersaultSpeed = 600f;
-    private const float endSomersaultSpeed = 600f;
+    private const float initSomersaultSpeed = 1000f;
+    private const float endSomersaultSpeed = 800f;
     private const float somersaultDuration = 0.4f;
     protected int somersaultDirection;
 
+    private float startTime;
+
     private Transform transform;
-    private Transform body;
     private CentralController controller;
+    private CentralLookAround lookAround;
     private CentralPhaseTracker phaseTracker;
     private Animator animator;
 
-    public Somersault(Transform transform, CentralPhaseTracker phaseTracker, 
-        Animator animator, CentralController controller) 
+    public Somersault(Transform transform, CentralPhaseTracker phaseTracker, Animator animator, 
+        CentralController controller, CentralLookAround lookAround) 
     {
         this.transform = transform;
-        this.body = transform.GetChild(0);
         this.phaseTracker = phaseTracker;
         this.animator = animator;
         this.controller = controller;
+        this.lookAround = lookAround;
     }
 
     public void Reset() => state = SomersaultState.Exited;
@@ -37,11 +39,12 @@ public class Somersault
     public IEnumerator Begin()
     {
         // setup 
-        somersaultDirection = controller.DirX != 0 ? -controller.DirX : ((body.localEulerAngles.y == 0) ? -1 : 1);
+        somersaultDirection = controller.DirX != 0 ? -controller.DirX : (lookAround.IsFacingRight ? -1 : 1);
+        startTime = Time.time;
 
-        if (controller.DirX == -1 && body.localEulerAngles.y == 0)
+        if (controller.DirX == -1 && lookAround.IsFacingRight)
             animator.SetBool("somersault forwards", false);
-        else if (controller.DirX == 1 && body.localEulerAngles.y == 180)
+        else if (controller.DirX == 1 && !lookAround.IsFacingRight)
             animator.SetBool("somersault forwards", false);
         else
             animator.SetBool("somersault forwards", true);
@@ -69,9 +72,9 @@ public class Somersault
         {
             doSomersault();
 
-            bool spunBackUpright = (somersaultDirection == -1 && transform.localEulerAngles.z < 30)
-                || (somersaultDirection == 1 && (transform.localEulerAngles.z > 0 && transform.localEulerAngles.z < 40))
-                || (somersaultDirection == 1 && transform.localEulerAngles.z > 345);
+            float z = MathX.ClampAngleTo360(transform.localEulerAngles.z);
+            bool spunBackUpright = (somersaultDirection == -1 && z < 40)
+                || (somersaultDirection == 1 && z > 320);
 
             if (spunBackUpright) 
                 state = SomersaultState.NearFinished;
@@ -86,30 +89,30 @@ public class Somersault
     // the double jump animation.
     private void doSomersault()
     {
-        float t = ((animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1) + 1) % 1;
+        float timeElapsed = Time.time - startTime;
 
-        if (t < somersaultDuration)
-            transform.eulerAngles = new Vector3(0, 0, t * initSomersaultSpeed * somersaultDirection);
+        if (timeElapsed <= somersaultDuration)
+            transform.eulerAngles = new Vector3(0, 0, timeElapsed * initSomersaultSpeed * somersaultDirection);
         else
         {
             float zAngle = somersaultDuration * initSomersaultSpeed * somersaultDirection
-                    + (t - somersaultDuration) * endSomersaultSpeed * somersaultDirection;
+                    + (timeElapsed - somersaultDuration) * endSomersaultSpeed * somersaultDirection;
             transform.eulerAngles = new Vector3(0, 0, zAngle);
         }
     }
 
     private void endSomersault()
     {
-        float z = (transform.localEulerAngles.z + 360) % 360;
+        float z = MathX.ClampAngleTo180(transform.localEulerAngles.z);
 
-        if (Mathf.Abs(z - 360) < 2 || Mathf.Abs(z) < 2)
+        if (Mathf.Abs(z) <= 8)
         {
             state = SomersaultState.Exited;
             transform.localEulerAngles = new Vector3(0f, 0f, 0f);
         }
         else
         {
-            z = (z < 180) ? transform.localEulerAngles.z - 2f : transform.localEulerAngles.z + 2f;
+            z = (z > 0) ? z - 15f : z + 15f;
             transform.localEulerAngles = new Vector3(0f, 0f, z);
         }
     }

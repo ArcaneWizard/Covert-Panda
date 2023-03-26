@@ -36,7 +36,7 @@ public class CentralPhaseTracker : MonoBehaviour
         camera = transform.parent.parent.parent.GetComponent<References>().Camera;
 
         // somersault handler
-        somersaultHandler = new Somersault(transform, this, animator, controller);
+        somersaultHandler = new Somersault(transform, this, animator, controller, lookAround);
         somersaultHandler.Reset();
 
         // setup animation clip overrides so different jump animations, falling animations, etc. can be used

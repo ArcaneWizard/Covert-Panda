@@ -8,10 +8,16 @@ public static class MathX
     // Useful threshold for comparing differences between floats
     public static float Epsilon = 0.0001f;
 
-    // Takes in an angle in degrees. Returns an equivalent angle between -180 and 180 degrees
-    public static float StandardizeAngle(float angle)
+    // Takes in an angle in degrees. Returns an equivalent angle between 0 and 360 degrees
+    public static float ClampAngleTo360(float angle)
     {
-        angle = (angle + 3600) % 360;
+        return (angle % 360 + 3600) % 360;
+    }
+
+    // Takes in an angle in degrees. Returns an equivalent angle between -180 and 180 degrees
+    public static float ClampAngleTo180(float angle)
+    {
+        angle = ClampAngleTo360(angle);
         if (angle > 180)
             angle -= 360;
 
@@ -26,12 +32,14 @@ public static class MathX
 
     // Rotates the vector by specified angle in radians. Can optionally specify pivot point
     public static Vector2 RotateVector(Vector2 vector, float radians, Vector2 pivot = default(Vector2)) 
-    { 
+    {
         float sin = Mathf.Sin(radians);
         float cos = Mathf.Cos(radians);
+
         vector -= pivot; 
         vector = new Vector2(cos * vector.x - sin * vector.y, sin * vector.x + cos * vector.y); 
         vector += pivot; 
+
         return vector; 
     }
 }

@@ -48,14 +48,6 @@ public abstract class CentralLookAround : MonoBehaviour
     protected Health health;
     protected Animator animator;
 
-    // Get the angle the creature is looking in relative to the positive x-axis in world space.
-    // Returns a value between -180 and 180
-    public float GetAngleOfSight()
-    {
-        float angleOfSight = Mathf.Atan2(directionToLook.y, Mathf.Abs(directionToLook.x)) * 180 / Mathf.PI;
-        return MathX.StandardizeAngle(angleOfSight);
-    }
-
     // Update the main arm and back arm's Inverse Kinematic (IK) settings so they aim the current
     // equipped weapon correctly. Afterall, different weapon types (long barrel, pistol grip, etc.) have
     // different IK configurations
@@ -128,8 +120,6 @@ public abstract class CentralLookAround : MonoBehaviour
         calculatePOV();
         rotateHead();
         updateArmPosition();
-
-        Debug.Log(povVector.x + ", " + povVector.y);
     }
 
     // calculate and set whether the creature's body faces left or right
@@ -148,7 +138,7 @@ public abstract class CentralLookAround : MonoBehaviour
     {
         povVector = MathX.RotateVector(directionToLook, -controller.GetAngleOfBodyTilt() * Mathf.Deg2Rad);
         float temp = Mathf.Atan2(povVector.y, Mathf.Abs(povVector.x)) * Mathf.Rad2Deg;
-        povAngle = MathX.StandardizeAngle(temp);
+        povAngle = MathX.ClampAngleTo180(temp);
     }
     
     private void rotateHead()
@@ -160,7 +150,7 @@ public abstract class CentralLookAround : MonoBehaviour
         if (povVector.y >= 0)
             headSlope = (153f - defaultHeadAngle) / 90f;
         else
-            headSlope = (50f - defaultHeadAngle) / -90f;
+            headSlope = (61f - defaultHeadAngle) / -90f;
 
         headRotation = headSlope * povAngle + defaultHeadAngle;
         head.localEulerAngles = new Vector3(head.localEulerAngles.x, head.localEulerAngles.y, headRotation);

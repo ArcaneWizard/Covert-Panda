@@ -92,7 +92,7 @@ public abstract class CentralController : MonoBehaviour
     }
 
     // Get the angle the creature's body tilt on sloped ground. Returns a value between -180 and 180
-    public float GetAngleOfBodyTilt() => MathX.StandardizeAngle(transform.eulerAngles.z);
+    public float GetAngleOfBodyTilt() => MathX.ClampAngleTo180(transform.eulerAngles.z);
 
     protected virtual void Start()
     {
@@ -168,7 +168,7 @@ public abstract class CentralController : MonoBehaviour
         if (health.IsDead)
             return;
 
-        // you need to be leave further from the ground to get ungrounded then you need to be close
+        // you need to be be further from the ground to get ungrounded then you need to be close
         // to the ground to be grounded
         float raycastLength = isGrounded ? 2.6f : 2.0f;
 

@@ -113,6 +113,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
         pickupWeaponIntoAvailableSlot(Weapon.ArcticPistol);
         pickupWeaponIntoAvailableSlot(Weapon.Railgun);
+        pickupWeaponIntoAvailableSlot(Weapon.Shotgun);
     }
 
     // Switch to the weapon in the specified inventory slot

@@ -35,8 +35,9 @@ public class Ragdolling : MonoBehaviour
 
         foreach (Rigidbody2D rig in ragdollParts)
         {
-            rig.isKinematic = true;
             rig.gameObject.layer = Layer.Limb;
+            rig.isKinematic = true;
+            rig.velocity = Vector2.zero;
         }
 
         playerRig.isKinematic = false;
@@ -60,11 +61,10 @@ public class Ragdolling : MonoBehaviour
 
         foreach (Rigidbody2D rig in ragdollParts)
         {
-            rig.velocity = Vector2.zero;
-            rig.gravityScale = CentralController.Gravity;
             rig.gameObject.layer = Layer.LimbInRagdoll;
             rig.isKinematic = false;
             rig.velocity = velocityBeforeDeath;
+            rig.gravityScale = CentralController.Gravity;
         }
 
         ragdollParts[0].AddTorque(velocityBeforeDeath.magnitude * Random.Range(-20f, 20f));

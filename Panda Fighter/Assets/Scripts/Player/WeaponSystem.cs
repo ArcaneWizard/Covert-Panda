@@ -8,7 +8,10 @@ using UnityEngine.UI;
 
 public class WeaponSystem : CentralWeaponSystem
 {
-    private HashSet<GameObject> pickableWeapons = new HashSet<GameObject>();
+    private HashSet<GameObject> weaponsYouCanPickUp = new HashSet<GameObject>();
+    private bool tryPickingUpWeapon;
+    private float timer;
+
    /* private Dictionary<string, Image> weaponIcon = new Dictionary<string, Image>();
     private Dictionary<string, Image> weaponSlot = new Dictionary<string, Image>();
     private Dictionary<string, Sprite> equipped = new Dictionary<string, Sprite>();
@@ -60,34 +63,44 @@ public class WeaponSystem : CentralWeaponSystem
                 switchWeapons(i-1);
         }
 
+        /*foreach (GameObject weapon in weaponsYouCanPickUp)
+        {
+            if (!weapon.activeSelf)
+            {
+                Debug.Log("a");
+                weaponsYouCanPickUp.Remove(weapon);
+            }
+
+            Debug.Log(weapon.name);
+        }*/
+
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            foreach (GameObject pickableWeapon in pickableWeapons)
-            {
-                Weapon weapon = pickableWeapon.transform.GetComponent<WeaponTag>().Tag;
-                pickupWeaponIntoCurrentSlot(weapon);
-                pickableWeapon.SetActive(false);
-                pickableWeapon.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
-                return;
-            }
+            tryPickingUpWeapon = true;
+            timer = 0.1f;
         }
+
+        if (timer > 0f)
+            timer -= Time.deltaTime;
+
+        if (timer <= 0f)
+            tryPickingUpWeapon = false;
     }
 
-    protected override void OnTriggerEnter2D(Collider2D col)
+    private void OnTriggerStay2D(Collider2D col)
     {
-        base.OnTriggerEnter2D(col);
+        if (col.gameObject.layer == Layer.Weapons && col.gameObject.activeSelf)
+        {
+            if (tryPickingUpWeapon)
+            {
+                Weapon w = col.gameObject.transform.GetComponent<WeaponTag>().Tag;
+                pickupWeaponIntoCurrentSlot(w);
+                col.gameObject.SetActive(false);
+                col.gameObject.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
+            }
 
-        if (!col.gameObject.activeSelf)
-            return;
-
-        if (col.gameObject.layer == Layer.Weapons)
-            pickableWeapons.Add(col.gameObject);
-    }
-
-    private void OnTriggerExit2D(Collider2D col)
-    {
-        if (col.gameObject.layer == Layer.Weapons)
-            pickableWeapons.Remove(col.gameObject);
+            tryPickingUpWeapon = false;
+        }
     }
 
 
