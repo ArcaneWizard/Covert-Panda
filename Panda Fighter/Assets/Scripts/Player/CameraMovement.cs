@@ -49,12 +49,13 @@ public class CameraMovement : MonoBehaviour
         cameraOffset = transform.position - cameraTarget.transform.position;
     }
 
-    void FixedUpdate()  => updateCameraMovement();
+    //void FixedUpdate()  => updateCameraMovement();
 
-    void Update()
+    void LateUpdate()
     {
         updateCameraShake();
         updateCameraSway();
+        updateCameraMovement();
 
         // when timer is over, end camera shake
         if (shakeTimer > 0f)
@@ -77,8 +78,8 @@ public class CameraMovement : MonoBehaviour
     private void updateCameraMovement()
     {
         // determine mouse position relative to the center of screen
-        float mouseDistanceX = (Input.mousePosition.x - (float)Screen.width / 2f) / (float)Screen.width;
-        float mouseDistanceY = (Input.mousePosition.y - (float)Screen.height / 2f) / (float)Screen.height;
+        float mouseDistanceX = (Input.mousePosition.x - Screen.width / 2f) / (float)Screen.width;
+        float mouseDistanceY = (Input.mousePosition.y - Screen.height / 2f) / (float)Screen.height;
 
         if (mouseDistanceX > 0.5f || mouseDistanceX < -0.5f)
             mouseDistanceX = 0.5f * Mathf.Sign(mouseDistanceX);

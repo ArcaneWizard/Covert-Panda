@@ -112,24 +112,21 @@ public abstract class CentralController : MonoBehaviour
         }
 
         adjustCollidersAndDetectors();
+
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        body.position = new Vector3(body.position.x, body.position.y, 0);
     }
 
     protected virtual void LateUpdate() 
     {
         if (health.IsDead)
             return;
-
-        updateTilt();
     }
 
     protected virtual void FixedUpdate()
     {
-        if (health.IsDead)
-            return;
-
+        updateTilt();
         oneWayCollider.enabled = rig.velocity.y < 0.1f;
-        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-        body.position = new Vector3(body.position.x, body.position.y, 0);
     }
 
     // Update the creature's body tilt depending on the ground angle
@@ -158,7 +155,9 @@ public abstract class CentralController : MonoBehaviour
     // check if the creature is on the ground + update the groundAngle
     private IEnumerator repeatedlyCheckIfGrounded()
     {
-        updateGroundAngle();
+        if (!health.IsDead)
+            updateGroundAngle();
+
         yield return new WaitForSeconds(0.06f);
         StartCoroutine(repeatedlyCheckIfGrounded());
     }
