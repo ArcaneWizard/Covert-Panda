@@ -51,7 +51,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
     }
 
     // Invoked when the creature switches to a new weapon. 
-    public virtual void UponSwitchingToWeapon() 
+    public virtual void UponSwitchingToThisWeapon() 
     {
         attackProgress = AttackProgress.Finished;
         bonusAttackProgress = AttackProgress.Finished;

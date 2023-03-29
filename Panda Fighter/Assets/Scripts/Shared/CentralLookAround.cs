@@ -131,9 +131,10 @@ public abstract class CentralLookAround : MonoBehaviour
             body.localRotation = Quaternion.Euler(0, 180, 0);
     }
 
-    // Calculate the direction and angle the creature is looking at from their POV. The vector and angle are defined in a coordinate plane
-    // where the vector (1,0) corresponds to the creature's local x-axis/tilt. Ex. if the creature's body is tilted 20 degrees on a super steep
-    // slope, a POV angle of 90 degrees represents looking "upwards" from their perspective, or 110 degrees in world space.
+    // Calculate the direction the creature is looking in from its point of view (POV), which should be affected by
+    // standing tilted on a slope. The POV vector is obtained by mapping the vector directionToLook in the world's coordinate plane
+    // to a coordinate plane whose positive x-axis is defined by the the creature's local positive x-axis. The POV angle is
+    // the angle between the creature's local positive x-axis and the direction it is looking
     private void calculatePOV()
     {
         povVector = MathX.RotateVector(directionToLook, -controller.GetAngleOfBodyTilt() * Mathf.Deg2Rad);
@@ -162,7 +163,7 @@ public abstract class CentralLookAround : MonoBehaviour
         else
             headPos = 0.05f + povAngle * (0.142f - 0.05f) / -90f;
 
-        head.localPosition = new Vector3(headPos, head.localPosition.y, Mathf.Sign(directionToLook.x) * head.localPosition.z);
+        head.localPosition = new Vector3(headPos, head.localPosition.y, Mathf.Sign(povVector.x) * head.localPosition.z);
     }
 
     private void updateArmPosition()

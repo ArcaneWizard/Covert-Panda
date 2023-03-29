@@ -56,7 +56,7 @@ public class CentralPhaseTracker : MonoBehaviour
     // set phase to jumping, and play any random one of the jump animations
     public void EnterJumpPhase()
     {
-        // if creature is still, use the default idle jump animation. else use any
+        // note: if creature is still, use the default idle jump animation.
         if (controller.DirX == 0)
             clipOverrides["jumping"] = jumpClips[0];
         else
@@ -88,11 +88,11 @@ public class CentralPhaseTracker : MonoBehaviour
             return;
         }
         
-        // the creature is idle or running if it's grounded and hasn't jumped recently
+        // update the phase when the creature is idle or running 
         if (controller.isGrounded && !controller.recentlyJumpedOffGround)
             setPhase((controller.DirX == 0) ? Phase.Idle : Phase.Running);
 
-        // else the creature is falling if a mid-air phase (falling, jumping, double jumping) hasn't been set yet
+        // update the phase when the creature is falling
         else if (!IsMidAir)
             setPhase(Phase.Falling);
 

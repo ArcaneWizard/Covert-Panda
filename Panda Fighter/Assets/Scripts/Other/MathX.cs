@@ -18,7 +18,7 @@ public static class MathX
     public static float ClampAngleTo180(float angle)
     {
         angle = ClampAngleTo360(angle);
-        if (angle > 180)
+        if (angle >= 180)
             angle -= 360;
 
         return angle;

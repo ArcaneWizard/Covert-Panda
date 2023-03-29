@@ -7,9 +7,9 @@ public class wFragGrenade : WeaponBehaviour
     protected float grenadeThrowForce = 2200;
     protected float grenadeYForce = -20;
 
-    public override void UponSwitchingToWeapon()
+    public override void UponSwitchingToThisWeapon()
     {
-        base.UponSwitchingToWeapon();
+        base.UponSwitchingToThisWeapon();
         weaponConfiguration.Animator.SetInteger("Arms Phase", 0);
     }
 

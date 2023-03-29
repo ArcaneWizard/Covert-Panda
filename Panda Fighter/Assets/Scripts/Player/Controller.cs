@@ -8,6 +8,19 @@ public class Controller : CentralController
 {
     private bool standingOnJumpPad;
     private bool canThrustDown;
+    private float fastestYVelocityRecorded;
+
+    public float a = 0.4f;
+    public float b = 100f;
+    public float c = 12f;
+
+    [SerializeField] private CameraMovement cameraMovement;
+
+    protected override void Start()
+    {
+        base.Start();
+        canThrustDown = true;
+    }
 
     protected override void Update()
     {
@@ -43,11 +56,20 @@ public class Controller : CentralController
         if (Input.GetKeyDown(KeyCode.S) && canThrustDown)
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, -JumpForce));
+            rig.AddForce(new Vector2(0, DownwardsThrustForce));
             canThrustDown = false;
+            fastestYVelocityRecorded = 0;
         }
 
         setPlayerVelocity();
+    }
+
+    protected override void FixedUpdate()
+    {
+        base.FixedUpdate();
+
+        if (rig.velocity.y < fastestYVelocityRecorded)
+            fastestYVelocityRecorded = rig.velocity.y;
     }
 
     private void setPlayerVelocity()
@@ -76,6 +98,13 @@ public class Controller : CentralController
 
             //don't slip on steep slopes
             rig.gravityScale = (DirX == 0) ? 0f : Gravity;
+
+            //camera shakes if landing from a downwards thrust
+            if (!canThrustDown && fastestYVelocityRecorded < -20f)
+            {
+                float shakeMultiplier = a + (-fastestYVelocityRecorded - 40f) / b;
+                cameraMovement.ExecuteCameraShake(shakeMultiplier);
+            }
 
             //allow player to thrust themselves downwards the next time they jump
             canThrustDown = true;

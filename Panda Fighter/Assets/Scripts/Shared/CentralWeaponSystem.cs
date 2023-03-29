@@ -37,10 +37,12 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
     protected virtual void Awake()
     {
+        // get components
         lookAround = transform.GetComponent<CentralLookAround>();
         centralShooting = transform.GetComponent<CentralShooting>();
         health = transform.GetComponent<Health>();
 
+        // setup
         bulletPools = new Dictionary<Weapon, List<Transform>>();
         weaponBehaviours = new Dictionary<Weapon, WeaponBehaviour>();
         weaponConfigurations = new Dictionary<Weapon, WeaponConfiguration>();
@@ -63,14 +65,17 @@ public abstract class CentralWeaponSystem : MonoBehaviour
                 tempBulletPool.Add(bullet);
             bulletPools[weapon] = tempBulletPool;
 
+            // make each weapon's configuration accesible by a dictionary
             WeaponConfiguration config = bulletPool.GetComponent<WeaponConfiguration>();
             weaponConfigurations[weapon] = config;
 
+            // make each weapon's behavior accesible by a dictionary
             WeaponBehaviour behavior = bulletPool.GetComponent<WeaponBehaviour>();
             behavior.Initialize(config, null, this);  
             weaponBehaviours[weapon] = behavior;
         }
 
+        // initialize weapon stats
         WeaponStats weaponStats = new WeaponStats(this);
         weaponStats.Initialize();
     }
@@ -179,17 +184,18 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         return false;
     }
 
-    // switches to the new weapon at the specified slot, which becomes the selected inventory slot 
+    // switch to a weapon at the specified slot
     private void switchToNewWeapon(int slot)
     {
         CurrentWeaponBehaviour.TerminateAttack();
+
         selectedSlot = slot;
-        CurrentWeaponBehaviour.UponSwitchingToWeapon();
-        centralShooting.ResetForNewlySwitchedWeapon();
 
+        CurrentWeaponBehaviour.UponSwitchingToThisWeapon();
         lookAround.UpdateArmInverseKinematics();
+        centralShooting.Reset();
 
-        // note that not all weapons have bullet pools (ex. meelee weapons)
+        // setup bullet pooling correctly if applicable. Some weapons don't have bullet pools (ex. meelee weapons)
         if (bulletPools.ContainsKey(CurrentWeapon))
             bulletPoolIdx = ++bulletPoolIdx % bulletPools[CurrentWeapon].Count;
 
@@ -206,6 +212,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         CurrentWeaponConfiguration.Arms.SetActive(true);
     }
 
+    // auto pickup weapon if inventory isn't full
     protected virtual void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.layer == Layer.Weapons && col.gameObject.activeSelf)

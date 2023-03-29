@@ -21,7 +21,8 @@ public abstract class CentralController : MonoBehaviour
     // Important movement constants:
     public const float JumpForce = 1850f; 
     public const float DoubleJumpForce = 2220f; 
-    public const float JumpPadForce = 3400; 
+    public const float JumpPadForce = 3400f;
+    public const float DownwardsThrustForce = -2600f;
     public const float Gravity = 6.3f;
    
     [Header("Limbs and colliders")]
@@ -80,7 +81,7 @@ public abstract class CentralController : MonoBehaviour
         speed = MaxSpeed;
     }
 
-    // Update the creature's body tilt to match the sloped platform it's currently standing on
+    // Update body tilt based of the slope of the platform that this creature is standing on
     // To be invoked whenever the creature teleports to a new platform (ex. respawning)
     public void UpdateTiltInstantly()
     {
@@ -91,7 +92,7 @@ public abstract class CentralController : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, newGroundAngle);
     }
 
-    // Get the angle the creature's body tilt on sloped ground. Returns a value between -180 and 180
+    // Get the angle of the creature's body tilt on a slope. Returns a value between -180 and 180
     public float GetAngleOfBodyTilt() => MathX.ClampAngleTo180(transform.eulerAngles.z);
 
     protected virtual void Start()
@@ -154,7 +155,7 @@ public abstract class CentralController : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, zAngle - zAngle * 10 * Time.deltaTime);
     }
     
-    //check if the creature is on the ground + update the groundAngle
+    // check if the creature is on the ground + update the groundAngle
     private IEnumerator repeatedlyCheckIfGrounded()
     {
         updateGroundAngle();
