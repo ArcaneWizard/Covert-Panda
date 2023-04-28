@@ -6,22 +6,20 @@ public class Needler : Bullet
 {
     private ParticleSystem impactExplosion;
     private SpriteRenderer sR;
-    private Rigidbody2D rig;
     private Explosion explosion;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         sR = transform.GetComponent<SpriteRenderer>();
-        rig = transform.GetComponent<Rigidbody2D>();
 
         impactExplosion = transform.GetComponent<ParticleSystem>();
         explosion = transform.GetComponent<Explosion>();
         explosion.Radius = 1.1f;
     }
 
-    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
+    protected override void onFire() 
     {
-        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         transform.GetComponent<ParticleSystem>().Stop();
     }
 

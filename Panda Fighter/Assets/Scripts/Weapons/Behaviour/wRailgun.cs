@@ -13,14 +13,9 @@ public class wRailgun : WeaponBehaviour
     }
     public override void StopChargingUp() => chargeParticles.Clear();
 
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startAttack()
     {
-        StartCoroutine(base.attack(aim));
-
         WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
-
-        confirmAttackFinished();
-        yield return null;
     }
 
     void Start()

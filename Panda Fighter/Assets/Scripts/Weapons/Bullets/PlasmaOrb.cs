@@ -10,7 +10,6 @@ public class PlasmaOrb : Bullet
     private float delayTillExplosion = 0.9f;
 
     private SpriteRenderer sR;
-    private Rigidbody2D rig;
     private GameObject physicalExplosion;
     private Explosion explosion;
 
@@ -18,19 +17,19 @@ public class PlasmaOrb : Bullet
     private Transform trackingSurface;
     private Transform creature;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         sR = transform.GetComponent<SpriteRenderer>();
-        rig = transform.GetComponent<Rigidbody2D>();
 
         physicalExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
         explosion.Radius = 12f;
     }
 
-    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
+    public override void StartCollisionDetection(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
-        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
+        base.StartCollisionDetection(aim, movementAfterFiring, doesBulletStickToCreatures);
         explosionTimer = 0f;
         rig.constraints = RigidbodyConstraints2D.None;
     }

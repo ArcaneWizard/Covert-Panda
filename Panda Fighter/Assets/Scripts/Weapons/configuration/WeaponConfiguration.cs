@@ -15,8 +15,9 @@ public class WeaponConfiguration : MonoBehaviour
 
     // By default, represents max shots fired per second
     // Exception being for charge-up weapons, where this represents time to charge up shot
-    public float FireRateInfo { get; private set; }  
+    public float FireRateInfo { get; private set; }
 
+    public bool SticksToCreatures { get; private set; }
     public CombatType CombatType { get; private set; }
     public FiringMode FiringMode { get; private set; }
 

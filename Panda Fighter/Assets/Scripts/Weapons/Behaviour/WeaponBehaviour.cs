@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,11 +14,16 @@ public abstract class WeaponBehaviour : MonoBehaviour
     public AttackProgress attackProgress { get; protected set; }
     public AttackProgress bonusAttackProgress { get; protected set; }
 
-    private Coroutine cAttack;
-    private Coroutine cBonusAttack;
+    private ActionFlowOverTime attackTimedActions;
+    private ActionFlowOverTime bonusAttackTimedActions;
 
-    private float attackStopWatch;
-    private float bonusAttackStopWatch;
+    protected List<ExecutionDelay> attackTimes;
+    protected List<ExecutionDelay> bonusAttackTimes;
+    protected List<Action> attackActions;
+    protected List<Action> bonusAttackActions;
+
+    protected Vector2 aim;
+    protected Vector2 bonusAim;
 
     protected CentralShooting shooting;
     protected CentralPhaseTracker phaseTracker;
@@ -35,21 +41,78 @@ public abstract class WeaponBehaviour : MonoBehaviour
 
         attackProgress = AttackProgress.Finished;
         bonusAttackProgress = AttackProgress.Finished;
+
+        attackTimes = new List<ExecutionDelay>() { };
+        bonusAttackTimes = new List<ExecutionDelay>() { };
+        attackActions = new List<Action>() { };
+        bonusAttackActions = new List<Action>() { };
+    }
+
+    private void Start()
+    {
+        startMultiActionAttack(true);
+        startMultiActionBonusAttack(true);
+    }
+
+    // Override to implement a single action attack
+    protected virtual void startAttack() { }
+
+    // Override to implement a single action bonus attack
+    protected virtual void startBonusAttack() { }
+
+    // Construct a multi or single action attack
+    protected virtual void startMultiActionAttack(bool singleAction)
+    {
+        if (singleAction)
+        {
+            attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero };
+            attackActions = new List<Action>() { startAttack };
+        }
+
+        else if (attackTimes.Count == 0 || attackTimes.Count != attackActions.Count)
+            Debug.Log("Invalid Attack Specified");
+
+        attackTimes.Add(ExecutionDelay.Zero);
+        attackActions.Add(confirmAttackFinished);
+        attackTimedActions = new ActionFlowOverTime(attackTimes, attackActions);
+    }
+
+    // Construct a multi or single action bonus attack
+    protected virtual void startMultiActionBonusAttack(bool singleAction)
+    {
+        if (singleAction)
+        {
+            bonusAttackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero };
+            bonusAttackActions = new List<Action>() { startBonusAttack };
+        }
+
+        else if (bonusAttackTimes.Count == 0 || bonusAttackTimes.Count != bonusAttackActions.Count)
+            Debug.Log("Invalid Bonus Attack Specified");
+
+        bonusAttackTimes.Add(ExecutionDelay.Zero);
+        bonusAttackActions.Add(confirmBonusAttackFinished);
+        bonusAttackTimedActions = new ActionFlowOverTime(bonusAttackTimes, bonusAttackActions);
     }
 
     // Execute an attack with this weapon. Requires the aim direction
-    public void Attack(Vector2 aim) => attackStopWatch = 0f; // cAttack = StartCoroutine(attack(aim));
+    public void Attack(Vector2 aim)
+    {
+        this.aim = aim;
+        attackTimedActions.Start();
+    }
 
     // Execute a bonus attack with this weapon. Requires the aim direction
-    public void BonusAttack(Vector2 aim) => bonusAttackStopWatch = 0f;// cBonusAttack = StartCoroutine(attack(aim));
+    public void BonusAttack(Vector2 aim)
+    {
+        this.bonusAim = aim;
+        bonusAttackTimedActions.Start();
+    } 
 
     // Terminates current attack(s).
     public void TerminateAttackEarly() 
     {
-        if (cAttack != null)
-            StopCoroutine(cAttack);
-        if (cBonusAttack != null)
-            StopCoroutine(cBonusAttack);
+        attackTimedActions?.StopEarly();
+        bonusAttackTimedActions?.StopEarly();
 
         attackProgress = AttackProgress.Finished;
         bonusAttackProgress = AttackProgress.Finished;
@@ -69,20 +132,6 @@ public abstract class WeaponBehaviour : MonoBehaviour
     // Invoked when a charge-up-fire weapon stops charging it's attack prematurely, before it can fire/execute the attack
     public virtual void StopChargingUp() { }
 
-    // Invoked for a default attack with this weapon. The aim direction is provided
-    protected virtual IEnumerator attack(Vector2 aim)
-    {
-        attackProgress = AttackProgress.Started;
-        yield return null;
-    }
-
-    // Invoked for a bonus attack with this weapon. The aim direction is specified
-    protected virtual IEnumerator bonusAttack(Vector2 aim)
-    {
-        bonusAttackProgress = AttackProgress.Started;
-        yield return null;
-    }
-
     protected void confirmAttackFinished() => attackProgress = AttackProgress.Finished;
     protected void confirmBonusAttackFinished() => bonusAttackProgress = AttackProgress.Finished;
 
@@ -94,6 +143,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
 
     void Update()
     {
-        
+        attackTimedActions?.Update();
+        bonusAttackTimedActions?.Update();
     }
-}
+ }

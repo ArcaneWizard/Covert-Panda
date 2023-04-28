@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class wScythe : WeaponBehaviour
 {
@@ -10,17 +11,28 @@ public class wScythe : WeaponBehaviour
         weaponConfiguration.Animator.SetInteger("Arms Phase", 10);
     }
 
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startMultiActionAttack(bool singleAction)
     {
-        StartCoroutine(base.attack(aim));
+        ExecutionDelay wait = ExecutionDelay.Waiting;
 
-        weaponConfiguration.Animator.SetInteger("Arms Phase", 11);
-        weaponConfiguration.MainArmIKTracker.gameObject.SetActive(false);
+        attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero, wait };
+        attackActions = new List<Action>() { configureAnimator, waitTillAnimationCompletes };
 
-        while (weaponConfiguration.Animator.GetInteger("Arms Phase") == 11)
-            yield return null;
+        base.startMultiActionAttack(false);
 
-        confirmAttackFinished();
+        void configureAnimator()
+        {
+            weaponConfiguration.Animator.SetInteger("Arms Phase", 11);
+            weaponConfiguration.MainArmIKTracker.gameObject.SetActive(false);
+        }
+
+        void waitTillAnimationCompletes()
+        {
+            if (weaponConfiguration.Animator.GetInteger("Arms Phase") != 11)
+                wait.StopWaiting();
+        }
+
+        base.startMultiActionAttack(false);
     }
 
    /* public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)

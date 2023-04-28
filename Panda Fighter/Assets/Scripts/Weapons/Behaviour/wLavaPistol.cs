@@ -5,16 +5,15 @@ using System;
 
 public class wLavaPistol : WeaponBehaviour
 {
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startAttack()
     {
-        StartCoroutine(base.attack(aim));
+        WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, 
+            weaponConfiguration, side, extraSettings);
 
-        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
-
-        bullet.localEulerAngles = Vector3.zero;
-        bullet.transform.GetComponent<Bullet>().OnFire(aim, BulletMovementAfterFiring.StraightLine, false);
-
-        confirmAttackFinished();
-        yield return null;
+        void extraSettings(Transform bullet)
+        {
+            bullet.localEulerAngles = Vector3.zero;
+            bullet.transform.GetComponent<Bullet>().StartCollisionDetection(aim, BulletMovementAfterFiring.StraightLine, false);
+        }
     }
 }

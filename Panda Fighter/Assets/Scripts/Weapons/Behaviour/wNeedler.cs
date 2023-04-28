@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 public class wNeedler : WeaponBehaviour
 {
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startAttack()
     {
-        StartCoroutine(base.attack(aim));
-
-        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
         float yOffset = Random.Range(-0.13f, 0.13f);
-        bullet.position += new Vector3(0, yOffset, 0f);
+        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, 
+            weaponConfiguration, side, extraSettings);
 
-        confirmAttackFinished();
-        yield return null;
+        void extraSettings(Transform bullet)
+        {
+            bullet.position += new Vector3(0, yOffset, 0f);
+        }
     }
 }
 

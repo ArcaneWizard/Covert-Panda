@@ -6,13 +6,12 @@ public class ArcticStream : Bullet
 {
     private float explosionTimer = 0;
 
-    private Rigidbody2D rig;
     private GameObject animatedExplosion;
     private Explosion explosion;
 
-    void Awake()
+    protected override void Awake()
     {
-        rig = transform.GetComponent<Rigidbody2D>();
+        base.Awake();
 
         animatedExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();

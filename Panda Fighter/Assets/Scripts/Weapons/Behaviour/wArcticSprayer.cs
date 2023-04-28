@@ -1,22 +1,17 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
+using System;
 
 public class wArcticSprayer : WeaponBehaviour
 {
-    protected override IEnumerator attack(Vector2 aim)
+    private static Vector2 forceMultiplier = new Vector2(1.0f, 1.1f);
+    private static Vector2 forceOffset = Vector2.zero;
+
+    protected override void startAttack()
     {
-        StartCoroutine(base.attack(aim));
-
-        Vector2 forceMultiplier = new Vector2(1.0f, 1.1f);
-        Vector2 forceOffset = Vector2.zero;
-
         Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletInArc(aim, forceMultiplier, forceOffset,
             weaponSystem, weaponConfiguration, side);
-
-        bullet.transform.GetComponent<Bullet>().OnFire(aim, BulletMovementAfterFiring.Arc, false);
-
-        confirmAttackFinished();
-        yield return null;
     }
 }

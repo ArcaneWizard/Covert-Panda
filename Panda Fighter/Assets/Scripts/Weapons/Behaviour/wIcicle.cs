@@ -4,15 +4,8 @@ using System.Collections.Generic;
 
 public class wIcicle : WeaponBehaviour
 {
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startAttack()
     {
-        StartCoroutine(base.attack(aim));
-
-        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
-        bullet.transform.GetComponent<Bullet>().OnFire(aim, BulletMovementAfterFiring.StraightLine, false);
-
-        confirmAttackFinished();
-        yield return null;
+        WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
     }
-
 }

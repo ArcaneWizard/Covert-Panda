@@ -4,14 +4,10 @@ using System.Collections.Generic;
 
 public class wSniper : WeaponBehaviour
 {
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startAttack() 
     {
-        StartCoroutine(base.attack(aim));
-
         PhysicalBullet bullet = WeaponBehaviourHelper.SpawnBullet(aim, weaponSystem, weaponConfiguration, side);
         bullet.transform.GetComponent<SniperBeam>().ShowBeam();
-
-        confirmAttackFinished();
-        yield return null;
+        bullet.transform.GetComponent<Bullet>().StartCollisionDetection(aim, BulletMovementAfterFiring.StraightLine, false);
     }
 }

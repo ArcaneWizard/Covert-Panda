@@ -15,11 +15,12 @@ public class FocusBeam : Bullet
 
     private float timerStayAlive;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         beam = transform.GetComponent<LineRenderer>();
         collider = transform.GetComponent<BoxCollider2D>();
-
         initialColliderSize = collider.size;
     }
 

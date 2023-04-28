@@ -21,28 +21,27 @@ public class Test : MonoBehaviour
     // public static List<Action> a = new List<Action>();
 
 
-    public static float[] f;
-    public static Action[] a;
+    public List<ExecutionDelay> f;
+    public List<Action> a;
 
+    private ActionFlowOverTime fastCouroutine;
     private void Start()
     {
-        if (f == null)
+       /* if (f == null)
         {
-            f = new float[500];
-            for (int i = 0; i < 500; i++)
-                f[i] = i * Time.deltaTime;
+            f = new List<ExecutionDelay>();
+            for (int i = 0; i < 3; i++)
+                f.Add(ExecutionDelay.Waiting);
         }
 
         if (a == null)
         {
-            a = new Action[500];
-            for (int i = 0; i < 100; i++)
+            a = new List<Action>();
+            for (int i = 0; i < 1; i++)
             {
-                a[0 + 5 * i] = (bob);
-                a[1 + 5 * i] = (joe);
-                a[2 + 5 * i] = (cow);
-                a[3 + 5 * i] = (dee);
-                a[4 + 5 * i] = (nah);
+                a.Add(bob);
+                a.Add(joe);
+                a.Add(cow);
             }
         }
 
@@ -71,10 +70,11 @@ public class Test : MonoBehaviour
                doubleDistance = 5 * distance;
             time = Time.time;
         }
-
-           fastCouroutine = new TimedActions(f, a);
-          
-      // yield return StartCoroutine(testVillage());
+       */
+          // fastCouroutine = new ActionFlowOverTime(f, a);
+     
+         StartCoroutine(testVillage());
+        //fastCouroutine.Start(true);
     }
 
     private bool yay;
@@ -83,10 +83,14 @@ public class Test : MonoBehaviour
         yay = true;
     }
 
-    private void Update()
+    private int i = 0;
+   /* private void Update()
     {
         fastCouroutine.Update();
-    }
+
+        f[i].StopWaiting();
+        i = (i + 1) % f.Count;
+    }*/
 
     /*private void Update()
     {
@@ -153,17 +157,22 @@ public class Test : MonoBehaviour
 
     private IEnumerator testVillage()
     {
-        for (int i = 0; i < 10000; i++)
-        {
-            yield return null;
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
             distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
-            yield return null;
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
             doubleDistance = 4 * 2;
-            yield return null;
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
             doubleDistance = 4 * distance;
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
+        doubleDistance = 4 * 3;
+
+        int i = 100;
+        while (i > 0f) {
             yield return null;
-            doubleDistance = 4 * 3;
-        }
+            i--;
+         }
+
+        StartCoroutine(testVillage());
     }
 
     private IEnumerator testVillage2()
@@ -172,7 +181,6 @@ public class Test : MonoBehaviour
             yield return null;
     }
     
-    private TimedActions fastCouroutine;
 
     float distance;
     float doubleDistance;

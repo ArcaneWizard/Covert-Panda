@@ -15,6 +15,7 @@ public class FragGrenade : Bullet
 
     void Awake()
     {
+        base.Awake();
         sR = transform.GetComponent<SpriteRenderer>();
         rig = transform.GetComponent<Rigidbody2D>();
         animatedExplosion = transform.GetChild(0).gameObject;

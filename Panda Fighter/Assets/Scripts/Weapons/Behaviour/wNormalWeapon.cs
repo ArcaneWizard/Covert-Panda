@@ -4,13 +4,8 @@ using System.Collections.Generic;
 
 public class wNormalWeapon : WeaponBehaviour
 {
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startAttack()
     {
-        StartCoroutine(base.attack(aim));
-
         WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
-
-        confirmAttackFinished();
-        yield return null;
     }
 }

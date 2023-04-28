@@ -11,10 +11,19 @@ public static class WeaponBehaviourHelper
 {
     // spawns in a new bullet and shoots it in straight line forward.
     public static Transform SpawnAndShootBulletForward(Vector2 aim, CentralWeaponSystem weaponSystem,
-        WeaponConfiguration configuration, Side side)
+        WeaponConfiguration configuration, Side side, Action<Transform> extraSettings = null)
     {
+        // spawn bullet and shoot in straight line in specified aim direction
         PhysicalBullet bullet = SpawnBullet(aim, weaponSystem, configuration, side);
         bullet.rig.velocity = aim * configuration.Speed;
+
+        // apply extra settings to bullet, if any are specified
+        if (extraSettings != null)
+            extraSettings(bullet.transform);
+
+        // confirm bullet was fired
+        bullet.transform.GetComponent<Bullet>().StartCollisionDetection(aim, BulletMovementAfterFiring.StraightLine, configuration.SticksToCreatures);
+        
         return bullet.transform;
     }
 
@@ -22,25 +31,40 @@ public static class WeaponBehaviourHelper
     // and shoots it a specified angle off from the default aim direction
     public static Transform SpawnAndShootBulletDiagonally(Vector2 aim, float angleOffset,
         Vector2 verticalOffsetRange, CentralWeaponSystem weaponSystem,
-        WeaponConfiguration configuration, Side side)
+        WeaponConfiguration configuration, Side side, Action<Transform> extraSettings = null)
     {
+        // spawn bullet and shoot in a diagonal line based on specified aim direction, angle offset, and vertical offset
         PhysicalBullet bullet = SpawnBullet(aim, weaponSystem, configuration, side);
         Vector2 newAim = Quaternion.AngleAxis(angleOffset, Vector3.forward) * aim;
         bullet.transform.position += Vector3.up * UnityEngine.Random.Range(verticalOffsetRange.x, verticalOffsetRange.y);
         bullet.transform.right = newAim;
         bullet.rig.velocity = newAim * configuration.Speed;
 
+        // apply extra settings to bullet, if any are specified
+        if (extraSettings != null)
+            extraSettings(bullet.transform);
+
+        // confirm bullet was fired
+        bullet.transform.GetComponent<Bullet>().StartCollisionDetection(aim, BulletMovementAfterFiring.StraightLine, configuration.SticksToCreatures);
         return bullet.transform;
     }
 
     // spawns in a new bullet and shoots it in an arc
     public static Transform SpawnAndShootBulletInArc(Vector2 aim, Vector2 forceMultiplier, Vector2 forceOffset,
-        CentralWeaponSystem weaponSystem, WeaponConfiguration configuration, Side side)
+        CentralWeaponSystem weaponSystem, WeaponConfiguration configuration, Side side, 
+        Action<Transform> extraSettings = null)
     {
+        // spawn bullet and shoot with specified force
         PhysicalBullet bullet = SpawnBullet(aim, weaponSystem, configuration, side);
         Vector2 unadjustedForce = configuration.Speed * 40 * aim * forceMultiplier + forceOffset;
         bullet.rig.AddForce(unadjustedForce * bullet.rig.mass);
 
+        // apply extra settings to bullet, if any are specified
+        if (extraSettings != null)
+            extraSettings(bullet.transform);
+
+        // confirm bullet was fired 
+        bullet.transform.GetComponent<Bullet>().StartCollisionDetection(aim, BulletMovementAfterFiring.Arc, configuration.SticksToCreatures);
         return bullet.transform;
     }
 

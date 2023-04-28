@@ -6,17 +6,15 @@ public class Rocket : Bullet
 {
     private SpriteRenderer rocketRenderer;
     private SpriteRenderer rocketGlareRenderer;
-    private Rigidbody2D rig;
     private GameObject physicalExplosion;
     private Explosion explosion;
 
     private float explosionTimer = 0;
 
-
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         rocketRenderer = transform.GetComponent<SpriteRenderer>();
-        rig = transform.GetComponent<Rigidbody2D>();
         rocketGlareRenderer = transform.GetChild(1).GetComponent<SpriteRenderer>();
 
         physicalExplosion = transform.GetChild(0).gameObject;

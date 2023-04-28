@@ -1,11 +1,15 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class wFragGrenade : WeaponBehaviour
 {
-    protected float grenadeThrowForce = 2200;
-    protected float grenadeYForce = -20;
+    protected static float grenadeThrowForce = 2200;
+    protected static float grenadeYForce = -20;
+
+    private ExecutionDelay timeB4Release = ExecutionDelay.Unknown;
+    private ExecutionDelay timeAfterRelease = ExecutionDelay.Unknown;
 
     public override void ConfigureUponPullingOutWeapon()
     {
@@ -13,27 +17,37 @@ public class wFragGrenade : WeaponBehaviour
         weaponConfiguration.Animator.SetInteger("Arms Phase", 0);
     }
 
-    protected override IEnumerator attack(Vector2 aim)
+    protected override void startMultiActionAttack(bool singleAction)
     {
-        StartCoroutine(base.attack(aim));
-        //weaponConfiguration.Arms[1].transform.parent.GetComponent<Animator>().Play(0, -1);
-        //weaponConfiguration.Arms[1].SetActive(true);
+        attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero, timeB4Release, timeAfterRelease };
+        attackActions = new List<Action>() { getTimeB4Release, throwGrenade, disableArms};
 
-        float wait = WeaponBehaviourHelper.CalculateTimeB4ReleasingGrenade(0.02f, 0.2f, aim);
-        yield return new WaitForSeconds(wait);
+        base.startMultiActionAttack(false);
 
-        Transform grenade = null;// WeaponBehaviourHelper.SpawnGrenade(aim, grenadeSystem, weaponConfiguration, side, false);
-        grenade.transform.right = -aim;
+        void getTimeB4Release()
+        {
+            timeB4Release.seconds = WeaponBehaviourHelper.CalculateTimeB4ReleasingGrenade(0.02f, 0.2f, aim);
+            timeAfterRelease.seconds = 0.6f - timeB4Release.seconds;
+            //weaponConfiguration.Arms[1].transform.parent.GetComponent<Animator>().Play(0, -1);
+            //weaponConfiguration.Arms[1].SetActive(true);
+        }
 
-        grenade.GetComponent<Collider2D>().isTrigger = false;
-        grenade.GetComponent<FragGrenade>().startExplosionTimer();
+        void throwGrenade()
+        {
+            Transform grenade = null;// WeaponBehaviourHelper.SpawnGrenade(aim, grenadeSystem, weaponConfiguration, side, false);
+            grenade.transform.right = -aim;
 
-        Rigidbody2D rig = grenade.GetComponent<Rigidbody2D>();
-        Vector2 unadjustedForce = weaponConfiguration.Speed * 40 * aim * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
-        rig.AddForce(unadjustedForce * rig.mass);
+            grenade.GetComponent<Collider2D>().isTrigger = false;
+            grenade.GetComponent<FragGrenade>().startExplosionTimer();
 
-        yield return new WaitForSeconds(0.6f - wait);
-        //weaponConfiguration.Arms[1].SetActive(false);
-        confirmAttackFinished();
-    } 
+            Rigidbody2D rig = grenade.GetComponent<Rigidbody2D>();
+            Vector2 unadjustedForce = weaponConfiguration.Speed * 40 * aim * new Vector2(1.2f, 1) + new Vector2(0, grenadeYForce);
+            rig.AddForce(unadjustedForce * rig.mass);
+        }
+
+        void disableArms()
+        {
+            //weaponConfiguration.Arms[1].SetActive(false);
+        }
+    }
 }

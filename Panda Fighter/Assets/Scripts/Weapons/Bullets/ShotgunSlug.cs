@@ -9,9 +9,8 @@ public class ShotgunSlug : Bullet
     private float trailOffset;
     private TrailRenderer trailRenderer;
 
-    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
+    protected override void onFire()
     {
-        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         spawnPosition = transform.position;
 
         if (trailRenderer == null)

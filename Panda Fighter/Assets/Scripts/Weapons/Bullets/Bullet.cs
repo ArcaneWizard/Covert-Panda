@@ -37,7 +37,7 @@ public class Bullet : MonoBehaviour
     // how far the bullet predictively raycasts forward
     private int bulletRaycastDistance = 70;
 
-    public virtual void Awake()
+    protected virtual void Awake()
     {
         weaponConfiguration = transform.parent.GetComponent<WeaponConfiguration>();
         rig = transform.GetComponent<Rigidbody2D>();
@@ -45,10 +45,10 @@ public class Bullet : MonoBehaviour
         lookAround = creature.GetChild(0).GetComponent<CentralLookAround>();    
     }
 
-    // Invoke when the bullet is fired/appears. Starts up bullet collision detection (ideally right before the bullet is fired).
+    // Starts up bullet collision detection (ideally right before the bullet is fired).
     // Takes in the initial aim vector of the gun, whether the bullet travels in an arc motion (vs straight line),
     // and whether the bullet is supposed to stick to enemy creatures.
-    public virtual void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
+    public virtual void StartCollisionDetection(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
         // enable predictive collision logic for fast bullets so they don't accidently phase through walls
         if (weaponConfiguration.Speed > 55)
@@ -67,7 +67,13 @@ public class Bullet : MonoBehaviour
         }
         else
             collisionDetectionMode = CollisionDetectionMode.PhysicalColliders;
+
+        // confirm bullet was fired
+        onFire();
     }
+
+    // Invoked at the instant the bullet is fired
+    protected virtual void onFire() { }
 
     // Invoked whenever the bullet hits a creature. By default, deactivates the bullet
     protected virtual void onCreatureEnter(Transform creature) => StartCoroutine(deactivateBullet());
@@ -75,7 +81,7 @@ public class Bullet : MonoBehaviour
     // Invoked whenever the bullet hits a physical platform/object on the map. By default, deactivates the bullet.
     protected virtual void onMapEnter(Transform map) => StartCoroutine(deactivateBullet());
 
-    // Set the damage this bullet does. By default, always does the specified damage for this bullet.
+    // Set the damage this bullet does. By default, use the damage specified for this bullet in all situations.
     protected virtual int damage() => weaponConfiguration.Damage;
 
     // For sticky bullets, keeps track of the limb that the bullet stuck to 

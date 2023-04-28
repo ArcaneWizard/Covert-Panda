@@ -6,22 +6,21 @@ public class Railgun : Bullet
 {
     private ParticleSystem impactExplosion;
     private SpriteRenderer sR;
-    private Rigidbody2D rig;
     private Explosion explosion;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         sR = transform.GetComponent<SpriteRenderer>();
-        rig = transform.GetComponent<Rigidbody2D>();
 
         impactExplosion = transform.GetChild(0).GetComponent<ParticleSystem>();
         explosion = transform.GetComponent<Explosion>();
         explosion.Radius = 1.1f;
     }
 
-    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
+    public override void StartCollisionDetection(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
-        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
+        base.StartCollisionDetection(aim, movementAfterFiring, doesBulletStickToCreatures);
         impactExplosion.GetComponent<ParticleSystem>().Stop();
     }
 

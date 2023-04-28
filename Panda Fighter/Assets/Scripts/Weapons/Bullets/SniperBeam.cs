@@ -16,8 +16,9 @@ public class SniperBeam : Bullet
 
     private float beamDistance = 60f;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         beam = transform.GetComponent<LineRenderer>();
         collider = transform.GetComponent<BoxCollider2D>();
 
@@ -28,9 +29,8 @@ public class SniperBeam : Bullet
         color = beam.startColor;
     }
 
-    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
+    protected override void onFire()
     {
-        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         beam.startColor = new Color(color.r, color.g, color.b, 1f);
         beam.endColor = new Color(color.r, color.g, color.b, 1f);
     }
