@@ -2,19 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// This class houses the actual stats of the weapon (ex. bullet speed).
+// This class houses all stats about a specific weapon (ex. bullet speed, explosion dmg)
 // It also houses physical components of the weapon relevant to using it correctly.
 
 public class WeaponConfiguration : MonoBehaviour
 {
-    public CombatType CombatType { get; private set; }
-    public FiringMode FiringMode { get; private set; }
-    public int BulletDmg { get; private set; }
+    public int Damage { get; private set; }
     public int ExplosionDmg { get; private set; }
     public int StartingAmmo { get; private set; }
-    public int BulletSpeed { get; private set; }
-    public float WeaponRange { get; private set; }
-    public float FireRateInfo { get; private set; }  // max attacks or fired shots per second
+    public int Speed { get; private set; }
+    public float Range { get; private set; }
+
+    // By default, represents max shots fired per second
+    // Exception being for charge-up weapons, where this represents time to charge up shot
+    public float FireRateInfo { get; private set; }  
+
+    public CombatType CombatType { get; private set; }
+    public FiringMode FiringMode { get; private set; }
 
     public Transform BulletSpawnPoint { get; private set; }
     public GameObject Arms { get; private set; }
@@ -34,10 +38,10 @@ public class WeaponConfiguration : MonoBehaviour
         this.FireRateInfo = fireRateInfo;
         this.CombatType = combatType;
         this.FiringMode = firingMode;
-        this.WeaponRange = weaponRange;
-        this.BulletSpeed = bulletSpeed;
+        this.Range = weaponRange;
+        this.Speed = bulletSpeed;
         this.StartingAmmo = startingAmmo;
-        this.BulletDmg = bulletDmg;
+        this.Damage = bulletDmg;
         this.ExplosionDmg = explosionDmg;
         this.Arms = arms;
         this.PhysicalWeapon = weapon;

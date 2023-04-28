@@ -33,40 +33,40 @@ public class Controller : CentralController
             return;
         }
 
-        //use A and D keys for left or right movement
-        DirX = 0;
-        if (Input.GetKey(KeyCode.D)) 
-            DirX++;
-        if (Input.GetKey(KeyCode.A)) 
-            DirX--;
-
         //use W and S keys for jumping up or thrusting downwards + allow double jump
         if (Input.GetKeyDown(KeyCode.W)) 
         {
             if (isGrounded && !phaseTracker.Is(Phase.Jumping) && !standingOnJumpPad)
-                normalJump();
+                StartCoroutine(normalJump());
 
             else if (phaseTracker.Is(Phase.Jumping)) 
-                doubleJump();
+                StartCoroutine(doubleJump());
 
             else if (isGrounded && !phaseTracker.Is(Phase.Jumping) && standingOnJumpPad)
-                jumpPadBoost();
+                StartCoroutine(jumpPadBoost());
         }
 
-        if (Input.GetKeyDown(KeyCode.S) && canThrustDown)
+        if (Input.GetKeyDown(KeyCode.S) && canThrustDown && phaseTracker.IsMidAir)
         {
             rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, DownwardsThrustForce));
+            rig.AddForce(new Vector2(0, DOWNWARDS_THRUST_FORCE));
             canThrustDown = false;
             fastestYVelocityRecorded = 0;
         }
-
-        setPlayerVelocity();
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
+
+        //use A and D keys for left or right movement
+        DirX = 0;
+        if (Input.GetKey(KeyCode.D))
+            DirX++;
+        if (Input.GetKey(KeyCode.A))
+            DirX--;
+
+        setPlayerVelocity();
 
         if (rig.velocity.y < fastestYVelocityRecorded)
             fastestYVelocityRecorded = rig.velocity.y;
@@ -75,29 +75,39 @@ public class Controller : CentralController
     private void setPlayerVelocity()
     {
         //nullify the slight bounce on a slope glitch when changing slopes
-        if ((!phaseTracker.IsMidAir || phaseTracker.Is(Phase.Falling)) && rig.velocity.y > 0)
-            rig.velocity = new Vector2(0, 0);
+        //if ((!phaseTracker.IsMidAir || phaseTracker.Is(Phase.Falling)) && rig.velocity.y > 0)
+          //  rig.velocity = new Vector2(0, 0);
 
         //when player is on the ground, player velocity is parallel to the slanted ground 
         if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
         {
-            //no x velocity when running into a wall to avoid bounce/fall glitch
-            if (DirX == 1 && wallToTheRight)
-                rig.velocity = new Vector2(0, 0);
-
-            //no x velocity when running into a wall to avoid bounce/fall glitch
-            else if (DirX == -1 && wallToTheLeft)
-                rig.velocity = new Vector2(0, 0);
-
-            //player velocity is parallel to the slanted ground
-            else 
+            // if running forwards into a wall, kill x velocity
+            if (wallInFront && ((DirX == 1 && lookAround.IsFacingRight) || (DirX == -1 && !lookAround.IsFacingRight)))
             {
-                float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
-                rig.velocity = groundSlope * speed * DirX * speedMultiplier;
+                rig.velocity = new Vector2(0, rig.velocity.y);
             }
 
-            //don't slip on steep slopes
-            rig.gravityScale = (DirX == 0) ? 0f : Gravity;
+            // if walking backwards into a wall, kill x velocity
+            else if (wallBehind && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight)))
+            {
+                rig.velocity = new Vector2(0, rig.velocity.y);
+            }
+
+            //else player velocity is parallel to the slanted ground
+            else if (!recentlyJumpedOffGround && !recentlyDoubleJumpedOffGround)
+            {
+                float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
+                addForce(groundSlope * speed * DirX * speedMultiplier);
+                // rig.velocity = groundSlope * speed * DirX * speedMultiplier;
+                rig.gravityScale = (DirX == 0) ? 0f : GRAVITY;
+            }
+
+            else
+            {
+                float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
+                addForce(new Vector2(speed * DirX * speedMultiplier, rig.velocity.y));
+                rig.gravityScale = GRAVITY;
+            }
 
             //camera shakes if landing from a downwards thrust
             if (!canThrustDown && fastestYVelocityRecorded < -20f)
@@ -113,20 +123,29 @@ public class Controller : CentralController
         //when player is not on the ground, player velocity is just left/right with gravity applied
         else
         {
-            //no x velocity when running into a wall mid-air to avoid clipping glitch
-            if (DirX == 1 && wallToTheRight)
+            // if running forwards into a wall, do nothing
+            if (wallInFront && ((DirX == 1 && lookAround.IsFacingRight) || (DirX == -1 && !lookAround.IsFacingRight)))
+            {
                 rig.velocity = new Vector2(0, rig.velocity.y);
+            }
 
-            //no x velocity when running into a wall mid-air to avoid clipping glitch
-            else if (DirX == -1 && wallToTheLeft)
+            // if walking backwards into a wall, do nothing
+            else if (wallBehind && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight)))
+            {
                 rig.velocity = new Vector2(0, rig.velocity.y);
-
-            //player velocity is just left or right (with gravity pulling the player down)
+            }
             else
-                rig.velocity = new Vector2(speed * DirX, rig.velocity.y);
+            {
+                 addForce(new Vector2(speed * DirX, rig.velocity.y));
+            }
 
-            rig.gravityScale = Gravity;
+            rig.gravityScale = GRAVITY;
         }
+    }
+
+    private void addForce(Vector2 velocity)
+    {
+        rig.AddForce((velocity * rig.mass - rig.velocity * rig.mass) / 0.02f);
     }
 
     private void OnTriggerEnter2D(Collider2D col) 

@@ -13,13 +13,13 @@ public class wShotgun : WeaponBehaviour
 
         float bulletSpread = Random.Range(bulletSpreadAngleRange.x, bulletSpreadAngleRange.y);
 
-        WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
 
-        WeaponAction.SpawnAndShootBulletDiagonally(aim, bulletSpread, bulletSpawnOffsetRange,
-             weaponSystem, weaponConfiguration, side, false);
+        WeaponBehaviourHelper.SpawnAndShootBulletDiagonally(aim, bulletSpread, bulletSpawnOffsetRange,
+             weaponSystem, weaponConfiguration, side);
 
-        WeaponAction.SpawnAndShootBulletDiagonally(aim, -bulletSpread, bulletSpawnOffsetRange,
-             weaponSystem, weaponConfiguration, side, false);
+        WeaponBehaviourHelper.SpawnAndShootBulletDiagonally(aim, -bulletSpread, bulletSpawnOffsetRange,
+             weaponSystem, weaponConfiguration, side);
 
         confirmAttackFinished();
         yield return null;

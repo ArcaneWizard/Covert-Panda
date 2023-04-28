@@ -24,6 +24,7 @@ public class CentralPhaseTracker : MonoBehaviour
     private AnimationClipOverrides clipOverrides;
 
     [SerializeField] private AnimationClip[] jumpClips;
+    [SerializeField] private AnimationClip[] doubleJumpClips;
     [SerializeField] private Collider2D doubleJumpCollider;
 
     void Awake() 
@@ -77,6 +78,16 @@ public class CentralPhaseTracker : MonoBehaviour
         IsDoingSomersault = false;
     }
 
+    public void SwapSomersaultAnimation(bool isForwardSomersault)
+    {
+        if (isForwardSomersault)
+            clipOverrides["double jump"] = doubleJumpClips[0];
+        else
+            clipOverrides["double jump"] = doubleJumpClips[1];
+
+        animatorOverrideController.ApplyOverrides(clipOverrides);
+    }
+
     private int phase => animator.GetInteger("Phase");
     private void setPhase(Phase p) => animator.SetInteger("Phase", (int)p);
 
@@ -89,7 +100,7 @@ public class CentralPhaseTracker : MonoBehaviour
         }
         
         // update the phase when the creature is idle or running 
-        if (controller.isGrounded && !controller.recentlyJumpedOffGround)
+        if (controller.isGrounded && !controller.recentlyJumpedOffGround && somersaultHandler.state == SomersaultState.Exited)
             setPhase((controller.DirX == 0) ? Phase.Idle : Phase.Running);
 
         // update the phase when the creature is falling

@@ -16,7 +16,7 @@ public class ArcticStream : Bullet
 
         animatedExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
-        explosion.radius = 13;
+        explosion.Radius = 13;
     }
 
     protected override void Update()
@@ -47,6 +47,6 @@ public class ArcticStream : Bullet
         }
     }
 
-    protected override void OnMapEnter(Transform map) => startExplosion();
-    protected override void OnCreatureEnter(Transform entity) => startExplosion();
+    protected override void onMapEnter(Transform map) => startExplosion();
+    protected override void onCreatureEnter(Transform entity) => startExplosion();
 }

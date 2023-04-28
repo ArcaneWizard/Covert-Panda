@@ -8,7 +8,8 @@ public class wIcicle : WeaponBehaviour
     {
         StartCoroutine(base.attack(aim));
 
-        WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
+        bullet.transform.GetComponent<Bullet>().OnFire(aim, BulletMovementAfterFiring.StraightLine, false);
 
         confirmAttackFinished();
         yield return null;

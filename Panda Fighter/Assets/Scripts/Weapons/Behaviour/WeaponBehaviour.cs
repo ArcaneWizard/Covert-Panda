@@ -16,6 +16,9 @@ public abstract class WeaponBehaviour : MonoBehaviour
     private Coroutine cAttack;
     private Coroutine cBonusAttack;
 
+    private float attackStopWatch;
+    private float bonusAttackStopWatch;
+
     protected CentralShooting shooting;
     protected CentralPhaseTracker phaseTracker;
     protected WeaponConfiguration weaponConfiguration;
@@ -29,19 +32,22 @@ public abstract class WeaponBehaviour : MonoBehaviour
         this.weaponConfiguration = weaponConfiguration;
         this.grenadeSystem = grenadeSystem;
         this.weaponSystem = weaponSystem;
+
+        attackProgress = AttackProgress.Finished;
+        bonusAttackProgress = AttackProgress.Finished;
     }
 
     // Execute an attack with this weapon. Requires the aim direction
-    public void Attack(Vector2 aim) =>  cAttack = StartCoroutine(attack(aim));
+    public void Attack(Vector2 aim) => attackStopWatch = 0f; // cAttack = StartCoroutine(attack(aim));
 
     // Execute a bonus attack with this weapon. Requires the aim direction
-    public void BonusAttack(Vector2 aim) => cBonusAttack = StartCoroutine(attack(aim));
+    public void BonusAttack(Vector2 aim) => bonusAttackStopWatch = 0f;// cBonusAttack = StartCoroutine(attack(aim));
 
     // Terminates current attack(s).
-    public void TerminateAttack() 
+    public void TerminateAttackEarly() 
     {
         if (cAttack != null)
-            StopCoroutine(cAttack); 
+            StopCoroutine(cAttack);
         if (cBonusAttack != null)
             StopCoroutine(cBonusAttack);
 
@@ -51,7 +57,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
     }
 
     // Invoked when the creature switches to a new weapon. 
-    public virtual void UponSwitchingToThisWeapon() 
+    public virtual void ConfigureUponPullingOutWeapon() 
     {
         attackProgress = AttackProgress.Finished;
         bonusAttackProgress = AttackProgress.Finished;
@@ -84,5 +90,10 @@ public abstract class WeaponBehaviour : MonoBehaviour
     {
         phaseTracker = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralPhaseTracker>();
         side = transform.parent.parent.parent.GetComponent<Role>().side;
+    }
+
+    void Update()
+    {
+        
     }
 }

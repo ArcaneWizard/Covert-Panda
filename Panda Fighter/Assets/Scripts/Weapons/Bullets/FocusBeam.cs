@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 
 public class FocusBeam : Bullet
@@ -30,7 +31,7 @@ public class FocusBeam : Bullet
             gameObject.SetActive(false);
     }
 
-    public void Beam(Transform bulletSpawnPoint, Transform weapon, bool inDoubleJump)
+    public void ShootBeam(Transform bulletSpawnPoint, Transform weapon, bool inDoubleJump)
     {
         timerStayAlive = Time.deltaTime;
 
@@ -38,7 +39,7 @@ public class FocusBeam : Bullet
 
         RaycastHit2D hit = Physics2D.Raycast(
             bulletSpawnPoint.position,
-            inDoubleJump ? weapon.right : weapon.right,
+            weapon.right,
             100f, LayerMasks.mapOrTarget(transform)
         );
 
@@ -57,5 +58,5 @@ public class FocusBeam : Bullet
         collider.offset = new Vector2(beamLength / 2, 0);
     }
 
-    protected override void OnCreatureEnter(Transform entity) { }
+    protected override void onCreatureEnter(Transform entity) { }
 }

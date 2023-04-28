@@ -25,12 +25,12 @@ public class PlasmaOrb : Bullet
 
         physicalExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
-        explosion.radius = 12f;
+        explosion.Radius = 12f;
     }
 
-    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
+    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
-        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
+        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         explosionTimer = 0f;
         rig.constraints = RigidbodyConstraints2D.None;
     }
@@ -77,13 +77,13 @@ public class PlasmaOrb : Bullet
         }
     }
 
-    protected override void OnMapEnter(Transform map) 
+    protected override void onMapEnter(Transform map) 
     {
          StartCoroutine(startTimedPlasmaExplosion(map));
          creature = null;
     }
     
-    protected override void OnCreatureEnter(Transform entity) 
+    protected override void onCreatureEnter(Transform entity) 
     {
         StartCoroutine(startTimedPlasmaExplosion(entity));
         creature = entity;

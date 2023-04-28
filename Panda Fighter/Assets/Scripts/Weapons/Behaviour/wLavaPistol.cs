@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class wLavaPistol : WeaponBehaviour
 {
@@ -8,11 +9,12 @@ public class wLavaPistol : WeaponBehaviour
     {
         StartCoroutine(base.attack(aim));
 
-        Transform bullet = WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
+
         bullet.localEulerAngles = Vector3.zero;
+        bullet.transform.GetComponent<Bullet>().OnFire(aim, BulletMovementAfterFiring.StraightLine, false);
 
         confirmAttackFinished();
         yield return null;
     }
-
 }

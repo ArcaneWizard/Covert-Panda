@@ -2,5 +2,11 @@
 public enum Grenade
 {
     None,
-    Frag 
+    Frag,
+    Plasma,
+    Shrapanel,
+    Shield,
+    MultiSeed,
+    Piercing,
+    C4
 }

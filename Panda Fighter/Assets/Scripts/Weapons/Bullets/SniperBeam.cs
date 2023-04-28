@@ -28,9 +28,9 @@ public class SniperBeam : Bullet
         color = beam.startColor;
     }
 
-    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
+    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
-        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
+        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         beam.startColor = new Color(color.r, color.g, color.b, 1f);
         beam.endColor = new Color(color.r, color.g, color.b, 1f);
     }
@@ -90,8 +90,8 @@ public class SniperBeam : Bullet
         );
     }
 
-    protected override void OnMapEnter(Transform map) { }
-    protected override void OnCreatureEnter(Transform creature) { }
+    protected override void onMapEnter(Transform map) { }
+    protected override void onCreatureEnter(Transform creature) { }
 
     private void initiateExplosionAt(Vector3 location)
     {

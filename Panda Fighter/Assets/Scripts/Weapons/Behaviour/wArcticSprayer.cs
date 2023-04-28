@@ -11,8 +11,10 @@ public class wArcticSprayer : WeaponBehaviour
         Vector2 forceMultiplier = new Vector2(1.0f, 1.1f);
         Vector2 forceOffset = Vector2.zero;
 
-        WeaponAction.SpawnAndShootBulletInArc(aim, forceMultiplier, forceOffset,
-            weaponSystem, weaponConfiguration, side, false);
+        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletInArc(aim, forceMultiplier, forceOffset,
+            weaponSystem, weaponConfiguration, side);
+
+        bullet.transform.GetComponent<Bullet>().OnFire(aim, BulletMovementAfterFiring.Arc, false);
 
         confirmAttackFinished();
         yield return null;

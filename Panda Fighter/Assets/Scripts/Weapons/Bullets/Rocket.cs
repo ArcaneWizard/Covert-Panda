@@ -21,7 +21,7 @@ public class Rocket : Bullet
 
         physicalExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
-        explosion.radius = 7f;
+        explosion.Radius = 7f;
     }
 
     protected override void Update()
@@ -41,8 +41,8 @@ public class Rocket : Bullet
         }
     }
 
-    protected override void OnMapEnter(Transform map) => setupExplosion();
-    protected override void OnCreatureEnter(Transform entity) => setupExplosion();
+    protected override void onMapEnter(Transform map) => setupExplosion();
+    protected override void onCreatureEnter(Transform entity) => setupExplosion();
 
     private void setupExplosion()
     {

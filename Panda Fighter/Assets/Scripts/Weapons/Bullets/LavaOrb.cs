@@ -16,14 +16,14 @@ public class LavaOrb : Bullet
 
         impactExplosion = transform.GetChild(0).GetComponent<ParticleSystem>();
         explosion = transform.GetComponent<Explosion>();
-        explosion.radius = 1.3f;
+        explosion.Radius = 1.3f;
 
         impactExplosion.gameObject.SetActive(true);
     }
 
-    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
+    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
-        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
+        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         impactExplosion.Stop();
     }
 
@@ -42,12 +42,12 @@ public class LavaOrb : Bullet
         fo.xMultiplier = (predictedNormal.y - 1) / -0.04f + 50f;
     }
 
-    protected override void OnCreatureEnter(Transform entity) 
+    protected override void onCreatureEnter(Transform entity) 
     {
          StartCoroutine(initiateExplosion());
          OrientExplosion(false);
     }
-    protected override void OnMapEnter(Transform map) 
+    protected override void onMapEnter(Transform map) 
     {
         StartCoroutine(initiateExplosion());
         OrientExplosion(true);

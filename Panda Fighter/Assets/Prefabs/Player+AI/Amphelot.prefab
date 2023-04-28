@@ -3447,23 +3447,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 257a7129a00424570a84cd8bb35cf747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ragdollParts:
-  - {fileID: 7859758418268124954}
-  - {fileID: 4438004640374126896}
-  - {fileID: 5703854978706396772}
-  - {fileID: 4406368859649775498}
-  - {fileID: 9050397321438836878}
-  - {fileID: 1337764831282443871}
-  - {fileID: 4053629535158784541}
-  - {fileID: 7488271861689191401}
-  - {fileID: 7902716378599252452}
-  - {fileID: 865268897720318272}
-  - {fileID: 6766191555468353999}
-  - {fileID: 3750988187195413527}
-  - {fileID: 825384983518982173}
-  - {fileID: 1593716248308528378}
-  - {fileID: 8075300623183797924}
+  ragdollRigidbodies: []
   ragdollArms: {fileID: 6041359829406936038}
+  limbFriction: {fileID: 0}
+  noFriction: {fileID: 0}
 --- !u!114 &1982344293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3479,9 +3466,10 @@ MonoBehaviour:
   oneWayCollider: {fileID: 7030806314310783155}
   somersaultCollider: {fileID: 0}
   <shootingArm>k__BackingField: {fileID: 0}
-  <mainCollider>k__BackingField: {fileID: 0}
+  mainCollider: {fileID: 0}
   frontGroundRaycaster: {fileID: 0}
   backGroundRaycaster: {fileID: 0}
+  wallRaycaster: {fileID: 0}
   a: 0.4
   b: 100
   c: 12
@@ -3520,6 +3508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpClips: []
+  doubleJumpClips: []
   doubleJumpCollider: {fileID: 8991020208848330079}
 --- !u!114 &281955178
 MonoBehaviour:

@@ -17,7 +17,7 @@ public class wRailgun : WeaponBehaviour
     {
         StartCoroutine(base.attack(aim));
 
-        WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
 
         confirmAttackFinished();
         yield return null;

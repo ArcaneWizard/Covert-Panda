@@ -37,10 +37,10 @@ public class RainCollision : MonoBehaviour
 
     void OnParticleCollision(GameObject other)
     {
-        // get the number of rain drops that just hit a surface
+        // get the number of rain drops that just collided with a platform
         int numCollisionEvents = particleSystem.GetCollisionEvents(other, collisionEvents);
 
-        // for each hit, spawn a rain splatter particle system right above where the rain drop hit
+        // for each collision, spawn a rain splatter particle system right above where the rain drop collided
         int i = 0;
         while (i < numCollisionEvents)
         {

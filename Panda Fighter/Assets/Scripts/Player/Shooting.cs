@@ -11,7 +11,7 @@ public class Shooting : CentralShooting
 
     public override Vector2 GetAim() => lookAround.directionToLook;
 
-    public override void Reset()
+    public override void Reconfigure()
     {
         timerBtwnShots = 0f;
         chargeUpTimer = 0f;

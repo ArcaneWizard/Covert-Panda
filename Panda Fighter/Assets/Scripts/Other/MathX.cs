@@ -27,7 +27,8 @@ public static class MathX
     //  returns squared distance between 2 vectors
     public static float GetSquaredDistance(Vector2 a, Vector2 b)
     {
-        return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+        Vector2 diff = a - b;
+        return diff.x * diff.x + diff.y * diff.y;
     }
 
     // Rotates the vector by specified angle in radians. Can optionally specify pivot point

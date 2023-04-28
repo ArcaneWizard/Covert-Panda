@@ -20,14 +20,12 @@ public class TestLevelDialogue : MonoBehaviour
     void Start()
     {
         dM.Specify(Character.Akabe);
-        dM.AddLine("These people don't deserve to watch this land burn...");
+        dM.AddLine("[Shrieking] VORTEVO, THE BRIDGE... it's collapsing");
 
-        dM.Specify(Character.Gargan);
-        dM.AddLine("I sacrificed my throne for those poor people, AND WHAT DID I GET IN RETURN?");
-        dM.AddLine("Nothing. But that's the life we were born with. That IS the life of the ruler.");
-
-        dM.Specify(Character.You);
-        dM.AddLine("Don't lie to me. I know yo took the casket!");
+        dM.Specify(Character.Vortevo);
+        dM.AddLine("[Shouting] I JUST NEED A FEW SECONDS.");
+        dM.AddLine("ALMOST THERE");
+        dM.AddLine("ON MY MARK... ... FIRE");
     }
 
     // execute dialogue with correct timing and order

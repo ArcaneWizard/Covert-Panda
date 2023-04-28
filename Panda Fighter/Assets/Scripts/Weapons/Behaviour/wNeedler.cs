@@ -8,7 +8,7 @@ public class wNeedler : WeaponBehaviour
     {
         StartCoroutine(base.attack(aim));
 
-        Transform bullet = WeaponAction.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side, false);
+        Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
         float yOffset = Random.Range(-0.13f, 0.13f);
         bullet.position += new Vector3(0, yOffset, 0f);
 

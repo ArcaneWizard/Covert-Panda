@@ -9,9 +9,9 @@ public class ShotgunSlug : Bullet
     private float trailOffset;
     private TrailRenderer trailRenderer;
 
-    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
+    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
-        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
+        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         spawnPosition = transform.position;
 
         if (trailRenderer == null)
@@ -26,7 +26,7 @@ public class ShotgunSlug : Bullet
     {
         base.Update();
 
-        if (squaredDistance(transform.position, spawnPosition) > trailOffset && gameObject.activeSelf) 
+        if (MathX.GetSquaredDistance(transform.position, spawnPosition) > trailOffset && gameObject.activeSelf) 
         {
            StartCoroutine(delayBulletStreaks());
            trailOffset = Int32.MaxValue;
@@ -35,7 +35,7 @@ public class ShotgunSlug : Bullet
 
     protected override int damage()
     {
-        float distance = squaredDistance(transform.position, spawnPosition);
+        float distance = MathX.GetSquaredDistance(transform.position, spawnPosition);
 
         if (distance <= 200f)
             return base.damage();
@@ -45,8 +45,8 @@ public class ShotgunSlug : Bullet
             return 0;
     }
 
-    protected override void OnMapEnter(Transform map) => StartCoroutine(madeContact());
-    protected override void OnCreatureEnter(Transform creature) => StartCoroutine(madeContact());
+    protected override void onMapEnter(Transform map) => StartCoroutine(madeContact());
+    protected override void onCreatureEnter(Transform creature) => StartCoroutine(madeContact());
 
     private IEnumerator madeContact() 
     {

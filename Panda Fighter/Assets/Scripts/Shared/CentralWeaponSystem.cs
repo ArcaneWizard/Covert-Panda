@@ -35,6 +35,15 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     private CentralShooting centralShooting;
     protected Health health;
 
+    // Retrieve useful info about the current weapon held
+    public Weapon CurrentWeapon => inventory[selectedSlot].Weapon;
+    public int CurrentAmmo => inventory[selectedSlot].Ammo;
+    public WeaponBehaviour CurrentWeaponBehaviour => weaponBehaviours[CurrentWeapon];
+    public WeaponConfiguration CurrentWeaponConfiguration => weaponConfigurations[CurrentWeapon];
+
+    // Get the weapon configuration for any specified weapon
+    public WeaponConfiguration GetConfiguration(Weapon weapon) => weaponConfigurations[weapon];
+
     protected virtual void Awake()
     {
         // get components
@@ -84,15 +93,6 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     {
         ResetInventory();
     }
-
-     // Methods for retrieving useful info about the current weapon equipped
-    public Weapon CurrentWeapon => inventory[selectedSlot].Weapon;
-    public int CurrentAmmo => inventory[selectedSlot].Ammo;
-    public WeaponBehaviour CurrentWeaponBehaviour => weaponBehaviours[CurrentWeapon];
-    public WeaponConfiguration CurrentWeaponConfiguration => weaponConfigurations[CurrentWeapon];
-
-    // Get the weapon configuration for a specified weapon
-    public WeaponConfiguration GetConfiguration(Weapon weapon) => weaponConfigurations[weapon];
 
     // Lowers current ammo by 1. Returns a physical bullet for the current weapon equipped
     public Transform UseOneBullet()
@@ -187,13 +187,13 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     // switch to a weapon at the specified slot
     private void switchToNewWeapon(int slot)
     {
-        CurrentWeaponBehaviour.TerminateAttack();
+        CurrentWeaponBehaviour.TerminateAttackEarly();
 
         selectedSlot = slot;
 
-        CurrentWeaponBehaviour.UponSwitchingToThisWeapon();
+        CurrentWeaponBehaviour.ConfigureUponPullingOutWeapon();
+        centralShooting.Reconfigure();
         lookAround.UpdateArmInverseKinematics();
-        centralShooting.Reset();
 
         // setup bullet pooling correctly if applicable. Some weapons don't have bullet pools (ex. meelee weapons)
         if (bulletPools.ContainsKey(CurrentWeapon))

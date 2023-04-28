@@ -79,7 +79,7 @@ public class AI_LookAround : CentralLookAround
 
         Collider2D[] enemiesWithinRangeOfWeapon = Physics2D.OverlapCircleAll(
                 transform.position, 
-                weaponSystem.CurrentWeaponConfiguration.WeaponRange,
+                weaponSystem.CurrentWeaponConfiguration.Range,
                 LayerMasks.target(side)
         );
 
@@ -92,15 +92,15 @@ public class AI_LookAround : CentralLookAround
             RaycastHit2D hit = Physics2D.Raycast(
                 weaponPivot.position, 
                 nearbyEnemy.transform.position - weaponPivot.position,
-                weaponSystem.CurrentWeaponConfiguration.WeaponRange, 
+                weaponSystem.CurrentWeaponConfiguration.Range, 
                 LayerMasks.mapOrTarget(side)
             );
 
             // if the enemy creature is in this creature's line of sight, switch focus to it if it's closer than other enemies
             if (hit.collider != null && hit.collider.gameObject.layer == Layer.GetHitBoxOfOpposition(side)) 
             {
-                if (EnemySpotted == null || sqrDistance(EnemySpotted.transform.position, weaponPivot.position) 
-                    > sqrDistance(nearbyEnemy.transform.position, weaponPivot.position))
+                if (EnemySpotted == null || MathX.GetSquaredDistance(EnemySpotted.transform.position, weaponPivot.position) 
+                    > MathX.GetSquaredDistance(nearbyEnemy.transform.position, weaponPivot.position))
                     EnemySpotted = nearbyEnemy;
             }
         }
@@ -122,11 +122,5 @@ public class AI_LookAround : CentralLookAround
 
         lookBackwards = false;
         StartCoroutine(sometimesLookBackwards());
-    }
-
-    private float sqrDistance(Vector2 a, Vector2 b) 
-    {
-        Vector2 diff = a-b;
-        return diff.x * diff.x + diff.y * diff.y;
     }
 }

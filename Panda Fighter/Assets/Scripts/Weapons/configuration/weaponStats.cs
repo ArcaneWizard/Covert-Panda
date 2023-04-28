@@ -8,6 +8,9 @@ public class WeaponStats
     private PhysicalWeapons equip;
 
     private CentralWeaponSystem weaponSystem;
+    private const int INSTANT_SPEED = -1; // bullet has "infinite" speed, impact is immediate
+    private const int NO_SPEED = -1;
+    private const int NO_AMMO = -1;
 
     public WeaponStats(CentralWeaponSystem weaponSystem)
     {
@@ -32,7 +35,7 @@ public class WeaponStats
             800, 110, 
             CombatType.Gun, FiringMode.ChargeUpFire, arms.MiddleBarrel, equip.Shielder);
 
-        set(Weapon.LeafScythe, 3f, 10,  -1, 50,
+        set(Weapon.LeafScythe, 3f, 10, NO_SPEED, 50,
             500, 0, 
             CombatType.Meelee, FiringMode.SingleFire, arms.MeeleGrip, equip.LeafScythe);
 
@@ -44,7 +47,7 @@ public class WeaponStats
             90,  0, 
             CombatType.Gun, FiringMode.SingleFire, arms.PistolGrip, equip.ArcticCannon);
 
-        set(Weapon.PlasmaSniper, 1.42f, 1000,  -1, 50, 
+        set(Weapon.PlasmaSniper, 1.42f, 200f, INSTANT_SPEED, 50, 
             200, 20, 
             CombatType.Gun, FiringMode.SingleFire, arms.LongBarrel, equip.Sniper);
 
@@ -52,7 +55,7 @@ public class WeaponStats
             50,  0, 
             CombatType.Gun, FiringMode.SpamFire, arms.MiddleBarrel, equip.Needler);
 
-        set(Weapon.FocusBeamer, 0.00f, 34,  -1, 2000,
+        set(Weapon.FocusBeamer, 0.00f, 34, INSTANT_SPEED, 2000,
             210,   0, 
             CombatType.Gun, FiringMode.ContinousBeam, arms.ShortBarrel, equip.FocusBeamer);
             
@@ -65,10 +68,10 @@ public class WeaponStats
             CombatType.Gun, FiringMode.SingleFire, arms.ShoulderRest, equip.ArcticSprayer);
     }
 
-    private void set(Weapon weapon, float maxAttacksPerSecond, float weaponRange, int bulletSpeed, int startingAmmo, int bulletDmg,
+    private void set(Weapon weapon, float fireRateInfo, float weaponRange, int speed, int startingAmmo, int dmg,
         int explosionDmg, CombatType combatType, FiringMode firingMode, GameObject limbs, GameObject physicalWeapon)
     {
-        weaponSystem.GetConfiguration(weapon).Initialize(maxAttacksPerSecond, combatType, firingMode, weaponRange, 
-            bulletSpeed, startingAmmo, bulletDmg, explosionDmg, limbs, physicalWeapon);
+        weaponSystem.GetConfiguration(weapon).Initialize(fireRateInfo, combatType, firingMode, weaponRange, 
+            speed, startingAmmo, dmg, explosionDmg, limbs, physicalWeapon);
     }
 }

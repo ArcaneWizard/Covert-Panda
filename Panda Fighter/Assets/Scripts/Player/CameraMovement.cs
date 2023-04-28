@@ -18,7 +18,7 @@ public class CameraMovement : MonoBehaviour
 
     // How much the camera overshoots/undershoots as the creature gets closer to the top/bottom edge of the map
     [Range(0, 1)]
-    private float mapOffsetMultiplier = 0.45f;
+    private float mapOffsetMultiplier = 0f;
 
     // Camera movement settings
     private float smoothTimeX = 0.15f;
@@ -43,15 +43,15 @@ public class CameraMovement : MonoBehaviour
     private Vector2 swayOffset;
     private float random;
 
+    public float d;
+
     void Start()
     {
         cameraTarget = cameraTargetAfterPlayerDeath;
         cameraOffset = transform.position - cameraTarget.transform.position;
     }
 
-    //void FixedUpdate()  => updateCameraMovement();
-
-    void LateUpdate()
+    void FixedUpdate()
     {
         updateCameraShake();
         updateCameraSway();

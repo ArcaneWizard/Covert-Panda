@@ -8,12 +8,13 @@ public class wFocusBeamer : WeaponBehaviour
     {
         StartCoroutine(base.attack(aim));
 
-        Transform bullet = WeaponAction.SpawnBullet(aim, weaponSystem, weaponConfiguration, side, false);
-        bullet.GetComponent<FocusBeam>().Beam(weaponConfiguration.BulletSpawnPoint,
+        PhysicalBullet bullet = WeaponBehaviourHelper.SpawnBullet(aim, weaponSystem, weaponConfiguration, side);
+        bullet.transform.GetComponent<FocusBeam>().ShootBeam(weaponConfiguration.BulletSpawnPoint,
             weaponConfiguration.PhysicalWeapon.transform, phaseTracker.IsDoingSomersault);
+
+        bullet.transform.GetComponent<Bullet>().OnFire(aim, BulletMovementAfterFiring.SyncedWithDirectionAimedIn, false);
 
         confirmAttackFinished();
         yield return null;
     }
-
 }

@@ -20,7 +20,7 @@ public class FragGrenade : Bullet
         animatedExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
 
-        explosion.radius = 12;
+        explosion.Radius = 12;
     }
 
     public void startExplosionTimer() => StartCoroutine(eStartExplosionTimer());
@@ -39,8 +39,8 @@ public class FragGrenade : Bullet
         StartCoroutine(explosion.damageSurroundingEntities());
     }
 
-    protected override void OnCreatureEnter(Transform creature) { }
-    protected override void OnMapEnter(Transform map) { }
+    protected override void onCreatureEnter(Transform creature) { }
+    protected override void onMapEnter(Transform map) { }
 
     void Update()
     {

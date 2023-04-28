@@ -15,9 +15,9 @@ public abstract class CentralLookAround : MonoBehaviour
     public Vector2 directionToLook { get; protected set; }
 
     // whether or not the creature is facing right
-    public bool IsFacingRight => body.localEulerAngles.y == 0;
+    public bool IsFacingRight { get; protected set; }
 
-    // calculate and set the direction the creature is looking at
+    // calculates and sets the direction the creature is looking at
     protected abstract void figureOutDirectionToLookIn();
 
     // the direction and angle the creature is looking at (relative to their tilt/local x-axis)
@@ -49,7 +49,7 @@ public abstract class CentralLookAround : MonoBehaviour
     protected Animator animator;
 
     // Update the main arm and back arm's Inverse Kinematic (IK) settings so they aim the current
-    // equipped weapon correctly. Afterall, different weapon types (long barrel, pistol grip, etc.) have
+    // equipped weapon correctly. Different weapon types (long barrel, pistol grip, etc.) have
     // different IK configurations
     public void UpdateArmInverseKinematics()
     {
@@ -123,13 +123,7 @@ public abstract class CentralLookAround : MonoBehaviour
     }
 
     // calculate and set whether the creature's body faces left or right
-    private void updateDirectionBodyFaces()
-    {
-        if (povVector.x >= 0)
-            body.localRotation = Quaternion.Euler(0, 0, 0);
-        else
-            body.localRotation = Quaternion.Euler(0, 180, 0);
-    }
+    private void updateDirectionBodyFaces() => IsFacingRight = (povVector.x >= 0);
 
     // Calculate the direction the creature is looking in from its point of view (POV), which should be affected by
     // standing tilted on a slope. The POV vector is obtained by mapping the vector directionToLook in the world's coordinate plane
@@ -147,7 +141,7 @@ public abstract class CentralLookAround : MonoBehaviour
         float headSlope, headRotation;
         float defaultHeadAngle = 90f;
 
-        // rotate head based on angle of sight
+        // rotate head based on POV angle
         if (povVector.y >= 0)
             headSlope = (153f - defaultHeadAngle) / 90f;
         else
@@ -170,7 +164,7 @@ public abstract class CentralLookAround : MonoBehaviour
     {
         float aimTargetDistanceFromShoulder, aimTargetAngle;
 
-        // rotate main arm to aim in the right direction
+        // rotate main arm based on POV angle
         if (mainArmIKTarget != null)
         {
             if (povVector.y >= 0)
@@ -196,7 +190,7 @@ public abstract class CentralLookAround : MonoBehaviour
                     * new Vector2(Mathf.Cos(aimTargetAngle * Mathf.PI / 180f), Mathf.Sin(aimTargetAngle * Mathf.PI / 180f)) + shoulderPos;
         }
 
-        // rotate secondary arm (if applicable) to aim in the right direction
+        // rotate secondary arm (if applicable) based on POV angle
         if (otherArmIKTarget != null)
         {
             if (povVector.y >= 0)

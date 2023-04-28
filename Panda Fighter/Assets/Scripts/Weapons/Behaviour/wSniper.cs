@@ -8,8 +8,8 @@ public class wSniper : WeaponBehaviour
     {
         StartCoroutine(base.attack(aim));
 
-        Transform bullet = WeaponAction.SpawnBullet(aim, weaponSystem, weaponConfiguration, side, false);
-        bullet.GetComponent<SniperBeam>().ShowBeam();
+        PhysicalBullet bullet = WeaponBehaviourHelper.SpawnBullet(aim, weaponSystem, weaponConfiguration, side);
+        bullet.transform.GetComponent<SniperBeam>().ShowBeam();
 
         confirmAttackFinished();
         yield return null;

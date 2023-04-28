@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Explosion : MonoBehaviour
 {
-    [HideInInspector] public float radius;
+    [HideInInspector] public float Radius;
 
     private int explosionDamage;
     private HashSet<int> entitiesHurt;
@@ -22,7 +22,8 @@ public class Explosion : MonoBehaviour
     private void Start()
     {
         if (collider)
-            collider.radius = radius;
+            collider.radius = Radius;
+
         explosionDamage = transform.parent.GetComponent<WeaponConfiguration>().ExplosionDmg;
     }
 
@@ -56,12 +57,12 @@ public class Explosion : MonoBehaviour
         float squareDistance = Mathf.Pow(closestCollisionPoint.x - collider.transform.position.x, 2)
             + Mathf.Pow(closestCollisionPoint.y - collider.transform.position.y, 2);
 
-        if (squareDistance <= radius * radius * 0.16f)
-            return Mathf.RoundToInt((explosionDamage * ((squareDistance/radius/radius/-1f) + 1f)) * UnityEngine.Random.Range(0.9f, 1.0f));
-        else if (squareDistance <= radius * radius * 0.64f)    
-            return Mathf.RoundToInt(explosionDamage * ((squareDistance/radius/radius/-0.8f) + 1.3f));
-        else if (squareDistance <= radius * radius)    
-            return  Mathf.RoundToInt(explosionDamage * (-2.5f * (squareDistance/radius/radius) + 2.7f));
+        if (squareDistance <= Radius * Radius * 0.16f)
+            return Mathf.RoundToInt((explosionDamage * ((squareDistance/Radius/Radius/-1f) + 1f)) * UnityEngine.Random.Range(0.9f, 1.0f));
+        else if (squareDistance <= Radius * Radius * 0.64f)    
+            return Mathf.RoundToInt(explosionDamage * ((squareDistance/Radius/Radius/-0.8f) + 1.3f));
+        else if (squareDistance <= Radius * Radius)    
+            return  Mathf.RoundToInt(explosionDamage * (-2.5f * (squareDistance/Radius/Radius) + 2.7f));
         else
             return 0;
     }

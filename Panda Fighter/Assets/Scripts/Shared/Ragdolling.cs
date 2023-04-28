@@ -2,25 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Provides functions to enable and disable creature ragdolling. When ragdolling
+// is enabled, no manual/procedural animations occur. Instead the creatures' limbs
+//  act like free-rigidbodies connected naturally like a body should be
 public class Ragdolling : MonoBehaviour
 {
     // Note: the hip and chest should always be the 0th and 1st entry
-    public Rigidbody2D[] ragdollParts;
+    public Rigidbody2D[] ragdollRigidbodies;
+    private Collider2D[] ragdollColliders;
     public GameObject ragdollArms;
 
     private Rigidbody2D playerRig;
     private Animator animator;
     private CentralWeaponSystem weaponSystem;
-    private CentralController controller;
-    private CentralDeathSequence deathSequence;
+
+    [SerializeField] private PhysicsMaterial2D limbFriction;
+    [SerializeField] private PhysicsMaterial2D noFriction;
 
     private void Awake()
     {
         animator = transform.GetChild(0).GetComponent<Animator>();
         playerRig = transform.GetComponent<Rigidbody2D>();
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
-        controller = transform.GetComponent<CentralController>();
-        deathSequence = transform.GetComponent<CentralDeathSequence>();
+
+        ragdollColliders = new Collider2D[ragdollRigidbodies.Length];
+        for (int i = 0; i < ragdollRigidbodies.Length; i++)
+            ragdollColliders[i] = ragdollRigidbodies[i].transform.GetComponent<Collider2D>();
 
         DisableRagdolling();
     }
@@ -33,11 +40,12 @@ public class Ragdolling : MonoBehaviour
         animator.enabled = true;
         ragdollArms.SetActive(false);
 
-        foreach (Rigidbody2D rig in ragdollParts)
+        for (int i = 0; i < ragdollRigidbodies.Length; i++)
         {
-            rig.gameObject.layer = Layer.Limb;
-            rig.isKinematic = true;
-            rig.velocity = Vector2.zero;
+            ragdollRigidbodies[i].gameObject.layer = Layer.Limb;
+            ragdollRigidbodies[i].isKinematic = true;
+            ragdollRigidbodies[i].velocity = Vector2.zero;
+            ragdollRigidbodies[i].sharedMaterial = noFriction;
         }
 
         playerRig.isKinematic = false;
@@ -59,15 +67,16 @@ public class Ragdolling : MonoBehaviour
         weaponSystem.CurrentWeaponConfiguration.PhysicalWeapon.SetActive(false);
         weaponSystem.CurrentWeaponConfiguration.Arms.SetActive(false);
 
-        foreach (Rigidbody2D rig in ragdollParts)
+        for (int i = 0; i < ragdollRigidbodies.Length; i++)
         {
-            rig.gameObject.layer = Layer.LimbInRagdoll;
-            rig.isKinematic = false;
-            rig.velocity = velocityBeforeDeath;
-            rig.gravityScale = CentralController.Gravity;
+            ragdollRigidbodies[i].gameObject.layer = Layer.LimbInRagdoll;
+            ragdollRigidbodies[i].isKinematic = false;
+            ragdollRigidbodies[i].velocity = velocityBeforeDeath;
+            ragdollRigidbodies[i].gravityScale = CentralController.GRAVITY;
+            ragdollRigidbodies[i].sharedMaterial = limbFriction;
         }
 
-        ragdollParts[0].AddTorque(velocityBeforeDeath.magnitude * Random.Range(-20f, 20f));
-        ragdollParts[1].AddTorque(velocityBeforeDeath.magnitude * Random.Range(-20f, 20f));
+        ragdollRigidbodies[0].AddTorque(velocityBeforeDeath.magnitude * Random.Range(-20f, 20f));
+        ragdollRigidbodies[1].AddTorque(velocityBeforeDeath.magnitude * Random.Range(-20f, 20f));
     }
 }

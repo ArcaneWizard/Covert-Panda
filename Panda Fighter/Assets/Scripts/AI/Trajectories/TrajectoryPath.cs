@@ -38,7 +38,7 @@ public class TrajectoryPath : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        defaultGravity = CentralController.Gravity * -13f;
+        defaultGravity = CentralController.GRAVITY * -13f;
 
         mass = 1f;
 
@@ -183,7 +183,7 @@ public class TrajectoryPath : MonoBehaviour
     {
         gravity = defaultGravity;
 
-        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JumpForce);
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JUMP_FORCE);
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
@@ -197,10 +197,10 @@ public class TrajectoryPath : MonoBehaviour
         gravity = defaultGravity;
          gravity = defaultGravity;
 
-        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JumpForce);
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JUMP_FORCE);
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change, speedRange, v));
 
-        v = new VerticalInfo(midwayInfo.Pos.y, 0, 0, CentralController.DoubleJumpForce);
+        v = new VerticalInfo(midwayInfo.Pos.y, 0, 0, CentralController.DOUBLE_JUMP_FORCE);
         midwayInfo = drawTrajectory(20f, new Info(midwayInfo.Pos, timeB4SecondChange.x, changedSpeed, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
@@ -229,7 +229,7 @@ public class TrajectoryPath : MonoBehaviour
     {
         gravity = defaultGravity;
 
-        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JumpPadForce);
+        VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JUMP_PAD_FORCE);
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange.x, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;

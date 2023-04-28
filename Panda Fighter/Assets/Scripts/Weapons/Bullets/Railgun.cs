@@ -16,17 +16,17 @@ public class Railgun : Bullet
 
         impactExplosion = transform.GetChild(0).GetComponent<ParticleSystem>();
         explosion = transform.GetComponent<Explosion>();
-        explosion.radius = 1.1f;
+        explosion.Radius = 1.1f;
     }
 
-    public override void ConfigureBulletBeforeFiring(Vector2 aim, bool doesBulletHaveArcMotion, bool doesBulletStickToCreatures)
+    public override void OnFire(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
     {
-        base.ConfigureBulletBeforeFiring(aim, doesBulletHaveArcMotion, doesBulletStickToCreatures);
+        base.OnFire(aim, movementAfterFiring, doesBulletStickToCreatures);
         impactExplosion.GetComponent<ParticleSystem>().Stop();
     }
 
-    protected override void OnMapEnter(Transform map) => StartCoroutine(initiateExplosion());
-    protected override void OnCreatureEnter(Transform entity) => StartCoroutine(initiateExplosion());
+    protected override void onMapEnter(Transform map) => StartCoroutine(initiateExplosion());
+    protected override void onCreatureEnter(Transform entity) => StartCoroutine(initiateExplosion());
 
     private IEnumerator initiateExplosion()
     {
