@@ -8,9 +8,9 @@ public class ChangeDirectionsAction : AIAction
 {
     public ChangeDirectionsAction(AIActionType action, AIActionInfo info) : base(action, info) { }
 
-    public override void Begin(AI_Controller controller)
+    public override void StartExecution(AI_Controller controller)
     {
-        base.Begin(controller);
+        base.StartExecution(controller);
         executeCoroutine(changeDirections());
     }
 

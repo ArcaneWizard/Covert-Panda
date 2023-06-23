@@ -13,9 +13,9 @@ public class wScythe : WeaponBehaviour
 
     protected override void startMultiActionAttack(bool singleAction)
     {
-        ExecutionDelay wait = ExecutionDelay.Waiting;
+        ExecutionDelay wait = ExecutionDelay.Wait;
 
-        attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero, wait };
+        attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Instant, wait };
         attackActions = new List<Action>() { configureAnimator, waitTillAnimationCompletes };
 
         base.startMultiActionAttack(false);

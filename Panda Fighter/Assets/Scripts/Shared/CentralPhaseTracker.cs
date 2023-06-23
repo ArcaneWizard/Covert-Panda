@@ -6,7 +6,7 @@ using UnityEngine;
 // A phase is the action the creature is doing right now (jumping, being idle, etc.)
 // This class manages the phase the creature is in, and updates the creature's animations,
 // colliders and ground detectors' position accordingly. Note: the animation controller
-// is already setup to change animations according to the creature's phase
+// is already setup to change animations when you call the function setPhase(Phase p)
 
 public class CentralPhaseTracker : MonoBehaviour
 {
@@ -29,6 +29,7 @@ public class CentralPhaseTracker : MonoBehaviour
 
     void Awake() 
     {
+        // setup
         body = transform.GetChild(0);
         animator = body.GetComponent<Animator>();
         controller = transform.GetComponent<CentralController>();
@@ -40,7 +41,7 @@ public class CentralPhaseTracker : MonoBehaviour
         somersaultHandler = new Somersault(transform, this, animator, controller, lookAround);
         somersaultHandler.Reset();
 
-        // setup animation clip overrides so different jump animations, falling animations, etc. can be used
+        // setup animation clip overrides so different jump animation variations, falling animation variations, etc. can be used
         animatorOverrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
         animator.runtimeAnimatorController = animatorOverrideController;
 
@@ -50,14 +51,20 @@ public class CentralPhaseTracker : MonoBehaviour
 
     // returns whether or not the creature is in a specific phase 
     public bool Is(Phase specificPhase) => phase == (int)specificPhase;
+
+    // returns whether the creature is in an "air-born" phase (ex. jumping, falling, etc. as opposed to running)
     public bool IsMidAir => 2 <= phase && phase <= 4;
+
+    // returns whether the creature is somersaulting
     public bool IsSomersaulting => Is(Phase.DoubleJumping) && somersaultHandler.state != SomersaultState.Exited;
+
+    // returns whether the creature is walking backwards
     public bool IsWalkingBackwards => Is(Phase.Running) && !animator.GetBool("walking forwards");
 
-    // set phase to jumping, and play any random one of the jump animations
-    public void EnterJumpPhase()
+    // Set the phase to jumping, and play any random variaton of the jump animation in the animator
+    public void Jump()
     {
-        // note: if creature is still, use the default idle jump animation.
+        // note: if creature is still, always use the default idle jump animation.
         if (controller.DirX == 0)
             clipOverrides["jumping"] = jumpClips[0];
         else
@@ -67,8 +74,8 @@ public class CentralPhaseTracker : MonoBehaviour
         setPhase(Phase.Jumping);
     }
 
-    // set phase to double jumping, and execute a mid-air somersault
-    public IEnumerator EnterDoubleJumpPhase()
+    // Set the phase to double jumping, and execute a mid-air somersault
+    public IEnumerator DoubleJump()
     {
         setPhase(Phase.DoubleJumping);
 
@@ -78,6 +85,7 @@ public class CentralPhaseTracker : MonoBehaviour
         IsDoingSomersault = false;
     }
 
+    // Specify which somersault animation should be used in the animator, based on somersault direction
     public void SwapSomersaultAnimation(bool isForwardSomersault)
     {
         if (isForwardSomersault)
@@ -88,8 +96,8 @@ public class CentralPhaseTracker : MonoBehaviour
         animatorOverrideController.ApplyOverrides(clipOverrides);
     }
 
-    private int phase => animator.GetInteger("Phase");
     private void setPhase(Phase p) => animator.SetInteger("Phase", (int)p);
+    private int phase => animator.GetInteger("Phase");
 
     private void FixedUpdate() 
     {
@@ -98,14 +106,18 @@ public class CentralPhaseTracker : MonoBehaviour
             somersaultHandler.Reset();
             return;
         }
-        
+
         // update the phase when the creature is idle or running 
-        if (controller.isGrounded && !controller.recentlyJumpedOffGround && somersaultHandler.state == SomersaultState.Exited)
+        if (controller.isGrounded && !controller.isOnSuperSteepSlope && !controller.recentlyJumpedOffGround
+            && somersaultHandler.state == SomersaultState.Exited)
             setPhase((controller.DirX == 0) ? Phase.Idle : Phase.Running);
 
         // update the phase when the creature is falling
         else if (!IsMidAir)
+        {
+            Debug.Log(controller.isGrounded);
             setPhase(Phase.Falling);
+        }
 
         // play forward or backwards running animation depending on
         // whether the creature runs forwards or backwards 

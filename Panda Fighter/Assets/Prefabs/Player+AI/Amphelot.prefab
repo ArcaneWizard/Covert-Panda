@@ -3463,6 +3463,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd8dd5d1d21584143a6dc73196b867dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  body_tilt: 0.5
   oneWayCollider: {fileID: 7030806314310783155}
   somersaultCollider: {fileID: 0}
   <shootingArm>k__BackingField: {fileID: 0}
@@ -3470,6 +3471,8 @@ MonoBehaviour:
   frontGroundRaycaster: {fileID: 0}
   backGroundRaycaster: {fileID: 0}
   wallRaycaster: {fileID: 0}
+  MOVEMENT_ALTERATION_SPEED: 40
+  SLIDE_DOWN_SPEED: 0.9
   a: 0.4
   b: 100
   c: 12

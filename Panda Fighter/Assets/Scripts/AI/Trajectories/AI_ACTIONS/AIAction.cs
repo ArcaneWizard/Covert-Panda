@@ -39,7 +39,7 @@ public class AIAction
         coroutinesRunning = new List<IEnumerator>();
     }
 
-    public virtual void Begin(AI_Controller controller)
+    public virtual void StartExecution(AI_Controller controller)
     {
         this.controller = controller;
         creature = controller.transform;
@@ -50,7 +50,7 @@ public class AIAction
         ExecuteJumpBoostNow = false;
     }
 
-    public virtual void Run() { }
+    public virtual void Execute() { }
 
     // stop all coroutines that were run by this action
     public void Exit()

@@ -5,7 +5,7 @@ using UnityEngine;
 public class TestInstantiate : MonoBehaviour
 {
     [SerializeField] private GameObject testObject;
-    [SerializeField] private int numOfObjects;
+    [SerializeField] private int numOfObjects = 100000;
 
     void Start()
     {

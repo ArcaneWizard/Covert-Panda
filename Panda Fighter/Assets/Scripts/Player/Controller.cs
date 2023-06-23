@@ -7,19 +7,26 @@ using UnityEngine;
 public class Controller : CentralController
 {
     private bool standingOnJumpPad;
-    private bool canThrustDown;
+    private bool isThrustingDownwards;
     private float fastestYVelocityRecorded;
+
+    // whether player hit the input for a certain action on the current frame
+    private bool jumpInput;
+    private bool downThrustInput;
+
+    public float MOVEMENT_ALTERATION_SPEED = 40f;
+    public float SLIDE_DOWN_SPEED = 0.5f;
 
     public float a = 0.4f;
     public float b = 100f;
     public float c = 12f;
 
-    [SerializeField] private CameraMovement cameraMovement;
+    [SerializeField] private CameraMovement2 cameraMovement;
 
     protected override void Start()
     {
         base.Start();
-        canThrustDown = true;
+        isThrustingDownwards = true;
     }
 
     protected override void Update()
@@ -33,26 +40,11 @@ public class Controller : CentralController
             return;
         }
 
-        //use W and S keys for jumping up or thrusting downwards + allow double jump
-        if (Input.GetKeyDown(KeyCode.W)) 
-        {
-            if (isGrounded && !phaseTracker.Is(Phase.Jumping) && !standingOnJumpPad)
-                StartCoroutine(normalJump());
+        if (Input.GetKeyDown(KeyCode.W))
+            jumpInput = true;
 
-            else if (phaseTracker.Is(Phase.Jumping)) 
-                StartCoroutine(doubleJump());
-
-            else if (isGrounded && !phaseTracker.Is(Phase.Jumping) && standingOnJumpPad)
-                StartCoroutine(jumpPadBoost());
-        }
-
-        if (Input.GetKeyDown(KeyCode.S) && canThrustDown && phaseTracker.IsMidAir)
-        {
-            rig.velocity = new Vector2(rig.velocity.x, 0);
-            rig.AddForce(new Vector2(0, DOWNWARDS_THRUST_FORCE));
-            canThrustDown = false;
-            fastestYVelocityRecorded = 0;
-        }
+        if (Input.GetKeyDown(KeyCode.S))
+            downThrustInput = true;
     }
 
     protected override void FixedUpdate()
@@ -66,86 +58,106 @@ public class Controller : CentralController
         if (Input.GetKey(KeyCode.A))
             DirX--;
 
+        if (downThrustInput && !isThrustingDownwards && phaseTracker.IsMidAir)
+        {
+            downThrustInput = false;
+            rig.velocity = new Vector2(rig.velocity.x, 0);
+            rig.AddForce(new Vector2(0, DOWNWARDS_THRUST_FORCE));
+            isThrustingDownwards = true;
+            fastestYVelocityRecorded = 0;
+        }
+
         setPlayerVelocity();
 
-        if (rig.velocity.y < fastestYVelocityRecorded)
-            fastestYVelocityRecorded = rig.velocity.y;
+        //use W and S keys for jumping up or thrusting downwards + allow double jump
+        if (jumpInput)
+        {
+            jumpInput = false;
+            if (isGrounded && !phaseTracker.Is(Phase.Jumping) && !standingOnJumpPad)
+                StartCoroutine(normalJump());
+
+            else if (phaseTracker.Is(Phase.Jumping))
+                StartCoroutine(doubleJump());
+
+            else if (isGrounded && !phaseTracker.Is(Phase.Jumping) && standingOnJumpPad)
+                StartCoroutine(jumpPadBoost());
+        }
     }
 
     private void setPlayerVelocity()
     {
         //nullify the slight bounce on a slope glitch when changing slopes
         //if ((!phaseTracker.IsMidAir || phaseTracker.Is(Phase.Falling)) && rig.velocity.y > 0)
-          //  rig.velocity = new Vector2(0, 0);
+        //  rig.velocity = new Vector2(0, 0);
+
+        if (wallInFrontOfYou && ((DirX == 1 && lookAround.IsFacingRight) || (DirX == -1 && !lookAround.IsFacingRight)))
+        {
+            setVelocity(new Vector2(0, rig.velocity.y));
+            rig.gravityScale = GRAVITY;
+        }
+
+        else if (wallBehindYou && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight)))
+        {
+            setVelocity(new Vector2(0, rig.velocity.y));
+            rig.gravityScale = GRAVITY;
+        }
 
         //when player is on the ground, player velocity is parallel to the slanted ground 
-        if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
+        else if (!phaseTracker.IsMidAir && isGrounded)
         {
-            // if running forwards into a wall, kill x velocity
-            if (wallInFront && ((DirX == 1 && lookAround.IsFacingRight) || (DirX == -1 && !lookAround.IsFacingRight)))
+            if (isOnSuperSteepSlope)
             {
-                rig.velocity = new Vector2(0, rig.velocity.y);
-            }
+                int dirX;
+                if (wallInFrontOfYou && lookAround.IsFacingRight || wallBehindYou && !lookAround.IsFacingRight)
+                    dirX = Math.Min(DirX, 0);
+                else
+                    dirX = Math.Max(DirX, 0);
 
-            // if walking backwards into a wall, kill x velocity
-            else if (wallBehind && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight)))
-            {
-                rig.velocity = new Vector2(0, rig.velocity.y);
-            }
 
-            //else player velocity is parallel to the slanted ground
-            else if (!recentlyJumpedOffGround && !recentlyDoubleJumpedOffGround)
-            {
-                float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
-                addForce(groundSlope * speed * DirX * speedMultiplier);
-                // rig.velocity = groundSlope * speed * DirX * speedMultiplier;
-                rig.gravityScale = (DirX == 0) ? 0f : GRAVITY;
+                if (dirX == 0)
+                {
+                    // Vector2 slideDownSlopeDirection = Mathf.Sign(groundSlope.y) * groundSlope;
+                    // rig.gravityScale = GRAVITY * slideDownSlopeDirection.normalized.y;
+                    rig.gravityScale = GRAVITY;
+                }
+                else
+                {
+                    setVelocity(new Vector2(speed * DirX, rig.velocity.y));
+                    rig.gravityScale = GRAVITY;
+                }
             }
 
             else
             {
                 float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
-                addForce(new Vector2(speed * DirX * speedMultiplier, rig.velocity.y));
-                rig.gravityScale = GRAVITY;
+                setVelocity(groundSlope * speed * DirX * speedMultiplier);
+                rig.gravityScale = (DirX == 0) ? 0f : GRAVITY;
             }
-
+         
             //camera shakes if landing from a downwards thrust
-            if (!canThrustDown && fastestYVelocityRecorded < -20f)
+            if (isThrustingDownwards && fastestYVelocityRecorded < -20f)
             {
                 float shakeMultiplier = a + (-fastestYVelocityRecorded - 40f) / b;
                 cameraMovement.ExecuteCameraShake(shakeMultiplier);
             }
 
             //allow player to thrust themselves downwards the next time they jump
-            canThrustDown = true;
+            isThrustingDownwards = false;
         }
 
-        //when player is not on the ground, player velocity is just left/right with gravity applied
         else
         {
-            // if running forwards into a wall, do nothing
-            if (wallInFront && ((DirX == 1 && lookAround.IsFacingRight) || (DirX == -1 && !lookAround.IsFacingRight)))
-            {
-                rig.velocity = new Vector2(0, rig.velocity.y);
-            }
-
-            // if walking backwards into a wall, do nothing
-            else if (wallBehind && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight)))
-            {
-                rig.velocity = new Vector2(0, rig.velocity.y);
-            }
-            else
-            {
-                 addForce(new Vector2(speed * DirX, rig.velocity.y));
-            }
-
+            setVelocity(new Vector2(speed * DirX, rig.velocity.y));
             rig.gravityScale = GRAVITY;
         }
+
+        if (rig.velocity.y < fastestYVelocityRecorded)
+            fastestYVelocityRecorded = rig.velocity.y;
     }
 
-    private void addForce(Vector2 velocity)
+    private void setVelocity(Vector2 velocity)
     {
-        rig.AddForce((velocity * rig.mass - rig.velocity * rig.mass) / 0.02f);
+        rig.AddForce((velocity * rig.mass - rig.velocity * rig.mass) * MOVEMENT_ALTERATION_SPEED);
     }
 
     private void OnTriggerEnter2D(Collider2D col) 

@@ -123,14 +123,14 @@ public class AI_Controller : CentralController
                 return;
             }
             
-            currAction.Begin(this);
+            currAction.StartExecution(this);
             hasActionStarted = true;
         }
 
         // Run the action
         if (hasActionStarted)
         {
-            currAction.Run();
+            currAction.Execute();
             DirX = currAction.DirX;
             speed = currAction.Speed;
         }
@@ -147,9 +147,9 @@ public class AI_Controller : CentralController
         // when alien is on the ground, alien velocity is parallel to the slanted ground 
         if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
         {
-            if (currAction == null && wallBehind)
+            if (currAction == null && wallBehindYou)
                 DirX = 1;
-            else if (currAction == null && wallInFront)
+            else if (currAction == null && wallInFrontOfYou)
                 DirX = -1;
 
             rig.velocity = groundSlope * speed * DirX;
@@ -160,11 +160,11 @@ public class AI_Controller : CentralController
         else
         {
             // Stop moving horizontally if the AI is about to crash into a wall after a jump.
-            if (rig.velocity.y > 0 && ((DirX == 1 && wallInFront) || (DirX == -1 && wallBehind)))
+            if (rig.velocity.y > 0 && ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou)))
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             // Change directions if the AI is falling left or right and about to crash into a wall.
-            else if ((DirX == 1 && wallInFront) || (DirX == -1 && wallBehind))
+            else if ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou))
             {
                 rig.velocity = new Vector2(0, rig.velocity.y);
                 DirX = (int)-Mathf.Sign(DirX) * UnityEngine.Random.Range(0, 2);

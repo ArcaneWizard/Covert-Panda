@@ -7,6 +7,8 @@ using UnityEngine;
 using static UnityEngine.InputManagerEntry;
 using static UnityEngine.Rendering.DebugUI.Table;
 using UnityEngine.UIElements;
+using UnityEditor.UIElements;
+using System.Collections.Generic;
 
 public class Test : MonoBehaviour
 {
@@ -14,6 +16,9 @@ public class Test : MonoBehaviour
     private float time;
     private float timer = 0f;
     private float index = 0f;
+
+    float distance;
+    float doubleDistance;
 
     private AdvCoroutine advCoroutine;
 
@@ -24,73 +29,94 @@ public class Test : MonoBehaviour
     public List<ExecutionDelay> f;
     public List<Action> a;
 
-    private ActionFlowOverTime fastCouroutine;
-    private void Start()
+    private TimedCode fastCouroutine;
+    /*void Start()
     {
-       /* if (f == null)
-        {
-            f = new List<ExecutionDelay>();
-            for (int i = 0; i < 3; i++)
-                f.Add(ExecutionDelay.Waiting);
-        }
+        f = new List<ExecutionDelay>();
+        a = new List<Action>();
+       
+         fastCouroutine = new TimedCode(f, a);
+        f.Clear();
+        for (int i = 0; i < 6; i++)
+            f.Add(new ExecutionDelay(UnityEngine.Random.Range(0.18f, 0.2f)));
 
-        if (a == null)
+        a.Clear();
+        for (int i = 0; i < 1; i++)
         {
-            a = new List<Action>();
+            a.Add(bob);
+            a.Add(joe);
+            a.Add(cow);
+            a.Add(dee);
+            a.Add(dee);
+            a.Add(nah);
+        }
+        void bob()
+            {
+              
+
+                distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
+            }
+
+            void joe()
+            {
+                doubleDistance = 2 * distance;
+            }
+
+            void cow()
+            {
+                doubleDistance = 3 * distance;
+            }
+
+            void dee()
+            {
+                doubleDistance = 4 * distance;
+            }
+
+            void nah()
+            {
+                doubleDistance = 5 * distance;
+             time = Time.time;
+            f.Clear();
+            for (int i = 0; i < 6; i++)
+                f.Add(new ExecutionDelay(UnityEngine.Random.Range(0.18f, 0.2f)));
+
+            a.Clear();
             for (int i = 0; i < 1; i++)
             {
                 a.Add(bob);
                 a.Add(joe);
                 a.Add(cow);
+                a.Add(dee);
+                a.Add(nah);
+                a.Add(nah);
             }
+
+            fastCouroutine.Start();
         }
+        
 
-           void bob()
-           {
-               distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
-           }
+        //StartCoroutine(testVillage());
+        fastCouroutine.Start();
+    }*/
 
-           void joe()
-           {
-               doubleDistance = 2 * distance;
-           }
-
-           void cow()
-           {
-               doubleDistance = 3 * distance;
-           }
-
-           void dee()
-           {
-               doubleDistance = 4 * distance;
-           }
-
-           void nah()
-           {
-               doubleDistance = 5 * distance;
-            time = Time.time;
-        }
-       */
-          // fastCouroutine = new ActionFlowOverTime(f, a);
-     
-         StartCoroutine(testVillage());
-        //fastCouroutine.Start(true);
-    }
-
-    private bool yay;
-    private void finale()
+    private void Start()
     {
-        yay = true;
+       // StartCoroutine(testVillage());
     }
+
+    /*private void FixedUpdate()
+    {
+        RaycastHit2D a = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
+        RaycastHit2D b = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
+        RaycastHit2D c = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
+        RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
+    }*/
 
     private int i = 0;
-   /* private void Update()
-    {
-        fastCouroutine.Update();
-
-        f[i].StopWaiting();
-        i = (i + 1) % f.Count;
-    }*/
+    //  void Update()
+    //{
+    //  fastCouroutine?.Update();
+    //}
 
     /*private void Update()
     {
@@ -155,68 +181,22 @@ public class Test : MonoBehaviour
     }
     */
 
+    private void FixedUpdate()
+    {
+        
+    }
+
     private IEnumerator testVillage()
     {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
-            distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
-            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
-            doubleDistance = 4 * 2;
-            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
-            doubleDistance = 4 * distance;
-            yield return new WaitForSeconds(UnityEngine.Random.Range(0.25f, 0.35f));
-        doubleDistance = 4 * 3;
-
-        int i = 100;
-        while (i > 0f) {
-            yield return null;
-            i--;
-         }
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.18f, 0.25f));
+        distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
 
         StartCoroutine(testVillage());
     }
 
     private IEnumerator testVillage2()
     {
-            distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
-            yield return null;
+        distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
+        yield return null;
     }
-    
-
-    float distance;
-    float doubleDistance;
-
-    private void start1()
-    {
-       
-    }
-
-    /*private void start2()
-    {
-        float[] f = new float[1] { 0f };
-        Action[] a = new Action[1] { action1 };
-
-        void action1()
-        {
-            Vector2 forceMultiplier = new Vector2(1.0f, 1.1f);
-            Vector2 forceOffset = Vector2.zero;
-
-            void config(Transform bullet) => bullet.localEulerAngles = Vector3.zero;
-
-            Transform bullet = WeaponBehaviourHelper.SpawnAndShootBulletInArc(aim, forceMultiplier, forceOffset,
-                weaponSystem, weaponConfiguration, side, config);
-
-        }
-    } 
-
-
-
-    private void setup() {
-        fastCouroutine = new FastCoroutine(f.Add(4), a.Add(terminate));
-    }
-
-    private void Update()
-    {
-        fastCouroutine.Update();
-        Debug.Log(doubleDistance);
-    }*/
 }

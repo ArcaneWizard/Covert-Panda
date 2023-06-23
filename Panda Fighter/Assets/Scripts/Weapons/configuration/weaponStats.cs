@@ -8,7 +8,7 @@ public class WeaponStats
     private PhysicalWeapons equip;
 
     private CentralWeaponSystem weaponSystem;
-    private const int INSTANT_SPEED = -1; // bullet has "infinite" speed, impact is immediate
+    private const int INSTANT_SPEED = -1;
     private const int NO_SPEED = -1;
     private const int NO_AMMO = -1;
 

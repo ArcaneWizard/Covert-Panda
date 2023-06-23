@@ -14,8 +14,8 @@ public abstract class WeaponBehaviour : MonoBehaviour
     public AttackProgress attackProgress { get; protected set; }
     public AttackProgress bonusAttackProgress { get; protected set; }
 
-    private ActionFlowOverTime attackTimedActions;
-    private ActionFlowOverTime bonusAttackTimedActions;
+    private TimedCode attackTimedActions;
+    private TimedCode bonusAttackTimedActions;
 
     protected List<ExecutionDelay> attackTimes;
     protected List<ExecutionDelay> bonusAttackTimes;
@@ -65,16 +65,16 @@ public abstract class WeaponBehaviour : MonoBehaviour
     {
         if (singleAction)
         {
-            attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero };
+            attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Instant };
             attackActions = new List<Action>() { startAttack };
         }
 
         else if (attackTimes.Count == 0 || attackTimes.Count != attackActions.Count)
             Debug.Log("Invalid Attack Specified");
 
-        attackTimes.Add(ExecutionDelay.Zero);
+        attackTimes.Add(ExecutionDelay.Instant);
         attackActions.Add(confirmAttackFinished);
-        attackTimedActions = new ActionFlowOverTime(attackTimes, attackActions);
+        attackTimedActions = new TimedCode(attackTimes, attackActions);
     }
 
     // Construct a multi or single action bonus attack
@@ -82,16 +82,16 @@ public abstract class WeaponBehaviour : MonoBehaviour
     {
         if (singleAction)
         {
-            bonusAttackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero };
+            bonusAttackTimes = new List<ExecutionDelay>() { ExecutionDelay.Instant };
             bonusAttackActions = new List<Action>() { startBonusAttack };
         }
 
         else if (bonusAttackTimes.Count == 0 || bonusAttackTimes.Count != bonusAttackActions.Count)
             Debug.Log("Invalid Bonus Attack Specified");
 
-        bonusAttackTimes.Add(ExecutionDelay.Zero);
+        bonusAttackTimes.Add(ExecutionDelay.Instant);
         bonusAttackActions.Add(confirmBonusAttackFinished);
-        bonusAttackTimedActions = new ActionFlowOverTime(bonusAttackTimes, bonusAttackActions);
+        bonusAttackTimedActions = new TimedCode(bonusAttackTimes, bonusAttackActions);
     }
 
     // Execute an attack with this weapon. Requires the aim direction

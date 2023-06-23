@@ -19,7 +19,7 @@ public class wFragGrenade : WeaponBehaviour
 
     protected override void startMultiActionAttack(bool singleAction)
     {
-        attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Zero, timeB4Release, timeAfterRelease };
+        attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Instant, timeB4Release, timeAfterRelease };
         attackActions = new List<Action>() { getTimeB4Release, throwGrenade, disableArms};
 
         base.startMultiActionAttack(false);

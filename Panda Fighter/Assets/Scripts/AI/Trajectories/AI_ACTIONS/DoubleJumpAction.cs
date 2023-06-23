@@ -10,15 +10,15 @@ public class DoubleJumpAction : AIAction
 
     private bool hasJumped;
 
-    public override void Begin(AI_Controller controller)
+    public override void StartExecution(AI_Controller controller)
     {
-        base.Begin(controller);
+        base.StartExecution(controller);
         executeCoroutine(doubleJump());
 
         hasJumped = false;
     }
 
-    public override void Run()
+    public override void Execute()
     {
         if (!controller.isGrounded && !hasJumped)
             hasJumped = true;
