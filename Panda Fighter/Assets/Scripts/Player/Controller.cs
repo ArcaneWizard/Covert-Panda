@@ -33,7 +33,7 @@ public class Controller : CentralController
     {
         base.Update();
 
-        if (health.IsDead) 
+        if (health.IsDead)
         {
             isTouchingMap = false;
             standingOnJumpPad = false;
@@ -133,7 +133,7 @@ public class Controller : CentralController
                 setVelocity(groundSlope * speed * DirX * speedMultiplier);
                 rig.gravityScale = (DirX == 0) ? 0f : GRAVITY;
             }
-         
+
             //camera shakes if landing from a downwards thrust
             if (isThrustingDownwards && fastestYVelocityRecorded < -20f)
             {
@@ -160,15 +160,73 @@ public class Controller : CentralController
         rig.AddForce((velocity * rig.mass - rig.velocity * rig.mass) * MOVEMENT_ALTERATION_SPEED);
     }
 
-    private void OnTriggerEnter2D(Collider2D col) 
+    private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.layer == Layer.JumpPad)
             standingOnJumpPad = true;
     }
 
-    private void OnTriggerExit2D(Collider2D col) 
+    private void OnTriggerExit2D(Collider2D col)
     {
         if (col.gameObject.layer == Layer.JumpPad)
             standingOnJumpPad = false;
+    }
+
+    private HashSet<GameObject> wallsInFront = new HashSet<GameObject>();
+    private HashSet<GameObject> wallsBehind = new HashSet<GameObject>();
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
+        {
+            ContactPoint2D[] contacts = new ContactPoint2D[5];
+            int numOfContactsDetected = col.GetContacts(contacts);
+
+            for (int i = 0; i < numOfContactsDetected; i++)
+            {
+                // wall in front if it has a small y normal and you're facing it
+                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                    (lookAround.IsFacingRight && contacts[i].point.x > transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x < transform.position.x)) ;
+                wallsInFront.Add(col.gameObject);
+
+                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                   (lookAround.IsFacingRight && contacts[i].point.x < transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x > transform.position.x)) ;
+                wallsBehind.Add(col.gameObject);
+
+                Debug.Log(contacts[i].normal + ", " + contacts[i].collider.gameObject.name);
+            }
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D col)
+    {
+        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
+        {
+            ContactPoint2D[] contacts = new ContactPoint2D[5];
+            int numOfContactsDetected = col.GetContacts(contacts);
+
+            for (int i = 0; i < numOfContactsDetected; i++)
+            {
+                // wall in front if it has a small y normal and you're facing it
+                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                    (lookAround.IsFacingRight && contacts[i].point.x > transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x < transform.position.x)) ;
+                wallsInFront.Add(col.gameObject);
+
+                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                   (lookAround.IsFacingRight && contacts[i].point.x < transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x > transform.position.x)) ;
+                wallsBehind.Add(col.gameObject);
+
+                Debug.Log(contacts[i].normal + ", " + contacts[i].collider.gameObject.name);
+            }
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D col)
+    {
+        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
+        {
+            wallsInFront.Remove(col.gameObject);
+            wallsBehind.Remove(col.gameObject);
+        }
     }
 }

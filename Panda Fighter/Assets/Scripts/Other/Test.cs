@@ -183,7 +183,10 @@ public class Test : MonoBehaviour
 
     private void FixedUpdate()
     {
-        
+        RaycastHit2D a = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.map);
+        RaycastHit2D b = Physics2D.Raycast(transform.position, Vector2.down, 3, LayerMasks.map);
+        RaycastHit2D c = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.map);
+        RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.map);
     }
 
     private IEnumerator testVillage()

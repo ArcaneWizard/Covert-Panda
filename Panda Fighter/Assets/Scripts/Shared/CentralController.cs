@@ -38,7 +38,7 @@ public abstract class CentralController : MonoBehaviour
     // The creature updates it's body tilt at this speed as the ground slope changes
     private const float BODY_TILT_UPDATE_SPEED = 7f;
 
-    protected readonly float min_y_normal_of_walls = Mathf.Cos(MIN_ANGLE_OF_STEEP_SLOPE * Mathf.Deg2Rad);
+    protected readonly float max_y_normal_of_walls = Mathf.Cos(MIN_ANGLE_OF_STEEP_SLOPE * Mathf.Deg2Rad);
 
     [Header("Limbs and colliders")]
     [SerializeField] private BoxCollider2D oneWayCollider;
@@ -255,27 +255,27 @@ public abstract class CentralController : MonoBehaviour
         centerRaycasterOnMainCollider(wallRaycaster, 0f);
 
         // left and right wall raycasts should extend just barely beyond the left/right edges of the main collider
-        float raycastSize = body.lossyScale.x * mainCollider.size.x / 2f + 0.025f;
+        float raycastSize = body.lossyScale.x * mainCollider.size.x / 2f + 0.02f;
         Vector2 raycastDir = Vector2.right; // isGrounded ? groundSlope : Vector2.right;
 
         if (body.localEulerAngles.y == 0)
         {
             RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.map);
-            wallBehindYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < min_y_normal_of_walls);
+            wallBehindYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * -raycastDir, Color.blue, 2f);
 
             RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.map);
-            wallInFrontOfYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < min_y_normal_of_walls);
+            wallInFrontOfYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * raycastDir, Color.red, 2f);
         }
         else
         {
             RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.map);
-            wallInFrontOfYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < min_y_normal_of_walls);
+            wallInFrontOfYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * -raycastDir, Color.red, 2f);
 
             RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.map);
-            wallBehindYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < min_y_normal_of_walls);
+            wallBehindYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * raycastDir, Color.blue, 2f);
         }
     }
@@ -351,9 +351,9 @@ public abstract class CentralController : MonoBehaviour
         mainCollider.size = new Vector2(x, mainCollider.size.y);
 
         // activiate the right colliders for the creature based on the situation
-        mainCollider.enabled = false;// !phaseTracker.IsSomersaulting;
-        oneWayCollider.enabled = false; // !phaseTracker.IsSomersaulting && rig.velocity.y < 0.1f;
-        somersaultCollider.enabled = false;// phaseTracker.IsSomersaulting;
+        mainCollider.enabled =  !phaseTracker.IsSomersaulting;
+        oneWayCollider.enabled = !phaseTracker.IsSomersaulting && rig.velocity.y < 0.1f;
+        somersaultCollider.enabled = phaseTracker.IsSomersaulting;
     }
 
     // offset = 0 (centered), -1 = (left edge), 1 (right edge)
