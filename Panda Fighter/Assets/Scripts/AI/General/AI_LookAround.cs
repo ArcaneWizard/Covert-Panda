@@ -80,7 +80,7 @@ public class AI_LookAround : CentralLookAround
         Collider2D[] enemiesWithinRangeOfWeapon = Physics2D.OverlapCircleAll(
                 transform.position, 
                 weaponSystem.CurrentWeaponConfiguration.Range,
-                LayerMasks.target(side)
+                LayerMasks.Target(side)
         );
 
         foreach (Collider2D enemy in enemiesWithinRangeOfWeapon) 
@@ -93,7 +93,7 @@ public class AI_LookAround : CentralLookAround
                 weaponPivot.position, 
                 nearbyEnemy.transform.position - weaponPivot.position,
                 weaponSystem.CurrentWeaponConfiguration.Range, 
-                LayerMasks.mapOrTarget(side)
+                LayerMasks.MapOrTarget(side)
             );
 
             // if the enemy creature is in this creature's line of sight, switch focus to it if it's closer than other enemies

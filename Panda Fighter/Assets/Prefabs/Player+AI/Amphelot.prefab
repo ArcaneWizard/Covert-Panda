@@ -3463,6 +3463,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd8dd5d1d21584143a6dc73196b867dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  so: 2
   body_tilt: 0.5
   oneWayCollider: {fileID: 7030806314310783155}
   somersaultCollider: {fileID: 0}
@@ -3525,8 +3526,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11fa0fab849d64c4a8053d62e32ce302, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  respawnText: {fileID: 0}
-  inventory: {fileID: 0}
 --- !u!1 &2732179973479718262
 GameObject:
   m_ObjectHideFlags: 0
@@ -4698,7 +4697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf0b4f85c25124ca8b965325473bd212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  limbType: 6
+  limbType: 0
   limbSettings: {fileID: 0}
 --- !u!114 &8025231702920592408
 MonoBehaviour:

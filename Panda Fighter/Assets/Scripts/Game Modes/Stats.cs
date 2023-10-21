@@ -12,6 +12,13 @@ public class Stats : MonoBehaviour
     public Text scores;
     private StringBuilder statReader = new StringBuilder();
 
+    public static Stats Instance { get; private set; }
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         statsManager[Player] = new KDA(0, 0, 0);
@@ -22,13 +29,12 @@ public class Stats : MonoBehaviour
 
     void Update()
     {
-        scores.text = "";
+        /*
+        statReader.Clear();
         foreach (KeyValuePair<Transform, KDA> stat in statsManager)
-        {
-            statReader.Clear();
             statReader.Append(scores.text + stat.Key.name + ": " + stat.Value.ToString() + " \n");
-            scores.text = statReader.ToString();
-        }
+
+        scores.text = statReader.ToString();*/
     }
 
     public static void ConfirmKillFor(Transform killer)

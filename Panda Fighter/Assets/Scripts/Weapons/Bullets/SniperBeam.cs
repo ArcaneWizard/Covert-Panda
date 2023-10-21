@@ -39,7 +39,7 @@ public class SniperBeam : Bullet
     {
         beam.SetPosition(0, transform.position);
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 100f, LayerMasks.mapOrTarget(transform));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 100f, LayerMasks.MapOrTarget(transform));
 
         if (hit.collider != null)
         {

@@ -13,7 +13,7 @@ public class AI_Shooting : CentralShooting
     private float timeSinceLastShot = 0f;
 
     // aim should be off slightly by some random, offset angle
-    public override Vector2 GetAim() 
+    protected override Vector2 GetAim() 
     {
          offsetAngle = Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
          return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.directionToLook.normalized;

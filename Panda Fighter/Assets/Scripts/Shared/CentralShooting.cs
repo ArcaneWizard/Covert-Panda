@@ -9,7 +9,6 @@ public abstract class CentralShooting : MonoBehaviour
     protected CentralLookAround lookAround;
     protected CentralWeaponSystem weaponSystem;
     protected CentralGrenadeSystem grenadeSystem;
-    protected CentralPhaseTracker phaseTracker;
     protected Health health;
 
     private Transform bullet;
@@ -22,7 +21,6 @@ public abstract class CentralShooting : MonoBehaviour
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         grenadeSystem = transform.GetComponent<CentralGrenadeSystem>();
         lookAround = transform.GetComponent<CentralLookAround>();
-        phaseTracker = transform.GetComponent<CentralPhaseTracker>();
         health = transform.GetComponent<Health>();
         
         //grenadeHeld = null;
@@ -49,7 +47,7 @@ public abstract class CentralShooting : MonoBehaviour
         }
     }*/
 
-    public abstract Vector2 GetAim();
+    protected abstract Vector2 GetAim();
 
     //public void ReleasedGrenade() => grenadeHeld = null;
     //protected void DeployGrenade() => grenadeSystem.CurrentGrenadeImplementation.attack(GetAim()));

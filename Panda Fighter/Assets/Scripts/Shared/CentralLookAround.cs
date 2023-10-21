@@ -4,11 +4,10 @@ using System.Linq;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
 
-// When the the creature looks around with their weapon, update the arm limbs/weapon
-// to aim in the correct direction and update the head to look in the correct direction.
-// Note: the player will look in the direction of their mouse cursor, while the
-// AI's sight follows an algorithm
-
+/// <summary>
+/// When the the creature looks around with their weapon, update the arm limbs/weapon
+/// to aim in the correct direction and update the head to look in the correct direction.
+/// </summary>
 public abstract class CentralLookAround : MonoBehaviour
 {
     // the direction the creature is looking at (in world space)
@@ -48,14 +47,14 @@ public abstract class CentralLookAround : MonoBehaviour
     protected Health health;
     protected Animator animator;
 
-    // Update the main arm and back arm's Inverse Kinematic (IK) settings so they aim the current
-    // equipped weapon correctly. Different weapon types (long barrel, pistol grip, etc.) have
-    // different IK configurations
+    /// <summary> Update the main arm and back arm's Inverse Kinematic (IK) settings so they aim the 
+    /// current equipped weapon correctly. </summary> Different weapon types 
+    /// (long barrel, pistol grip, etc.) have different IK configurations
     public void UpdateArmInverseKinematics()
     {
         WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
         mainArmIKTarget = configuration.MainArmIKTracker;
-        otherArmIKTarget = configuration.OtherArmIKTracker;    
+        otherArmIKTarget = configuration.OtherArmIKTracker;
 
         if (mainArmIKTarget != null)
         {
@@ -229,5 +228,300 @@ public abstract class CentralLookAround : MonoBehaviour
             Transform temp = armBones.Dequeue();
             temp.localEulerAngles = new Vector3(0f, 0f, temp.localEulerAngles.z);
         }
+
+    }
+
+}
+
+
+/*
+  enum Actions {
+      walkAround,
+      bark,
+      meow,
+      scratch
+  }
+
+ if (Contains(Dog, walkaround))
+      Dog.WalkAround
+  
+
+  public class Dog {
+     Set<Actions> -> add walk around, bark
+  }
+
+
+  public class Cat {
+     Set<Actions> -> add walk around, meow, scratch
+  }
+
+  
+  public class DogCatHybrid {
+     add all things a dog can do
+     add all things a cat can do
+     
+   }
+
+
+
+
+
+  public interface CanWalkAround { public void WalkAround();}
+  public interface CanScratch { public void Scratch();}
+  public interface CanBark { public void Bark();}
+  public interface CanMeow { public void Meow();}
+
+  public interface Animal { }
+
+  public class Dog: Animal, CanWalkAround, CanBark {
+     public void WalkAround(){}
+     public void Bark(){}
+  }
+
+  public class Cat: Animal, CanMeow, CanScratch, CanWalkAround {
+     public void WalkAround(){}
+     public void Meow(){}
+     public void Scratch(){}
+  }
+
+  public class Main {
+     List<Animals> animals;
+     void Start() {
+         foreach (Animal animal in animals) {
+             if (animal is CanWalkAround)
+                animal.WalkAround();
+         }
+     }
+  
+
+  public enum Ability {
+     CanWalkAround,
+     Meow,
+     Scratch,
+     Bark
+  }
+
+   public static class AbilityHandler {
+
+      private Dictionary<AbilityName, Ability> dict;
+      private static bool isSetup;
+
+      public Ability Get() {
+          if (!isSetup) {
+             setup();
+             isSetup = true;
+          }
+
+          return dict[ability];
+      }
+      
+      private void setup() {
+         dict[Abilties.CanWalkAround] = new WalkAround();
+         dict[Abilities.Bark] = new Bark();
+         ...
+      } 
+   }
+
+  public abstract class PhysicalAbility() {
+     public abstract Ability Name {get; }
+     public void Execute(Animal a);
+
+    //overide equals or compare to so that two physical abilities with the same ability name are considered the same
+  }
+
+  public class WalkAround : PhysicalAbility {
+      public override Ability Name {get Ability.WalkAround;}
+      public void Execute(Animal a) {//do stuff };
+  }
+
+  public class Meow : PhysicalAbility {
+      public override Ability Name {get Ability.Meow;}
+      public void Execute(Animal a) {//do stuff };
+  }
+
+  public class Scratch : PhysicalAbility {
+       public void Execute(Animal a) {//do stuff };
+  }
+
+  public class Bark : PhysicalAbility {
+      public void Execute(Animal a) {//do stuff };
+  }
+
+  public class Roar : PhysicalAbility {
+      public void Execute(Animal a) {//do stuff };
+  }
+
+  public abstract class Animal { 
+       
+     public Dictionary<Ability, PhysicalAbility> Abilities {get; protected set;}
+
+     protected abstract void setAbilities();
+      public Creature() {
+          Abilities = new Dictionary<Ability, PhysicalAbility>();
+          setAbilities();
+      }
+
+     public bool Has(Ability ability) {
+         return animal.Abilities.Contains(ability);
+     }
+
+     public void AddAbility(PhysicalAbility ability) {
+        Abilties.Add(ability.Name, ability);
+     }
+
+     public void RemoveAbility(Ability ability) {
+        if (Abilties.Contains(ability))
+            Abilties.Remove(ability);
+     }
+
+     public void Execute(AbilityName ability) {
+         AbilityHandler.Get(ability).Execute(this);
+     }
+   }
+
+  public class Dog: Animal {
+    protected override void setAbilities() {
+        Abilities.Add(new Bark());
+        Abilities.Add(new WalkAround());
+    }
+
+    
+  }
+
+  public class Cat: Animal {
+      protected override void setAbilities() {
+        Abilities.Add(new WalkAround());
+        Abilities.Add(new Meow());
+    }
+  }
+
+
+  public class Lion: Animal {
+      protected override void setAbilities() {
+        Abilities.Add(Ability.WalkAround);
+        Abilities.Add(Ability.
+        Abilities.Add(new Roar());
+    }
+  }
+
+
+  public class Main {
+     List<Animals> animals;
+     void Start() {
+         foreach (Animal animal in animals) {
+             if (animal.Has(Ability.WalkAround)) {
+                animal.Execute(Ability.WalkAround);
+                animal.RemoveAbility(Ability.WalkAround));
+             }
+         }
+     }
+  
+      // adding classifier or ability (not a sub component)
+      // can't add remove/change classifier or ability during runtime
+      // USE interface
+
+     // else use list/set/dictionary
+
+     Interfaces 
+       - cannot change
+       - can't have duplicates
+  
+ 
+  
+ * */
+
+// must be able to walks around
+// must be like a dog (walk around, bark) or cat (walk around, meow, scratch)
+
+// thing
+// sub things
+
+// one thing be multiple things at the same time -> interfaces to the rescue
+
+// can something do x? -> use interfaces + composition
+
+// has multiple sub things
+// 
+
+// may remove/add sub things at runtime -> list or set
+// may have duplicate sub things  -> list
+
+// no duplicates, 
+
+// otherwise use interfaces (no duplicates and 0 subthings is fine)
+
+/*
+public abstract class Action
+{
+    public List<Move> moves { get; protected set; }
+
+    protected abstract void setMoves();
+    public Action()
+    {
+        moves =  new List<Move>();
+        setMoves();
+    }
+
+    public void Execute()
+    {
+        foreach (Move move in moves)
+            move.Execute();
     }
 }
+ 
+public class HealFireWaterAction : Action
+{
+    protected override void setMoves()
+    {
+        moves.Add(new HealMove());
+        moves.Add(new FireAguaMove());
+    }
+}
+
+public class HealMove: Move
+{
+    public override void Execute()
+    {
+        // do a move that involves healing
+    }
+
+    protected override void setTypes()
+    {
+        types.Add(MoveType.Heal);
+    }
+}
+
+public class FireAguaMove : Move
+{
+    public override void Execute()
+    {
+        // do a move that involves using both fire and water
+    }
+
+    protected override void setTypes()
+    {
+        types.Add(MoveType.Water);
+        types.Add(MoveType.Fire);
+    }
+}
+
+public abstract class Move
+{
+    public List<MoveType> types { get; protected set; }
+    public abstract void Execute();
+
+    protected abstract void setTypes();
+    public Move()
+    {
+        types = new List<MoveType>();
+        setTypes();
+    }
+}
+
+public enum MoveType
+{
+    Water,
+    Fire,
+    Heal
+}*/
+

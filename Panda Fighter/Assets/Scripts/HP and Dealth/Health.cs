@@ -19,7 +19,7 @@ public abstract class Health : MonoBehaviour
     protected Vector2 hpBarOffset;
 
     protected int bulletLayer;
-    protected CentralAbilityHandler abilityHandler;
+    protected ICentralAbilityHandler abilityHandler;
     private CentralDeathSequence deathSequence;
     private Side side;
 
@@ -27,9 +27,8 @@ public abstract class Health : MonoBehaviour
 
     protected virtual void Awake()
     {
-        abilityHandler = transform.GetComponent<CentralAbilityHandler>();
+        abilityHandler = transform.GetComponent<ICentralAbilityHandler>();
         deathSequence = transform.GetComponent<CentralDeathSequence>();
-
         hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
 
         side = transform.parent.GetComponent<Role>().side;
@@ -45,21 +44,20 @@ public abstract class Health : MonoBehaviour
         currentHP = maxHP;
         paddingHP = (int)(2.5f * maxHP / 100f);
         IsDead = false;
-        // hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
+        hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
 
         hitBox.offset = new Vector2(0, -0.15f);
         hitBox.size = new Vector2(0.13f, 2.48f);
     }
 
-    // Damage this creature
-    // Optionally takes in who damaged this creature (if known)
+    ///<summary> Damage this creature. Optionally takes in who damaged this creature (if known) </summary>
     public void TakeDamage(int damage, Transform attacker = null)
     {
         if (IsDead || currentHP <= 0 || abilityHandler.IsInvulnerable)
             return;
 
         currentHP -= damage;
-
+        
         if (currentHP <= 0 && attacker)
             Stats.ConfirmKillFor(attacker);
     }

@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering;
+using static Validation;
 
-// Implements the creature's movement (for running, jumping, double
-// jumping, and getting a jump boost off jump pads). Stores useful
-// movement info such as whether the creature is grounded or touching
-// the map, and the direction it's moving
-
+///<summary> Provides functionality for implementing movement and access to wall/ground collision info. </summary>
 public abstract class CentralController : MonoBehaviour
 {
     // Useful information
@@ -17,6 +15,8 @@ public abstract class CentralController : MonoBehaviour
     public bool isOnSuperSteepSlope { get; protected set; }
     public bool recentlyJumpedOffGround { get; private set; }
     public bool recentlyDoubleJumpedOffGround { get; private set; }
+
+    public float so = 2;
 
     // Current direction of creature's movement (-1 = left, 0 = idle, 1 = right)
     public int DirX { get; protected set; }
@@ -98,8 +98,7 @@ public abstract class CentralController : MonoBehaviour
         speed = MaxSpeed;
     }
 
-    // Update body tilt based of the slope of the platform that this creature is standing on
-    // To be invoked whenever the creature teleports to a new platform (ex. respawning)
+    /// <summary> Update body tilt based of the slope of the ground below this creature </summary>
     public void UpdateTiltInstantly()
     {
         checkIfGrounded();
@@ -108,7 +107,7 @@ public abstract class CentralController : MonoBehaviour
             tiltAngle = groundAngle * body_tilt;
     }
 
-    // Get the angle of the creature's body tilt on a slope. Returns a value between -180 and 180
+    /// <summary> Returns a value between -180 and 180 </summary>
     public float GetAngleOfBodyTilt() => MathX.ClampAngleTo180(tiltAngle);
     private float tiltAngle;
 
@@ -143,9 +142,9 @@ public abstract class CentralController : MonoBehaviour
         body.position = new Vector3(body.position.x, body.position.y, 0);
 
         // grow double jump collider over time when double jumping
-        if (recentlyDoubleJumpedOffGround && somersaultCollider.radius < somersaultColliderRadius)
-            somersaultCollider.radius += Time.fixedDeltaTime * 10f;
-        else if (!recentlyDoubleJumpedOffGround)
+        if (somersaultCollider.radius < somersaultColliderRadius)
+            somersaultCollider.radius += Time.fixedDeltaTime * so;
+        else
             somersaultCollider.radius = somersaultColliderRadius;
     }
 
@@ -180,8 +179,8 @@ public abstract class CentralController : MonoBehaviour
         centerRaycasterOnMainCollider(frontGroundRaycaster, -0.9f);
 
         float raycastLength = isGrounded ? 2.3f : 2.0f;
-        RaycastHit2D backLegContactInfo = Physics2D.Raycast(backGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.map);
-        RaycastHit2D frontLegContactInfo = Physics2D.Raycast(frontGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.map);
+        RaycastHit2D backLegContactInfo = Physics2D.Raycast(backGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.Map);
+        RaycastHit2D frontLegContactInfo = Physics2D.Raycast(frontGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.Map);
 
         Debug.DrawRay(frontGroundRaycaster.position, Vector2.down * raycastLength, Color.blue, 2f);
         Debug.DrawRay(backGroundRaycaster.position, Vector2.down * raycastLength, Color.blue, 2f);
@@ -255,26 +254,26 @@ public abstract class CentralController : MonoBehaviour
         centerRaycasterOnMainCollider(wallRaycaster, 0f);
 
         // left and right wall raycasts should extend just barely beyond the left/right edges of the main collider
-        float raycastSize = body.lossyScale.x * mainCollider.size.x / 2f + 0.02f;
+        float raycastSize = body.lossyScale.x * mainCollider.size.x / 2f + 0.1f;
         Vector2 raycastDir = Vector2.right; // isGrounded ? groundSlope : Vector2.right;
 
         if (body.localEulerAngles.y == 0)
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.Map);
             wallBehindYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * -raycastDir, Color.blue, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.Map);
             wallInFrontOfYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * raycastDir, Color.red, 2f);
         }
         else
         {
-            RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.map);
+            RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.Map);
             wallInFrontOfYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * -raycastDir, Color.red, 2f);
 
-            RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.map);
+            RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.Map);
             wallBehindYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < max_y_normal_of_walls);
             Debug.DrawRay(wallRaycaster.position, raycastSize * raycastDir, Color.blue, 2f);
         }
@@ -302,6 +301,7 @@ public abstract class CentralController : MonoBehaviour
         rig.AddForce(new Vector2(0, DOUBLE_JUMP_FORCE));
 
         recentlyDoubleJumpedOffGround = true;
+        somersaultCollider.radius = 0.05f;
         yield return new WaitForSeconds(0.2f);
         recentlyDoubleJumpedOffGround = false;
     }

@@ -13,7 +13,7 @@ public class wScythe : WeaponBehaviour
 
     protected override void startMultiActionAttack(bool singleAction)
     {
-        ExecutionDelay wait = ExecutionDelay.Wait;
+        ExecutionDelay wait = ExecutionDelay.Repeat;
 
         attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Instant, wait };
         attackActions = new List<Action>() { configureAnimator, waitTillAnimationCompletes };
@@ -28,8 +28,8 @@ public class wScythe : WeaponBehaviour
 
         void waitTillAnimationCompletes()
         {
-            if (weaponConfiguration.Animator.GetInteger("Arms Phase") != 11)
-                wait.StopWaiting();
+            //if (weaponConfiguration.Animator.GetInteger("Arms Phase") != 11)
+              //  wait.StopWaiting();
         }
 
         base.startMultiActionAttack(false);

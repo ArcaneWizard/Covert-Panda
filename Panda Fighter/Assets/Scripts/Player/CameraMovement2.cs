@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
-// Handles the main camera's movement
+///<summary> Handles the main camera's movement </summary>
 [RequireComponent(typeof(Camera))]
 public class CameraMovement2 : MonoBehaviour
 {
@@ -44,6 +45,14 @@ public class CameraMovement2 : MonoBehaviour
     private float random;
 
     public float d;
+
+    void OnValidate()
+    {
+        this.RequireTag(cameraTargetBeforePlayerDeath, nameof(cameraTargetBeforePlayerDeath), "cameraTargetBeforePlayerDeath");
+        this.RequireTag(cameraTargetAfterPlayerDeath, nameof(cameraTargetAfterPlayerDeath), "cameraTargetAfterPlayerDeath");
+        this.RequireTag(centerOfMap, nameof(centerOfMap), "centerOfMap");
+        this.ConfirmNotNull(health, nameof(health));
+    }
 
     void Start()
     {

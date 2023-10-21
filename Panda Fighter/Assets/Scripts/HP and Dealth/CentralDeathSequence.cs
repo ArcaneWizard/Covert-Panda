@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-/* Handles what occurs from the moment the player dies to the moment after they respawn. */
+///<summary> Handles what occurs from the moment the player dies to the moment after they respawn. </summary>
 public class CentralDeathSequence : MonoBehaviour
 {
     protected const float respawnTime = 4.22f;
@@ -20,7 +20,7 @@ public class CentralDeathSequence : MonoBehaviour
     protected CentralAbilityHandler abilityHandler;
     protected Ragdolling ragdolling;
 
-    void Awake()
+    protected virtual void Awake()
     {
         controller = transform.GetComponent<CentralController>();
         abilityHandler = transform.GetComponent<CentralAbilityHandler>();

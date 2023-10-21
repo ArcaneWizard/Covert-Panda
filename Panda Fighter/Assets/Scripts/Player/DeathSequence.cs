@@ -2,19 +2,21 @@ using UnityEngine;
 
 public class DeathSequence : CentralDeathSequence
 {
-    public RespawningText respawnText;
-    public GameObject inventory;
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     protected override void uponDying()
     {
         base.uponDying();
-        inventory.SetActive(false);
-        respawnText.StartRespawnCountdown(respawnTime);
+        References.Instance.InventoryCanvas.SetActive(false);
+        References.Instance.RespawnText.StartRespawnCountdown(respawnTime);
     }
-
+    
     protected override void rightBeforeRespawning()
     {
-        inventory.SetActive(true);
+        References.Instance.InventoryCanvas.SetActive(true);
         base.rightBeforeRespawning();
     }
 }

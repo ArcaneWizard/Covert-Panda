@@ -24,8 +24,7 @@ public class LimbSwapper : MonoBehaviour
         if (!Application.isPlaying)
             return;
 
-        if (!limbSettings)
-            Debug.LogError("No limb settings found");
+        this.ConfirmNotNull(limbSettings, nameof(limbSettings));
 
         updateSpriteAndBoneTransforms(true);
 

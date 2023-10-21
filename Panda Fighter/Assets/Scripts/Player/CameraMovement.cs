@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
-// Handles the main camera's movement
+///<summary> Handles the main camera's movement </summary>
 [RequireComponent(typeof(Camera))]
 public class CameraMovement : MonoBehaviour
 {
@@ -64,7 +64,6 @@ public class CameraMovement : MonoBehaviour
             executeCameraShake = false;
     }
 
-    // Start executing camera shake.
     public void ExecuteCameraShake(float maxMagnitude)
     {
         executeCameraShake = true;
@@ -74,7 +73,6 @@ public class CameraMovement : MonoBehaviour
         random = UnityEngine.Random.Range(0, 100000);
     }
 
-    // Updates camera movement 
     private void updateCameraMovement()
     {
         // determine mouse position relative to the center of screen

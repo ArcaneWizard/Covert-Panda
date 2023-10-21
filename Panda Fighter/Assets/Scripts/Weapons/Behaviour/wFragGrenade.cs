@@ -26,8 +26,8 @@ public class wFragGrenade : WeaponBehaviour
 
         void getTimeB4Release()
         {
-            timeB4Release.seconds = WeaponBehaviourHelper.CalculateTimeB4ReleasingGrenade(0.02f, 0.2f, aim);
-            timeAfterRelease.seconds = 0.6f - timeB4Release.seconds;
+            timeB4Release.Seconds = WeaponBehaviourHelper.CalculateTimeB4ReleasingGrenade(0.02f, 0.2f, aim);
+            timeAfterRelease.Seconds = 0.6f - timeB4Release.Seconds;
             //weaponConfiguration.Arms[1].transform.parent.GetComponent<Animator>().Play(0, -1);
             //weaponConfiguration.Arms[1].SetActive(true);
         }

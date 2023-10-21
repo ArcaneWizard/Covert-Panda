@@ -215,8 +215,6 @@ public class Controller : CentralController
                 if (contacts[i].normal.y < max_y_normal_of_walls &&
                    (lookAround.IsFacingRight && contacts[i].point.x < transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x > transform.position.x)) ;
                 wallsBehind.Add(col.gameObject);
-
-                Debug.Log(contacts[i].normal + ", " + contacts[i].collider.gameObject.name);
             }
         }
     }

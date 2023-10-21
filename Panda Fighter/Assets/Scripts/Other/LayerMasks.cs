@@ -6,21 +6,22 @@ using UnityEngine;
 
 public static class LayerMasks
 {
-    // returns a layermask allowing collisions with the map
-    public static LayerMask map => 1 << Layer.DefaultGround | 1 << Layer.OneWayGround;
+    public static LayerMask Map => 1 << Layer.DefaultGround | 1 << Layer.OneWayGround;
 
-    // returns a layermask allowing collisions with the map and the hit box of the opposite side (friends or enemies)
-    public static LayerMask mapOrTarget(Side side) => map | target(side);
-    public static LayerMask mapOrTarget(Transform bullet) => map |
-        ((bullet.gameObject.layer == Layer.FriendlyBullet) ? (1 << Layer.EnemyHitBox) : (1 << Layer.FriendlyHitBox));
+    ///<summary> allows collisions with creatures on the opposite of the specified side </summary> 
+    public static LayerMask Target(Side side) => 
+        (side == Side.Friendly) ? (1 << Layer.EnemyHitBox) : (1 << Layer.FriendlyHitBox);
 
-    // returns a layermask allowing collisions with the hit box of the opposite entity 
-    // (player/friendly AI hit boxes for enemies and enemiy hit boxes for the player/friendly bots)
-    public static LayerMask target(Side side)
+    ///<summary> allows collisions with creatures the bullet is allowed to hit </summary> 
+    public static LayerMask Target(Transform bullet)
     {
-        return (side == Side.Friendly)
-            ? (1 << Layer.EnemyHitBox)
-            : (1 << Layer.FriendlyHitBox);
+        return (bullet.gameObject.layer == Layer.FriendlyBullet)
+            ? (1 << Layer.EnemyHitBox) : (1 << Layer.FriendlyHitBox);
     }
 
+    ///<summary> allows collisions with the map or creatures on the opposite side </summary>
+    public static LayerMask MapOrTarget(Side side) => Map | Target(side);
+
+    ///<summary> allows collisions with the map or creatures this bullet is allowed to hit </summary>
+    public static LayerMask MapOrTarget(Transform bullet) => Map | Target(bullet);
 }

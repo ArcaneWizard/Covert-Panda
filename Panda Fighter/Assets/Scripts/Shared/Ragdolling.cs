@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Provides functions to enable and disable creature ragdolling. When ragdolling
-// is enabled, no manual/procedural animations occur. Instead the creatures' limbs
-//  act like free-rigidbodies connected naturally like a body should be
+/// <summary> Provides functionality to enable and disable creature ragdolling </summary>
 public class Ragdolling : MonoBehaviour
 {
     // Note: the hip and chest should always be the 0th and 1st entry
@@ -32,8 +30,7 @@ public class Ragdolling : MonoBehaviour
         DisableRagdolling();
     }
 
-    // Disable ragdolling. Allow animations to play and makes all limbs no longer subject
-    // to physic forces and no longer able to collide with platforms.
+    /// <summary> Makes all limbs no longer subject to physic forces and enables animations. </summary>
     public void DisableRagdolling()
     {
         animator.SetInteger("ragdolling", 0);
@@ -51,7 +48,7 @@ public class Ragdolling : MonoBehaviour
         playerRig.isKinematic = false;
     }
 
-    // Enables ragdolling: makes all limbs subject to physics forces and collidable with platforms.
+    /// <summary> Makes all limbs subject to physics forces and disables animations. </summary>
     public void EnableRagdolling() => StartCoroutine(enableRagdolling());
 
     private IEnumerator enableRagdolling()

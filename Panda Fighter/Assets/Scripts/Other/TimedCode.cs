@@ -3,16 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Execute a sequence of timed code with full power over the time delays in between
-// This class offers an easy-to-use, effecient alternative to IEnumerators when
-// a sequence of timed code ges re-executed manually quite often (*trying to avoid the overhead of StartCoroutine*)
+///<summary> This class offers an effecient alternative to IEnumerators to execute code 
+/// after a certain amount of time or after conditions are met </summary>
 
-// Other features supported:
-// - Time delays can be set to UNKNOWN initially and change mid-way during execution
-// - Time delays can be set to WAIT if we don't proceed until a condition is met
-//   *handle this more effeciently than while loop checks + yield return null in Coroutines*
-// - The code's time-based execution can be stopped early, similar to StopCoroutine
-// - The code's time-based execution can loop
+/*
+   Other features supported:
+   - Execution can be stopped early, similar to StopCoroutine
+   - Execution can loop
+
+   Timed Code constructor takes in list of n execution delays and list of n actions (ie. functions of code to execute)
+     - let x refer to the ith execution delay, and y refer to the ith action
+     - x = new ExecutionDelay(3) means wait 3 seconds before executing y
+     - x = ExecutionDelay.Wait means execute y every frame until until ExecutionDelay.StopWaiting is called
+     - x = ExecutionDelay.Unknown means do nothing until x is redefined
+*/
 
 public class TimedCode
 {
@@ -53,6 +57,15 @@ public class TimedCode
         IsRunning = false;
     }
 
+    // stop repeating the current action every frame (if applicable)
+    public void StopRepeatingEveryFrame()
+    {
+        if (!delays[index].RepeatEveryFrame)
+            return;
+
+        updateIndex();
+    }
+
     public void Update()
     {
         if (IsRunning)
@@ -68,29 +81,20 @@ public class TimedCode
             return;
         }
 
-        while (index < delays.Count && delays[index].status != ETStatus.Waiting)
-        {
-            // If the current execution delay has passed, execute the corresponding piece of code
-            if (TimeElapsed >= delays[index].seconds + lastTimeElapsed)
+        if (delays[index].RepeatEveryFrame)
+            piecesOfCode[index]();
+
+        while (index < delays.Count && !delays[index].RepeatEveryFrame)
+        { 
+            if (TimeElapsed >= delays[index].Seconds + lastTimeElapsed)
             {
                 piecesOfCode[index]();
-                updateIndex();
-            }
-
-            // If we're finished waiting for a condition to be met, move to the next execution delay
-            else if (delays[index].status == ETStatus.FinishedWaiting)
-            {
-                delays[index].ReEnableWaiting();
                 updateIndex();
             }
 
             else
                 break;
         }
-
-        // Execute a piece of code if we're waiting for a conditional delay to be met 
-        if (index < delays.Count && delays[index].status == ETStatus.Waiting)
-            piecesOfCode[index]();
 
         TimeElapsed += Time.deltaTime;
     }
@@ -114,52 +118,26 @@ public class TimedCode
 }
 
 // An execution delay represents the number of seconds to wait before executing
-// the next piece of code (action). An execution delay can be Unknown initially and have its seconds property updated
-// when known. An execution delay can also be set to Wai if a piece of code needs to run every frame until a condition
-// is met. Dont forget to call StopWaiting() once the condition is finally met!
+// the next piece of code (action).
 
 public class ExecutionDelay
 {
-    public static ExecutionDelay Instant = new ExecutionDelay(0, ETStatus.Constant);
-    public static ExecutionDelay Unknown => new ExecutionDelay(float.MaxValue, ETStatus.Constant);
-    public static ExecutionDelay Wait => new ExecutionDelay(float.MaxValue, ETStatus.Waiting);
+    public float Seconds;
+    public bool RepeatEveryFrame {get; set;}
 
-    public float seconds;
-    public ETStatus status { get; private set; }
+    public static ExecutionDelay Instant = new ExecutionDelay(0);
+    public static ExecutionDelay Unknown => new ExecutionDelay(float.MaxValue);
+    public static ExecutionDelay Repeat => new ExecutionDelay(float.MaxValue, true);
 
     public ExecutionDelay(float seconds)
     {
-        this.seconds = seconds;
-        status = ETStatus.Constant;
+        Seconds = seconds;
+        RepeatEveryFrame = false;
     }
 
-    public void StopWaiting()
+    private ExecutionDelay(float seconds, bool isCalledEveryFrame)
     {
-        if (status == ETStatus.Waiting)
-            status = ETStatus.FinishedWaiting;
+        Seconds = seconds;
+        RepeatEveryFrame = isCalledEveryFrame;
     }
-
-    public void ReEnableWaiting()
-    {
-        if (status == ETStatus.FinishedWaiting)
-        {
-            status = ETStatus.Waiting;
-            seconds = float.MaxValue;
-        }
-    }
-
-    private ExecutionDelay(float seconds, ETStatus status)
-    {
-        this.seconds = seconds;
-        this.status = status;
-    }
-}
-
-// An Execution Time has 3 statuses. It can either be a constant (ex. 4 second delay),
-// waiting, or finished waiting
-public enum ETStatus
-{
-    Constant,
-    Waiting,
-    FinishedWaiting
 }

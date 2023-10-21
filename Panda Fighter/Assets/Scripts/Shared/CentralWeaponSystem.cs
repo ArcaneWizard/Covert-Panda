@@ -4,11 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// This class manages the weapon inventory system of the creature. The
-// inventory has multiple slots, each of which holds a weapon and tracks ammo. 
-// There are also useful methods related to the weapon the creature is currently holding,
-// such as accessing it's weapon configuration or retrieving a physical bullet.
-
+/// </summary> This class manages the weapon inventory system of the creature. </summary>
 public abstract class CentralWeaponSystem : MonoBehaviour
 {
     private struct InventorySlot
@@ -20,7 +16,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     private InventorySlot[] inventory;
     private int selectedSlot; // the current inventory slot selected 
     protected const int maxSlotsInInventory = 3; 
-    private HashSet<int> openInventorySlots; // inventory slots that don't have a weapon yet
+    private HashSet<int> openInventorySlots;
     protected Dictionary<Weapon, int> inventoryWeapons; // maps equipped weapons to their inventory slot
 
     private Transform allBulletPools;
@@ -35,7 +31,6 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     private CentralShooting centralShooting;
     protected Health health;
 
-    // Retrieve useful info about the current weapon held
     public Weapon CurrentWeapon => inventory[selectedSlot].Weapon;
     public int CurrentAmmo => inventory[selectedSlot].Ammo;
     public WeaponBehaviour CurrentWeaponBehaviour => weaponBehaviours[CurrentWeapon];
@@ -94,7 +89,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         ResetInventory();
     }
 
-    // Lowers current ammo by 1. Returns a physical bullet for the current weapon equipped
+    /// <summary> Lowers current ammo by 1. Returns a physical bullet for the current weapon equipped </summary>
     public Transform UseOneBullet()
     {
         inventory[selectedSlot].Ammo--;
@@ -102,7 +97,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         return bulletPools[CurrentWeapon][bulletPoolIdx];
     }
 
-    // Resets inventory back to the starting inventory
+    /// <summary> Resets inventory back to starting inventory </summary>
     public virtual void ResetInventory()
     {
         inventoryWeapons.Clear();
@@ -136,7 +131,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     }
 
     // pickup specified weapon into the current inventory slot
-    protected virtual void pickupWeaponIntoCurrentSlot(Weapon weapon) 
+    protected virtual void pickupWeaponIntoCurrentSlot(Weapon weapon)
     {
         // if we already have that weapon, just replenish ammo
         if (inventoryWeapons.TryGetValue(weapon, out int slot))

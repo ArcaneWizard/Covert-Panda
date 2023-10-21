@@ -154,7 +154,7 @@ public class Bullet : MonoBehaviour
 
         // start the predictive raycast from slightly behind where the bullet actually spawns (to detect collisions on creatures overlapping with the spawned bullet)
         Vector2 roughBulletSpawnPos = new Vector2(transform.position.x - velocityDir.x * 0.1f, transform.position.y - velocityDir.y * 0.1f);
-        RaycastHit2D hit = Physics2D.Raycast(roughBulletSpawnPos, velocityDir, bulletRaycastDistance, LayerMasks.mapOrTarget(transform));
+        RaycastHit2D hit = Physics2D.Raycast(roughBulletSpawnPos, velocityDir, bulletRaycastDistance, LayerMasks.MapOrTarget(transform));
 
         //if (hit.collider != null)
         //     Debug.DrawLine(new Vector2(transform.position.x, transform.position.y), hit.point, Color.green, 4);

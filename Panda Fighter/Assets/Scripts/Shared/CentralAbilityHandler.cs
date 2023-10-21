@@ -7,8 +7,8 @@ using UnityEngine.UI;
 // NOTE: needs to be refactored with the use of an interface named Ability for defining each ability
 // This will improve scalability when tons of complex abilities exist in the future
 
-public class CentralAbilityHandler : MonoBehaviour {
-
+public class CentralAbilityHandler : ICentralAbilityHandler
+{
     // whether or not the creature is invulnerable to damage
     public bool IsInvulnerable { get; private set; }
 

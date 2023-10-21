@@ -89,7 +89,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     public WeaponConfiguration CurrentGrenadeConfiguration => grenadeConfigurations[currentGrenade];
     public WeaponConfiguration GetConfiguration(Grenade grenade) => grenadeConfigurations[grenade];
 
-    // Uses a grenade. Lowers grenade left and returns a physical grenade
+    /// <summary> Lowers grenade count by 1 and returns a physical grenade </summary>
     public Transform UseOneGrenade()
     {
         grenadesLeft[currIdx]--;

@@ -9,19 +9,17 @@ public class Shooting : CentralShooting
     private float chargeUpTimer = 0f;
     private bool canExecuteChargedAttack = true;
 
-    public override Vector2 GetAim() => lookAround.directionToLook;
-
-    public override void Reconfigure()
-    {
-        timerBtwnShots = 0f;
-        chargeUpTimer = 0f;
-        canExecuteChargedAttack = true;
-    }
+    protected override Vector2 GetAim() => lookAround.directionToLook;
 
     private void Update()
     {
         if (health.IsDead)
+        {
+            timerBtwnShots = 0f;
+            chargeUpTimer = 0f;
+            canExecuteChargedAttack = true;
             return;
+        }
 
         //if (Input.GetKeyDown(KeyCode.Tab) && grenadeSystem.GrenadesLeft > 0)
         //  DeployGrenade();

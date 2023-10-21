@@ -30,26 +30,24 @@ public class Test : MonoBehaviour
     public List<Action> a;
 
     private TimedCode fastCouroutine;
-    /*void Start()
+    void Start()
     {
         f = new List<ExecutionDelay>();
         a = new List<Action>();
        
-         fastCouroutine = new TimedCode(f, a);
+        fastCouroutine = new TimedCode(f, a);
         f.Clear();
         for (int i = 0; i < 6; i++)
             f.Add(new ExecutionDelay(UnityEngine.Random.Range(0.18f, 0.2f)));
 
         a.Clear();
-        for (int i = 0; i < 1; i++)
-        {
             a.Add(bob);
             a.Add(joe);
             a.Add(cow);
             a.Add(dee);
             a.Add(dee);
             a.Add(nah);
-        }
+
         void bob()
             {
               
@@ -76,20 +74,18 @@ public class Test : MonoBehaviour
             {
                 doubleDistance = 5 * distance;
              time = Time.time;
+
+            //  reset coroutine
             f.Clear();
             for (int i = 0; i < 6; i++)
                 f.Add(new ExecutionDelay(UnityEngine.Random.Range(0.18f, 0.2f)));
-
             a.Clear();
-            for (int i = 0; i < 1; i++)
-            {
-                a.Add(bob);
-                a.Add(joe);
-                a.Add(cow);
-                a.Add(dee);
-                a.Add(nah);
-                a.Add(nah);
-            }
+            a.Add(bob);
+            a.Add(joe);
+            a.Add(cow);
+            a.Add(dee);
+            a.Add(nah);
+            a.Add(nah);
 
             fastCouroutine.Start();
         }
@@ -97,11 +93,6 @@ public class Test : MonoBehaviour
 
         //StartCoroutine(testVillage());
         fastCouroutine.Start();
-    }*/
-
-    private void Start()
-    {
-       // StartCoroutine(testVillage());
     }
 
     /*private void FixedUpdate()
@@ -112,11 +103,10 @@ public class Test : MonoBehaviour
         RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
     }*/
 
-    private int i = 0;
-    //  void Update()
-    //{
-    //  fastCouroutine?.Update();
-    //}
+      void Update()
+    {
+      fastCouroutine?.Update();
+    }
 
     /*private void Update()
     {
@@ -183,10 +173,10 @@ public class Test : MonoBehaviour
 
     private void FixedUpdate()
     {
-        RaycastHit2D a = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.map);
-        RaycastHit2D b = Physics2D.Raycast(transform.position, Vector2.down, 3, LayerMasks.map);
-        RaycastHit2D c = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.map);
-        RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.map);
+        RaycastHit2D a = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
+        RaycastHit2D b = Physics2D.Raycast(transform.position, Vector2.down, 3, LayerMasks.Map);
+        RaycastHit2D c = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
+        RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
     }
 
     private IEnumerator testVillage()
