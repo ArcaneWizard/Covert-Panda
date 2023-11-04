@@ -1,30 +1,34 @@
+using MEC;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FragGrenade : Bullet
+// THIS CLASS IS NOT CURRENTLY BEING USED
+public class FragGrenade : MovingBullet
 {
     private int surfacesTouched = 0;
     private float explosionTimer = 0;
     private float timeTillExplosion = 1.2f;
 
     private SpriteRenderer sR;
-    private Rigidbody2D rig;
     private GameObject animatedExplosion;
     private Explosion explosion;
 
-    void Awake()
+    public void startExplosionTimer() => StartCoroutine(eStartExplosionTimer());
+
+    protected override void Awake()
     {
         base.Awake();
         sR = transform.GetComponent<SpriteRenderer>();
-        rig = transform.GetComponent<Rigidbody2D>();
         animatedExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
 
         explosion.Radius = 12;
     }
 
-    public void startExplosionTimer() => StartCoroutine(eStartExplosionTimer());
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) { }
+    protected override void OnMapCollision(CollisionInfo info) { }
+
 
     private IEnumerator eStartExplosionTimer()
     {
@@ -37,11 +41,8 @@ public class FragGrenade : Bullet
         animatedExplosion.SetActive(true);
         explosionTimer = 1.4f;
 
-        StartCoroutine(explosion.damageSurroundingEntities());
+        Timing.RunSafeCoroutine(explosion.EnableExplosion(), gameObject);
     }
-
-    protected override void onCreatureEnter(Transform creature) { }
-    protected override void onMapEnter(Transform map) { }
 
     void Update()
     {

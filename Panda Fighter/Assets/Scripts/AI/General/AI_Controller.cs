@@ -6,62 +6,49 @@ using UnityEngine;
 
 public class AI_Controller : CentralController
 {
-    // the current action the AI is executing (null if no action is being executed right now) 
-    [field: SerializeField] public AIAction currAction { get; private set; }
+    /// <summary> The current action the AI is executing (null means none). </summary>
+    [field: SerializeField] public AIAction CurrAction { get; private set; }
 
     // the decision zone that provided the current action the AI should execute
     private Transform decisionZone;
 
     private bool hasActionStarted;
     private HashSet<Transform> decisionZonesNearby;
+    private CentralDeathSequence deathSequence;
 
-    protected override void Start()
-    {
-        base.Start();
-        resetOnSpawn();
-        transform.GetComponent<CentralDeathSequence>().UponRespawning += resetOnSpawn;
-    }
-
-    private void resetOnSpawn()
-    {
-        DirX = UnityEngine.Random.Range(0, 2) * 2 - 1;
-        speed = MaxSpeed;
-        currAction = null;
-        decisionZone = null;
-        decisionZonesNearby = new HashSet<Transform>();
-    }
-
-    // Return the coordinates of a point in space in front of the AI's upper body
-    public Vector3 InFrontOfAI() => shootingArm.position + new Vector3(DirX, 0, 0);
-
-    // Start executing a specified action.
+    /// <summary> AI starts executing the specified action.
+    /// Proivde the zone the action originated from, if applicable. </summary>
     public void StartAction(AIAction AI_action, Transform zone = null)
     {
-        currAction = AI_action;
+        CurrAction = AI_action;
         decisionZone = zone;
         hasActionStarted = false;
     }
 
-    // End the current action
-    public void EndAction() => currAction = null;
-
-    // Check if the specified action is being executed
-    public bool IsActionBeingExecuted(AIAction action) => currAction.Equals(action);
-
-    // Make AI head in a specified direction
+    public void EndAction() => CurrAction = null;
+    public bool IsActionBeingExecuted(AIAction action) => CurrAction.Equals(action);
     public void SetDirection(int dir) => StartAction(AIAction.ChangeDirection(dir));
+
+    protected override void Awake()
+    {
+        base.Awake();
+        deathSequence = transform.GetComponent<CentralDeathSequence>();
+        resetOnSpawn();
+    }
+
+    void OnEnable() => deathSequence.UponRespawning += resetOnSpawn;
+    void OnDisable() => deathSequence.UponRespawning -= resetOnSpawn;
+    void OnDestroy() => deathSequence.UponRespawning -= resetOnSpawn;
 
     protected override void Update()
     {
         base.Update();
 
-        // don't do anything if dead
         if (health.IsDead)
         {
             isTouchingMap = false;
-
-            currAction?.Exit();
-            currAction = null;
+            CurrAction?.Exit();
+            CurrAction = null;
             decisionZone = null;
             decisionZonesNearby.Clear();
 
@@ -69,7 +56,7 @@ public class AI_Controller : CentralController
         }
 
         // AI moves at max speed when not executing an action
-        if (currAction == null)
+        if (CurrAction == null)
         {
             speed = MaxSpeed;
             return;
@@ -77,10 +64,10 @@ public class AI_Controller : CentralController
 
         executeCurrentAction();
 
-        if (currAction.Finished)
+        if (CurrAction.Finished)
         {
-            currAction.Exit();
-            currAction = null;
+            CurrAction.Exit();
+            CurrAction = null;
         }
 
         setAlienVelocity();
@@ -88,51 +75,60 @@ public class AI_Controller : CentralController
 
     protected override void FixedUpdate()
     {
-        if (currAction == null || currAction.Finished)
+        if (CurrAction == null || CurrAction.Finished)
             return;
 
-        if (currAction.ExecuteNormalJumpNow)
+        if (CurrAction.ExecuteNormalJumpNow)
         {
             StartCoroutine(normalJump());
-            currAction.ExecuteNormalJumpNow = false;
+            CurrAction.ExecuteNormalJumpNow = false;
         }
-        if (currAction.ExecuteDoubleJumpNow)
+        if (CurrAction.ExecuteDoubleJumpNow)
         {
             StartCoroutine(doubleJump());
-            currAction.ExecuteDoubleJumpNow = false;
+            CurrAction.ExecuteDoubleJumpNow = false;
         }
-        if (currAction.ExecuteJumpBoostNow)
+        if (CurrAction.ExecuteJumpBoostNow)
         {
             StartCoroutine(jumpPadBoost());
-            currAction.ExecuteJumpBoostNow = false;
+            CurrAction.ExecuteJumpBoostNow = false;
         }
+    }
+
+    private void resetOnSpawn()
+    {
+        DirX = UnityEngine.Random.Range(0, 2) * 2 - 1;
+        speed = MaxSpeed;
+        CurrAction = null;
+        decisionZone = null;
+        decisionZonesNearby = new HashSet<Transform>();
     }
 
     private void executeCurrentAction()
     {
-        if (currAction == null)
+        if (CurrAction == null)
             return;
 
-        // When the AI is grounded, begin the current action (once)
+        // When the AI is grounded, start executing the current action
         if (isGrounded && isTouchingMap && !hasActionStarted)
         {
-            // End the action if the creature is too far from its decision zone
+            // Abort action if the creature is too far from the og decision zone
             if (!decisionZonesNearby.Contains(decisionZone))
             {
                 EndAction();
                 return;
             }
             
-            currAction.StartExecution(this);
+            CurrAction.StartExecution(this);
             hasActionStarted = true;
         }
 
-        // Run the action
+        // Execute the action
         if (hasActionStarted)
         {
-            currAction.Execute();
-            DirX = currAction.DirX;
-            speed = currAction.Speed;
+            CurrAction.Execute();
+            DirX = CurrAction.DirX;
+            speed = CurrAction.Speed;
         }
     }
 
@@ -147,13 +143,13 @@ public class AI_Controller : CentralController
         // when alien is on the ground, alien velocity is parallel to the slanted ground 
         if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
         {
-            if (currAction == null && wallBehindYou)
+            if (CurrAction == null && wallBehindYou)
                 DirX = 1;
-            else if (currAction == null && wallInFrontOfYou)
+            else if (CurrAction == null && wallInFrontOfYou)
                 DirX = -1;
 
             rig.velocity = groundSlope * speed * DirX;
-            rig.gravityScale = (DirX == 0) ? 0f : GRAVITY;
+            rig.gravityScale = (DirX == 0) ? 0f : Game.GRAVITY;
         }
 
         // when alien is not on the ground (falling or midair after a jump)
@@ -169,32 +165,32 @@ public class AI_Controller : CentralController
                 rig.velocity = new Vector2(0, rig.velocity.y);
                 DirX = (int)-Mathf.Sign(DirX) * UnityEngine.Random.Range(0, 2);
                 speed = 22;
-                currAction = null;
+                CurrAction = null;
             }
 
             // Set velocity to the left/right with specified speed and direction. Vertical motion is affected by gravity
             else
                 rig.velocity = new Vector2(speed * DirX, rig.velocity.y);
 
-            rig.gravityScale = GRAVITY;
+            rig.gravityScale = Game.GRAVITY;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layer.DecisionZone)
+        if (col.gameObject.layer == Layer.AiDecisionZone)
             decisionZonesNearby.Add(col.transform);
     }
 
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layer.DecisionZone && !decisionZonesNearby.Contains(col.transform))
+        if (col.gameObject.layer == Layer.AiDecisionZone && !decisionZonesNearby.Contains(col.transform))
             decisionZonesNearby.Add(col.transform);
     }
 
     private void OnTriggerExit2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layer.DecisionZone)
+        if (col.gameObject.layer == Layer.AiDecisionZone)
             decisionZonesNearby.Remove(col.transform);
     }
 }

@@ -6,31 +6,28 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
+/// <summary> 
+/// Provides functions to find a path, or multiple paths, from the seeker (AI) to a
+/// target position on the map. Uses A* pathfinding and randomness to vary the path each time. 
+/// The nodes on the path are decision zones.
+/// </summary>
 public class PathFinding : MonoBehaviour
 {
     private Transform seeker;
     public Grid grid;
+    public List<Node> ChosenPath { get; private set; } = new List<Node>();
 
     public Vector2 randomDistanceWeightRange;
 
     private Dictionary<float, List<Node>> pathsFound = new Dictionary<float, List<Node>>();
-    private List<Node> chosenPath = new List<Node>();
     private HashSet<Node> universalClosedSet = new HashSet<Node>();
     private System.Random random;
-
-    void Awake()
-    {
-        seeker = transform.GetChild(0).transform;
-        random = new System.Random();
-    }
-
-    public List<Node> getChosenPath() => chosenPath;
 
     public IEnumerator FindMultiplePaths(float searchTime, Vector2 target)
     {
         pathsFound.Clear();
         universalClosedSet.Clear();
-        chosenPath = null;
+        ChosenPath = null;
 
         Node startNode = grid.GetClosestNodeToWorldPosition(seeker.position, 5);
         Node targetNode = grid.GetClosestNodeToWorldPosition(target, 5);
@@ -45,9 +42,27 @@ public class PathFinding : MonoBehaviour
 
         List<Node> path = pathsFound.ElementAt(random.Next(0, pathsFound.Count)).Value;
 
-        //show the path visually and share it with state manager script
-        showPathOnGrid(path);
-        chosenPath = path;
+        grid.path = path;
+        ChosenPath = path;
+    }
+
+    public void PrintPathInConsole(List<Node> path)
+    {
+        if (path.Count == 0)
+            return;
+
+        string s = $"{path[0].transform.name}";
+        for (int i = 1; i < path.Count; i++)
+            s += $", {path[i].transform.name}";
+
+        Debug.Log(s);
+        Debug.Log($"{path[path.Count - 1].gCost} and {path[path.Count - 1].hCost}");
+    }
+
+    void Awake()
+    {
+        seeker = transform.GetChild(0).transform;
+        random = new System.Random();
     }
 
     private void findOnePath(Node startNode, Node targetNode)
@@ -82,7 +97,7 @@ public class PathFinding : MonoBehaviour
                     continue;
 
                 //the very first neighbor nodes of the startNode should have the same g Cost (equal probability)
-                float newMovementCostToNeighbour = !Transform.Equals(currentNode, startNode)
+                float newMovementCostToNeighbour = !Equals(currentNode, startNode)
                     ? currentNode.gCost + Random.Range(0.2f, 0.4f)
                     : currentNode.gCost + 0.1f;
 
@@ -93,7 +108,8 @@ public class PathFinding : MonoBehaviour
                 if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
                 {
                     neighbour.gCost = newMovementCostToNeighbour;
-                    neighbour.hCost = getWeightedDistanceBtwnNodes(neighbour, targetNode, Random.Range(randomDistanceWeightRange.x, randomDistanceWeightRange.y));
+                    neighbour.hCost = getWeightedDistanceBtwnNodes(neighbour, targetNode, 
+                        Random.Range(randomDistanceWeightRange.x, randomDistanceWeightRange.y));
 
                     if (!universalClosedSet.Contains(neighbour) && pathsFound.Count > 2)
                         neighbour.hCost = 0.02f;
@@ -126,26 +142,8 @@ public class PathFinding : MonoBehaviour
 
             path.Reverse();
             pathsFound.Add(endNode.pathID, path);
-            showPathOnGrid(path);
+            grid.path = path;
         }
-    }
-
-    public void debugPathInConsole(List<Node> path)
-    {
-        if (path.Count == 0)
-            return;
-
-        /*string s = $"{path[0].transform.name}";
-        for (int i = 1; i < path.Count; i++)
-            s += $", {path[i].transform.name}";
-
-        Debug.Log(s);*/
-        // Debug.Log($"{path[path.Count - 1].gCost} and {path[path.Count - 1].hCost}");
-    }
-
-    private void showPathOnGrid(List<Node> path)
-    {
-        grid.path = path;
     }
 
     private float getWeightedDistanceBtwnNodes(Node a, Node b, float multiplier)

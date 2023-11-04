@@ -1,12 +1,14 @@
+using MEC;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.Animations;
 
-public class PlasmaOrb : Bullet
+public class PlasmaOrb : MovingBullet
+
 {
     private float explosionTimer = 0;
-
     private float delayTillExplosion = 0.9f;
 
     private SpriteRenderer sR;
@@ -15,7 +17,13 @@ public class PlasmaOrb : Bullet
 
     private Vector3 contactLocation, surfaceContactLocation;
     private Transform trackingSurface;
-    private Transform creature;
+
+    public override void OnFire(Vector2 aim)
+    {
+        base.OnFire(aim);
+        explosionTimer = 0f;
+        rig.constraints = RigidbodyConstraints2D.None;
+    }
 
     protected override void Awake()
     {
@@ -27,17 +35,21 @@ public class PlasmaOrb : Bullet
         explosion.Radius = 12f;
     }
 
-    public override void StartCollisionDetection(Vector2 aim, BulletMovementAfterFiring movementAfterFiring, bool doesBulletStickToCreatures)
+    protected override void OnMapCollision(CollisionInfo info) 
     {
-        base.StartCollisionDetection(aim, movementAfterFiring, doesBulletStickToCreatures);
-        explosionTimer = 0f;
-        rig.constraints = RigidbodyConstraints2D.None;
+         StartCoroutine(startTimedPlasmaExplosion(info.Collider.transform));
+         creature = null;
     }
 
-    protected override void Update()
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature)
     {
-        base.Update();
-        
+        transform.position = info.ContactPoint;
+        StartCoroutine(startTimedPlasmaExplosion(creature));
+        this.creature = creature;
+    }
+
+    void Update()
+    {
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
@@ -56,6 +68,7 @@ public class PlasmaOrb : Bullet
             transform.position = trackingSurface.position - surfaceContactLocation + contactLocation;
     }
 
+
     private IEnumerator startTimedPlasmaExplosion(Transform surface)
     {
         if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
@@ -72,19 +85,8 @@ public class PlasmaOrb : Bullet
             explosionTimer = 1.4f;
             sR.enabled = false;
 
-            StartCoroutine(explosion.damageSurroundingEntities());
+            Timing.RunSafeCoroutine(explosion.EnableExplosion(), gameObject);
         }
     }
 
-    protected override void onMapEnter(Transform map) 
-    {
-         StartCoroutine(startTimedPlasmaExplosion(map));
-         creature = null;
-    }
-    
-    protected override void onCreatureEnter(Transform entity) 
-    {
-        StartCoroutine(startTimedPlasmaExplosion(entity));
-        creature = entity;
-    }
 }

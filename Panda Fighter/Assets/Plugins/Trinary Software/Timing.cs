@@ -672,6 +672,100 @@ namespace MEC
             SlowUpdateCoroutines = _nextSlowUpdateProcessSlot = inner.i;
         }
 
+
+        /// <summary>
+        /// Run a new coroutine in the Update segment. Couroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, null, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine in the Update segment. Couroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, tag, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new safe coroutine. Safe coroutines get killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, Segment segment)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, null, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine. Couroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, Segment segment, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, tag, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine on this Timing instance in the Update segment. Couroutine will be killed if the gameObject is disabled or destroyed..
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, null, new CoroutineHandle(_instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new safe coroutine on this Timing instance in the Update segment. Safe coroutines get killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, tag, new CoroutineHandle(_instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine on this Timing instance. Couroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, Segment segment)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, null, new CoroutineHandle(_instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine on this Timing instance. Couroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, Segment segment, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, tag, new CoroutineHandle(_instanceID), true);
+        }
+
         /// <summary>
         /// Run a new coroutine in the Update segment.
         /// </summary>

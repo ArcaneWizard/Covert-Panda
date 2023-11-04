@@ -45,6 +45,15 @@ public class CameraMovement : MonoBehaviour
 
     public float d;
 
+    public void ExecuteCameraShake(float maxMagnitude)
+    {
+        executeCameraShake = true;
+
+        shakeMaxMagnitude = maxMagnitude;
+        shakeTimer = shakeDuration;
+        random = UnityEngine.Random.Range(0, 100000);
+    }
+
     void Start()
     {
         cameraTarget = cameraTargetAfterPlayerDeath;
@@ -62,15 +71,6 @@ public class CameraMovement : MonoBehaviour
             shakeTimer -= Time.deltaTime;
         else
             executeCameraShake = false;
-    }
-
-    public void ExecuteCameraShake(float maxMagnitude)
-    {
-        executeCameraShake = true;
-
-        shakeMaxMagnitude = maxMagnitude;
-        shakeTimer = shakeDuration;
-        random = UnityEngine.Random.Range(0, 100000);
     }
 
     private void updateCameraMovement()

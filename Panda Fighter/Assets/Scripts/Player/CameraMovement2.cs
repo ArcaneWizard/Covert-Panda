@@ -46,12 +46,14 @@ public class CameraMovement2 : MonoBehaviour
 
     public float d;
 
-    void OnValidate()
+    // Start executing camera shake.
+    public void ExecuteCameraShake(float maxMagnitude)
     {
-        this.RequireTag(cameraTargetBeforePlayerDeath, nameof(cameraTargetBeforePlayerDeath), "cameraTargetBeforePlayerDeath");
-        this.RequireTag(cameraTargetAfterPlayerDeath, nameof(cameraTargetAfterPlayerDeath), "cameraTargetAfterPlayerDeath");
-        this.RequireTag(centerOfMap, nameof(centerOfMap), "centerOfMap");
-        this.ConfirmNotNull(health, nameof(health));
+        executeCameraShake = true;
+
+        shakeMaxMagnitude = maxMagnitude;
+        shakeTimer = shakeDuration;
+        random = UnityEngine.Random.Range(0, 100000);
     }
 
     void Start()
@@ -73,14 +75,12 @@ public class CameraMovement2 : MonoBehaviour
             executeCameraShake = false;
     }
 
-    // Start executing camera shake.
-    public void ExecuteCameraShake(float maxMagnitude)
+    void OnValidate()
     {
-        executeCameraShake = true;
-
-        shakeMaxMagnitude = maxMagnitude;
-        shakeTimer = shakeDuration;
-        random = UnityEngine.Random.Range(0, 100000);
+        this.RequireTag(cameraTargetBeforePlayerDeath, nameof(cameraTargetBeforePlayerDeath), "cameraTargetBeforePlayerDeath");
+        this.RequireTag(cameraTargetAfterPlayerDeath, nameof(cameraTargetAfterPlayerDeath), "cameraTargetAfterPlayerDeath");
+        this.RequireTag(centerOfMap, nameof(centerOfMap), "centerOfMap");
+        this.NullCheck(health, nameof(health));
     }
 
     // Updates camera movement 

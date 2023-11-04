@@ -17,7 +17,6 @@ public class WeaponConfiguration : MonoBehaviour
     // Exception being for charge-up weapons, where this represents time to charge up shot
     public float FireRateInfo { get; private set; }
 
-    public bool SticksToCreatures { get; private set; }
     public CombatType CombatType { get; private set; }
     public FiringMode FiringMode { get; private set; }
 

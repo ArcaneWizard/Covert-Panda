@@ -58,7 +58,7 @@ public class AI_WanderAround : MonoBehaviour
         // retrive the next, pending decision zone if the bot isn't performing an action.
         // pick a random action to perform within this new decision zone (with a preference to moving in the 
         // same direction - left or right - as opposed to switching directions). 
-        if (controller.currAction == null)
+        if (controller.CurrAction == null)
         {
             currentDecisionZone = decisionZones.Dequeue();
             List<AIAction> AI_ACTIONS = new List<AIAction>();

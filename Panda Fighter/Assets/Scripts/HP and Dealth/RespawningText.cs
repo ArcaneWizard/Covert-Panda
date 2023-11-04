@@ -5,12 +5,11 @@ using UnityEngine.UI;
 
 public class RespawningText : MonoBehaviour
 {
-
     private Text text;
 
-    private void Awake() => text = transform.GetComponent<Text>();
-
     public void StartRespawnCountdown(float respawnTime) => StartCoroutine(eStartRespawnCountdown(respawnTime));
+
+    private void Awake() => text = transform.GetComponent<Text>();
 
     private IEnumerator eStartRespawnCountdown(float respawnTime)
     {

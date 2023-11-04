@@ -2,7 +2,10 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using MEC;
+using Unity.Burst.Intrinsics;
 
+// THIS CLASS VERSION IS OUTDATED RUSHEEL, OR IF YOU WANT TO CALL IT, DEPRECATED
 public class wFragGrenade : WeaponBehaviour
 {
     protected static float grenadeThrowForce = 2200;
@@ -11,12 +14,22 @@ public class wFragGrenade : WeaponBehaviour
     private ExecutionDelay timeB4Release = ExecutionDelay.Unknown;
     private ExecutionDelay timeAfterRelease = ExecutionDelay.Unknown;
 
-    public override void ConfigureUponPullingOutWeapon()
+    protected override void attack(Vector2 aim)
     {
         base.ConfigureUponPullingOutWeapon();
-        weaponConfiguration.Animator.SetInteger("Arms Phase", 0);
+        Timing.RunSafeCoroutine(configure(aim), gameObject);
     }
 
+    protected IEnumerator<float> configure(Vector2 aim)
+    {
+        weaponConfiguration.Animator.SetInteger("Arms Phase", 0);
+        timeB4Release.Seconds = CommonWeaponBehaviours.CalculateTimeB4ReleasingGrenade(0.02f, 0.2f, aim);
+        timeAfterRelease.Seconds = 0.6f - timeB4Release.Seconds;
+
+        yield return Timing.WaitForSeconds(2f);
+    }
+
+    /*
     protected override void startMultiActionAttack(bool singleAction)
     {
         attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Instant, timeB4Release, timeAfterRelease };
@@ -49,5 +62,5 @@ public class wFragGrenade : WeaponBehaviour
         {
             //weaponConfiguration.Arms[1].SetActive(false);
         }
-    }
+    }*/
 }

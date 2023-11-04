@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using MEC;
 
 public class wScythe : WeaponBehaviour
 {
@@ -11,28 +12,20 @@ public class wScythe : WeaponBehaviour
         weaponConfiguration.Animator.SetInteger("Arms Phase", 10);
     }
 
-    protected override void startMultiActionAttack(bool singleAction)
+    protected override void attack(Vector2 aim)
     {
-        ExecutionDelay wait = ExecutionDelay.Repeat;
+        Timing.RunSafeCoroutine(meeleeAttack(), gameObject);
+    }
 
-        attackTimes = new List<ExecutionDelay>() { ExecutionDelay.Instant, wait };
-        attackActions = new List<Action>() { configureAnimator, waitTillAnimationCompletes };
+    private IEnumerator<float> meeleeAttack() 
+    {
+        weaponConfiguration.Animator.SetInteger("Arms Phase", 11);
+        weaponConfiguration.MainArmIKTracker.gameObject.SetActive(false);
 
-        base.startMultiActionAttack(false);
+        while (weaponConfiguration.Animator.GetInteger("Arms Phase") != 11)
+            yield return Timing.WaitForOneFrame;
 
-        void configureAnimator()
-        {
-            weaponConfiguration.Animator.SetInteger("Arms Phase", 11);
-            weaponConfiguration.MainArmIKTracker.gameObject.SetActive(false);
-        }
-
-        void waitTillAnimationCompletes()
-        {
-            //if (weaponConfiguration.Animator.GetInteger("Arms Phase") != 11)
-              //  wait.StopWaiting();
-        }
-
-        base.startMultiActionAttack(false);
+        //throw scythe
     }
 
    /* public override IEnumerator BonusSetupAttack(Vector2 aim, Transform bullet, Rigidbody2D bulletRig)

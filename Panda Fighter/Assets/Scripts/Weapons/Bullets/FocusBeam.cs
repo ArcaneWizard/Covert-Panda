@@ -3,34 +3,16 @@ using System.Collections.Generic;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
 
-public class FocusBeam : Bullet
+public class FocusBeam : StaticBullet
 {
     private LineRenderer beam;
     private BoxCollider2D collider;
 
     private Vector2 initialColliderSize;
     private float beamLength;
-
     private float beamDistance = 60f;
 
     private float timerStayAlive;
-
-    protected override void Awake()
-    {
-        base.Awake();
-
-        beam = transform.GetComponent<LineRenderer>();
-        collider = transform.GetComponent<BoxCollider2D>();
-        initialColliderSize = collider.size;
-    }
-
-    protected override void Update() 
-    {
-        if (timerStayAlive > 0)
-            timerStayAlive -= Time.deltaTime;
-        else
-            gameObject.SetActive(false);
-    }
 
     public void ShootBeam(Transform bulletSpawnPoint, Transform weapon, bool inDoubleJump)
     {
@@ -59,5 +41,23 @@ public class FocusBeam : Bullet
         collider.offset = new Vector2(beamLength / 2, 0);
     }
 
-    protected override void onCreatureEnter(Transform entity) { }
+    protected override void Awake()
+    {
+        base.Awake();
+
+        beam = transform.GetComponent<LineRenderer>();
+        collider = transform.GetComponent<BoxCollider2D>();
+        initialColliderSize = collider.size;
+    }
+
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) { }
+    protected override void OnMapCollision(CollisionInfo info) { }
+
+    void Update()
+    {
+        if (timerStayAlive > 0)
+            timerStayAlive -= Time.deltaTime;
+        else
+            gameObject.SetActive(false);
+    }
 }

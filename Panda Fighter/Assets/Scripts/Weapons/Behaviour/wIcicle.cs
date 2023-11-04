@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class wIcicle : WeaponBehaviour
 {
-    protected override void startAttack()
+    protected override void attack(Vector2 aim)
     {
-        WeaponBehaviourHelper.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
+        CommonWeaponBehaviours.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
     }
 }

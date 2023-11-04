@@ -4,14 +4,13 @@ using System.Collections.Generic;
 
 public class wFocusBeamer : WeaponBehaviour
 {
-    protected override void startAttack()
+    protected override void attack(Vector2 aim)
     {
-        PhysicalBullet bullet = WeaponBehaviourHelper.SpawnBullet(aim, weaponSystem, weaponConfiguration, side);
+        PhysicalBullet bullet = CommonWeaponBehaviours.SpawnBullet(aim, weaponSystem, weaponConfiguration, side);
 
         bullet.transform.GetComponent<FocusBeam>().ShootBeam(weaponConfiguration.BulletSpawnPoint,
             weaponConfiguration.PhysicalWeapon.transform, phaseTracker.IsDoingSomersault);
 
-        bullet.transform.GetComponent<Bullet>().StartCollisionDetection(aim,
-            BulletMovementAfterFiring.SyncedWithDirectionAimedIn, false);
+        bullet.transform.GetComponent<Bullet>().OnFire(aim);
     }
 }

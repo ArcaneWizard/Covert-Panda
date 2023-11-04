@@ -18,7 +18,7 @@ public class TrajectoryPath : MonoBehaviour
     public Vector2 secondChangedSpeed = new Vector2(25f, 25f);
 
     private float mass = 1f;
-    private float defaultGravity = -32.5f;
+    private float defaultGravity;
     private float gravity;
 
     [Header("Other Settings")]
@@ -38,8 +38,7 @@ public class TrajectoryPath : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        defaultGravity = CentralController.GRAVITY * -13f;
-
+        defaultGravity = Game.GRAVITY * -13f;
         mass = 1f;
 
         if (ActionType == AIActionType.ChangeDirections)
@@ -113,7 +112,7 @@ public class TrajectoryPath : MonoBehaviour
     }
     #endif
     
-    // visually display AI trajectory even if it's child object is selected (note: this could be removed)
+    // visually display AI trajectory even it's child object is selected 
     #if UNITY_EDITOR
         private void OnDrawGizmos()
         {

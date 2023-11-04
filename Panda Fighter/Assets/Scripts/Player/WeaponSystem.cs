@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+// commented out code was for old inventory system that displayed all equipped weapons in slots
 public class WeaponSystem : CentralWeaponSystem
 {
     private HashSet<GameObject> weaponsYouCanPickUp = new HashSet<GameObject>();
@@ -89,7 +90,7 @@ public class WeaponSystem : CentralWeaponSystem
 
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layer.Weapons && col.gameObject.activeSelf)
+        if (col.gameObject.layer == Layer.PickableWeapons && col.gameObject.activeSelf)
         {
             if (tryPickingUpWeapon)
             {

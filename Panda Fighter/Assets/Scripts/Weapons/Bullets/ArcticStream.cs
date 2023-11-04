@@ -1,8 +1,10 @@
+using MEC;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
-public class ArcticStream : Bullet
+public class ArcticStream : MovingBullet
 {
     private float explosionTimer = 0;
 
@@ -12,16 +14,16 @@ public class ArcticStream : Bullet
     protected override void Awake()
     {
         base.Awake();
-
         animatedExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
         explosion.Radius = 13;
     }
 
-    protected override void Update()
-    {
-        base.Update();
+    protected override void OnMapCollision(CollisionInfo info) => startExplosion();
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) => startExplosion();
 
+    void Update()
+    {
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
@@ -42,10 +44,7 @@ public class ArcticStream : Bullet
             animatedExplosion.SetActive(true);
             explosionTimer = 1.4f;
 
-            StartCoroutine(explosion.damageSurroundingEntities());
+            Timing.RunSafeCoroutine(explosion.EnableExplosion(creature, weaponConfiguration.ExplosionDmg), gameObject);
         }
     }
-
-    protected override void onMapEnter(Transform map) => startExplosion();
-    protected override void onCreatureEnter(Transform entity) => startExplosion();
 }

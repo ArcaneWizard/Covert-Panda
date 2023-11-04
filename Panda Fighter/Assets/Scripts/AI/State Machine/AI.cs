@@ -36,7 +36,7 @@ public class AI : MonoBehaviour
         var idle = new Idle(controller);
 
         IState a = attack;
-        transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.journey == Journey.Ended);
+        transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.journeyStatus == JourneyStatus.Ended);
         transition(wander, seekDestination, () => Input.GetKeyDown(KeyCode.O));
       //  transition(wander, idle, () => idle.GoodTimeToGoIdle);
       //  transition(idle, wander, () => idle.StopBeingIdle);

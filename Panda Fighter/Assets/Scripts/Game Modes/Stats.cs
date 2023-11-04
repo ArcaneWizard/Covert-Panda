@@ -16,7 +16,29 @@ public class Stats : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+            Instance = this;
+    }
+
+    public void ConfirmKillFor(Transform killer)
+    {
+        KDA kda = statsManager[killer];
+        kda.AddKill();
+        statsManager[killer] = kda;
+    }
+
+    public void ConfirmDeathFor(Transform victim)
+    {
+        KDA kda = statsManager[victim];
+        kda.AddDeath();
+        statsManager[victim] = kda;
+    }
+
+    public static void ConfirmAssistFor(Transform assister)
+    {
+        KDA kda = statsManager[assister];
+        kda.AddAssist();
+        statsManager[assister] = kda;
     }
 
     void Start()
@@ -35,26 +57,5 @@ public class Stats : MonoBehaviour
             statReader.Append(scores.text + stat.Key.name + ": " + stat.Value.ToString() + " \n");
 
         scores.text = statReader.ToString();*/
-    }
-
-    public static void ConfirmKillFor(Transform killer)
-    {
-        KDA kda = statsManager[killer];
-        kda.AddKill();
-        statsManager[killer] = kda;
-    }
-
-    public static void ConfirmDeathFor(Transform victim)
-    {
-        KDA kda = statsManager[victim];
-        kda.AddDeath();
-        statsManager[victim] = kda;
-    }
-
-    public static void ConfirmAssistFor(Transform assister)
-    {
-        KDA kda = statsManager[assister];
-        kda.AddAssist();
-        statsManager[assister] = kda;
     }
 }

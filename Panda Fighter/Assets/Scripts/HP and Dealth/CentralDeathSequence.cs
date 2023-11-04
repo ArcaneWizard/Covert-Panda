@@ -54,7 +54,7 @@ public class CentralDeathSequence : MonoBehaviour
     protected virtual void uponDying()
     {
         ragdolling.EnableRagdolling();
-        Stats.ConfirmDeathFor(transform.parent);
+        Stats.Instance.ConfirmDeathFor(transform.parent);
     }
 
     protected virtual void rightBeforeRespawning()

@@ -1,6 +1,8 @@
+using MEC;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
 public class AI_LookAround : CentralLookAround
 {
@@ -25,20 +27,10 @@ public class AI_LookAround : CentralLookAround
         resetUponSpawning();
         deathSequence.RightBeforeRespawning += resetUponSpawning;
 
-        StartCoroutine(scanForNearbyEnemies());
-        StartCoroutine(sometimesLookBackwards());
+        Timing.RunSafeCoroutine(scanForNearbyEnemies(), gameObject);
+        Timing.RunSafeCoroutine(sometimesLookBackwards(), gameObject);
     }
 
-    private void resetUponSpawning()
-    {
-        random = Random.Range(0f, 10f);
-        lookBackwards = false;
-        lastKnownDirX = -1 + Random.Range(0, 2) * 2; // either -1 or 1
-    }  
-    
-    // Sets the direction the AI should look in. If an enemy has been spotted, the direction to look in
-    // is the vector from the AI's shoulder to said enemy. If no enemy is spotted, the AI looks around randomly
-    // to give the appearance of scanning the environment 
     protected override void figureOutDirectionToLookIn() 
     {
         if (EnemySpotted)
@@ -71,10 +63,17 @@ public class AI_LookAround : CentralLookAround
             lastKnownDirX = controller.DirX;
     }
 
-    // updates the Enemy Spotted GameObject if an enemy creature is spotted in the AI's vision to shoot at
-    private IEnumerator scanForNearbyEnemies()
+    private void resetUponSpawning()
     {
-        yield return new WaitForSeconds(0.3f);
+        random = Random.Range(0f, 10f);
+        lookBackwards = false;
+        lastKnownDirX = -1 + Random.Range(0, 2) * 2; // either -1 or 1
+    }
+
+    // updates the EnemySpotted gameobject if an enemy creature is spotted in the AI's vision
+    private IEnumerator<float> scanForNearbyEnemies()
+    {
+        yield return Timing.WaitForSeconds(0.3f);
         EnemySpotted = null;
 
         Collider2D[] enemiesWithinRangeOfWeapon = Physics2D.OverlapCircleAll(
@@ -97,7 +96,7 @@ public class AI_LookAround : CentralLookAround
             );
 
             // if the enemy creature is in this creature's line of sight, switch focus to it if it's closer than other enemies
-            if (hit.collider != null && hit.collider.gameObject.layer == Layer.GetHitBoxOfOpposition(side)) 
+            if (hit.collider != null && hit.collider.gameObject.layer == Layer.GetHitBoxOfOpposingSide(side)) 
             {
                 if (EnemySpotted == null || MathX.GetSquaredDistance(EnemySpotted.transform.position, weaponPivot.position) 
                     > MathX.GetSquaredDistance(nearbyEnemy.transform.position, weaponPivot.position))
@@ -105,19 +104,19 @@ public class AI_LookAround : CentralLookAround
             }
         }
 
-        StartCoroutine(scanForNearbyEnemies());
+        Timing.RunSafeCoroutine(scanForNearbyEnemies(), gameObject);
     }
 
     // Decide whether the creature should look backwards (relative to movement) or not
-    private IEnumerator sometimesLookBackwards()
+    private IEnumerator<float> sometimesLookBackwards()
     {
-        yield return new WaitForSeconds(Random.Range(3f, 5f));
+        yield return Timing.WaitForSeconds(Random.Range(3f, 5f));
 
         // 10% chance the creature looks backwards when an enemy isn't spotted
         if (!EnemySpotted && Random.Range(0, 100) < 10)
         {
             lookBackwards = true;
-            yield return new WaitForSeconds(Random.Range(2f, 6f));
+            yield return Timing.WaitForSeconds(Random.Range(2f, 6f));
         }
 
         lookBackwards = false;

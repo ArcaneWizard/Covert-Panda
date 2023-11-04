@@ -24,7 +24,7 @@ public class LimbSwapper : MonoBehaviour
         if (!Application.isPlaying)
             return;
 
-        this.ConfirmNotNull(limbSettings, nameof(limbSettings));
+        this.NullCheck(limbSettings, nameof(limbSettings));
 
         updateSpriteAndBoneTransforms(true);
 

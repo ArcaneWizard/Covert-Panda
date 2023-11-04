@@ -17,10 +17,6 @@ public class Controller : CentralController
     public float MOVEMENT_ALTERATION_SPEED = 40f;
     public float SLIDE_DOWN_SPEED = 0.5f;
 
-    public float a = 0.4f;
-    public float b = 100f;
-    public float c = 12f;
-
     [SerializeField] private CameraMovement2 cameraMovement;
 
     protected override void Start()
@@ -93,13 +89,13 @@ public class Controller : CentralController
         if (wallInFrontOfYou && ((DirX == 1 && lookAround.IsFacingRight) || (DirX == -1 && !lookAround.IsFacingRight)))
         {
             setVelocity(new Vector2(0, rig.velocity.y));
-            rig.gravityScale = GRAVITY;
+            rig.gravityScale = Game.GRAVITY;
         }
 
         else if (wallBehindYou && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight)))
         {
             setVelocity(new Vector2(0, rig.velocity.y));
-            rig.gravityScale = GRAVITY;
+            rig.gravityScale = Game.GRAVITY;
         }
 
         //when player is on the ground, player velocity is parallel to the slanted ground 
@@ -118,12 +114,12 @@ public class Controller : CentralController
                 {
                     // Vector2 slideDownSlopeDirection = Mathf.Sign(groundSlope.y) * groundSlope;
                     // rig.gravityScale = GRAVITY * slideDownSlopeDirection.normalized.y;
-                    rig.gravityScale = GRAVITY;
+                    rig.gravityScale = Game.GRAVITY;
                 }
                 else
                 {
                     setVelocity(new Vector2(speed * DirX, rig.velocity.y));
-                    rig.gravityScale = GRAVITY;
+                    rig.gravityScale = Game.GRAVITY;
                 }
             }
 
@@ -131,24 +127,25 @@ public class Controller : CentralController
             {
                 float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
                 setVelocity(groundSlope * speed * DirX * speedMultiplier);
-                rig.gravityScale = (DirX == 0) ? 0f : GRAVITY;
+                rig.gravityScale = (DirX == 0) ? 0f : Game.GRAVITY;
             }
 
             //camera shakes if landing from a downwards thrust
             if (isThrustingDownwards && fastestYVelocityRecorded < -20f)
             {
-                float shakeMultiplier = a + (-fastestYVelocityRecorded - 40f) / b;
+                float shakeMultiplier = 0.4f + (-fastestYVelocityRecorded - 40f) / 100f;
                 cameraMovement.ExecuteCameraShake(shakeMultiplier);
             }
+
 
             //allow player to thrust themselves downwards the next time they jump
             isThrustingDownwards = false;
         }
-
+        
         else
         {
             setVelocity(new Vector2(speed * DirX, rig.velocity.y));
-            rig.gravityScale = GRAVITY;
+            rig.gravityScale = Game.GRAVITY;
         }
 
         if (rig.velocity.y < fastestYVelocityRecorded)
@@ -177,7 +174,7 @@ public class Controller : CentralController
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
+        if (col.gameObject.layer == Layer.DefaultPlatform || col.gameObject.layer == Layer.OneSidedPlatform)
         {
             ContactPoint2D[] contacts = new ContactPoint2D[5];
             int numOfContactsDetected = col.GetContacts(contacts);
@@ -185,22 +182,20 @@ public class Controller : CentralController
             for (int i = 0; i < numOfContactsDetected; i++)
             {
                 // wall in front if it has a small y normal and you're facing it
-                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                if (contacts[i].normal.y < MAX_Y_NORMAL_OF_WALLS &&
                     (lookAround.IsFacingRight && contacts[i].point.x > transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x < transform.position.x)) ;
                 wallsInFront.Add(col.gameObject);
 
-                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                if (contacts[i].normal.y < MAX_Y_NORMAL_OF_WALLS &&
                    (lookAround.IsFacingRight && contacts[i].point.x < transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x > transform.position.x)) ;
                 wallsBehind.Add(col.gameObject);
-
-                Debug.Log(contacts[i].normal + ", " + contacts[i].collider.gameObject.name);
             }
         }
     }
 
     private void OnCollisionStay2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
+        if (col.gameObject.layer == Layer.DefaultPlatform || col.gameObject.layer == Layer.OneSidedPlatform)
         {
             ContactPoint2D[] contacts = new ContactPoint2D[5];
             int numOfContactsDetected = col.GetContacts(contacts);
@@ -208,11 +203,11 @@ public class Controller : CentralController
             for (int i = 0; i < numOfContactsDetected; i++)
             {
                 // wall in front if it has a small y normal and you're facing it
-                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                if (contacts[i].normal.y < MAX_Y_NORMAL_OF_WALLS &&
                     (lookAround.IsFacingRight && contacts[i].point.x > transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x < transform.position.x)) ;
                 wallsInFront.Add(col.gameObject);
 
-                if (contacts[i].normal.y < max_y_normal_of_walls &&
+                if (contacts[i].normal.y < MAX_Y_NORMAL_OF_WALLS &&
                    (lookAround.IsFacingRight && contacts[i].point.x < transform.position.x || !lookAround.IsFacingRight && contacts[i].point.x > transform.position.x)) ;
                 wallsBehind.Add(col.gameObject);
             }
@@ -221,7 +216,7 @@ public class Controller : CentralController
 
     private void OnCollisionExit2D(Collision2D col)
     {
-        if (col.gameObject.layer == Layer.DefaultGround || col.gameObject.layer == Layer.OneWayGround)
+        if (col.gameObject.layer == Layer.DefaultPlatform || col.gameObject.layer == Layer.OneSidedPlatform)
         {
             wallsInFront.Remove(col.gameObject);
             wallsBehind.Remove(col.gameObject);

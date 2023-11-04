@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.EventSystems.EventTrigger;
+using static Validation;
 
 /* Abstract class that manages the creature's health. Also tracks whether or not the creature is dead. */
 
@@ -11,84 +14,61 @@ public abstract class Health : MonoBehaviour
     public int currentHP { get; protected set; }
     public bool IsDead { get; private set; }
 
-    // pads the hp bar slightly so that low hp doesn't make the hp bar look empty
-    private int paddingHP; 
+    // The HP bar is padded slightly so low hp doesn't make the bar look empty
+    private const float PERCENT_OF_PADDED_HP = 2.5f;
+    private float paddedHp;
 
     protected Image hpBar;
     protected RectTransform hpBarRect;
     protected Vector2 hpBarOffset;
 
-    protected int bulletLayer;
-    protected ICentralAbilityHandler abilityHandler;
+    protected BoxCollider2D hitBox;
     private CentralDeathSequence deathSequence;
     private Side side;
 
-    protected BoxCollider2D hitBox;
+    ///<summary> Damage this creature. Takes in a base dmg and the attacker responsible (if known) </summary>
+    public virtual void InflictDamage(int baseDmg, Transform attacker = null)
+    {
+        if (IsDead)
+            return;
+
+        currentHP -= DamageCalculator.CalculateDmg(baseDmg, transform, attacker);
+
+        if (currentHP <= 0 && attacker && !transform.Equals(attacker))
+            Stats.Instance.ConfirmKillFor(attacker);
+    }
 
     protected virtual void Awake()
     {
-        abilityHandler = transform.GetComponent<ICentralAbilityHandler>();
         deathSequence = transform.GetComponent<CentralDeathSequence>();
         hitBox = transform.GetChild(1).GetComponent<BoxCollider2D>();
-
-        side = transform.parent.GetComponent<Role>().side;
-        hitBox.gameObject.layer = (side == Side.Friendly) ? Layer.FriendlyHitBox : Layer.EnemyHitBox;
-
         hpBar = transform.parent.GetChild(2).GetChild(0).GetChild(1).GetComponent<Image>();
         hpBarRect = hpBar.transform.parent.GetComponent<RectTransform>();
+        var role = transform.parent.GetComponent<Role>();
+
+        this.Validate(
+            new NotNull(deathSequence, nameof(deathSequence)),
+            new RequiredTag(hitBox, nameof(hitBox), "hitBox"),
+            new NotNull(role, nameof(role)),
+            new RequiredTag(hpBar, nameof(hpBar), "hpBar")
+         );
+
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
+        side = role.side;
     }
 
     protected virtual void Start()
     {
         currentHP = maxHP;
-        paddingHP = (int)(2.5f * maxHP / 100f);
+        paddedHp = currentHP * (1f + PERCENT_OF_PADDED_HP / 100f);
         IsDead = false;
         hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
 
+        hitBox.gameObject.layer = (side == Side.Friendly) ? Layer.EnemyHitBox : Layer.EnemyHitBox;
         hitBox.offset = new Vector2(0, -0.15f);
         hitBox.size = new Vector2(0.13f, 2.48f);
     }
 
-    ///<summary> Damage this creature. Optionally takes in who damaged this creature (if known) </summary>
-    public void TakeDamage(int damage, Transform attacker = null)
-    {
-        if (IsDead || currentHP <= 0 || abilityHandler.IsInvulnerable)
-            return;
-
-        currentHP -= damage;
-        
-        if (currentHP <= 0 && attacker)
-            Stats.ConfirmKillFor(attacker);
-    }
-
-    // Checks if the creature collided with a bullet or explosion
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (IsDead || abilityHandler.IsInvulnerable)
-            return;
-
-        else if (col.gameObject.layer == Layer.Explosion)
-            hitByExplosion(col.transform);
-    }
-
-    // Takes damage from an explosion
-    private void hitByExplosion(Transform explosionCollider)
-    {
-        Explosion explosion = explosionCollider.parent.transform.GetComponent<Explosion>();
-        int id = gameObject.GetHashCode();
-
-        if (!explosion.wasEntityAlreadyHurt(id))
-        {
-            explosion.updateEntitiesHurt(id);
-
-            Transform attacker = explosion.transform.parent.parent.parent.parent;
-            TakeDamage(explosion.GetDamageBasedOffDistance(transform), attacker);
-        }
-    }
-
-    // Every frame, update the hp bar to reflect the entity's current hp. Also, fix the hp
-    // bar position above the entity's head as it moves
     void Update()
     {
         if (IsDead)
@@ -97,12 +77,12 @@ public abstract class Health : MonoBehaviour
         if (currentHP <= 0 || Input.GetKeyDown(KeyCode.K))
         {
             IsDead = true;
-            currentHP = -paddingHP;
+            currentHP = -((int)paddedHp+1);
             hpBar.transform.parent.gameObject.SetActive(false);
             StartCoroutine(deathSequence.Initiate());
         }
 
-        hpBar.fillAmount = (float)(currentHP + paddingHP) / (float)maxHP;
+        hpBar.fillAmount = (float)(currentHP + paddedHp) / (float)maxHP;
         hpBarRect.position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);
     }
 
@@ -117,6 +97,13 @@ public abstract class Health : MonoBehaviour
         deathSequence.RightBeforeRespawning -= resetHealthWhenRespawning;
         deathSequence.UponRespawning -= enableHealthBar;
     }
+
+    void OnDestroy()
+    {
+        deathSequence.RightBeforeRespawning -= resetHealthWhenRespawning;
+        deathSequence.UponRespawning -= enableHealthBar;
+    }
+
 
     private void resetHealthWhenRespawning()
     {

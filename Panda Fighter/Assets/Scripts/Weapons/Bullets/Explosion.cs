@@ -1,69 +1,89 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MEC;
 
+[RequireComponent(typeof(CircleCollider2D))]
 public class Explosion : MonoBehaviour
 {
     [HideInInspector] public float Radius;
 
-    private int explosionDamage;
-    private HashSet<int> entitiesHurt;
+    private HashSet<Transform> entitiesHurt;
     private CircleCollider2D collider;
 
-    private void Awake()
+    private int defaultDmg; // default explosion dmg
+    private Transform creator; // who created the explosion 
+
+    /// <summary> Requires the creature who created the explosion and the explosion dmg </summary>
+    public IEnumerator<float> EnableExplosion(Transform creator, int dmg)
     {
-        entitiesHurt = new HashSet<int>();
-
-        if (transform.childCount > 0)
-            collider = transform.GetChild(0).GetComponent<CircleCollider2D>();
-    }
-
-    // initialize explosion's radius and the explosion damage
-    private void Start()
-    {
-        if (collider)
-            collider.radius = Radius;
-
-        explosionDamage = transform.parent.GetComponent<WeaponConfiguration>().ExplosionDmg;
-    }
-
-    // check if an entity was already damaged by an explosion
-    public bool wasEntityAlreadyHurt(int id) => entitiesHurt.Contains(id);
-
-    // update which entities were already damaged by an explosion
-    public void updateEntitiesHurt(int id) => entitiesHurt.Add(id);
-
-    // updates explosion layer and enables explosion collider to damage nearby entities (their health script 
-    // detects the explosion collider). turns off explosion collider after one frame. clears the list of entities 
-    // damaged by the explosion
-    public IEnumerator damageSurroundingEntities()
-    {
-        transform.GetChild(0).gameObject.layer = Layer.Explosion;
+        this.defaultDmg = dmg;
+        this.creator = creator;
 
         collider.enabled = true;
-        yield return new WaitForSeconds(Time.deltaTime);
+        yield return Timing.WaitForSeconds(Time.deltaTime);
         collider.enabled = false;
-
         entitiesHurt.Clear();
     }
 
-    // returns the dmg the explosion should do to a given entity based on how far they are from the center of 
-    // the explosion
-    public int GetDamageBasedOffDistance(Transform entity)
+    void Awake()
     {
-        BoxCollider2D entityCollider = entity.GetChild(0).GetComponent<BoxCollider2D>();
-        Vector2 closestCollisionPoint = entityCollider.ClosestPoint(collider.transform.position);
+        entitiesHurt = new HashSet<Transform>();
+        collider = transform.GetComponent<CircleCollider2D>();
+    }
 
-        float squareDistance = Mathf.Pow(closestCollisionPoint.x - collider.transform.position.x, 2)
-            + Mathf.Pow(closestCollisionPoint.y - collider.transform.position.y, 2);
+    void Start()
+    {
+        collider.gameObject.layer = Layer.Explosion;
+        collider.radius = Radius;
+        collider.gameObject.SetActive(false);
+    }
 
-        if (squareDistance <= Radius * Radius * 0.16f)
-            return Mathf.RoundToInt((explosionDamage * ((squareDistance/Radius/Radius/-1f) + 1f)) * UnityEngine.Random.Range(0.9f, 1.0f));
-        else if (squareDistance <= Radius * Radius * 0.64f)    
-            return Mathf.RoundToInt(explosionDamage * ((squareDistance/Radius/Radius/-0.8f) + 1.3f));
-        else if (squareDistance <= Radius * Radius)    
-            return  Mathf.RoundToInt(explosionDamage * (-2.5f * (squareDistance/Radius/Radius) + 2.7f));
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        int layer = col.gameObject.layer;
+        if (layer == Layer.FriendlyHitBox || layer == Layer.EnemyHitBox)
+        {
+            var entity = col.transform;
+            if (entitiesHurt.Contains(entity))
+                return;
+
+            var health = entity.GetComponent<Health>();
+            int explosionDmg = getDamageByDistance(entity);
+            health?.InflictDamage(explosionDmg, creator);
+            entitiesHurt.Add(entity);
+        }
+    }
+
+    // the further the entity is from the explosion's center, the lower the explosion dmg returned
+    private int getDamageByDistance(Transform entity)
+    {
+        Collider2D hitBoxCollider = entity.GetComponent<Collider2D>();
+        Vector2 closestCollisionPoint = hitBoxCollider.ClosestPoint(transform.position);
+
+        // calculate d: the distance between the creature and the center of the explosion,
+        // in units of explosion radius, squared
+        float xDiff = closestCollisionPoint.x - transform.position.x;
+        float yDiff = closestCollisionPoint.y - transform.position.y;
+        float d = (xDiff * xDiff + yDiff * yDiff) / (Radius * Radius);
+
+        float dmgMultiplier;
+        if (d <= 0.16f)
+            dmgMultiplier = -d + 1f;
+        else if (d <= 0.64f)
+            dmgMultiplier = -0.5f * d + 0.92f;
+        else if (d <= 1)
+            dmgMultiplier = -0.83f * d + 1.13f;
         else
-            return 0;
+            dmgMultiplier = 0f;
+
+        // Self-note on math above:
+        // let e = the distance between the creature and the center of the explosion in units of explosion radius
+        // for e btwn [0, 0.4], dmg multiplier ranges btwn [1, 0.84]
+        // for e btwn [0.4, 0.8], dmg multiplier ranges btwn [0.84, 0.60]
+        // for e btwn [0.8, 1], dmg multiplier ranges btwn [0.60, 0.30]
+        // for e > 1, dmg multiplier is 0
+
+        return Mathf.RoundToInt(defaultDmg * dmgMultiplier * Random.Range(0.93f, 1.07f));
     }
 }

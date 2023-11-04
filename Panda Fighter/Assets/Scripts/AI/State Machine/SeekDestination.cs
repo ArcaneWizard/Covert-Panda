@@ -30,22 +30,22 @@ public class SeekDestination : IState
 
     public void Tick()
     {
-        pathFollower.tick();
+        pathFollower.Tick();
 
         if (getSquaredDistanceBtwnVectors(aiBody.position, destination) < 16f)
         {
-            pathFollower.endJourney();
+            pathFollower.TerminateJourney();
             //Debug.Log("journey over");
         }
 
-        if (pathFollower.gotLost())
+        if (pathFollower.IsAiLost)
         {
             beginNewJourney();
             //Debug.Log("AI got lost");
         }
     }
 
-    public void OnExit() => pathFollower.endJourney();
+    public void OnExit() => pathFollower.TerminateJourney();
 
     private void beginNewJourney()
     {
@@ -53,7 +53,7 @@ public class SeekDestination : IState
             ? manualDestination.position
             : possibleDestinations.GetChild(UnityEngine.Random.Range(0, possibleDestinations.childCount)).position;
 
-        ai.StartCoroutine(pathFollower.startJourney(destination));
+        ai.StartCoroutine(pathFollower.StartJourney(destination));
     }
 
     private float getSquaredDistanceBtwnVectors(Vector2 a, Vector2 b)

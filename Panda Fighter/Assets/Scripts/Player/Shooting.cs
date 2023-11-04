@@ -9,48 +9,52 @@ public class Shooting : CentralShooting
     private float chargeUpTimer = 0f;
     private bool canExecuteChargedAttack = true;
 
+    public override void ConfigureUponPullingOutWeapon() => reset();
     protected override Vector2 GetAim() => lookAround.directionToLook;
+
+    private void reset()
+    {
+        timerBtwnShots = 0f;
+        chargeUpTimer = 0f;
+        canExecuteChargedAttack = true;
+    }
 
     private void Update()
     {
         if (health.IsDead)
         {
-            timerBtwnShots = 0f;
-            chargeUpTimer = 0f;
-            canExecuteChargedAttack = true;
+            reset();
             return;
         }
 
-        //if (Input.GetKeyDown(KeyCode.Tab) && grenadeSystem.GrenadesLeft > 0)
-        //  DeployGrenade();
+        var config = weaponSystem.CurrentWeaponConfiguration;
+        var wb = weaponSystem.CurrentWeaponBehaviour;
 
-        WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
-
-        if (configuration.FiringMode != FiringMode.ChargeUpFire)
+        if (config.FiringMode != FiringMode.ChargeUpFire)
             canExecuteChargedAttack = true;
 
-        if (weaponSystem.CurrentAmmo <= 0 || weaponSystem.CurrentWeaponBehaviour.attackProgress != AttackProgress.Finished)
+        if (weaponSystem.CurrentAmmo <= 0 || wb.attackProgress != AttackProgress.Finished)
             return;
 
-        if (configuration.FiringMode == FiringMode.SingleFire && Input.GetMouseButtonDown(0) && timerBtwnShots <= 0f)
+        if (config.FiringMode == FiringMode.SingleFire && Input.GetMouseButtonDown(0) && timerBtwnShots <= 0f)
         {
-            timerBtwnShots = 1 / configuration.FireRateInfo;
+            timerBtwnShots = 1 / config.FireRateInfo;
             AttackWithWeapon();
         }
 
-        else if (configuration.FiringMode == FiringMode.SpamFire && Input.GetMouseButton(0) && timerBtwnShots <= 0f)
+        else if (config.FiringMode == FiringMode.SpamFire && Input.GetMouseButton(0) && timerBtwnShots <= 0f)
         {
-            timerBtwnShots = 1 / configuration.FireRateInfo;
+            timerBtwnShots = 1 / config.FireRateInfo;
             AttackWithWeapon();
         }
 
-        else if (configuration.FiringMode == FiringMode.ChargeUpFire)
+        else if (config.FiringMode == FiringMode.ChargeUpFire)
         {
             // set the charge up timer when the right mouse button is first pressed
             if (Input.GetMouseButtonDown(0))
             {
-                chargeUpTimer = configuration.FireRateInfo;
-                weaponSystem.CurrentWeaponBehaviour.StartChargingUp();
+                chargeUpTimer = config.FireRateInfo;
+                wb.StartChargingUp();
             }
 
             // tick down the timer whlie the right mouse button is held
@@ -69,10 +73,10 @@ public class Shooting : CentralShooting
                 canExecuteChargedAttack = true;
 
             if (Input.GetMouseButtonUp(0))
-                weaponSystem.CurrentWeaponBehaviour.StopChargingUp();
+                wb.StopChargingUp();
         }
 
-        else if (configuration.FiringMode == FiringMode.ContinousBeam && Input.GetMouseButton(0))
+        else if (config.FiringMode == FiringMode.ContinousBeam && Input.GetMouseButton(0))
             AttackWithWeapon();
     }
 

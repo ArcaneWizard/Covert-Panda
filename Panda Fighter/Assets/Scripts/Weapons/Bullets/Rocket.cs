@@ -1,15 +1,14 @@
+using MEC;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rocket : Bullet
+public class Rocket : MovingBullet
 {
     private SpriteRenderer rocketRenderer;
     private SpriteRenderer rocketGlareRenderer;
     private GameObject physicalExplosion;
     private Explosion explosion;
-
-    private float explosionTimer = 0;
 
     protected override void Awake()
     {
@@ -20,38 +19,32 @@ public class Rocket : Bullet
         physicalExplosion = transform.GetChild(0).gameObject;
         explosion = transform.GetComponent<Explosion>();
         explosion.Radius = 7f;
+
+        this.NullCheck(explosion, nameof(explosion));
+        this.NullCheck(rocketRenderer, nameof(rocketRenderer));
+        this.NullCheck(rocketGlareRenderer, nameof(rocketGlareRenderer));
     }
 
-    protected override void Update()
-    {
-        base.Update();
-        
-        if (explosionTimer > 0f)
-            explosionTimer -= Time.deltaTime;
+    protected override void OnMapCollision(CollisionInfo info) => 
+        Timing.RunSafeCoroutine(setupExplosion(), gameObject);
 
-        else if (physicalExplosion.activeSelf)
-        {
-            rig.constraints = RigidbodyConstraints2D.None;
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) =>
+        Timing.RunSafeCoroutine(setupExplosion(), gameObject);
 
-            physicalExplosion.SetActive(false);
-            changeRocketVisibility(true);
-            gameObject.SetActive(false);
-        }
-    }
-
-    protected override void onMapEnter(Transform map) => setupExplosion();
-    protected override void onCreatureEnter(Transform entity) => setupExplosion();
-
-    private void setupExplosion()
+    private IEnumerator<float> setupExplosion()
     {
         rig.constraints = RigidbodyConstraints2D.FreezeAll;
         transform.localEulerAngles = new Vector3(0, 0, 0);
 
         physicalExplosion.SetActive(true);
         changeRocketVisibility(false);
-        explosionTimer = 1.4f;
+        yield return Timing.WaitForSeconds(1.4f);
 
-        StartCoroutine(explosion.damageSurroundingEntities());
+        Timing.RunSafeCoroutine(explosion.EnableExplosion(), gameObject);
+        rig.constraints = RigidbodyConstraints2D.None;
+        physicalExplosion.SetActive(false);
+        changeRocketVisibility(true);
+        gameObject.SetActive(false);
     }
 
     private void changeRocketVisibility(bool visibility)

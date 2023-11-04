@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D.IK;
 
-/* Adds color filters to the sprites of weapons, creature limbs, etc. at runtime to ensure uniformity in the entire game.
- * Ex. it should be easy to change the hue of a specific weapon & be confident that this change will apply to the entire game. */
+
+/// <summary> 
+/// Adds color filters to the sprites of weapons, creature limbs, etc. at runtime to ensure uniformity in the entire game.
+/// Ex. it should be easy to change the hue of a specific weapon & be confident that this change will apply to the entire game.
+/// </summary>
 
 public static class Colorer 
 {
     private static Dictionary<LimbTypes, Color32> relativeLimbColors;
-    private static Dictionary<Weapon, Color32> relativeWeaponColors;
 
     private static Color32 defaultColor = new Color32(255, 255, 255, 255);
     private static Color32 AmphelotColor = new Color32(182, 200, 217, 255);
@@ -21,50 +23,33 @@ public static class Colorer
             return;
 
         if (relativeLimbColors == null)
-            initializeColorOfLimbs();
+            initializeColorOfLimbs(defaultColor);
 
         renderer.color = relativeLimbColors[limb];
     }
 
-    // Update specified weapon's color
-    public static void UpdateWeaponColor(Weapon weapon, SpriteRenderer renderer, Transform creature)
-    {
-        if (renderer == null)
-            return;
-
-        if (relativeWeaponColors == null)
-            initializeColorOfWeapons();
-
-        renderer.color = relativeWeaponColors[weapon];
-    }
-
-    private static void initializeColorOfWeapons()
-    {
-        relativeWeaponColors = new Dictionary<Weapon, Color32>();
-    }
-
-    private static void initializeColorOfLimbs()
+    private static void initializeColorOfLimbs(Color32 color)
     {
         relativeLimbColors = new Dictionary<LimbTypes, Color32>();
 
-        relativeLimbColors[LimbTypes.FrontUpperArm] = AmphelotColor;
-        relativeLimbColors[LimbTypes.FrontLowerArm] = AmphelotColor;
-        relativeLimbColors[LimbTypes.FrontHand] = AmphelotColor;
+        relativeLimbColors[LimbTypes.FrontUpperArm] = color;
+        relativeLimbColors[LimbTypes.FrontLowerArm] = color;
+        relativeLimbColors[LimbTypes.FrontHand] = color;
 
-        relativeLimbColors[LimbTypes.FrontThigh] = AmphelotColor;
-        relativeLimbColors[LimbTypes.FrontLeg] = AmphelotColor;
-        relativeLimbColors[LimbTypes.FrontFoot] = AmphelotColor;
+        relativeLimbColors[LimbTypes.FrontThigh] = color;
+        relativeLimbColors[LimbTypes.FrontLeg] = color;
+        relativeLimbColors[LimbTypes.FrontFoot] = color;
 
-        relativeLimbColors[LimbTypes.Head] = AmphelotColor;
-        relativeLimbColors[LimbTypes.Chest] = AmphelotColor;
+        relativeLimbColors[LimbTypes.Head] = color;
+        relativeLimbColors[LimbTypes.Chest] = color;
 
-        relativeLimbColors[LimbTypes.BackUpperArm] = AmphelotColor;
-        relativeLimbColors[LimbTypes.BackLowerArm] = AmphelotColor;
-        relativeLimbColors[LimbTypes.BackHand] = AmphelotColor;
+        relativeLimbColors[LimbTypes.BackUpperArm] = color;
+        relativeLimbColors[LimbTypes.BackLowerArm] = color;
+        relativeLimbColors[LimbTypes.BackHand] = color;
 
-        relativeLimbColors[LimbTypes.BackThigh] = AmphelotColor;
-        relativeLimbColors[LimbTypes.BackLeg] = AmphelotColor;
-        relativeLimbColors[LimbTypes.BackFoot] = AmphelotColor;
+        relativeLimbColors[LimbTypes.BackThigh] = color;
+        relativeLimbColors[LimbTypes.BackLeg] = color;
+        relativeLimbColors[LimbTypes.BackFoot] = color;
     }
 
 }

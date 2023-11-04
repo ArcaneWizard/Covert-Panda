@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 
-/* Orders the sprites such to prevent overlaping sprite glitches between distinct creatures
- * or within a single creature. Provides methods to orders the limbs of creatures or any provided sprite." */
-
+/// <summary> 
+/// Orders sprites such to prevent overlaping sprite glitches (between two creatures,
+/// creature limbs overlapping, creatures and weapons overlapping, etc.)
+/// </summary>
 public static class Orderer 
 {
     private static Dictionary<LimbTypes, int> relativeLimbOrder;
@@ -41,7 +42,7 @@ public static class Orderer
         if (relativeLimbOrder == null)
             setRelativeOrderOfLimbs();
 
-        renderer.sortingLayerName = SortingLayer.Default;
+        renderer.sortingLayerName = SortingLayers.Default;
         renderer.sortingOrder = getUniqueOrderForThisCreature(relativeLimbOrder[limb], creature);
     }
 
@@ -78,14 +79,14 @@ public static class Orderer
             return defaultWeaponInfo;
     }
 
-    private static OrderInfo defaultWeaponInfo = new OrderInfo(SortingLayer.Default, 78);
+    private static OrderInfo defaultWeaponInfo = new OrderInfo(SortingLayers.Default, 78);
 
     private static void setRelativeOrderOfWeapons()
     {
         relativeWeaponOrder = new Dictionary<Weapon, OrderInfo>();
-        relativeWeaponOrder[Weapon.RocketLauncher] = new OrderInfo(SortingLayer.Default, 40);
-        relativeWeaponOrder[Weapon.ArcticSprayer] = new OrderInfo(SortingLayer.Default, 40);
-        relativeWeaponOrder[Weapon.PlasmaSniper] = new OrderInfo(SortingLayer.Default, 90);
+        relativeWeaponOrder[Weapon.RocketLauncher] = new OrderInfo(SortingLayers.Default, 40);
+        relativeWeaponOrder[Weapon.ArcticSprayer] = new OrderInfo(SortingLayers.Default, 40);
+        relativeWeaponOrder[Weapon.PlasmaSniper] = new OrderInfo(SortingLayers.Default, 90);
     }
 
     private static void setRelativeOrderOfLimbs()

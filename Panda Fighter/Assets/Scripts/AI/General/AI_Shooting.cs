@@ -7,15 +7,17 @@ public class AI_Shooting : CentralShooting
 
     private Vector2 reactionTime = new Vector2(0.4f, 0.67f);
     private Vector2 angleAimIsOffBy = new Vector2(-12, 12f);
-    private float offsetAngle;
 
-    private float countdownBtwnShots = 0f;
+    private float timeBtwnShots = 0f;
     private float timeSinceLastShot = 0f;
+    private bool isCharged;
 
-    // aim should be off slightly by some random, offset angle
+    public override void ConfigureUponPullingOutWeapon() => reset();
+
+    // aim should be off slightly by a random offset angle
     protected override Vector2 GetAim() 
     {
-         offsetAngle = Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
+         float offsetAngle = Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
          return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.directionToLook.normalized;
     }
 
@@ -25,20 +27,26 @@ public class AI_Shooting : CentralShooting
         AI_lookAround = transform.GetComponent<AI_LookAround>();
     }
 
+    private void reset()
+    {
+        timeBtwnShots = 0f;
+    }
+
+
     private void Update()
     {
         timeSinceLastShot += Time.deltaTime;
 
         if (health.IsDead)
         {
-            countdownBtwnShots = 0f;
+            reset();
             return;
         }
 
-        WeaponConfiguration configuration = weaponSystem.CurrentWeaponConfiguration;
-        WeaponBehaviour behaviour = weaponSystem.CurrentWeaponBehaviour;
+        var configuration = weaponSystem.CurrentWeaponConfiguration;
+        var behaviour = weaponSystem.CurrentWeaponBehaviour;
 
-        if (!AI_lookAround.EnemySpotted || countdownBtwnShots > 0f || weaponSystem.CurrentAmmo <= 0)
+        if (!AI_lookAround.EnemySpotted || timeBtwnShots > 0f || weaponSystem.CurrentAmmo <= 0)
             return;
 
         if (behaviour.attackProgress != AttackProgress.Finished)
@@ -46,25 +54,28 @@ public class AI_Shooting : CentralShooting
 
         if (configuration.FiringMode == FiringMode.SingleFire || configuration.FiringMode == FiringMode.SpamFire)
         {
-            countdownBtwnShots = 1 / configuration.FireRateInfo + reactionDelay;
+            timeBtwnShots = 1 / configuration.FireRateInfo + reactionDelay;
             timeSinceLastShot = 0f;
             AttackWithWeapon();
         }
-        else if (configuration.FiringMode == FiringMode.ChargeUpFire) 
+        else if (configuration.FiringMode == FiringMode.ChargeUpFire)
         {
-            countdownBtwnShots = configuration.FireRateInfo + reactionDelay;
-            timeSinceLastShot = 0f;
-            AttackWithWeapon();
+          // To-DO
+          // AI charges up its weapon when it spots an enemy, but also sometimes before spotting an enemy
+          // AI should be smart about when it starts charging or lets go off charging
         }
 
-        else 
+        else
+        {
+            timeSinceLastShot = 0f;
             AttackWithWeapon();
+        }
     }
 
     private void FixedUpdate()
     {
-        if (countdownBtwnShots > 0f)
-            countdownBtwnShots -= Time.fixedDeltaTime;
+        if (timeBtwnShots > 0f)
+            timeBtwnShots -= Time.fixedDeltaTime;
     }
 
     private float reactionDelay => (timeSinceLastShot > 1f) 

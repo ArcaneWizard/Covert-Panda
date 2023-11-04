@@ -4,20 +4,20 @@ using System;
 [System.Serializable]
 public struct KDA
 {
-    public int kills { get; private set; }
-    public int deaths { get; private set; }
-    public int assists { get; private set; }
+    public int Kills { get; private set; }
+    public int Deaths { get; private set; }
+    public int Assists { get; private set; }
 
     public KDA(int kills, int deaths, int assists)
     {
-        this.kills = kills;
-        this.deaths = deaths;
-        this.assists = assists;
+        Kills = kills;
+        Deaths = deaths;
+        Assists = assists;
     }
 
-    public void AddKill() => ++kills;
-    public void AddDeath() => ++deaths;
-    public void AddAssist() => ++assists;
+    public void AddKill() => ++Kills;
+    public void AddDeath() => ++Deaths;
+    public void AddAssist() => ++Assists;
 
-    public String ToString() => $"(K: {kills}, D: {deaths}, A: {assists})";
+    public override String ToString() => $"(K: {Kills}, D: {Deaths}, A: {Assists})";
 }

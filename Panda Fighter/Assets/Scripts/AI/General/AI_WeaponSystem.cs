@@ -45,7 +45,7 @@ public class AI_WeaponSystem : CentralWeaponSystem
     // pick up a weapon only if the creature feels like doing so
     private void OnTriggerStay2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layer.Weapons && feelsLikePickingUpWeapon)
+        if (col.gameObject.layer == Layer.PickableWeapons && feelsLikePickingUpWeapon)
         {
             Weapon weapon = col.transform.GetComponent<WeaponTag>().Tag;
             pickupWeaponIntoCurrentSlot(weapon);

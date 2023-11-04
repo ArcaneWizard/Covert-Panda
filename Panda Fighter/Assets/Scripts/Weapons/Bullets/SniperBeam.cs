@@ -1,8 +1,9 @@
+using MEC;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SniperBeam : Bullet
+public class SniperBeam : StaticBullet
 {
     private LineRenderer beam;
     private BoxCollider2D collider;
@@ -13,24 +14,11 @@ public class SniperBeam : Bullet
 
     private Vector2 initialColliderSize;
     private float beamLength;
-
     private float beamDistance = 60f;
 
-    protected override void Awake()
+    public override void OnFire(Vector2 aim)
     {
-        base.Awake();
-        beam = transform.GetComponent<LineRenderer>();
-        collider = transform.GetComponent<BoxCollider2D>();
-
-        explosionCounter = 0;
-        impactExplosion = transform.GetChild(explosionCounter).transform.GetComponent<Animator>();
-
-        initialColliderSize = collider.size;
-        color = beam.startColor;
-    }
-
-    protected override void onFire()
-    {
+        base.OnFire(aim);
         beam.startColor = new Color(color.r, color.g, color.b, 1f);
         beam.endColor = new Color(color.r, color.g, color.b, 1f);
     }
@@ -55,24 +43,41 @@ public class SniperBeam : Bullet
 
         collider.size = initialColliderSize + new Vector2(beamLength, 0);
         collider.offset = new Vector2(beamLength / 2, 0);
-        StartCoroutine(fadeBeam());
+        Timing.RunSafeCoroutine(fadeBeam(), gameObject);
     }
 
-    private IEnumerator fadeBeam()
+    protected override void Awake()
     {
-        yield return new WaitForSeconds(0.41f);
+        base.Awake();
+        beam = transform.GetComponent<LineRenderer>();
+        collider = transform.GetComponent<BoxCollider2D>();
+
+        explosionCounter = 0;
+        impactExplosion = transform.GetChild(explosionCounter).transform.GetComponent<Animator>();
+
+        initialColliderSize = collider.size;
+        color = beam.startColor;
+    }
+
+
+    protected override void OnMapCollision(CollisionInfo info) { }
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) { }
+
+    private IEnumerator<float> fadeBeam()
+    {
+        yield return Timing.WaitForSeconds(0.41f);
         impactExplosion.SetBool("impactExplosion", false);
 
         while (beam.startColor.r > 0.6f)
         {
             alterBeamColor(0.08f, 0.088f, 0.08f, 0.05f);
-            yield return new WaitForSeconds(0.04f);
+            yield return Timing.WaitForSeconds(0.04f);
         }
 
         while (beam.startColor.a > 0f)
         {
             alterBeamColor(0.08f, 0.088f, 0.08f, 0.08f);
-            yield return new WaitForSeconds(0.04f);
+            yield return Timing.WaitForSeconds(0.04f);
         }
 
         gameObject.SetActive(false);
@@ -89,9 +94,6 @@ public class SniperBeam : Bullet
             beam.startColor.b, beam.startColor.a
         );
     }
-
-    protected override void onMapEnter(Transform map) { }
-    protected override void onCreatureEnter(Transform creature) { }
 
     private void initiateExplosionAt(Vector3 location)
     {

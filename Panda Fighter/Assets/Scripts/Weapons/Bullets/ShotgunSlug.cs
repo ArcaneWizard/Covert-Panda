@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class ShotgunSlug : Bullet
+public class ShotgunSlug : MovingBullet
 {
     private Vector3 spawnPosition;
     private float trailOffset;
     private TrailRenderer trailRenderer;
 
-    protected override void onFire()
+    public override void OnFire(Vector2 aim)
     {
+        base.OnFire(aim);
         spawnPosition = transform.position;
 
         if (trailRenderer == null)
@@ -21,10 +22,8 @@ public class ShotgunSlug : Bullet
         trailOffset = UnityEngine.Random.Range(0.8f, 4); 
     }
 
-    protected override void Update() 
+    void Update() 
     {
-        base.Update();
-
         if (MathX.GetSquaredDistance(transform.position, spawnPosition) > trailOffset && gameObject.activeSelf) 
         {
            StartCoroutine(delayBulletStreaks());
@@ -32,24 +31,24 @@ public class ShotgunSlug : Bullet
         }
     }
 
-    protected override int damage()
+    protected override float DamageMultiplier()
     {
         float distance = MathX.GetSquaredDistance(transform.position, spawnPosition);
 
         if (distance <= 200f)
-            return base.damage();
+            return 1f;
         else if (distance > 200f && distance <= 400f)
-            return (int)Mathf.Ceil(base.damage() * (distance * -0.005f + 2f));
+            return (float)(distance * -0.005f + 2f);
         else
-            return 0;
+            return 0f;
     }
 
-    protected override void onMapEnter(Transform map) => StartCoroutine(madeContact());
-    protected override void onCreatureEnter(Transform creature) => StartCoroutine(madeContact());
+    protected override void OnMapCollision(CollisionInfo info) => StartCoroutine(madeContact());
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) => StartCoroutine(madeContact());
 
     private IEnumerator madeContact() 
     {
-        transform.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        rig.velocity = Vector2.zero;
         yield return new WaitForSeconds(Time.deltaTime);
         gameObject.SetActive(false);
     }
