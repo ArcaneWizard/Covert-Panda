@@ -1,5 +1,4 @@
-# Entangled Cores
-2D shooter platformer game with intelligent AI creatures:  
+2D shooter platformer game with really intelligent AI creatures. 
 
 # Quick Code Navigation
  ## Folders
