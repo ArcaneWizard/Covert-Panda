@@ -191,7 +191,6 @@ dotnet_style_qualification_for_property = false:silent
 dotnet_style_qualification_for_field = false:silent
 dotnet_style_qualification_for_event = false:silent
 #dotnet_diagnostic.IDE0055.severity = none  # formatting
-
 [*.cs]
 csharp_indent_labels = one_less_than_current
 csharp_using_directive_placement = outside_namespace:silent
