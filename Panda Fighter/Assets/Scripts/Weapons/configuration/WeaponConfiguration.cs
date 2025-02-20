@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 // This class houses all stats about a specific weapon (ex. bullet speed, explosion dmg)

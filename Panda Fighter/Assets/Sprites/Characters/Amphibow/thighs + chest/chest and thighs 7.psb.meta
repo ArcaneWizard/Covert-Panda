@@ -36,10 +36,13 @@ ScriptedImporter:
     convertToNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
     isReadable: 0
     streamingMipmaps: 1
     streamingMipmapsPriority: 0
     vTOnly: 0
+    ignoreMipmapLimit: 0
     nPOTScale: 1
     sRGBTexture: 1
     spriteMode: 2
@@ -61,6 +64,7 @@ ScriptedImporter:
     flipbookRows: 0
     flipbookColumns: 0
     ignorePngGamma: 0
+    cookieMode: 0
     filterMode: 1
     aniso: 1
     mipBias: 0
@@ -81,12 +85,13 @@ ScriptedImporter:
     compressionQualitySet: 0
     textureFormatSet: 0
     applyGammaDecoding: 0
-  spriteImportData:
+  singleSpriteImportData:
   - name: 
     originalName: 
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -94,7 +99,6 @@ ScriptedImporter:
       width: 0
       height: 0
     spriteID: 
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -102,15 +106,106 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
     uvTransform: {x: 0, y: 0}
-  mosaicSpriteImportData: []
+    spritePosition: {x: 0, y: 0}
+  multiSpriteImportData: []
+  layeredSpriteImportData:
+  - name: right thigh
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 128
+      y: 4
+      width: 122
+      height: 109
+    spriteID: 99a6ab274fcc1e4438606e64f837b221
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 128, y: 4}
+    spritePosition: {x: 125, y: 74}
+  - name: Paint Layer 4 Merged
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 116
+      height: 142
+    spriteID: 6a0aadfbc80e34440bfc65fcdd0e9e3f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 74, y: 158}
+  - name: left thigh
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 154
+      width: 62
+      height: 81
+    spriteID: 21a1077acd91d5b4facc9f665dd17b97
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 154}
+    spritePosition: {x: 186, y: 76}
+  spriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+    spritePosition: {x: 0, y: 0}
   rigSpriteImportData:
   - name: chest and thighs 7_0
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -118,7 +213,6 @@ ScriptedImporter:
       width: 62
       height: 80
     spriteID: c56a0c50118a0a680800000000000000
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -126,13 +220,14 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
     uvTransform: {x: 4, y: 154}
+    spritePosition: {x: 0, y: 0}
   - name: chest and thighs 7_1
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 55
@@ -140,7 +235,6 @@ ScriptedImporter:
       width: 7
       height: 6
     spriteID: a2558389e48497b80800000000000000
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -148,13 +242,14 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
     uvTransform: {x: 55, y: 140}
+    spritePosition: {x: 0, y: 0}
   - name: chest and thighs 7_2
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -162,7 +257,6 @@ ScriptedImporter:
       width: 135
       height: 133
     spriteID: 712dbad22d9784790800000000000000
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -170,13 +264,14 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
     uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 0, y: 0}
   - name: chest and thighs 7_3
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 129
@@ -184,7 +279,6 @@ ScriptedImporter:
       width: 64
       height: 81
     spriteID: beecf15d965bfb1f0800000000000000
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -192,13 +286,14 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
     uvTransform: {x: 129, y: 4}
+    spritePosition: {x: 0, y: 0}
   - name: chest and thighs 7_4
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 188
@@ -206,7 +301,6 @@ ScriptedImporter:
       width: 62
       height: 77
     spriteID: f0b40dc805194dfb0800000000000000
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -214,20 +308,23 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
     uvTransform: {x: 188, y: 9}
-  characterData:
-    bones: []
-    parts: []
-    dimension: {x: 0, y: 0}
-    characterGroups: []
-    boneReadOnly: 0
+    spritePosition: {x: 0, y: 0}
   sharedRigSpriteImportData: []
+  mosaicSpriteImportData: []
   sharedRigCharacterData:
     bones: []
     parts: []
     dimension: {x: 0, y: 0}
     characterGroups: []
+    pivot: {x: 0, y: 0}
+    boneReadOnly: 0
+  characterData:
+    bones: []
+    parts: []
+    dimension: {x: 0, y: 0}
+    characterGroups: []
+    pivot: {x: 0, y: 0}
     boneReadOnly: 0
   platformSettings: []
   mosaicLayers: 1
@@ -235,18 +332,101 @@ ScriptedImporter:
   documentPivot: {x: 0, y: 0}
   documentAlignment: 7
   importHiddenLayers: 0
-  importedTextureWidth: 256
-  importedTextureHeight: 256
-  documentSize: {x: 400, y: 400}
+  layerMappingOption: 2
+  generatePhysicsShape: 0
   paperDollMode: 0
   keepDupilcateSpriteName: 1
+  padding: 4
+  spriteSizeExpand: 0
   skeletonAssetReferenceID: 
+  pipeline: {instanceID: 0}
+  pipelineVersion: 
   spriteCategoryList:
     categories: []
-  textureActualWidth: 256
-  textureActualHeight: 256
   spritePackingTag: 
   resliceFromLayer: 0
+  pSDLayerImportSetting: []
+  psdLayers:
+  - name: right thigh
+    spriteName: right thigh
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 99a6ab274fcc1e4438606e64f837b221
+    layerID: 0
+    mosaicPosition: {x: 128, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Paint Layer 4 Merged
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 7d467fb4f72b8234db52452f31f69260
+    layerID: 2112086665
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: Paint Layer 4 Merged
+    spriteName: Paint Layer 4 Merged
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 6a0aadfbc80e34440bfc65fcdd0e9e3f
+    layerID: 1550681411
+    mosaicPosition: {x: 4, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Paint Layer 3
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: ababe6fdef60f5c4a8d1fd9111bdde6e
+    layerID: 1139611362
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: chest
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: edbb3e07a65332544ac865a9bd493b10
+    layerID: -548736147
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: left thigh
+    spriteName: left thigh
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 21a1077acd91d5b4facc9f665dd17b97
+    layerID: 1632127077
+    mosaicPosition: {x: 4, y: 154}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Paint Layer 2
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 9c1cca75906e2ad4bb6e2f34a6ba23bd
+    layerID: 1139611363
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: Paint Layer 1
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: e27e08fed395c1a44ae46b19e1b5903b
+    layerID: 1139611364
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   mosaicPSDLayers: []
   rigPSDLayers:
   - name: right thigh
@@ -256,6 +436,9 @@ ScriptedImporter:
     spriteID: 99a6ab274fcc1e4438606e64f837b221
     layerID: 0
     mosaicPosition: {x: 128, y: 4}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   - name: Paint Layer 4 Merged
     spriteName: Paint Layer 4 Merged
     isGroup: 0
@@ -263,6 +446,9 @@ ScriptedImporter:
     spriteID: 6a0aadfbc80e34440bfc65fcdd0e9e3f
     layerID: 1550681411
     mosaicPosition: {x: 4, y: 4}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   - name: left thigh
     spriteName: left thigh
     isGroup: 0
@@ -270,7 +456,13 @@ ScriptedImporter:
     spriteID: 21a1077acd91d5b4facc9f665dd17b97
     layerID: 1632127077
     mosaicPosition: {x: 4, y: 154}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   sharedRigPSDLayers: []
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  spriteSizeExpandChanged: 0
   generateGOHierarchy: 0
   textureAssetName: chest and thighs 7 Texture
   prefabAssetName: chest and thighs 7 Prefab

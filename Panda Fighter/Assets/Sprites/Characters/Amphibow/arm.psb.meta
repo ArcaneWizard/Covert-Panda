@@ -21,10 +21,13 @@ ScriptedImporter:
     convertToNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
     isReadable: 0
     streamingMipmaps: 1
     streamingMipmapsPriority: 0
     vTOnly: 0
+    ignoreMipmapLimit: 0
     nPOTScale: 1
     sRGBTexture: 1
     spriteMode: 2
@@ -46,6 +49,7 @@ ScriptedImporter:
     flipbookRows: 0
     flipbookColumns: 0
     ignorePngGamma: 0
+    cookieMode: 0
     filterMode: 1
     aniso: 1
     mipBias: 0
@@ -66,12 +70,13 @@ ScriptedImporter:
     compressionQualitySet: 0
     textureFormatSet: 0
     applyGammaDecoding: 0
-  spriteImportData:
+  singleSpriteImportData:
   - name: 
     originalName: 
     pivot: {x: 0, y: 0}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 0
@@ -79,7 +84,6 @@ ScriptedImporter:
       width: 0
       height: 0
     spriteID: 
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -87,15 +91,16 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
     uvTransform: {x: 0, y: 0}
-  mosaicSpriteImportData: []
-  rigSpriteImportData:
+    spritePosition: {x: 0, y: 0}
+  multiSpriteImportData: []
+  layeredSpriteImportData:
   - name: main arm pad
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 89
@@ -103,7 +108,6 @@ ScriptedImporter:
       width: 144
       height: 64
     spriteID: 2c05d70f41d6545bca33588cad854900
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -111,13 +115,14 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
-    uvTransform: {x: -41, y: -179}
+    uvTransform: {x: 89, y: 4}
+    spritePosition: {x: 130, y: 183}
   - name: main arm
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -125,7 +130,6 @@ ScriptedImporter:
       width: 77
       height: 124
     spriteID: 130c4d57e751a49858a117de6e424a7f
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -133,13 +137,14 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
-    uvTransform: {x: -229, y: -114}
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 233, y: 118}
   - name: main wrist alternate
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -147,7 +152,6 @@ ScriptedImporter:
       width: 48
       height: 40
     spriteID: 64ba546804a8342b79fae02dcf469c1b
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -155,13 +159,14 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
-    uvTransform: {x: -287, y: -75}
+    uvTransform: {x: 4, y: 136}
+    spritePosition: {x: 291, y: 211}
   - name: main wrist
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
     rect:
       serializedVersion: 2
       x: 4
@@ -169,7 +174,6 @@ ScriptedImporter:
       width: 48
       height: 40
     spriteID: bcea8a0cb23f84596bac4c1060b37d7d
-    internalID: 0
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -177,20 +181,135 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    parentGroupIndex: -1
-    uvTransform: {x: -287, y: -27}
-  characterData:
-    bones: []
-    parts: []
-    dimension: {x: 0, y: 0}
-    characterGroups: []
-    boneReadOnly: 0
+    uvTransform: {x: 4, y: 184}
+    spritePosition: {x: 291, y: 211}
+  spriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+    spritePosition: {x: 0, y: 0}
+  rigSpriteImportData:
+  - name: main arm pad
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 89
+      y: 4
+      width: 144
+      height: 64
+    spriteID: 2c05d70f41d6545bca33588cad854900
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 89, y: 4}
+    spritePosition: {x: 130, y: 183}
+  - name: main arm
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 77
+      height: 124
+    spriteID: 130c4d57e751a49858a117de6e424a7f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 233, y: 118}
+  - name: main wrist alternate
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 136
+      width: 48
+      height: 40
+    spriteID: 64ba546804a8342b79fae02dcf469c1b
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 136}
+    spritePosition: {x: 291, y: 211}
+  - name: main wrist
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 184
+      width: 48
+      height: 40
+    spriteID: bcea8a0cb23f84596bac4c1060b37d7d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 184}
+    spritePosition: {x: 291, y: 211}
   sharedRigSpriteImportData: []
+  mosaicSpriteImportData: []
   sharedRigCharacterData:
     bones: []
     parts: []
     dimension: {x: 0, y: 0}
     characterGroups: []
+    pivot: {x: 0, y: 0}
+    boneReadOnly: 0
+  characterData:
+    bones: []
+    parts: []
+    dimension: {x: 0, y: 0}
+    characterGroups: []
+    pivot: {x: 0, y: 0}
     boneReadOnly: 0
   platformSettings: []
   mosaicLayers: 1
@@ -198,18 +317,171 @@ ScriptedImporter:
   documentPivot: {x: 0, y: 0}
   documentAlignment: 7
   importHiddenLayers: 0
-  importedTextureWidth: 256
-  importedTextureHeight: 256
-  documentSize: {x: 400, y: 400}
+  layerMappingOption: 2
+  generatePhysicsShape: 0
   paperDollMode: 0
   keepDupilcateSpriteName: 1
+  padding: 4
+  spriteSizeExpand: 0
   skeletonAssetReferenceID: 
+  pipeline: {instanceID: 0}
+  pipelineVersion: 
   spriteCategoryList:
     categories: []
-  textureActualWidth: 256
-  textureActualHeight: 256
   spritePackingTag: 
   resliceFromLayer: 0
+  pSDLayerImportSetting: []
+  psdLayers:
+  - name: main arm pad
+    spriteName: main arm pad
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 2c05d70f41d6545bca33588cad854900
+    layerID: 0
+    mosaicPosition: {x: 89, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: main arm
+    spriteName: main arm
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 130c4d57e751a49858a117de6e424a7f
+    layerID: -1324468655
+    mosaicPosition: {x: 4, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: main wrist alternate
+    spriteName: main wrist alternate
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 64ba546804a8342b79fae02dcf469c1b
+    layerID: -402689246
+    mosaicPosition: {x: 4, y: 136}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: main wrist
+    spriteName: main wrist
+    isGroup: 0
+    parentIndex: -1
+    spriteID: bcea8a0cb23f84596bac4c1060b37d7d
+    layerID: 1980646176
+    mosaicPosition: {x: 4, y: 184}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: Copy of main wrist
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 85a53847faeff244d884142bb88dedf4
+    layerID: 1950792690
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: main wrist
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: ea8a96f8984cf99429d1772eb3494fe0
+    layerID: -609066548
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: head
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 90ed31bc715d42447ab567f6e91b6425
+    layerID: 28810848
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: right thigh
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 0f6d7a07c8fe00144bfaef43fe3549d9
+    layerID: -781073592
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: right leg
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 53b4b5e2f5531d1468e4875eb7c2ab6a
+    layerID: -286915916
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: chest
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 3c3ddfb808c3a674eb068d48f81f5465
+    layerID: -548736147
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: left thigh
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 02b986661c79d3e41a70ced78a4ed5b5
+    layerID: 1632127077
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: left leg
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: eaa0234aaaf301a45a0424333081e6d1
+    layerID: -1180439419
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: back arm pad
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 5221b4743fad2da48a13f35b6705548d
+    layerID: -1192011670
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: back arm
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 543e2d5c85d4be1418dd38ecce643c2f
+    layerID: -666457115
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
+  - name: Paint Layer 1
+    spriteName: 
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 89bf92b7cda86b64eb4c60f930c720d7
+    layerID: 1139611364
+    mosaicPosition: {x: 0, y: 0}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   mosaicPSDLayers: []
   rigPSDLayers:
   - name: main arm pad
@@ -219,6 +491,9 @@ ScriptedImporter:
     spriteID: 2c05d70f41d6545bca33588cad854900
     layerID: 0
     mosaicPosition: {x: 89, y: 4}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   - name: main arm
     spriteName: main arm
     isGroup: 0
@@ -226,6 +501,9 @@ ScriptedImporter:
     spriteID: 130c4d57e751a49858a117de6e424a7f
     layerID: -1324468655
     mosaicPosition: {x: 4, y: 4}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   - name: main wrist alternate
     spriteName: main wrist alternate
     isGroup: 0
@@ -233,6 +511,9 @@ ScriptedImporter:
     spriteID: 64ba546804a8342b79fae02dcf469c1b
     layerID: -402689246
     mosaicPosition: {x: 4, y: 136}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   - name: main wrist
     spriteName: main wrist
     isGroup: 0
@@ -240,7 +521,13 @@ ScriptedImporter:
     spriteID: bcea8a0cb23f84596bac4c1060b37d7d
     layerID: 1980646176
     mosaicPosition: {x: 4, y: 184}
+    flatten: 0
+    isImported: 0
+    isVisible: 0
   sharedRigPSDLayers: []
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  spriteSizeExpandChanged: 0
   generateGOHierarchy: 0
   textureAssetName: arm Texture
   prefabAssetName: arm Prefab
