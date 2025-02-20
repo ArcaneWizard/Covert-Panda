@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 // Houses the information required to execute any type of complex AI action. Not all parameters need to be filled
@@ -31,7 +29,7 @@ public class AIActionInfo : MonoBehaviour
 
     public override string ToString()
     {
-        return $"dirX: {DirX}, speed: {Speed}, timeB4CHange: {TimeB4Change} + changedSpeed: {ChangedSpeed}" +
-            $"timeb4SecondChange: {TimeB4SecondChange} + secondChangedSpeed: {SecondChangedSpeed} + Bounds: {Bounds}";
+        return $"DirX: {DirX}, speed: {Speed}, timeB4CHange: {TimeB4Change} + ChangedSpeed: {ChangedSpeed}" +
+            $"timeb4SecondChange: {TimeB4SecondChange} + SecondChangedSpeed: {SecondChangedSpeed} + Bounds: {Bounds}";
     }
 }

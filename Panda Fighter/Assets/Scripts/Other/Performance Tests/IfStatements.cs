@@ -1,37 +1,36 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Numerics;
 using System.Text;
+
 using UnityEngine;
 
 public class IfStatements : MonoBehaviour
 {
-    const int numEntitiesSpawned = 30;
-    const int numAspectsCreated = 15;
-    const int multiplierOfAdditionalCasesPossible = 4;
+    const int NUM_ENTITIES_SPAWNED = 30;
+    const int NUM_ASPECTS_CREATED = 15;
+    const int MULTIPLIER_OF_ADDITIONAL_CASES_POSSIBLE = 4;
 
-    int Iterations; // total number of searches performed on the case search specified
+    int iterations; // total number of searches performed on the case search specified
     int numManualCases; // number of if statements to go through (worst case) for a single search when not using dictionaries
     int numDictionariesUsed; // number of dictionaries used to speed up performance
     int numDictionaryManualCases; // number of if statements to go through (worst case) for a single search after using dictionaries
-    int MemorySize;  // total memory used (total number of cases)
+    int memorySize;  // total memory used (total number of cases)
 
     int[] caseSearches = new int[] { 25, 25, 5, 6 };
     int numberOfVarsToOptimize = 2;
 
     void Awake()
     {
-        Iterations = numEntitiesSpawned * numAspectsCreated * multiplierOfAdditionalCasesPossible;
+        iterations = NUM_ENTITIES_SPAWNED * NUM_ASPECTS_CREATED * MULTIPLIER_OF_ADDITIONAL_CASES_POSSIBLE;
 
-        MemorySize = 1;
+        memorySize = 1;
         numDictionariesUsed = 1;
         numDictionaryManualCases = 0;
         numManualCases = 0;
 
         for (int i = 0; i < caseSearches.Length; i++) {
-            MemorySize *= caseSearches[i];
+            memorySize *= caseSearches[i];
             numManualCases += caseSearches[i];
         }
 
@@ -46,7 +45,7 @@ public class IfStatements : MonoBehaviour
             printCases.Append($" {caseSearches[i]}");
         UnityEngine.Debug.Log(printCases.ToString());
 
-        UnityEngine.Debug.Log($"MemorySize: {MemorySize}, DictionaryCount: {numDictionariesUsed}, IfStatement cases: {numManualCases} " +
+        UnityEngine.Debug.Log($"memorySize: {memorySize}, DictionaryCount: {numDictionariesUsed}, IfStatement cases: {numManualCases} " +
             $" \nIf statements ot manually check: {numDictionaryManualCases}");
 
         performTimeTest();
@@ -56,8 +55,7 @@ public class IfStatements : MonoBehaviour
     {
         Stopwatch swBeforeInitialization = Stopwatch.StartNew();
         var data = new List<Dictionary<int, int>>();
-        for (int i = 0; i < numDictionariesUsed; i++)
-        {
+        for (int i = 0; i < numDictionariesUsed; i++) {
             var dict = new Dictionary<int, int>();
             dict[i + 1] = i * 2 - 1;
             dict[i - 1] = i;
@@ -70,14 +68,12 @@ public class IfStatements : MonoBehaviour
         int[] arr = new int[] { 40, 123, 1232, 12332, 11, 3, 12, 4, 13 };
         BigInteger bigInteger = 0;
 
-        for (int i = 0; i < Iterations; i++)
-        {
-            for (int w = 0; w < data.Count/4; w++)
-                data[Random.Range(0, data.Count)][numberOfVarsToOptimize] = Random.Range(4, MemorySize);
+        for (int i = 0; i < iterations; i++) {
+            for (int w = 0; w < data.Count / 4; w++)
+                data[Random.Range(0, data.Count)][numberOfVarsToOptimize] = Random.Range(4, memorySize);
 
-            for (int h = 0; h < numDictionaryManualCases; h++)
-            {
-                int c = Random.Range(1, MemorySize);
+            for (int h = 0; h < numDictionaryManualCases; h++) {
+                int c = Random.Range(1, memorySize);
                 if (c == arr[0])
                     bigInteger += 2;
                 else if (c == arr[1])
@@ -90,12 +86,12 @@ public class IfStatements : MonoBehaviour
                     bigInteger += (h - 2);
             }
 
-            if (bigInteger == Random.Range(1, MemorySize) || bigInteger % Random.Range(1, MemorySize) == Random.Range(1, MemorySize))
+            if (bigInteger == Random.Range(1, memorySize) || bigInteger % Random.Range(1, memorySize) == Random.Range(1, memorySize))
                 UnityEngine.Debug.LogError("Mission failed");
 
-            for (int j = 0; j < numberOfVarsToOptimize; j++) 
-                if (data[Random.Range(0, data.Count)].ContainsKey(Random.Range(1, MemorySize)))
-                   UnityEngine.Debug.LogError("Mission failed");
+            for (int j = 0; j < numberOfVarsToOptimize; j++)
+                if (data[Random.Range(0, data.Count)].ContainsKey(Random.Range(1, memorySize)))
+                    UnityEngine.Debug.LogError("Mission failed");
         }
 
         swBeforeInitialization.Stop();
@@ -105,10 +101,8 @@ public class IfStatements : MonoBehaviour
 
         Stopwatch sw = Stopwatch.StartNew();
         BigInteger a = 0;
-        for (int i = 0; i < Iterations; i++)
-        {
-            for (int j = 0; j < numManualCases + data.Count / 4; j++)
-            {
+        for (int i = 0; i < iterations; i++) {
+            for (int j = 0; j < numManualCases + data.Count / 4; j++) {
                 int c = Random.Range(1, 12300);
                 if (c == arr[0])
                     a += 2;
@@ -122,7 +116,7 @@ public class IfStatements : MonoBehaviour
                     a += (j - 2);
             }
 
-            if (a == Random.Range(1, MemorySize) || a % Random.Range(1, MemorySize) == Random.Range(1, MemorySize))
+            if (a == Random.Range(1, memorySize) || a % Random.Range(1, memorySize) == Random.Range(1, memorySize))
                 UnityEngine.Debug.LogError("Mission failed");
         }
 

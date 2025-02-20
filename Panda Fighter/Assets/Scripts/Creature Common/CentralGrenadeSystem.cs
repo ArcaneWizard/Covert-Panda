@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
+
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 // DEPRECATED, NOT CURRENTLY IN GAME.
 public abstract class CentralGrenadeSystem : MonoBehaviour
@@ -10,7 +8,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     protected Grenade[] inventory;
     protected int currIdx;
     protected int[] grenadesLeft;
-    protected const int maxGrenadesCarried = 2;
+    protected const int MAX_GRENADES_CARRIED = 2;
 
     private HashSet<int> openInventoryIndices;
     private Dictionary<Grenade, int> grenadesToIndices;
@@ -25,7 +23,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     protected CentralLookAround lookAround;
     protected Health health;
 
-    protected virtual void Awake()
+    void Awake()
     {
         shooting = transform.GetComponent<CentralShooting>();
         lookAround = transform.GetComponent<CentralLookAround>();
@@ -35,17 +33,16 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
         grenadeImplementations = new Dictionary<Grenade, WeaponBehaviour>();
         grenadeConfigurations = new Dictionary<Grenade, WeaponConfiguration>();
 
-        inventory = new Grenade[maxGrenadesCarried];
-        grenadesLeft = new int[maxGrenadesCarried];
+        inventory = new Grenade[MAX_GRENADES_CARRIED];
+        grenadesLeft = new int[MAX_GRENADES_CARRIED];
         currIdx = 0;
 
         allGrenadePools = transform.parent.GetChild(1).transform.GetChild(0);
 
-        foreach (Transform grenadePool in allGrenadePools)
-        {
+        foreach (Transform grenadePool in allGrenadePools) {
             Grenade grenadeType = grenadePool.GetComponent<Grenade>();
 
-            //make each grenade's pool accesible by a dictionary
+            //make each grenade's pool accessible by a dictionary
             List<Transform> tempGrenadePool = new List<Transform>();
             foreach (Transform grenade in grenadePool)
                 tempGrenadePool.Add(grenade);
@@ -72,12 +69,11 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
         openInventoryIndices.Clear();
         currIdx = 0;
 
-        for (int i = 0; i < maxGrenadesCarried; i++)
-        {
+        for (int i = 0; i < MAX_GRENADES_CARRIED; i++) {
             inventory[i] = Grenade.None;
             grenadesLeft[i] = 0;
             openInventoryIndices.Add(i);
-        }  
+        }
 
         equipGrenade(Grenade.Frag);
     }
@@ -100,7 +96,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
 
     protected virtual void switchGrenades(int idx)
     {
-        if (idx < 0 || idx >= maxGrenadesCarried)
+        if (idx < 0 || idx >= MAX_GRENADES_CARRIED)
             return;
 
         // if this grenade is already selected, no need to do anything
@@ -114,8 +110,7 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     protected virtual void equipGrenade(Grenade grenade)
     {
         // if we already have that grenade, just replenish ammo
-        if (grenadesToIndices.TryGetValue(grenade, out int newIdx)) 
-        {
+        if (grenadesToIndices.TryGetValue(grenade, out int newIdx)) {
             grenadesLeft[newIdx] = grenadeConfigurations[grenade].StartingAmmo;
             return;
         }
@@ -131,17 +126,15 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
     // equips grenade in any available slot. Returns
     // whether or not the grenade could be equipped
     protected bool equipGrenadeIfSlotAvailable(Grenade grenade)
-    {   
+    {
         // if we already have that grenade, just replenish ammo
-        if (grenadesToIndices.TryGetValue(grenade, out int idx))
-        {
+        if (grenadesToIndices.TryGetValue(grenade, out int idx)) {
             grenadesLeft[idx] = grenadeConfigurations[grenade].StartingAmmo;
             return true;
         }
 
         // otherwise put that grenade in any open slot
-        foreach (int slot in openInventoryIndices) 
-        {
+        foreach (int slot in openInventoryIndices) {
             inventory[slot] = grenade;
             grenadesLeft[slot] = grenadeConfigurations[grenade].StartingAmmo;
 

@@ -1,4 +1,3 @@
-using UnityEngine;
 
 public class DeathSequence : CentralDeathSequence
 {
@@ -11,9 +10,9 @@ public class DeathSequence : CentralDeathSequence
     {
         base.uponDying();
         References.Instance.InventoryCanvas.SetActive(false);
-        References.Instance.RespawnText.StartRespawnCountdown(respawnTime);
+        References.Instance.RespawnText.StartRespawnCountdown(RESPAWN_TIME);
     }
-    
+
     protected override void rightBeforeRespawning()
     {
         References.Instance.InventoryCanvas.SetActive(true);

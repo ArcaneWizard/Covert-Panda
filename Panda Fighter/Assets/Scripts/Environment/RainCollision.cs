@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 // Spawn rain splatter particles when this object's particles (rain drops) hit a surface
@@ -22,8 +22,7 @@ public class RainCollision : MonoBehaviour
         rainSplatterSystems = new List<ParticleSystem>();
 
         // clone as many rain splatter particle systems as needed
-        for (int i = 0; i < maxRainDrops; i++)
-        {
+        for (int i = 0; i < maxRainDrops; i++) {
             ParticleSystem p = Instantiate(rainSplatter, Vector3.zero, Quaternion.identity, transform);
             rainSplatterSystems.Add(p);
         }
@@ -42,8 +41,7 @@ public class RainCollision : MonoBehaviour
 
         // for each collision, spawn a rain splatter particle system right above where the rain drop collided
         int i = 0;
-        while (i < numCollisionEvents)
-        {
+        while (i < numCollisionEvents) {
             rainSplatterSystems[index].transform.position = collisionEvents[i].intersection + new Vector3(offset.x, offset.y, 0);
             rainSplatterSystems[index].Play();
             index = (index + 1) % maxRainDrops;

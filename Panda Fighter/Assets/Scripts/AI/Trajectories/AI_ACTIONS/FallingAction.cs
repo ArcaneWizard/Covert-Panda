@@ -15,19 +15,19 @@ public class FallingAction : AIAction
         base.StartExecution(controller);
 
         DirX = Info.DirX;
-        Speed = CentralController.MaxSpeed;
+        Speed = CentralController.MAX_SPEED;
         hasFallen = false;
     }
 
     public override void Execute()
     {
-        if (!controller.isGrounded && !hasFallen)
+        if (!controller.IsGrounded && !hasFallen)
         {
             hasFallen = true;
             executeCoroutine(fall());
         }
 
-        if (controller.isGrounded && controller.isTouchingMap && hasFallen)
+        if (controller.IsGrounded && controller.IsTouchingMap && hasFallen)
             Finished = true;
     }
 

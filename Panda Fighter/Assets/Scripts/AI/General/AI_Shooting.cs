@@ -18,7 +18,7 @@ public class AI_Shooting : CentralShooting
     protected override Vector2 GetAim() 
     {
          float offsetAngle = Random.Range(angleAimIsOffBy.x, angleAimIsOffBy.y);
-         return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.directionToLook.normalized;
+         return Quaternion.AngleAxis(offsetAngle, Vector3.forward) * AI_lookAround.DirectionToLook.normalized;
     }
 
     protected override void Awake()
@@ -49,7 +49,7 @@ public class AI_Shooting : CentralShooting
         if (!AI_lookAround.EnemySpotted || timeBtwnShots > 0f || weaponSystem.CurrentAmmo <= 0)
             return;
 
-        if (behaviour.attackProgress != AttackProgress.Finished)
+        if (behaviour.AttackProgress != AttackProgress.Finished)
             return;
 
         if (configuration.FiringMode == FiringMode.SingleFire || configuration.FiringMode == FiringMode.SpamFire)

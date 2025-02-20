@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public static class Forces
 {
@@ -39,6 +36,7 @@ public static class Forces
     }
 
     // throws error upon failing
+    /*
     private static void passTestCases()
     {
         float a = CalculateTorqueAroundInfiniteAxis2D(new Vector2(3, 2).normalized, new Vector2(0, 0), Vector2.left, new Vector2(8, 2));
@@ -54,5 +52,5 @@ public static class Forces
         c = CalculateTorqueAroundInfiniteAxis2D(new Vector2(-5, 1).normalized, new Vector2(20, 0), Vector2.right, new Vector2(10, 3));
         if (!b.EqualTo(c))
             Debug.LogError("Torque with equal, opposite diagonal forces around pivot point don't match");
-    }
+    }*/
 }

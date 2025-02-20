@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using UnityEngine;
 
 public class AI_WanderAround : MonoBehaviour
@@ -36,7 +37,7 @@ public class AI_WanderAround : MonoBehaviour
     public void StopWandering()
     {
         shouldWander = false;
-        controller. EndAction();
+        controller.EndAction();
     }
 
     // Called every frame. Returns early if the AI isn't in the wander state or if there
@@ -49,8 +50,7 @@ public class AI_WanderAround : MonoBehaviour
         // discards the next queued up decision zone if the bot has gotten too far from it distance
         // wise or elevation wise 
         if (getSquaredDistanceBtwnVectors(decisionZones.Peek().position, transform.position) > 900
-        || Mathf.Abs(decisionZones.Peek().position.y - transform.position.y) > 9f)
-        {
+        || Mathf.Abs(decisionZones.Peek().position.y - transform.position.y) > 9f) {
             decisionZones.Dequeue();
             return;
         }
@@ -58,8 +58,7 @@ public class AI_WanderAround : MonoBehaviour
         // retrive the next, pending decision zone if the bot isn't performing an action.
         // pick a random action to perform within this new decision zone (with a preference to moving in the 
         // same direction - left or right - as opposed to switching directions). 
-        if (controller.CurrAction == null)
-        {
+        if (controller.CurrAction == null) {
             currentDecisionZone = decisionZones.Dequeue();
             List<AIAction> AI_ACTIONS = new List<AIAction>();
 
@@ -67,32 +66,27 @@ public class AI_WanderAround : MonoBehaviour
                 Debug.LogError("Empty Decision Zone");
 
             // AI is picky and chooses actions it prefers
-            if (Random.Range(0, 100) > switchDirectionOdds)
-            {
-                foreach (Transform decision in currentDecisionZone)
-                {
+            if (Random.Range(0, 100) > switchDirectionOdds) {
+                foreach (Transform decision in currentDecisionZone) {
                     trajectoryPath = decision.transform.GetComponent<TrajectoryPath>();
                     if (trajectoryPath == null)
                         continue;
 
-                    if (trajectoryPath.ConvertToAction().DirX == controller.DirX)
-                    {
-                        for (int i = 0; i < trajectoryPath.considerationWeight; i++)
+                    if (trajectoryPath.ConvertToAction().DirX == controller.DirX) {
+                        for (int i = 0; i < trajectoryPath.ConsiderationWeight; i++)
                             AI_ACTIONS.Add(trajectoryPath.ConvertToAction());
                     }
                 }
             }
 
             // If the AI was too picky and didn't choose an action, just consider all actions
-            if (AI_ACTIONS.Count == 0)
-            {
-                foreach (Transform decision in currentDecisionZone)
-                {
+            if (AI_ACTIONS.Count == 0) {
+                foreach (Transform decision in currentDecisionZone) {
                     trajectoryPath = decision.transform.GetComponent<TrajectoryPath>();
                     if (trajectoryPath == null)
                         continue;
 
-                    for (int i = 0; i < trajectoryPath.considerationWeight; i++)
+                    for (int i = 0; i < trajectoryPath.ConsiderationWeight; i++)
                         AI_ACTIONS.Add(trajectoryPath.ConvertToAction());
                 }
             }
@@ -117,8 +111,7 @@ public class AI_WanderAround : MonoBehaviour
         if (decisionZones.Count > 0 && col.transform == decisionZones.Peek())
             return;
 
-        if (col.gameObject.layer == 8)
-        {
+        if (col.gameObject.layer == 8) {
             decisionZones.Enqueue(col.transform);
             justEnteredWanderingState = false;
         }
@@ -132,8 +125,7 @@ public class AI_WanderAround : MonoBehaviour
         if (!shouldWander || !justEnteredWanderingState)
             return;
 
-        if (col.gameObject.layer == 8)
-        {
+        if (col.gameObject.layer == 8) {
             decisionZones.Enqueue(col.transform);
             justEnteredWanderingState = false;
         }

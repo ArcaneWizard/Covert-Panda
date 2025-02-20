@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
+
 using UnityEngine;
 
 ///<summary> Handles what occurs from the moment the player dies to the moment after they respawn. </summary>
 public class CentralDeathSequence : MonoBehaviour
 {
-    protected const float respawnTime = 4.22f;
+    protected const float RESPAWN_TIME = 4.22f;
     private Transform respawnLocations;
 
     public Action UponDying;
@@ -24,7 +23,7 @@ public class CentralDeathSequence : MonoBehaviour
     {
         controller = transform.GetComponent<CentralController>();
         abilityHandler = transform.GetComponent<CentralAbilityHandler>();
-        side = transform.parent.GetComponent<Role>().side;
+        side = transform.parent.GetComponent<Role>().Side;
         weaponSystem = transform.GetComponent<CentralWeaponSystem>();
         ragdolling = transform.GetComponent<Ragdolling>();
 
@@ -42,7 +41,7 @@ public class CentralDeathSequence : MonoBehaviour
         uponDying();
         UponDying?.Invoke();
 
-        yield return new WaitForSeconds(respawnTime);
+        yield return new WaitForSeconds(RESPAWN_TIME);
         RightBeforeRespawning?.Invoke();
         rightBeforeRespawning();
 

@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using UnityEngine;
-using System.Collections.Generic;
-
-public enum AttackProgress
+﻿
+public enum AttackProgress : byte
 {
     Started,
     Finished

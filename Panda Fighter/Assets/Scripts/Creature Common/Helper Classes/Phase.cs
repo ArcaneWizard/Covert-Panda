@@ -1,8 +1,9 @@
-public enum Phase
+
+public enum Phase : byte
 {
-    Idle = 0,
-    Running = 1,
-    Jumping = 2,
-    DoubleJumping = 3,
-    Falling = 4
+    Idle,
+    Running,
+    Jumping,
+    DoubleJumping,
+    Falling
 }

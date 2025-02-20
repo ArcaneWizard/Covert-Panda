@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class Wander : IState
 {
     private AI_WanderAround wanderAround;
+#pragma warning disable IDE0052 // Remove unread private members
     private AI_LookAround lookAround;
+#pragma warning restore IDE0052 // Remove unread private members
 
     public Wander(AI_WanderAround wanderAround, AI_LookAround lookAround)
     {

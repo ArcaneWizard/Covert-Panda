@@ -1,7 +1,5 @@
-
-using System;
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 public class AI_Controller : CentralController
@@ -11,7 +9,6 @@ public class AI_Controller : CentralController
 
     // the decision zone that provided the current action the AI should execute
     private Transform decisionZone;
-
     private bool hasActionStarted;
     private HashSet<Transform> decisionZonesNearby;
     private CentralDeathSequence deathSequence;
@@ -44,9 +41,8 @@ public class AI_Controller : CentralController
     {
         base.Update();
 
-        if (health.IsDead)
-        {
-            isTouchingMap = false;
+        if (health.IsDead) {
+            IsTouchingMap = false;
             CurrAction?.Exit();
             CurrAction = null;
             decisionZone = null;
@@ -56,16 +52,14 @@ public class AI_Controller : CentralController
         }
 
         // AI moves at max speed when not executing an action
-        if (CurrAction == null)
-        {
-            speed = MaxSpeed;
+        if (CurrAction == null) {
+            speed = MAX_SPEED;
             return;
         }
 
         executeCurrentAction();
 
-        if (CurrAction.Finished)
-        {
+        if (CurrAction.Finished) {
             CurrAction.Exit();
             CurrAction = null;
         }
@@ -78,18 +72,15 @@ public class AI_Controller : CentralController
         if (CurrAction == null || CurrAction.Finished)
             return;
 
-        if (CurrAction.ExecuteNormalJumpNow)
-        {
+        if (CurrAction.ExecuteNormalJumpNow) {
             StartCoroutine(normalJump());
             CurrAction.ExecuteNormalJumpNow = false;
         }
-        if (CurrAction.ExecuteDoubleJumpNow)
-        {
+        if (CurrAction.ExecuteDoubleJumpNow) {
             StartCoroutine(doubleJump());
             CurrAction.ExecuteDoubleJumpNow = false;
         }
-        if (CurrAction.ExecuteJumpBoostNow)
-        {
+        if (CurrAction.ExecuteJumpBoostNow) {
             StartCoroutine(jumpPadBoost());
             CurrAction.ExecuteJumpBoostNow = false;
         }
@@ -98,7 +89,7 @@ public class AI_Controller : CentralController
     private void resetOnSpawn()
     {
         DirX = UnityEngine.Random.Range(0, 2) * 2 - 1;
-        speed = MaxSpeed;
+        speed = MAX_SPEED;
         CurrAction = null;
         decisionZone = null;
         decisionZonesNearby = new HashSet<Transform>();
@@ -110,22 +101,19 @@ public class AI_Controller : CentralController
             return;
 
         // When the AI is grounded, start executing the current action
-        if (isGrounded && isTouchingMap && !hasActionStarted)
-        {
+        if (IsGrounded && IsTouchingMap && !hasActionStarted) {
             // Abort action if the creature is too far from the og decision zone
-            if (!decisionZonesNearby.Contains(decisionZone))
-            {
+            if (!decisionZonesNearby.Contains(decisionZone)) {
                 EndAction();
                 return;
             }
-            
+
             CurrAction.StartExecution(this);
             hasActionStarted = true;
         }
 
         // Execute the action
-        if (hasActionStarted)
-        {
+        if (hasActionStarted) {
             CurrAction.Execute();
             DirX = CurrAction.DirX;
             speed = CurrAction.Speed;
@@ -141,27 +129,24 @@ public class AI_Controller : CentralController
             rig.velocity = new Vector2(0, 0);
 
         // when alien is on the ground, alien velocity is parallel to the slanted ground 
-        if (!phaseTracker.IsMidAir && isGrounded && isTouchingMap)
-        {
+        if (!phaseTracker.IsMidAir && IsGrounded && IsTouchingMap) {
             if (CurrAction == null && wallBehindYou)
                 DirX = 1;
             else if (CurrAction == null && wallInFrontOfYou)
                 DirX = -1;
 
-            rig.velocity = groundSlope * speed * DirX;
+            rig.velocity = DirX * speed * groundSlope;
             rig.gravityScale = (DirX == 0) ? 0f : Game.GRAVITY;
         }
 
         // when alien is not on the ground (falling or midair after a jump)
-        else
-        {
+        else {
             // Stop moving horizontally if the AI is about to crash into a wall after a jump.
             if (rig.velocity.y > 0 && ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou)))
                 rig.velocity = new Vector2(0, rig.velocity.y);
 
             // Change directions if the AI is falling left or right and about to crash into a wall.
-            else if ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou))
-            {
+            else if ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou)) {
                 rig.velocity = new Vector2(0, rig.velocity.y);
                 DirX = (int)-Mathf.Sign(DirX) * UnityEngine.Random.Range(0, 2);
                 speed = 22;

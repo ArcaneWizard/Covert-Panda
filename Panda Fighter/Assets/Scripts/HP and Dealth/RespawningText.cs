@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,8 +16,7 @@ public class RespawningText : MonoBehaviour
         text.text = "";
         text.enabled = true;
 
-        while (respawnTime >= 1)
-        {
+        while (respawnTime >= 1) {
             text.text = "Respawning in " + ((int)Mathf.Floor(respawnTime)).ToString();
             yield return new WaitForSeconds(1);
             respawnTime--;

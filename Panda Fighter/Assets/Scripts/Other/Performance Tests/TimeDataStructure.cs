@@ -1,4 +1,4 @@
-using System.Diagnostics;
+/*using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using System;
@@ -224,4 +224,4 @@ public class TimeDataStructure : MonoBehaviour
         sw.Stop();
         UnityEngine.Debug.Log($"Foreach loop: {sw.ElapsedMilliseconds}");
     }
-}
+}*/

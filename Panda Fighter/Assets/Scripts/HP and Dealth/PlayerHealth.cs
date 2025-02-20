@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class PlayerHealth : Health
 {
@@ -8,6 +5,6 @@ public class PlayerHealth : Health
     {
         base.Awake();
 
-        maxHP = 600;
+        MaxHP = 600;
     }
 }

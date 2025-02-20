@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 [System.Serializable]
 public class NormalJumpAction : AIAction
@@ -20,10 +18,10 @@ public class NormalJumpAction : AIAction
 
     public override void Execute()
     {
-        if (!controller.isGrounded && !hasJumped)
+        if (!controller.IsGrounded && !hasJumped)
             hasJumped = true;
 
-        if (controller.isGrounded && hasJumped)
+        if (controller.IsGrounded && hasJumped)
             Finished = true;
     }
 
@@ -31,7 +29,7 @@ public class NormalJumpAction : AIAction
     {
         float randomXPos = UnityEngine.Random.Range(Info.Bounds.x, Info.Bounds.y);
         DirX = Math.Sign(randomXPos - creature.position.x);
-        Speed = CentralController.MaxSpeed;
+        Speed = CentralController.MAX_SPEED;
 
         while ((DirX == 1 && creature.position.x < randomXPos) || (DirX == -1 && creature.position.x > randomXPos))
             yield return null;
@@ -39,7 +37,7 @@ public class NormalJumpAction : AIAction
         DirX = Info.DirX;
         Speed = getRandomSpeed(Info.Speed);
 
-        if (controller.isGrounded && !phaseTracker.Is(Phase.DoubleJumping) && !phaseTracker.Is(Phase.Jumping))
+        if (controller.IsGrounded && !phaseTracker.Is(Phase.DoubleJumping) && !phaseTracker.Is(Phase.Jumping))
             ExecuteNormalJumpNow = true;
 
         executeCoroutine(changeVelocityAfterDelay(Info.TimeB4Change, Info.ChangedSpeed));

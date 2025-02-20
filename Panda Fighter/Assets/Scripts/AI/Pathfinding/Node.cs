@@ -1,22 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class Node
 {
-    public Transform transform { get; private set; }
-    public Node parent;
+    public Transform Transform { get; private set; }
+    public Node Parent;
 
-    public float gCost;
-    public float hCost;
+    public float GCost;
+    public float HCost;
 
-    public float pathID;
+    public float PathId;
 
     public Node(Transform transform)
     {
-        this.transform = transform;
+        Transform = transform;
     }
 
-    public float fCost => gCost + hCost;
+    public float FCost => GCost + HCost;
 }

@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class IEnumeratorTest : MonoBehaviour
@@ -10,30 +10,23 @@ public class IEnumeratorTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("started at " + Time.time);
         timer = 10f;
         storage = StartCoroutine(writeCheese());
-        Debug.Log("ended at " + Time.time);
     }
 
     void Update()
     {
         if (timer > 0f)
             timer -= Time.deltaTime;
-        else
-        {
-            Debug.Log("timer finished at " + Time.time);
+        else {
             StopCoroutine(storage);
             timer = 100f;
         }
-
-        Debug.Log("storage is " + storage + ", " + storage == null);
     }
 
     private IEnumerator writeCheese()
     {
-        while (true)
-        {
+        while (true) {
             yield return new WaitForSeconds(1f);
             Debug.Log("cheese");
         }

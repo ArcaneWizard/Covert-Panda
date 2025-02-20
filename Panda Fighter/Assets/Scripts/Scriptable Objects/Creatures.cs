@@ -1,9 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Creature", menuName = "Creature")]
-public class Creatures: ScriptableObject {
+public class Creatures : ScriptableObject
+{
     public Sprite chest;
     public Sprite mainArmPad;
     public Sprite mainArm;

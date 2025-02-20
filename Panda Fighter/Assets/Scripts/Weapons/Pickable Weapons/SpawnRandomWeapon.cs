@@ -8,6 +8,12 @@ public class SpawnRandomWeapon : MonoBehaviour
     private SpawnWeaponManager spawnWeaponManager;
     private bool canSpawnWeapon;
 
+    public void StartCountdownForNewWeapon()
+    {
+        timer = UnityEngine.Random.Range(timeTillNextSpawn.x, timeTillNextSpawn.y);
+        canSpawnWeapon = true;
+    }
+
     void Start()
     {
         transform.localPosition = new Vector3(62, 73, 69);
@@ -24,17 +30,11 @@ public class SpawnRandomWeapon : MonoBehaviour
             spawnRandomWeapon();
     }
 
-    private void spawnRandomWeapon() 
+    private void spawnRandomWeapon()
     {
-         int randomPick = UnityEngine.Random.Range(0, spawnWeaponManager.AvailableWeapons.Count);
-         transform.GetChild(spawnWeaponManager.AvailableWeapons[randomPick]).gameObject.SetActive(true);
+        int randomPick = Random.Range(0, spawnWeaponManager.AvailableWeapons.Count);
+        transform.GetChild(spawnWeaponManager.AvailableWeapons[randomPick]).gameObject.SetActive(true);
 
-         canSpawnWeapon = false;
-    }
-
-    public void startCountdownForNewWeapon() 
-    {
-        timer = UnityEngine.Random.Range(timeTillNextSpawn.x, timeTillNextSpawn.y);
-        canSpawnWeapon = true;
+        canSpawnWeapon = false;
     }
 }

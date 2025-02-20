@@ -9,8 +9,7 @@ public class Tag : MonoBehaviour
 
     void OnValidate()
     {
-        if (AddName)
-        {
+        if (AddName) {
             AddName = false;
             Tags.Add(gameObject.name);
         }

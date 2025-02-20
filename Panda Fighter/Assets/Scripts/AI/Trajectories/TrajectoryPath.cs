@@ -1,21 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using UnityEngine;
 using UnityEditor;
-using System;
+
+using UnityEngine;
 
 public class TrajectoryPath : MonoBehaviour
 {
     [field: SerializeField] public AIActionType ActionType { get; private set; }
 
     [Header("Describe Jump")]
-    public int dirX = 1;
-    public Vector2 speedRange = new Vector2(25f, 25f);
-    public Vector2 timeB4Change = new Vector2(1f, 1f);
-    public Vector2 changedSpeed = new Vector2(25f, 25f);
-    public Vector2 timeB4SecondChange = new Vector2(1f, 1f);
-    public Vector2 secondChangedSpeed = new Vector2(25f, 25f);
+    public int DirX = 1;
+    public Vector2 SpeedRange = new Vector2(25f, 25f);
+    public Vector2 TimeB4Change = new Vector2(1f, 1f);
+    public Vector2 ChangedSpeed = new Vector2(25f, 25f);
+    public Vector2 TimeB4SecondChange = new Vector2(1f, 1f);
+    public Vector2 SecondChangedSpeed = new Vector2(25f, 25f);
 
     private float mass = 1f;
     private float defaultGravity;
@@ -23,14 +20,13 @@ public class TrajectoryPath : MonoBehaviour
 
     [Header("Other Settings")]
     public Vector2 Bounds = new Vector2(-1f, -1f);
-    public int considerationWeight = 1;
-    public float lingerTime = 3f;
+    public int ConsiderationWeight = 1;
+    public float LingerTime = 3f;
 
     [Header("Connected Zone")]
-    public int chainedDecisionZone = -1;
+    public int ChainedDecisionZone = -1;
 
-    private const float epsilon = 0.001f;
-
+    private const float EPSILON = 0.001f;
 
     private Color[] trajectoryColors;
     private short colorIndex;
@@ -42,88 +38,72 @@ public class TrajectoryPath : MonoBehaviour
         defaultGravity = Game.GRAVITY * -13f;
         mass = 1f;
 
-        if (ActionType == AIActionType.ChangeDirections)
-        {
+        if (ActionType == AIActionType.ChangeDirections) {
             transform.name = "Change Directions";
             drawStraightLine();
             showGizmoBounds();
-        }
-
-        else if (ActionType == AIActionType.Falling)
-        {
+        } else if (ActionType == AIActionType.Falling) {
             transform.name = "Falling";
-            drawFallDownArc(timeB4Change.x, speedRange.x);
-            drawFallDownArc(timeB4Change.y, speedRange.x);
-            drawFallDownArc(timeB4Change.x, speedRange.y);
-            drawFallDownArc(timeB4Change.y, speedRange.y);
-        }
-
-        else if (ActionType == AIActionType.LaunchPad)
-        {
+            drawFallDownArc(TimeB4Change.x, SpeedRange.x);
+            drawFallDownArc(TimeB4Change.y, SpeedRange.x);
+            drawFallDownArc(TimeB4Change.x, SpeedRange.y);
+            drawFallDownArc(TimeB4Change.y, SpeedRange.y);
+        } else if (ActionType == AIActionType.LaunchPad) {
             transform.name = "Launch Pad";
             drawJumpPadArc();
             showGizmoBounds();
-        }
-
-        else if (ActionType == AIActionType.DoubleJump)
-        {
+        } else if (ActionType == AIActionType.DoubleJump) {
             transform.name = "Double Jump";
             colorIndex = 3;
-            drawDoubleJump(speedRange.x, timeB4Change.x, changedSpeed.x);
+            drawDoubleJump(SpeedRange.x, TimeB4Change.x, ChangedSpeed.x);
             colorIndex = 3;
-            drawDoubleJump(speedRange.x, timeB4Change.y, changedSpeed.x);
+            drawDoubleJump(SpeedRange.x, TimeB4Change.y, ChangedSpeed.x);
             colorIndex = 4;
-            drawDoubleJump(speedRange.y, timeB4Change.x, changedSpeed.x);
+            drawDoubleJump(SpeedRange.y, TimeB4Change.x, ChangedSpeed.x);
             colorIndex = 4;
-            drawDoubleJump(speedRange.y, timeB4Change.y, changedSpeed.x);
+            drawDoubleJump(SpeedRange.y, TimeB4Change.y, ChangedSpeed.x);
             colorIndex = 3;
-            drawDoubleJump(speedRange.x, timeB4Change.x, changedSpeed.y);
+            drawDoubleJump(SpeedRange.x, TimeB4Change.x, ChangedSpeed.y);
             colorIndex = 3;
-            drawDoubleJump(speedRange.x, timeB4Change.y, changedSpeed.y);
+            drawDoubleJump(SpeedRange.x, TimeB4Change.y, ChangedSpeed.y);
             colorIndex = 4;
-            drawDoubleJump(speedRange.y, timeB4Change.x, changedSpeed.y);
+            drawDoubleJump(SpeedRange.y, TimeB4Change.x, ChangedSpeed.y);
             colorIndex = 4;
-            drawDoubleJump(speedRange.y, timeB4Change.y, changedSpeed.y);
+            drawDoubleJump(SpeedRange.y, TimeB4Change.y, ChangedSpeed.y);
             showGizmoBounds();
-        }
-
-        else if (ActionType == AIActionType.NormalJump)
-        {
+        } else if (ActionType == AIActionType.NormalJump) {
             transform.name = "Normal Jump";
             colorIndex = 0;
-            drawNormalJump(speedRange.x, changedSpeed.x);
+            drawNormalJump(SpeedRange.x, ChangedSpeed.x);
             colorIndex = 1;
-            drawNormalJump(speedRange.y, changedSpeed.x);
+            drawNormalJump(SpeedRange.y, ChangedSpeed.x);
             colorIndex = 0;
-            drawNormalJump(speedRange.x, changedSpeed.y);
+            drawNormalJump(SpeedRange.x, ChangedSpeed.y);
             colorIndex = 1;
-            drawNormalJump(speedRange.y, changedSpeed.y);
+            drawNormalJump(SpeedRange.y, ChangedSpeed.y);
             showGizmoBounds();
-        }
-
-        else
+        } else
             Debug.LogError("The specified trajectory doesn't have any visuals");
 
         // put a green dot on neighboring decision zones
-        if (chainedDecisionZone != -1)
-        {
+        if (ChainedDecisionZone != -1) {
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(getChainedZone().position, 0.5f);
         }
     }
-    #endif
-    
+#endif
+
     // visually display AI trajectory even it's child object is selected 
-    #if UNITY_EDITOR
-        private void OnDrawGizmos()
-        {
-            if (Selection.transforms.Length != 0 && Selection.transforms[0].parent == this.transform)
-                OnDrawGizmosSelected();
-        }
-    #endif
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (Selection.transforms.Length != 0 && Selection.transforms[0].parent == this.transform)
+            OnDrawGizmosSelected();
+    }
+#endif
 
     // gets the Transform of the specified chained zone (each zone is a node with its own trajectories)
-    public Transform getChainedZone() => transform.parent.parent.GetChild(chainedDecisionZone);
+    public Transform getChainedZone() => transform.parent.parent.GetChild(ChainedDecisionZone);
 
     // converts the trajectory into a performable AI Action
     public AIAction ConvertToAction()
@@ -139,18 +119,18 @@ public class TrajectoryPath : MonoBehaviour
         else if (ActionType == AIActionType.DoubleJump)
             action = new DoubleJumpAction(ActionType, actionInfo);
 
-       else if (ActionType == AIActionType.Falling)
+        else if (ActionType == AIActionType.Falling)
             action = new FallingAction(ActionType, actionInfo);
 
-       else if (ActionType == AIActionType.LaunchPad)
+        else if (ActionType == AIActionType.LaunchPad)
             action = new LaunchPadAction(ActionType, actionInfo);
 
         return action;
     }
 
     // Stores all of this trajectory's info in a form that the AI could execute
-    private AIActionInfo actionInfo => new AIActionInfo(dirX,
-            speedRange, timeB4Change, changedSpeed, timeB4SecondChange, secondChangedSpeed, Bounds, transform.position);
+    private AIActionInfo actionInfo => new AIActionInfo(DirX,
+            SpeedRange, TimeB4Change, ChangedSpeed, TimeB4SecondChange, SecondChangedSpeed, Bounds, transform.position);
 
     // draw spheres on jump bounds in the scene editor
     private void showGizmoBounds()
@@ -166,16 +146,16 @@ public class TrajectoryPath : MonoBehaviour
     //----------------------------------------------------------------------------------------------------------------
     //---------------------------------- DRAW DIFF TYPES OF TRAJECTORIES ---------------------------------------------
     //----------------------------------------------------------------------------------------------------------------
-    
+
     // draws a straight line trajectory on the scene view
     private void drawStraightLine()
     {
         gravity = 0;
 
-        float yVelocity = transform.right.y / transform.right.x * (float)dirX * speedRange.x;
+        float yVelocity = transform.right.y / transform.right.x * (float)DirX * SpeedRange.x;
         VerticalInfo v = new VerticalInfo(transform.position.y, 0, yVelocity, 0);
 
-        drawTrajectory(5f, new Info(transform.position, 0.8f, speedRange.x, v));
+        drawTrajectory(5f, new Info(transform.position, 0.8f, SpeedRange.x, v));
     }
 
     // draws normal jump trajectories on the scene view
@@ -184,10 +164,10 @@ public class TrajectoryPath : MonoBehaviour
         gravity = defaultGravity;
 
         VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JUMP_FORCE);
-        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange, v));
+        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, TimeB4Change.x, speedRange, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, changedSpeed, v));
+        drawTrajectory(20f, new Info(midwayInfo.Pos, LingerTime, changedSpeed, v));
     }
 
     // draws the double jump trajectory on the scene view. first draws the normal jump up till right b4 
@@ -195,32 +175,32 @@ public class TrajectoryPath : MonoBehaviour
     private void drawDoubleJump(float speedRange, float timeB4Change, float changedSpeed)
     {
         gravity = defaultGravity;
-         gravity = defaultGravity;
+        gravity = defaultGravity;
 
         VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JUMP_FORCE);
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change, speedRange, v));
 
         v = new VerticalInfo(midwayInfo.Pos.y, 0, 0, CentralController.DOUBLE_JUMP_FORCE);
-        midwayInfo = drawTrajectory(20f, new Info(midwayInfo.Pos, timeB4SecondChange.x, changedSpeed, v));
+        midwayInfo = drawTrajectory(20f, new Info(midwayInfo.Pos, TimeB4SecondChange.x, changedSpeed, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, secondChangedSpeed.x, v));
+        drawTrajectory(20f, new Info(midwayInfo.Pos, LingerTime, SecondChangedSpeed.x, v));
     }
 
     // draws the falling down trajectory on the scene view. first draws the fall down path till right b4
     // the AI changes its x velocity, then it updates the fall path. Likewise when speed is changed a 2nd time
-    private void drawFallDownArc(float timeB4Change,float speedRange)
+    private void drawFallDownArc(float timeB4Change, float speedRange)
     {
         this.gravity = defaultGravity;
 
         // initial y velocity depends on slope of platform which is indicated by this object's right vector
-        float yVelocity = CentralController.MaxSpeed * transform.right.y * dirX;
+        float yVelocity = CentralController.MAX_SPEED * transform.right.y * DirX;
 
         VerticalInfo v = new VerticalInfo(transform.position.y, 0, yVelocity, 0);
         Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change, speedRange, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, changedSpeed.x, v));
+        drawTrajectory(20f, new Info(midwayInfo.Pos, LingerTime, ChangedSpeed.x, v));
     }
 
     // draws the jump pad boost trajectory on the scene view. first draws the upwards path till right b4 the
@@ -230,13 +210,13 @@ public class TrajectoryPath : MonoBehaviour
         gravity = defaultGravity;
 
         VerticalInfo v = new VerticalInfo(transform.position.y, 0, 0, CentralController.JUMP_PAD_FORCE);
-        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, timeB4Change.x, speedRange.x, v));
+        Info midwayInfo = drawTrajectory(20f, new Info(transform.position, TimeB4Change.x, SpeedRange.x, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, timeB4SecondChange.x, changedSpeed.x, v));
+        drawTrajectory(20f, new Info(midwayInfo.Pos, TimeB4SecondChange.x, ChangedSpeed.x, v));
 
         v.TimeElapsed = midwayInfo.Y.TimeElapsed;
-        drawTrajectory(20f, new Info(midwayInfo.Pos, lingerTime, secondChangedSpeed.x, v));
+        drawTrajectory(20f, new Info(midwayInfo.Pos, LingerTime, SecondChangedSpeed.x, v));
     }
 
     //----------------------------------------------------------------------------------------------------------------
@@ -251,13 +231,13 @@ public class TrajectoryPath : MonoBehaviour
         float speed = info.XVelocity;
         float time = timeElapsed;
 
-        float x = xPos + dirX * (speed * time);
+        float x = xPos + DirX * (speed * time);
 
         float yPos = info.Y.InitPos;
         speed = info.Y.Velocity + info.Y.Force * 0.02f / mass;
         time = info.Y.TimeElapsed + timeElapsed;
 
-        float y =  yPos + speed * time + 0.5f * gravity * time * time;
+        float y = yPos + speed * time + 0.5f * gravity * time * time;
 
         return new Vector2(x, y);
     }
@@ -273,8 +253,7 @@ public class TrajectoryPath : MonoBehaviour
         Vector2 prevPointPosition = info.Pos;
 
         float time = 0;
-        for (;time <= info.Duration + epsilon; time += increment)
-        {
+        for (; time <= info.Duration + EPSILON; time += increment) {
             Gizmos.color = randomTrajectoryColor();
 
             Vector2 currPointPosition = calculatePosition(info, time);
@@ -289,8 +268,7 @@ public class TrajectoryPath : MonoBehaviour
 
     private Color randomTrajectoryColor()
     {
-        if (trajectoryColors == null || trajectoryColors.Length == 0)
-        {
+        if (trajectoryColors == null || trajectoryColors.Length == 0) {
             trajectoryColors = new Color[6];
             trajectoryColors[0] = Color.white;
             trajectoryColors[1] = Color.green;

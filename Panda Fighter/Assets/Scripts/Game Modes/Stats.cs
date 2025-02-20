@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Text;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,8 +9,7 @@ public class Stats : MonoBehaviour
     public Transform Player;
     public Transform AIs;
 
-    public Text scores;
-    private StringBuilder statReader = new StringBuilder();
+    public Text Scores;
 
     public static Stats Instance { get; private set; }
 
@@ -49,13 +48,14 @@ public class Stats : MonoBehaviour
             statsManager[AIs.GetChild(index)] = new KDA(0, 0, 0);
     }
 
+    /*
     void Update()
     {
-        /*
         statReader.Clear();
         foreach (KeyValuePair<Transform, KDA> stat in statsManager)
             statReader.Append(scores.text + stat.Key.name + ": " + stat.Value.ToString() + " \n");
 
-        scores.text = statReader.ToString();*/
+        scores.text = statReader.ToString();
     }
+    */
 }

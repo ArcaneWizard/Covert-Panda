@@ -1,3 +1,4 @@
+
 public enum BulletMovementAfterFiring : byte
 {
     StraightLine,

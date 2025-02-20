@@ -48,13 +48,13 @@ public class Idle : IState
     {
         float delay = UnityEngine.Random.Range(frequency.x, frequency.y);
         yield return new WaitForSeconds(delay);
-        bool canGoIdle = controller.isGrounded && controller.isTouchingMap;
+        bool canGoIdle = controller.IsGrounded && controller.IsTouchingMap;
 
         int x = 1;
         if (!canGoIdle && x <= 1) 
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(1f, 1.2f));
-            canGoIdle = controller.isGrounded && controller.isTouchingMap;
+            canGoIdle = controller.IsGrounded && controller.IsTouchingMap;
             ++x;
         }
             

@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 [System.Serializable]
 public class ChangeDirectionsAction : AIAction
@@ -19,13 +17,13 @@ public class ChangeDirectionsAction : AIAction
     {
         float randomXPos = UnityEngine.Random.Range(Info.Bounds.x, Info.Bounds.y);
         DirX = Math.Sign(randomXPos - creature.position.x);
-        Speed = CentralController.MaxSpeed;
+        Speed = CentralController.MAX_SPEED;
 
         while ((DirX == 1 && creature.position.x < randomXPos) || (DirX == -1 && creature.position.x > randomXPos))
             yield return null;
 
         DirX = Info.DirX;
-        Speed = CentralController.MaxSpeed;
+        Speed = CentralController.MAX_SPEED;
         Finished = true;
     }
 }

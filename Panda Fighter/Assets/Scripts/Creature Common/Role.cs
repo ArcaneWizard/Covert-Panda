@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// Contains which side this entity is on, and which creature it is
@@ -8,15 +6,14 @@ using UnityEngine;
 [ExecuteAlways]
 public class Role : MonoBehaviour
 {
-    public Side side;
+    public Side Side;
 
-    [field: SerializeField] public Creatures sprites { get; private set; }
-    [field: SerializeField] public CreatureColliders colliders { get; private set; }
+    [field: SerializeField] public Creatures Sprites { get; private set; }
+    [field: SerializeField] public CreatureColliders Colliders { get; private set; }
 }
 
-public enum Side 
+public enum Side
 {
     Friendly,
     Enemy
 }
- 

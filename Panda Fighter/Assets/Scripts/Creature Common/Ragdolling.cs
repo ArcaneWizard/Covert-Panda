@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 /// <summary> Provides functionality to enable and disable creature ragdolling </summary>
@@ -24,8 +24,7 @@ public class Ragdolling : MonoBehaviour
         animator.enabled = true;
         ragdollArms.SetActive(false);
 
-        for (int i = 0; i < ragdollRigidbodies.Length; i++)
-        {
+        for (int i = 0; i < ragdollRigidbodies.Length; i++) {
             ragdollRigidbodies[i].gameObject.layer = Layer.LimbsAndArmor;
             ragdollRigidbodies[i].isKinematic = true;
             ragdollRigidbodies[i].velocity = Vector2.zero;
@@ -64,8 +63,7 @@ public class Ragdolling : MonoBehaviour
         weaponSystem.CurrentWeaponConfiguration.PhysicalWeapon.SetActive(false);
         weaponSystem.CurrentWeaponConfiguration.Arms.SetActive(false);
 
-        for (int i = 0; i < ragdollRigidbodies.Length; i++)
-        {
+        for (int i = 0; i < ragdollRigidbodies.Length; i++) {
             ragdollRigidbodies[i].gameObject.layer = Layer.LimbInRagdoll;
             ragdollRigidbodies[i].isKinematic = false;
             ragdollRigidbodies[i].velocity = velocityBeforeDeath;

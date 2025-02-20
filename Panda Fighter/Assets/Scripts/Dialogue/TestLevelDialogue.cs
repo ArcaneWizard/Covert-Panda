@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class TestLevelDialogue : MonoBehaviour
 {
-    [SerializeField] private Text Name;
-    [SerializeField] private Text Dialogue;
+    [SerializeField] private Text name;
+    [SerializeField] private Text dialogue;
 
     private DialogueManager dM;
     private float timer;
@@ -24,31 +24,23 @@ public class TestLevelDialogue : MonoBehaviour
         dM.AddLine(Voice.Shouting, "I JUST NEED A FEW SECONDS.");
         dM.AddLine("ALMOST THERE");
         dM.AddLine("ON MY MARK... ... FIRE");
-
-
     }
 
     // execute dialogue with correct timing and order
     void Update()
     {
-        if (timer < 0f)
-        {
+        if (timer < 0f) {
             DialogueLine line = dM.GetLine();
 
-            if (line == null)
-            {
-                Name.text = "";
-                Dialogue.text = "";
-            }
-            else
-            {
+            if (line == null) {
+                name.text = "";
+                dialogue.text = "";
+            } else {
                 timer = line.LingerDuration;
-                Name.text = line.Name.ToString().ToUpper() + ":";
-                Dialogue.text = line.Dialogue.ToString();
+                name.text = line.Name.ToString().ToUpper() + ":";
+                dialogue.text = line.Dialogue.ToString();
             }
-        }
-        else
-        {
+        } else {
             timer -= Time.deltaTime;
         }
     }

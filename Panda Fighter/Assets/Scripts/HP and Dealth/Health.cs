@@ -1,17 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.EventSystems.EventTrigger;
+
 using static Validation;
 
 /* Abstract class that manages the creature's health. Also tracks whether or not the creature is dead. */
 
 public abstract class Health : MonoBehaviour
 {
-    public int maxHP { get; protected set; }
-    public int currentHP { get; protected set; }
+    public int MaxHP { get; protected set; }
+    public int CurrentHP { get; protected set; }
     public bool IsDead { get; private set; }
 
     // The HP bar is padded slightly so low hp doesn't make the bar look empty
@@ -32,9 +29,9 @@ public abstract class Health : MonoBehaviour
         if (IsDead)
             return;
 
-        currentHP -= DamageCalculator.CalculateDmg(baseDmg, transform, attacker);
+        CurrentHP -= DamageCalculator.CalculateDmg(baseDmg, transform, attacker);
 
-        if (currentHP <= 0 && attacker && !transform.Equals(attacker))
+        if (CurrentHP <= 0 && attacker && !transform.Equals(attacker))
             Stats.Instance.ConfirmKillFor(attacker);
     }
 
@@ -54,13 +51,13 @@ public abstract class Health : MonoBehaviour
          );
 
         hpBarOffset = hpBar.transform.parent.GetComponent<RectTransform>().position - transform.position;
-        side = role.side;
+        side = role.Side;
     }
 
     protected virtual void Start()
     {
-        currentHP = maxHP;
-        paddedHp = currentHP * (1f + PERCENT_OF_PADDED_HP / 100f);
+        CurrentHP = MaxHP;
+        paddedHp = CurrentHP * (1f + PERCENT_OF_PADDED_HP / 100f);
         IsDead = false;
         hpBar.color = (side == Side.Friendly) ? new Color32(0, 166, 255, 255) : new Color32(204, 57, 62, 255);
 
@@ -74,15 +71,14 @@ public abstract class Health : MonoBehaviour
         if (IsDead)
             return;
 
-        if (currentHP <= 0 || Input.GetKeyDown(KeyCode.K))
-        {
+        if (CurrentHP <= 0 || Input.GetKeyDown(KeyCode.K)) {
             IsDead = true;
-            currentHP = -((int)paddedHp+1);
+            CurrentHP = -((int)paddedHp + 1);
             hpBar.transform.parent.gameObject.SetActive(false);
             StartCoroutine(deathSequence.Initiate());
         }
 
-        hpBar.fillAmount = (float)(currentHP + paddedHp) / (float)maxHP;
+        hpBar.fillAmount = (float)(CurrentHP + paddedHp) / MaxHP;
         hpBarRect.position = hpBarOffset + new Vector2(transform.position.x, transform.position.y);
     }
 
@@ -107,7 +103,7 @@ public abstract class Health : MonoBehaviour
 
     private void resetHealthWhenRespawning()
     {
-        currentHP = maxHP;
+        CurrentHP = MaxHP;
         IsDead = false;
     }
 

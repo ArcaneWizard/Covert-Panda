@@ -1,8 +1,4 @@
-using MEC;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.VersionControl.Asset;
 
 ///<summary> Math Library with useful functions on floats, angles, vectors, line intersections, modulo, and more. </summary>
 public static class MathX
@@ -20,7 +16,7 @@ public static class MathX
 
     ///<summary> Returns whether vectors are equal (within a threshold) </summary>
     public static bool EqualTo(this Vector2 a, Vector2 b, float threshold = EPSILON) =>
-        (a.x).EqualTo(b.x, threshold) && (a.y).EqualTo(b.y, threshold); 
+        (a.x).EqualTo(b.x, threshold) && (a.y).EqualTo(b.y, threshold);
 
     ///<summary> Always returns the non-negative modulo </summary>
     public static int Modulo(this int a, int b) => ((a % b) + b) % b;
@@ -46,16 +42,16 @@ public static class MathX
 
     ///<summary> Rotates the vector by specified angle in radians. Can optionally set the pivot point 
     /// (relative to the tail of the vector) </summary> 
-    public static Vector2 RotateVector(this Vector2 vector, float radians, Vector2 pivot = default(Vector2)) 
+    public static Vector2 RotateVector(this Vector2 vector, float radians, Vector2 pivot = default(Vector2))
     {
         float sin = Mathf.Sin(radians);
         float cos = Mathf.Cos(radians);
 
-        vector -= pivot; 
-        vector = new Vector2(cos * vector.x - sin * vector.y, sin * vector.x + cos * vector.y); 
-        vector += pivot; 
-        
-        return vector; 
+        vector -= pivot;
+        vector = new Vector2(cos * vector.x - sin * vector.y, sin * vector.x + cos * vector.y);
+        vector += pivot;
+
+        return vector;
     }
 
     ///<summary> Get perpendicular vector by rotating the specified vector 90 degrees clockwise </summary> 

@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class References : MonoBehaviour
@@ -15,13 +12,7 @@ public class References : MonoBehaviour
     public Transform EnemyRespawnPoints;
 
     private static References instance;
-    public static References Instance
-    {
-        get
-        {
-            return instance;
-        }
-    }
+    public static References Instance => instance;
 
-    private void Awake() =>  instance = this;
+    private void Awake() => instance = this;
 }

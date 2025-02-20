@@ -1,31 +1,30 @@
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 /// <summary> 
 /// Orders sprites such to prevent overlaping sprite glitches (between two creatures,
 /// creature limbs overlapping, creatures and weapons overlapping, etc.)
 /// </summary>
-public static class Orderer 
+public static class Orderer
 {
     private static Dictionary<LimbTypes, int> relativeLimbOrder;
     private static Dictionary<Weapon, OrderInfo> relativeWeaponOrder;
 
     private struct OrderInfo
     {
-        public string sortingLayer;
-        public int order;
+        public string SortingLayer;
+        public int Order;
 
         public OrderInfo(string sortingLayer, int order)
         {
-            this.sortingLayer = sortingLayer;
-            this.order = order;
+            SortingLayer = sortingLayer;
+            Order = order;
         }
     }
 
     // update the provided sprite's order to prevent overlap glitches
-    public static void UpdateSpriteOrder(SpriteRenderer renderer, Transform creature) 
+    public static void UpdateSpriteOrder(SpriteRenderer renderer, Transform creature)
     {
         if (renderer == null)
             return;
@@ -35,7 +34,7 @@ public static class Orderer
 
     // handle limb ordering to prevent overlap glitches between limbs or different creatures
     public static void UpdateLimbOrder(LimbTypes limb, SpriteRenderer renderer, Transform creature)
-    { 
+    {
         if (renderer == null)
             return;
 
@@ -53,8 +52,8 @@ public static class Orderer
             return;
 
         OrderInfo info = getWeaponOrderInfo(weapon);
-        renderer.sortingLayerName = info.sortingLayer;
-        renderer.sortingOrder = getUniqueOrderForThisCreature(info.order, creature);
+        renderer.sortingLayerName = info.SortingLayer;
+        renderer.sortingOrder = getUniqueOrderForThisCreature(info.Order, creature);
     }
 
     // applies offset to the provided order to prevent overlap glitches across different creatures
@@ -62,7 +61,7 @@ public static class Orderer
     {
         order = order % 100 + 100;
 
-        if (creature.tag.Equals("Player"))
+        if (creature.CompareTag("Player"))
             return order + 10000;
         else
             return order + 100 * (creature.GetSiblingIndex() + 1);

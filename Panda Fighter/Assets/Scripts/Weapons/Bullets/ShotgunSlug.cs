@@ -39,7 +39,7 @@ public class ShotgunSlug : MovingBullet
             return 1f;
         else if (distance > 200f && distance <= 400f)
             return (float)(distance * -0.005f + 2f);
-        else
+        elsee
             return 0f;
     }
 

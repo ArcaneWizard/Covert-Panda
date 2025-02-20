@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class WeaponHolderFlare : MonoBehaviour
@@ -7,7 +7,7 @@ public class WeaponHolderFlare : MonoBehaviour
     private float lowestAlpha = 155;
     private float highestAlpha = 200;
 
-    public Vector2 flickerSpeedRange = new Vector2(150, 200);
+    public Vector2 FlickerSpeedRange = new Vector2(150, 200);
     private float flickerSpeed;
 
     private SpriteRenderer sR;
@@ -24,16 +24,14 @@ public class WeaponHolderFlare : MonoBehaviour
 
     private IEnumerator varyFlare()
     {
-        flickerSpeed = Random.Range(flickerSpeedRange.x, flickerSpeedRange.y);
-        while (sR.color.a < highestAlpha / 255f)
-        {
+        flickerSpeed = Random.Range(FlickerSpeedRange.x, FlickerSpeedRange.y);
+        while (sR.color.a < highestAlpha / 255f) {
             sR.color = new Color(sR.color.r, sR.color.g, sR.color.b, (sR.color.a + 2f / 255f));
             yield return new WaitForSeconds(1 / flickerSpeed);
         }
 
-        flickerSpeed = Random.Range(flickerSpeedRange.x, flickerSpeedRange.y);
-        while (sR.color.a > lowestAlpha / 255f)
-        {
+        flickerSpeed = Random.Range(FlickerSpeedRange.x, FlickerSpeedRange.y);
+        while (sR.color.a > lowestAlpha / 255f) {
             sR.color = new Color(sR.color.r, sR.color.g, sR.color.b, (sR.color.a - 2f / 255f));
             yield return new WaitForSeconds(1 / flickerSpeed);
         }

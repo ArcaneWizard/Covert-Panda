@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 // Used to display dialogue with the correct order and timing
 public class DialogueManager
@@ -42,13 +40,13 @@ public class DialogueManager
 }
 
 // Structure representing a line of spoken dialogue
-public class DialogueLine 
+public class DialogueLine
 {
     public Character Name;
     public string Dialogue;
     public float LingerDuration; // in seconds
 
-    private const float charactersPerSecond = 7;
+    private const float CHARACTERS_PER_SECOND = 7;
 
     public DialogueLine(Character name, string dialogue, float duration)
     {
@@ -56,8 +54,8 @@ public class DialogueLine
         Dialogue = dialogue;
 
         if (duration <= 0f)
-            LingerDuration = dialogue.Length / charactersPerSecond;
+            LingerDuration = dialogue.Length / CHARACTERS_PER_SECOND;
         else
             LingerDuration = duration;
-    } 
+    }
 }

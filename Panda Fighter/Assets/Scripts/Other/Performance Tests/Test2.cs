@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Security.Cryptography;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
@@ -30,7 +30,7 @@ public class Test2 : MonoBehaviour
         Timing.RunCoroutine(alpha());
     }
 
-    /*private IEnumerator testVillage()
+    *//*private IEnumerator testVillage()
     {
         for (int i = 0; i < 20; i++)
         {
@@ -38,7 +38,7 @@ public class Test2 : MonoBehaviour
             StartCoroutine(testVillage2());
         }
     }
-    */
+    *//*
     private IEnumerator<float> alpha()
     {
         r = (transform.GetSiblingIndex() % 100) / 100f;
@@ -74,4 +74,4 @@ public class Test2 : MonoBehaviour
 
 //        Timing.K
     }
-}
+}*/

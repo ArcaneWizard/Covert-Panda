@@ -1,4 +1,5 @@
-public enum SomersaultState
+
+public enum SomersaultState : byte
 {
     Started,
     MidWay,

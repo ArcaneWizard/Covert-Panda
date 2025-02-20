@@ -1,6 +1,3 @@
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AI_Health : Health
@@ -11,7 +8,7 @@ public class AI_Health : Health
     {
         base.Awake();
         abilityHandler = transform.GetComponent<ICentralAbilityHandler>();
-        maxHP = 400;
+        MaxHP = 400;
     }
 
     public override void InflictDamage(int damage, Transform attacker = null)

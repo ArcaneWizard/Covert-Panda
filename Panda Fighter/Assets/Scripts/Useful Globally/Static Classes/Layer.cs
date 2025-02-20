@@ -1,6 +1,4 @@
-﻿
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public static class Layer
 {
@@ -36,7 +34,7 @@ public static class Layer
     public static int Enemy = 9;
 
     // useful functions
-    public static int GetHitBoxOfOpposingSide(Side side) =>  
+    public static int GetHitBoxOfOpposingSide(Side side) =>
         (side == Side.Friendly) ? EnemyHitBox : FriendlyHitBox;
 
     /// <summary> Returns a layer allowing collisions against whichever side this bullet 

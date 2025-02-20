@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
-using Mono.Cecil;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class StateMachine : MonoBehaviour
 {
@@ -17,15 +13,17 @@ public class StateMachine : MonoBehaviour
 
     //transitions from our current state to a specified state | called when conditions' met
     private List<Transition> currentStateTransitions = new List<Transition>();
+
     //transitions to a specified state | called whenever applicable
     private List<Transition> alwaysCalledTransitions = new List<Transition>();
+
     //empty list of transitions 
+    private List<Transition> emptyTransitions = new List<Transition>();
 
     public void Tick()
     {
         var transition = GetTransition();
-        if (transition != null)
-        {
+        if (transition != null) {
             SetState(transition.To);
         }
 
@@ -43,17 +41,16 @@ public class StateMachine : MonoBehaviour
 
         transitions.TryGetValue(currentState.GetType(), out currentStateTransitions);
         if (currentStateTransitions == null)
-            currentStateTransitions = EmptyTransitions;
+            currentStateTransitions = emptyTransitions;
 
         currentState.OnEnter();
     }
 
-    public IState getLastState => lastState;
+    public IState GetLastState => lastState;
 
     public void AddTransition(IState start, IState end, Func<bool> condition)
     {
-        if (!transitions.TryGetValue(start.GetType(), out var startStateTransitions))
-        {
+        if (!transitions.TryGetValue(start.GetType(), out var startStateTransitions)) {
             startStateTransitions = new List<Transition>();
             transitions[start.GetType()] = startStateTransitions;
         }
@@ -70,7 +67,7 @@ public class StateMachine : MonoBehaviour
     private class Transition
     {
         public Func<bool> Condition { get; }
-        public IState To { get;     }
+        public IState To { get; }
 
         public Transition(IState to, Func<bool> condition)
         {

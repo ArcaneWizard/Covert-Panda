@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public enum ElementalType
+public enum ElementalType : byte
 {
-   Electricity,
-   Physical
+    Electricity,
+    Physical
 }

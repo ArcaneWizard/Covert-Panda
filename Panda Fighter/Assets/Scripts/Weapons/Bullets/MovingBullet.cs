@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -44,7 +42,7 @@ public class MovingBullet : Bullet
         if (!isDetectingCollisions)
             return;
 
-        if (rig.velocity.magnitude != 0) 
+        if (rig.velocity.magnitude != 0)
             velocityDir = rig.velocity.normalized;
 
         shootRaycastAndScanForObstacles();
@@ -83,25 +81,20 @@ public class MovingBullet : Bullet
 
         // if the bullet next frame is going to be at or beyond the intended impact location, teleport
         // to the collision spot and register a collision
-        if ((x == Mathf.Sign(velocityDir.x) || x == 0) && (y == Mathf.Sign(velocityDir.y) || y == 0))
-        {
+        if ((x == Mathf.Sign(velocityDir.x) || x == 0) && (y == Mathf.Sign(velocityDir.y) || y == 0)) {
             isDetectingCollisions = false;
 
             if (predictedRaycastHit.collider == null)
                 return;
 
             bool collidedWithCreature = predictedRaycastHit.transform.parent.GetComponent<Health>();
-            if (predictedRaycastHit.collider != null && collidedWithCreature)
-            {
+            if (predictedRaycastHit.collider != null && collidedWithCreature) {
                 transform.position = predictedImpactLocation.Value;
-                predictedRaycastHit.collider.transform.parent.GetComponent<Health>().InflictDamage(RuntimeBulletDamage, creature);
+                predictedRaycastHit.collider.transform.parent.GetComponent<Health>().InflictDamage(runtimeBulletDamage, creature);
 
                 var collisionInfo = new CollisionInfo(predictedRaycastHit.collider, predictedRaycastHit.point);
                 OnCreatureCollision(collisionInfo, predictedRaycastHit.collider.transform.parent);
-            }
-
-            else if (predictedRaycastHit.collider != null)
-            {
+            } else if (predictedRaycastHit.collider != null) {
                 transform.position = predictedImpactLocation.Value;
                 var collisionInfo = new CollisionInfo(predictedRaycastHit.collider, predictedRaycastHit.point);
                 OnMapCollision(collisionInfo);

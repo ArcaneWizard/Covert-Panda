@@ -15,7 +15,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     private int selectedSlot; // the current inventory slot selected 
     protected const int MAX_SLOTS_IN_INVENTORY = 3;
     private HashSet<int> openInventorySlots;
-    protected Dictionary<Weapon, int> InventoryWeapons; // maps equipped weapons to their inventory slot
+    protected Dictionary<Weapon, int> inventoryWeapons; // maps equipped weapons to their inventory slot
 
     private Transform allBulletPools;
     private Dictionary<Weapon, List<Transform>> bulletPools;
@@ -27,7 +27,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     private List<GameObject> physicalWeaponAndLimbs;
     private CentralLookAround lookAround;
     private CentralShooting centralShooting;
-    protected Health Health;
+    protected Health health;
 
     public Weapon CurrentWeapon => inventory[selectedSlot].Weapon;
     public int CurrentAmmo => inventory[selectedSlot].Ammo;
@@ -52,8 +52,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         openInventorySlots.Clear();
         selectedSlot = 0;
 
-        for (int i = 0; i < MAX_SLOTS_IN_INVENTORY; i++)
-        {
+        for (int i = 0; i < MAX_SLOTS_IN_INVENTORY; i++) {
             inventory[i].Weapon = Weapon.None;
             inventory[i].Ammo = 0;
             openInventorySlots.Add(i);
@@ -83,7 +82,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         // get components
         lookAround = transform.GetComponent<CentralLookAround>();
         centralShooting = transform.GetComponent<CentralShooting>();
-        Health = transform.GetComponent<Health>();
+        health = transform.GetComponent<Health>();
 
         // setup
         bulletPools = new Dictionary<Weapon, List<Transform>>();
@@ -98,8 +97,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         physicalWeaponAndLimbs = new List<GameObject>();
         allBulletPools = transform.parent.GetChild(1).transform.GetChild(0);
 
-        foreach (Transform bulletPool in allBulletPools)
-        {
+        foreach (Transform bulletPool in allBulletPools) {
             Weapon weapon = bulletPool.GetComponent<WeaponTag>().Tag;
 
             // make each weapon's ammo pool accesible by a dictionary
@@ -114,7 +112,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
             // make each weapon's behavior accesible by a dictionary
             WeaponBehaviour behavior = bulletPool.GetComponent<WeaponBehaviour>();
-            behavior.Initialize(config, null, this);  
+            behavior.Initialize(config, null, this);
             weaponBehaviours[weapon] = behavior;
         }
 
@@ -133,8 +131,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     protected virtual void pickupWeaponIntoCurrentSlot(Weapon weapon)
     {
         // if we already have that weapon, just replenish ammo
-        if (inventoryWeapons.TryGetValue(weapon, out int slot))
-        {
+        if (inventoryWeapons.TryGetValue(weapon, out int slot)) {
             inventory[slot].Ammo = weaponConfigurations[weapon].StartingAmmo;
             return;
         }
@@ -154,15 +151,13 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     protected virtual bool pickupWeaponIntoAvailableSlot(Weapon weapon)
     {
         // if we already have that weapon, just replenish ammo
-        if (inventoryWeapons.TryGetValue(weapon, out int slot))
-        {
+        if (inventoryWeapons.TryGetValue(weapon, out int slot)) {
             inventory[slot].Ammo = weaponConfigurations[weapon].StartingAmmo;
             return true;
         }
 
         // otherwise put that weapon into any open slot
-        foreach (int openSlot in openInventorySlots)
-        {
+        foreach (int openSlot in openInventorySlots) {
             inventory[openSlot].Weapon = weapon;
             inventory[openSlot].Ammo = weaponConfigurations[weapon].StartingAmmo;
 
@@ -209,15 +204,13 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     // auto pickup weapon if inventory isn't full
     protected virtual void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.layer == Layer.PickableWeapons && col.gameObject.activeSelf)
-        {
+        if (col.gameObject.layer == Layer.PickableWeapons && col.gameObject.activeSelf) {
             Weapon weapon = col.transform.GetComponent<WeaponTag>().Tag;
             bool pickedUp = pickupWeaponIntoAvailableSlot(weapon);
 
-            if (pickedUp) 
-            {
+            if (pickedUp) {
                 col.gameObject.SetActive(false);
-                col.transform.parent.GetComponent<SpawnRandomWeapon>().startCountdownForNewWeapon();
+                col.transform.parent.GetComponent<SpawnRandomWeapon>().StartCountdownForNewWeapon();
             }
         }
     }

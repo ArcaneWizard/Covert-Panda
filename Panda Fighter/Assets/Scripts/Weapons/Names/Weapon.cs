@@ -13,4 +13,5 @@ public enum Weapon : byte
     PlasmaSniper,
     RocketLauncher,
     ArcticSprayer
+
 }

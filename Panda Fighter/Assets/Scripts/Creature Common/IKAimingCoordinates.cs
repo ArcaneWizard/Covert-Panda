@@ -1,6 +1,5 @@
-
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 // Stores the Inverse Kinematic (IK) coordinates that properly setup the rotation of a creature's arms
@@ -55,7 +54,7 @@ public static class IKAimingCoordinates
     public static List<Vector2> ShortBarrelOtherArmCoordinates = new List<Vector2>()
     { shortBarrelPointingRight2, shortBarrelPointingUp2, shortBarrelPointingDown2, shortBarrelShoulderPos2 };
 
-    //ideal pistol grip weapon coordinates when looking to the side, up or down 
+    //ideal pistol grip weapon coordinates when looking to the side, up or down
     private static Vector2 pistolPointingRight = new Vector2(1.98f, 2.49f);
     private static Vector2 pistolPointingUp = new Vector2(-0.1f, 3.94f);
     private static Vector2 pistolPointingDown = new Vector2(0.31f, -0.15f);

@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
-public enum Character
+public enum Character : byte
 {
     You,
     Raivou,

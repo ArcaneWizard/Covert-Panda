@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -19,3 +19,4 @@ public class TestInstantiate : MonoBehaviour
             Instantiate(testObject, transform.position, Quaternion.identity, transform);
     }
 }
+*/

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 // An AI Action takes in an Action type (what) and an Action info (how). 
@@ -75,8 +76,8 @@ public class AIAction
         float randomSpeed = Random.Range(speedRange.x, speedRange.y);
         if (randomSpeed > -2.5f & randomSpeed < 2.5f)
             randomSpeed = 0f;
-        else if (randomSpeed < CentralController.MinSpeed && randomSpeed > -CentralController.MinSpeed)
-            randomSpeed = CentralController.MinSpeed * Mathf.Sign(randomSpeed);
+        else if (randomSpeed < CentralController.MIN_SPEED && randomSpeed > -CentralController.MIN_SPEED)
+            randomSpeed = CentralController.MIN_SPEED * Mathf.Sign(randomSpeed);
 
         return randomSpeed;
     }

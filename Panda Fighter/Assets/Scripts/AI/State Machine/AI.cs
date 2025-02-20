@@ -1,11 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic; 
+
 using UnityEngine;
 
 public class AI : MonoBehaviour
 {
-    private GameObject AI_body;
+    private GameObject aiBody;
     private AI_FollowPath pathFollower;
     private AI_LookAround lookAround;
     private AI_WanderAround wanderAround;
@@ -18,11 +17,11 @@ public class AI : MonoBehaviour
 
     void Awake()
     {
-        AI_body = transform.GetChild(0).gameObject;
-        pathFollower = AI_body.AddComponent<AI_FollowPath>();
-        wanderAround = AI_body.AddComponent<AI_WanderAround>();
-        lookAround = AI_body.GetComponent<AI_LookAround>();
-        controller = AI_body.GetComponent<AI_Controller>();
+        aiBody = transform.GetChild(0).gameObject;
+        pathFollower = aiBody.AddComponent<AI_FollowPath>();
+        wanderAround = aiBody.AddComponent<AI_WanderAround>();
+        lookAround = aiBody.GetComponent<AI_LookAround>();
+        controller = aiBody.GetComponent<AI_Controller>();
 
         stateMachine = new StateMachine();
     }
@@ -36,10 +35,10 @@ public class AI : MonoBehaviour
         var idle = new Idle(controller);
 
         IState a = attack;
-        transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.journeyStatus == JourneyStatus.Ended);
+        transition(seekDestination, wander, () => Input.GetKeyDown(KeyCode.P) || pathFollower.JourneyStatus == JourneyStatus.Ended);
         transition(wander, seekDestination, () => Input.GetKeyDown(KeyCode.O));
-      //  transition(wander, idle, () => idle.GoodTimeToGoIdle);
-      //  transition(idle, wander, () => idle.StopBeingIdle);
+        //  transition(wander, idle, () => idle.GoodTimeToGoIdle);
+        //  transition(idle, wander, () => idle.StopBeingIdle);
 
         stateMachine.SetState(wander);
 
@@ -47,5 +46,5 @@ public class AI : MonoBehaviour
             stateMachine.AddTransition(from, to, condition);
     }
 
-    void Update() => stateMachine.Tick();   
+    void Update() => stateMachine.Tick();
 }

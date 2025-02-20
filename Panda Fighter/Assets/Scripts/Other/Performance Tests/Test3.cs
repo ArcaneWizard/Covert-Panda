@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -72,4 +72,4 @@ public class Test3 : MonoBehaviour
         i++;
         //fastCouroutine.Update();
     }
-}
+}*/

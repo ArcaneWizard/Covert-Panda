@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,7 +45,7 @@ public class CentralAbilityHandler : ICentralAbilityHandler
         if (health.IsDead)
             return;
 
-        if (Input.GetKey(KeyCode.T) && canTurnInvisible && transform.parent.tag == "Player")
+        if (Input.GetKey(KeyCode.T) && canTurnInvisible && transform.parent.CompareTag("Player"))
             StartCoroutine(turnInvisible());
 
         IsInvulnerable = (IsInvisible || hasSpawnProtection);

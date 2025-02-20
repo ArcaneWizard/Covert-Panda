@@ -1,8 +1,7 @@
 
-
-public interface IState 
+public interface IState
 {
-     void OnEnter();
-     void Tick();
-     void OnExit();
+    void OnEnter();
+    void Tick();
+    void OnExit();
 }

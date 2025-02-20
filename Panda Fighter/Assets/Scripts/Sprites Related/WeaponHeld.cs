@@ -1,15 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
+
 using UnityEditor;
 using UnityEditor.Experimental.SceneManagement;
+
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class WeaponHeld : MonoBehaviour
 {
     [SerializeField] private Weapon weapon;
-    [SerializeField] private Transform body; 
+    [SerializeField] private Transform body;
 
     void Start()
     {
@@ -37,8 +37,7 @@ public class WeaponHeld : MonoBehaviour
     private void renameObjectInEditor()
     {
         StringBuilder newTag = new StringBuilder("");
-        foreach (char c in weapon.ToString())
-        {
+        foreach (char c in weapon.ToString()) {
             newTag.Append(c >= 'A' && c <= 'Z' ? " " + c : c.ToString());
         }
 

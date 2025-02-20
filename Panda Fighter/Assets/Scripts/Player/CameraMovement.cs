@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
 
 ///<summary> Handles the main camera's movement </summary>
@@ -25,13 +21,13 @@ public class CameraMovement : MonoBehaviour
     private float smoothTimeY = 0.4f;
 
     // Camera shake settings
-    public float shakeDuration = 0.2f;
-    public float shakeSpeed = 1f;
-    public float shakeMaxMagnitude = 1f;
+    public float ShakeDuration = 0.2f;
+    public float ShakeSpeed = 1f;
+    public float ShakeMaxMagnitude = 1f;
 
     // Camera sway settings
-    public float swaySpeed = 1f;
-    public float swayMaxMagnitude = 1f;
+    public float SwaySpeed = 1f;
+    public float SwayMaxMagnitude = 1f;
 
     private float cameraVelocityX = 0.0f;
     private float cameraVelocityY = 0.0f;
@@ -49,9 +45,9 @@ public class CameraMovement : MonoBehaviour
     {
         executeCameraShake = true;
 
-        shakeMaxMagnitude = maxMagnitude;
-        shakeTimer = shakeDuration;
-        random = UnityEngine.Random.Range(0, 100000);
+        ShakeMaxMagnitude = maxMagnitude;
+        shakeTimer = ShakeDuration;
+        random = Random.Range(0, 100000);
     }
 
     void Start()
@@ -76,8 +72,8 @@ public class CameraMovement : MonoBehaviour
     private void updateCameraMovement()
     {
         // determine mouse position relative to the center of screen
-        float mouseDistanceX = (Input.mousePosition.x - Screen.width / 2f) / (float)Screen.width;
-        float mouseDistanceY = (Input.mousePosition.y - Screen.height / 2f) / (float)Screen.height;
+        float mouseDistanceX = (Input.mousePosition.x - Screen.width / 2f) / Screen.width;
+        float mouseDistanceY = (Input.mousePosition.y - Screen.height / 2f) / Screen.height;
 
         if (mouseDistanceX > 0.5f || mouseDistanceX < -0.5f)
             mouseDistanceX = 0.5f * Mathf.Sign(mouseDistanceX);
@@ -102,22 +98,19 @@ public class CameraMovement : MonoBehaviour
     // Update a Vector2 camera shake offset to apply to the camera's position
     private void updateCameraShake()
     {
-        if (executeCameraShake)
-        {
-            float x = (Mathf.PerlinNoise(random, Time.time * shakeSpeed) * 2f - 1f) * shakeMaxMagnitude;
-            float y = (Mathf.PerlinNoise(random + 20, Time.time * shakeSpeed) * 2f - 1f) * shakeMaxMagnitude;
+        if (executeCameraShake) {
+            float x = (Mathf.PerlinNoise(random, Time.time * ShakeSpeed) * 2f - 1f) * ShakeMaxMagnitude;
+            float y = (Mathf.PerlinNoise(random + 20, Time.time * ShakeSpeed) * 2f - 1f) * ShakeMaxMagnitude;
             shakeOffset = new Vector2(x, y);
-        }
-
-        else
+        } else
             shakeOffset = Vector2.zero;
     }
 
     // Update a Vector2 sway offset to apply to the camera's position
     private void updateCameraSway()
     {
-        float x = (Mathf.PerlinNoise(420f, Time.time * swaySpeed) * 2f - 1f) * swayMaxMagnitude;
-        float y = (Mathf.PerlinNoise(420420f, Time.time * swaySpeed) * 2f - 1f) * swayMaxMagnitude;
+        float x = (Mathf.PerlinNoise(420f, Time.time * SwaySpeed) * 2f - 1f) * SwayMaxMagnitude;
+        float y = (Mathf.PerlinNoise(420420f, Time.time * SwaySpeed) * 2f - 1f) * SwayMaxMagnitude;
         swayOffset = new Vector2(x, y);
     }
 }

@@ -1,10 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class AdvCoroutine : MonoBehaviour
 {
-    public Coroutine coroutine { get; private set; }
+    public Coroutine Coroutine { get; private set; }
     public bool IsCoroutineActive { get; private set; }
 
     private IEnumerator target;

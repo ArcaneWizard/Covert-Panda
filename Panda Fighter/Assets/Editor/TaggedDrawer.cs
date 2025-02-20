@@ -20,7 +20,7 @@ public class TaggedDrawer : PropertyDrawer
         {
             // Draw the default object field.
             EditorGUI.PropertyField(position, property, label);
-            string desiredTag = (attribute as TaggedAttribute).tagFieldName;
+            string desiredTag = (attribute as TaggedAttribute).TagFieldName;
 
             // Get the assigned object
             GameObject obj = null;

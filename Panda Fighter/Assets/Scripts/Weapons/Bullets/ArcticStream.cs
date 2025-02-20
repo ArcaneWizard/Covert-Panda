@@ -1,7 +1,5 @@
 using MEC;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+
 using UnityEngine;
 
 public class ArcticStream : MovingBullet
@@ -19,16 +17,15 @@ public class ArcticStream : MovingBullet
         explosion.Radius = 13;
     }
 
-    protected override void OnMapCollision(CollisionInfo info) => startExplosion();
-    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) => startExplosion();
+    protected override void onMapCollision(CollisionInfo info) => startExplosion();
+    protected override void onCreatureCollision(CollisionInfo info, Transform creature) => startExplosion();
 
     void Update()
     {
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
-        else if (animatedExplosion.activeSelf)
-        {
+        else if (animatedExplosion.activeSelf) {
             rig.constraints = RigidbodyConstraints2D.None;
             animatedExplosion.SetActive(false);
             gameObject.SetActive(false);
@@ -37,8 +34,7 @@ public class ArcticStream : MovingBullet
 
     private void startExplosion()
     {
-        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
-        {
+        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll) {
             rig.constraints = RigidbodyConstraints2D.FreezeAll;
             transform.localEulerAngles = new Vector3(0, 0, 0);
             animatedExplosion.SetActive(true);

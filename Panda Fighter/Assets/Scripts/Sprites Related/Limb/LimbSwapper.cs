@@ -1,24 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
-using System.Threading.Tasks;
 using UnityEditor.Experimental.SceneManagement;
-using UnityEngine.Rendering;
-using System;
+
+using UnityEngine;
 
 [ExecuteAlways]
 public class LimbSwapper : MonoBehaviour
 {
     // what type of limb to swap in
-    [SerializeField] private LimbTypes limbType; 
+    [SerializeField] private LimbTypes limbType;
 
     // can retrieve any limb's sprite and collider settings
-    [SerializeField] private LimbSettings limbSettings; 
+    [SerializeField] private LimbSettings limbSettings;
 
     private SpriteRenderer sR;
     private UnityEngine.U2D.Animation.SpriteSkin spriteSkin;
-    
+
     void Start()
     {
         if (!Application.isPlaying)
@@ -73,8 +69,7 @@ public class LimbSwapper : MonoBehaviour
         // don't do anything if in prefab-mode
         PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
 
-        if (prefabStage != null)
-        {
+        if (prefabStage != null) {
             bool isValidPrefabStage = prefabStage != null && prefabStage.stageHandle.IsValid();
             bool prefabConnected = PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.Connected;
             if (isValidPrefabStage || !prefabConnected)
@@ -94,11 +89,10 @@ public class LimbSwapper : MonoBehaviour
     // Automates the task of manually dragging in the limb collection to this object's hierarchy.
     private bool findLimbSettings()
     {
-        int counter =  0;
+        int counter = 0;
         Transform body = transform;
- 
-        while (!limbSettings && body && counter <= 8)
-        {
+
+        while (!limbSettings && body && counter <= 8) {
             body = body.parent;
 
             if (body && body.GetComponent<LimbSettings>())

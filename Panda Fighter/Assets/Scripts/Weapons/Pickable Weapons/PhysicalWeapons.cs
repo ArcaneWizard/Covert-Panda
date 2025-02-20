@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine;
-using static UnityEngine.InputManagerEntry;
 
 public class PhysicalWeapons : MonoBehaviour
 {
@@ -38,7 +34,7 @@ public class PhysicalWeapons : MonoBehaviour
 }
 
 //combat Modes
-public enum CombatType
+public enum CombatType : byte
 {
     Gun,
     Meelee,

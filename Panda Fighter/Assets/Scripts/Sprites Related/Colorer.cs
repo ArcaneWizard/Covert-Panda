@@ -1,7 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
-using UnityEngine.U2D.IK;
 
 
 /// <summary> 
@@ -9,12 +8,12 @@ using UnityEngine.U2D.IK;
 /// Ex. it should be easy to change the hue of a specific weapon & be confident that this change will apply to the entire game.
 /// </summary>
 
-public static class Colorer 
+public static class Colorer
 {
     private static Dictionary<LimbTypes, Color32> relativeLimbColors;
 
     private static Color32 defaultColor = new Color32(255, 255, 255, 255);
-    private static Color32 AmphelotColor = new Color32(182, 200, 217, 255);
+    //private static Color32 amphelotColor = new Color32(182, 200, 217, 255);
 
     // Update specified limb's color
     public static void UpdateLimbColor(LimbTypes limb, SpriteRenderer renderer, Transform creature)

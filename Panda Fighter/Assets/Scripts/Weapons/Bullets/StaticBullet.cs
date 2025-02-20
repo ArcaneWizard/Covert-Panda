@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -25,21 +23,17 @@ public class StaticBullet : Bullet
 
         int layer = col.gameObject.layer;
 
-        if (layer == Layer.GetHitBoxOfOpposingSide(gameObject))
-        {
+        if (layer == Layer.GetHitBoxOfOpposingSide(gameObject)) {
             isDetectingCollisions = false;
 
             Health creatureHealth = col.transform.parent.GetComponent<Health>();
-            creatureHealth.InflictDamage(RuntimeBulletDamage, creature);
+            creatureHealth.InflictDamage(runtimeBulletDamage, creature);
 
             var contacts = new ContactPoint2D[1];
             col.GetContacts(contacts);
             var collisionInfo = new CollisionInfo(col, contacts[0].point);
             OnCreatureCollision(collisionInfo, col.transform);
-        }
-
-        else if (layer == Layer.DefaultPlatform || layer == Layer.OneSidedPlatform)
-        {
+        } else if (layer == Layer.DefaultPlatform || layer == Layer.OneSidedPlatform) {
             isDetectingCollisions = false;
 
             var contacts = new ContactPoint2D[1];

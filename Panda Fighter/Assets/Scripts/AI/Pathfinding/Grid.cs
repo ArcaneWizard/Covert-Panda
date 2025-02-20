@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections.Generic;
+
+using UnityEngine;
 
 /* This class contains useful info about all the node regions on the map. 
    It can provide the closest node to a specific world position, 
@@ -11,6 +12,7 @@ public class Grid : MonoBehaviour
 
     [SerializeField]
     private Transform nodeCollection, alien;
+
     [SerializeField]
     private LayerMask decisionZoneMask;
 
@@ -28,12 +30,10 @@ public class Grid : MonoBehaviour
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(entityPos, radiusCheck, decisionZoneMask);
         smallestDistanceFoundSoFar = 400;
 
-        foreach (Collider2D hitCollider in hitColliders)
-        {
+        foreach (Collider2D hitCollider in hitColliders) {
             colliderDistance = getSquaredDistanceBtwnVectors(hitCollider.transform.position, entityPos);
 
-            if (colliderDistance < smallestDistanceFoundSoFar)
-            {
+            if (colliderDistance < smallestDistanceFoundSoFar) {
                 smallestDistanceFoundSoFar = colliderDistance;
                 closestNode = hitCollider.transform;
             }
@@ -45,8 +45,7 @@ public class Grid : MonoBehaviour
 
         if (smallestDistanceFoundSoFar == 400)
             return GetClosestNodeToWorldPosition(entityPos, radiusCheck + 10);
-        else
-        {
+        else {
             if (grid.ContainsKey(closestNode.transform))
                 return grid[closestNode.transform];
             else
@@ -57,8 +56,7 @@ public class Grid : MonoBehaviour
     public List<Node> GetNeighborsOfNode(Node node)
     {
         List<Node> connectedNodes = new List<Node>();
-        foreach (Transform child in node.transform)
-        {
+        foreach (Transform child in node.Transform) {
             if (child.gameObject.activeSelf)
                 connectedNodes.Add(grid[child.transform.GetComponent<TrajectoryPath>().getChainedZone()]);
         }
@@ -78,23 +76,19 @@ public class Grid : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (Application.isPlaying)
-        {
+        if (Application.isPlaying) {
             /*Node alienNode = getClosestNodeToWorldPosition(alien.position, 10);*/
-            foreach (KeyValuePair<Transform, Node> n in grid)
-            {
+            foreach (KeyValuePair<Transform, Node> n in grid) {
                 Gizmos.color = Color.black;
-                if (path != null)
-                {
-                    foreach (Node pathNode in path)
-                    {
-                        if (Transform.Equals(pathNode.transform, n.Value.transform))
+                if (path != null) {
+                    foreach (Node pathNode in path) {
+                        if (Transform.Equals(pathNode.Transform, n.Value.Transform))
                             Gizmos.color = Color.white;
                     }
                 }
                 /*if (Transform.Equals(alienNode.transform, n.Value.transform))
                     Gizmos.color = Color.cyan;*/
-                Gizmos.DrawCube(n.Value.transform.position, new Vector2(0.5f, 0.5f));
+                Gizmos.DrawCube(n.Value.Transform.position, new Vector2(0.5f, 0.5f));
             }
         }
     }

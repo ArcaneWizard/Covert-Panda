@@ -1,14 +1,8 @@
-using System;
+/*using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using Unity.Burst.Intrinsics;
+
 using UnityEngine;
-using static UnityEngine.InputManagerEntry;
-using static UnityEngine.Rendering.DebugUI.Table;
-using UnityEngine.UIElements;
-using UnityEditor.UIElements;
-using System.Collections.Generic;
 
 public class Test : MonoBehaviour
 {
@@ -34,46 +28,46 @@ public class Test : MonoBehaviour
     {
         f = new List<ExecutionDelay>();
         a = new List<Action>();
-       
+
         fastCouroutine = new TimedCode(f, a);
         f.Clear();
         for (int i = 0; i < 6; i++)
             f.Add(new ExecutionDelay(UnityEngine.Random.Range(0.18f, 0.2f)));
 
         a.Clear();
-            a.Add(bob);
-            a.Add(joe);
-            a.Add(cow);
-            a.Add(dee);
-            a.Add(dee);
-            a.Add(nah);
+        a.Add(bob);
+        a.Add(joe);
+        a.Add(cow);
+        a.Add(dee);
+        a.Add(dee);
+        a.Add(nah);
 
         void bob()
-            {
-              
+        {
 
-                distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
-            }
 
-            void joe()
-            {
-                doubleDistance = 2 * distance;
-            }
+            distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
+        }
 
-            void cow()
-            {
-                doubleDistance = 3 * distance;
-            }
+        void joe()
+        {
+            doubleDistance = 2 * distance;
+        }
 
-            void dee()
-            {
-                doubleDistance = 4 * distance;
-            }
+        void cow()
+        {
+            doubleDistance = 3 * distance;
+        }
 
-            void nah()
-            {
-                doubleDistance = 5 * distance;
-             time = Time.time;
+        void dee()
+        {
+            doubleDistance = 4 * distance;
+        }
+
+        void nah()
+        {
+            doubleDistance = 5 * distance;
+            time = Time.time;
 
             //  reset coroutine
             f.Clear();
@@ -89,26 +83,26 @@ public class Test : MonoBehaviour
 
             fastCouroutine.Start();
         }
-        
+
 
         //StartCoroutine(testVillage());
         fastCouroutine.Start();
     }
 
-    /*private void FixedUpdate()
+    *//*private void FixedUpdate()
     {
         RaycastHit2D a = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
         RaycastHit2D b = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
         RaycastHit2D c = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
         RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 20f, LayerMasks.map);
-    }*/
+    }*//*
 
-      void Update()
+    void Update()
     {
-      fastCouroutine?.Update();
+        fastCouroutine?.Update();
     }
 
-    /*private void Update()
+    *//*private void Update()
     {
         fastCouroutine.Update();
 
@@ -148,48 +142,48 @@ public class Test : MonoBehaviour
             doubleDistance = 5 * distance;
         }*/
 
-    /*private void Update()
+/*private void Update()
+{
+    if (villagers2 > 0f)
+        villagers2 -= Time.deltaTime;
+
+    else if (villagers2 <= 0f)
     {
-        if (villagers2 > 0f)
-            villagers2 -= Time.deltaTime;
-
-        else if (villagers2 <= 0f)
-        {
-            villagers2 = UnityEngine.Random.Range(0.05f, 0.1f);
-            a += 1;
-        }
-    }*/
-
-
-    /*private IEnumerator testVillage()
-    {
-        for (int i = 0; i < 20; i++)
-        {
-            yield return new WaitForSeconds(UnityEngine.Random.Range(0.18f, 0.22f));
-            StartCoroutine(testVillage2());
-        }
+        villagers2 = UnityEngine.Random.Range(0.05f, 0.1f);
+        a += 1;
     }
-    */
+}*/
 
-    private void FixedUpdate()
+
+/*private IEnumerator testVillage()
+{
+    for (int i = 0; i < 20; i++)
     {
-        RaycastHit2D a = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
-        RaycastHit2D b = Physics2D.Raycast(transform.position, Vector2.down, 3, LayerMasks.Map);
-        RaycastHit2D c = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
-        RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
-    }
-
-    private IEnumerator testVillage()
-    {
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.18f, 0.25f));
-        distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
-
-        StartCoroutine(testVillage());
-    }
-
-    private IEnumerator testVillage2()
-    {
-        distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
-        yield return null;
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0.18f, 0.22f));
+        StartCoroutine(testVillage2());
     }
 }
+*//*
+
+private void FixedUpdate()
+{
+    RaycastHit2D a = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
+    RaycastHit2D b = Physics2D.Raycast(transform.position, Vector2.down, 3, LayerMasks.Map);
+    RaycastHit2D c = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
+    RaycastHit2D d = Physics2D.Raycast(transform.position, Vector2.down, 2, LayerMasks.Map);
+}
+
+private IEnumerator testVillage()
+{
+    yield return new WaitForSeconds(UnityEngine.Random.Range(0.18f, 0.25f));
+    distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
+
+    StartCoroutine(testVillage());
+}
+
+private IEnumerator testVillage2()
+{
+    distance = MathX.GetSquaredDistance(new Vector2(0, -1), new Vector2(-6, 7f));
+    yield return null;
+}
+}*/

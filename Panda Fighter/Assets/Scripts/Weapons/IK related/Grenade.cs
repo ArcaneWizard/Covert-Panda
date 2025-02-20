@@ -1,5 +1,5 @@
 
-public enum Grenade
+public enum Grenade : byte
 {
     None,
     Frag,

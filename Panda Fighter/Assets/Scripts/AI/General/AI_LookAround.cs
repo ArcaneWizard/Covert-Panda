@@ -1,12 +1,12 @@
-using MEC;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+
 using MEC;
+
+using UnityEngine;
 
 public class AI_LookAround : CentralLookAround
 {
-    private Side side;  
+    private Side side;
 
     public GameObject EnemySpotted { get; private set; }
 
@@ -14,7 +14,7 @@ public class AI_LookAround : CentralLookAround
     private float random;
 
     // whether or not the creature looks backwards 
-    private bool lookBackwards; 
+    private bool lookBackwards;
 
     // the most recent direction the creature headed in when it was moving (left = -1, right = 1)
     private int lastKnownDirX;
@@ -22,7 +22,7 @@ public class AI_LookAround : CentralLookAround
     protected override void Awake()
     {
         base.Awake();
-        side = transform.parent.GetComponent<Role>().side;
+        side = transform.parent.GetComponent<Role>().Side;
 
         resetUponSpawning();
         deathSequence.RightBeforeRespawning += resetUponSpawning;
@@ -31,33 +31,29 @@ public class AI_LookAround : CentralLookAround
         Timing.RunSafeCoroutine(sometimesLookBackwards(), gameObject);
     }
 
-    protected override void figureOutDirectionToLookIn() 
+    protected override void figureOutDirectionToLookIn()
     {
-        if (EnemySpotted)
-        {
-            directionToLook = EnemySpotted.transform.position - weaponPivot.position;
+        if (EnemySpotted) {
+            DirectionToLook = EnemySpotted.transform.position - weaponPivot.position;
             lookBackwards = false;
-        }
-
-        else if (controller.isGrounded && controller.isTouchingMap)
-        {
+        } else if (controller.IsGrounded && controller.IsTouchingMap) {
             // favor looking up more than looking down
-            directionToLook = new Vector2(
+            DirectionToLook = new Vector2(
                 Mathf.PerlinNoise(Time.time / 2f, random / 2f) * 2f - 1f,
                 Mathf.PerlinNoise(Time.time / 2f, random) * 2f - 0.96f
             );
 
             // favor looking to the side more than looking up/down
-            if (Mathf.Abs(directionToLook.x) < 0.45f)
-                directionToLook = new Vector2(Mathf.Sign(directionToLook.x) * 0.45f, directionToLook.y);
+            if (Mathf.Abs(DirectionToLook.x) < 0.45f)
+                DirectionToLook = new Vector2(Mathf.Sign(DirectionToLook.x) * 0.45f, DirectionToLook.y);
 
             // decide whether AI looks left/right depending on the direction they are moving in
             int dirX = (controller.DirX != 0) ? controller.DirX : lastKnownDirX;
             int sign = dirX * (lookBackwards ? -1 : 1);
-            directionToLook = new Vector2(sign * Mathf.Abs(directionToLook.x), directionToLook.y);
+            DirectionToLook = new Vector2(sign * Mathf.Abs(DirectionToLook.x), DirectionToLook.y);
         }
 
-        directionToLook = directionToLook.normalized;
+        DirectionToLook = DirectionToLook.normalized;
 
         if (controller.DirX != 0)
             lastKnownDirX = controller.DirX;
@@ -77,28 +73,26 @@ public class AI_LookAround : CentralLookAround
         EnemySpotted = null;
 
         Collider2D[] enemiesWithinRangeOfWeapon = Physics2D.OverlapCircleAll(
-                transform.position, 
+                transform.position,
                 weaponSystem.CurrentWeaponConfiguration.Range,
                 LayerMasks.Target(side)
         );
 
-        foreach (Collider2D enemy in enemiesWithinRangeOfWeapon) 
-        {
+        foreach (Collider2D enemy in enemiesWithinRangeOfWeapon) {
             // get a potential enemy creature
             GameObject nearbyEnemy = enemy.transform.parent.gameObject;
-            
+
             // check if there's a barrier in btwn the nearby enemy and this creature's weapon
             RaycastHit2D hit = Physics2D.Raycast(
-                weaponPivot.position, 
+                weaponPivot.position,
                 nearbyEnemy.transform.position - weaponPivot.position,
-                weaponSystem.CurrentWeaponConfiguration.Range, 
+                weaponSystem.CurrentWeaponConfiguration.Range,
                 LayerMasks.MapOrTarget(side)
             );
 
             // if the enemy creature is in this creature's line of sight, switch focus to it if it's closer than other enemies
-            if (hit.collider != null && hit.collider.gameObject.layer == Layer.GetHitBoxOfOpposingSide(side)) 
-            {
-                if (EnemySpotted == null || MathX.GetSquaredDistance(EnemySpotted.transform.position, weaponPivot.position) 
+            if (hit.collider != null && hit.collider.gameObject.layer == Layer.GetHitBoxOfOpposingSide(side)) {
+                if (EnemySpotted == null || MathX.GetSquaredDistance(EnemySpotted.transform.position, weaponPivot.position)
                     > MathX.GetSquaredDistance(nearbyEnemy.transform.position, weaponPivot.position))
                     EnemySpotted = nearbyEnemy;
             }
@@ -113,8 +107,7 @@ public class AI_LookAround : CentralLookAround
         yield return Timing.WaitForSeconds(Random.Range(3f, 5f));
 
         // 10% chance the creature looks backwards when an enemy isn't spotted
-        if (!EnemySpotted && Random.Range(0, 100) < 10)
-        {
+        if (!EnemySpotted && Random.Range(0, 100) < 10) {
             lookBackwards = true;
             yield return Timing.WaitForSeconds(Random.Range(2f, 6f));
         }

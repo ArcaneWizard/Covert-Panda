@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+
 using UnityEngine;
 
 // This class houses methods to spawn and shoot a bullet for almost any type of weapon.
@@ -15,16 +16,16 @@ public static class CommonWeaponBehaviours
     {
         // spawn bullet and shoot in straight line in specified aim direction
         PhysicalBullet bullet = SpawnBullet(aim, weaponSystem, configuration, side);
-        bullet.rig.velocity = aim * configuration.Speed;
+        bullet.Rig.velocity = aim * configuration.Speed;
 
         // apply extra settings to bullet, if any are specified
         if (extraSettings != null)
-            extraSettings(bullet.transform);
+            extraSettings(bullet.Transform);
 
         // confirm bullet was fired
-        bullet.transform.GetComponent<Bullet>().OnFire(aim);
-        
-        return bullet.transform;
+        bullet.Transform.GetComponent<Bullet>().OnFire(aim);
+
+        return bullet.Transform;
     }
 
     // spawns in a new bullet and with a random specified vertical offset from the default bullet spawn position,
@@ -36,36 +37,36 @@ public static class CommonWeaponBehaviours
         // spawn bullet and shoot in a diagonal line based on specified aim direction, angle offset, and vertical offset
         PhysicalBullet bullet = SpawnBullet(aim, weaponSystem, configuration, side);
         Vector2 newAim = Quaternion.AngleAxis(angleOffset, Vector3.forward) * aim;
-        bullet.transform.position += Vector3.up * UnityEngine.Random.Range(verticalOffsetRange.x, verticalOffsetRange.y);
-        bullet.transform.right = newAim;
-        bullet.rig.velocity = newAim * configuration.Speed;
+        bullet.Transform.position += Vector3.up * UnityEngine.Random.Range(verticalOffsetRange.x, verticalOffsetRange.y);
+        bullet.Transform.right = newAim;
+        bullet.Rig.velocity = newAim * configuration.Speed;
 
         // apply extra settings to bullet, if any are specified
         if (extraSettings != null)
-            extraSettings(bullet.transform);
+            extraSettings(bullet.Transform);
 
         // confirm bullet was fired
-        bullet.transform.GetComponent<Bullet>().OnFire(aim);
-        return bullet.transform;
+        bullet.Transform.GetComponent<Bullet>().OnFire(aim);
+        return bullet.Transform;
     }
 
     // spawns in a new bullet and shoots it in an arc
     public static Transform SpawnAndShootBulletInArc(Vector2 aim, Vector2 forceMultiplier, Vector2 forceOffset,
-        CentralWeaponSystem weaponSystem, WeaponConfiguration configuration, Side side, 
+        CentralWeaponSystem weaponSystem, WeaponConfiguration configuration, Side side,
         Action<Transform> extraSettings = null)
     {
         // spawn bullet and shoot with specified force
         PhysicalBullet bullet = SpawnBullet(aim, weaponSystem, configuration, side);
         Vector2 unadjustedForce = configuration.Speed * 40 * aim * forceMultiplier + forceOffset;
-        bullet.rig.AddForce(unadjustedForce * bullet.rig.mass);
+        bullet.Rig.AddForce(unadjustedForce * bullet.Rig.mass);
 
         // apply extra settings to bullet, if any are specified
         if (extraSettings != null)
-            extraSettings(bullet.transform);
+            extraSettings(bullet.Transform);
 
         // confirm bullet was fired 
-        bullet.transform.GetComponent<Bullet>().OnFire(aim);
-        return bullet.transform;
+        bullet.Transform.GetComponent<Bullet>().OnFire(aim);
+        return bullet.Transform;
     }
 
     // spawns in a new bullet that is still (doesn't shoot it)
@@ -93,8 +94,7 @@ public static class CommonWeaponBehaviours
         bullet.GetComponent<Collider2D>().enabled = true;
 
         // reset the bullet sprite to be opaque (ie. alpha = 1)
-        if (bullet.GetComponent<SpriteRenderer>())
-        {
+        if (bullet.GetComponent<SpriteRenderer>()) {
             Color color = bullet.GetComponent<SpriteRenderer>().color;
             bullet.GetComponent<SpriteRenderer>().color = new Color(color.r, color.g, color.b, 1);
         }
@@ -125,8 +125,7 @@ public static class CommonWeaponBehaviours
         float alphaDissipateRate = 0.1f / duration;
         SpriteRenderer sR = bullet.GetComponent<SpriteRenderer>();
 
-        while (duration > 0 && bullet.gameObject.activeSelf)
-        {
+        while (duration > 0 && bullet.gameObject.activeSelf) {
             duration -= 0.1f;
             sR.color = new Color(sR.color.r, sR.color.g, sR.color.b, sR.color.a - alphaDissipateRate);
             yield return new WaitForSeconds(0.1f);
@@ -136,12 +135,12 @@ public static class CommonWeaponBehaviours
 
 public struct PhysicalBullet
 {
-    public Transform transform;
-    public Rigidbody2D rig;
+    public Transform Transform;
+    public Rigidbody2D Rig;
 
     public PhysicalBullet(Transform transform, Rigidbody2D rig)
     {
-        this.transform = transform;
-        this.rig = rig;
+        this.Transform = transform;
+        this.Rig = rig;
     }
 }

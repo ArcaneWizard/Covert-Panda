@@ -1,8 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Rendering;
+
 using UnityEngine;
-using UnityEngine.Rendering;
+
 using static Validation;
 
 // Note to self: This class is doing too much: movement, collider setup + collision detection, ground info, wall detection.
@@ -12,12 +11,12 @@ using static Validation;
 public abstract class CentralController : MonoBehaviour
 {
     // Useful information
-    public bool isGrounded { get; protected set; }
-    public bool isTouchingMap { get; protected set; }
+    public bool IsGrounded { get; protected set; }
+    public bool IsTouchingMap { get; protected set; }
     public bool IsOnTraversableSlope { get; protected set; }
-    public bool isOnSuperSteepSlope { get; protected set; }
-    public bool recentlyJumpedOffGround { get; private set; }
-    public bool recentlyDoubleJumpedOffGround { get; private set; }
+    public bool IsOnSuperSteepSlope { get; protected set; }
+    public bool RecentlyJumpedOffGround { get; private set; }
+    public bool RecentlyDoubleJumpedOffGround { get; private set; }
 
     // Current direction of creature's movement (-1 = left, 0 = idle, 1 = right)
     public int DirX { get; protected set; }
@@ -29,11 +28,11 @@ public abstract class CentralController : MonoBehaviour
     public const float DOWNWARDS_THRUST_FORCE = -2600f;
     public const float MIN_ANGLE_OF_TRAVERSABLE_SLOPE = 65f;
 
-    protected readonly float MAX_Y_NORMAL_OF_WALLS = Mathf.Cos(MIN_ANGLE_OF_TRAVERSABLE_SLOPE * Mathf.Deg2Rad);
+    protected readonly float maxYNormalOfWalls = Mathf.Cos(MIN_ANGLE_OF_TRAVERSABLE_SLOPE * Mathf.Deg2Rad);
     private const float BODY_TILT_ANGLE_RATIO = 0.5f;
     private const float BODY_TILT_UPDATE_SPEED = 7f;
 
-    [Header("Limbs and colliders")]
+    [Header("Limbs and Colliders")]
     [SerializeField] private BoxCollider2D oneWayCollider;
     [SerializeField] private CircleCollider2D somersaultCollider;
     [field: SerializeField] protected Transform shootingArm { get; private set; }
@@ -52,8 +51,8 @@ public abstract class CentralController : MonoBehaviour
     protected CentralLookAround lookAround;
     protected Animator animator;
 
-    public const float MaxSpeed = 24f;
-    public const float MinSpeed = 16f;
+    public const float MAX_SPEED = 24f;
+    public const float MIN_SPEED = 16f;
     protected float speed;
 
     private const float SOMERSAULT_COLLIDER_RADIUS = 1.5f;
@@ -91,7 +90,6 @@ public abstract class CentralController : MonoBehaviour
 
         this.Validate(
             new NotNull(rig, nameof(rig)),
-            new RequireTag(oneWayCollider, nameof(oneWayCollider), "lightHouse"), 
             new NotNull(body, nameof(body)),
             new NotNull(animator, nameof(animator)),
             new NotNull(phaseTracker, nameof(phaseTracker)),
@@ -113,7 +111,7 @@ public abstract class CentralController : MonoBehaviour
 
         // configure vars
         initialMainColliderSize = mainCollider.size;
-        speed = MaxSpeed;
+        speed = MAX_SPEED;
 
         // other
         transform.position = new Vector3(transform.position.x, transform.position.y, 0);
@@ -121,8 +119,7 @@ public abstract class CentralController : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (health.IsDead)
-        {
+        if (health.IsDead) {
             mainCollider.enabled = false;
             oneWayCollider.enabled = false;
             somersaultCollider.enabled = false;
@@ -160,13 +157,10 @@ public abstract class CentralController : MonoBehaviour
         tiltAngle = MathX.ClampAngleTo180(tiltAngle);
         float targetTiltAngle = groundAngle * BODY_TILT_ANGLE_RATIO;
 
-        if (isGrounded && (DirX != 0 || (DirX == 0 && groundAngle == lastGroundAngle)))
-        {
+        if (IsGrounded && (DirX != 0 || (DirX == 0 && groundAngle == lastGroundAngle))) {
             if (Mathf.Abs(groundAngle - tiltAngle) > 0.5f)
                 tiltAngle += (targetTiltAngle - tiltAngle) * BODY_TILT_UPDATE_SPEED * Time.fixedDeltaTime;
-        }
-
-        else if (!isGrounded && Mathf.Abs(tiltAngle) > 0.5f && !phaseTracker.Is(Phase.DoubleJumping))
+        } else if (!IsGrounded && Mathf.Abs(tiltAngle) > 0.5f && !phaseTracker.Is(Phase.DoubleJumping))
             tiltAngle -= tiltAngle * 10 * Time.fixedDeltaTime;
     }
 
@@ -179,37 +173,33 @@ public abstract class CentralController : MonoBehaviour
         centerRaycasterOnMainCollider(backGroundRaycaster, 0.9f);
         centerRaycasterOnMainCollider(frontGroundRaycaster, -0.9f);
 
-        float raycastLength = isGrounded ? 2.3f : 2.0f;
+        float raycastLength = IsGrounded ? 2.3f : 2.0f;
         RaycastHit2D backLegContactInfo = Physics2D.Raycast(backGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.Map);
         RaycastHit2D frontLegContactInfo = Physics2D.Raycast(frontGroundRaycaster.position, Vector2.down, raycastLength, LayerMasks.Map);
 
-        platformBelowFrontLeg = (frontLegContactInfo.collider != null)  ? frontLegContactInfo.collider.gameObject : null;
+        platformBelowFrontLeg = (frontLegContactInfo.collider != null) ? frontLegContactInfo.collider.gameObject : null;
         platformUnderBackLeg = (backLegContactInfo.collider != null) ? backLegContactInfo.collider.gameObject : null;
 
         // this bool is used later to prevent bug (spasming when standing still on uneven terrain)
         bool checkForAngle = false;
-        if ((!isGrounded || DirX != 0) && (platformBelowFrontLeg || platformUnderBackLeg))
+        if ((!IsGrounded || DirX != 0) && (platformBelowFrontLeg || platformUnderBackLeg))
             checkForAngle = true;
 
         bool platformBelowFeet = false;
         if (!phaseTracker.IsDoingSomersault)
             platformBelowFeet = platformBelowFrontLeg || platformUnderBackLeg;
 
-        if (!platformBelowFeet)
-        {
+        if (!platformBelowFeet) {
             groundSlope = new Vector2(1, 0);
             groundAngle = 0;
-        }
-        else
-        {
+        } else {
             if (platformBelowFrontLeg && !platformUnderBackLeg)
                 groundSlope = new Vector2(frontLegContactInfo.normal.y, -frontLegContactInfo.normal.x);
-            
+
             else if (platformUnderBackLeg && !platformBelowFrontLeg)
                 groundSlope = new Vector2(backLegContactInfo.normal.y, -backLegContactInfo.normal.x);
 
-            else if (platformBelowFrontLeg && platformUnderBackLeg)
-            {
+            else if (platformBelowFrontLeg && platformUnderBackLeg) {
                 // if each leg is on a different slope, choose the less steep slope to determine if grounded
                 RaycastHit2D lowerOfTwoSlopesBelowLegs = (Mathf.Abs(frontLegContactInfo.normal.y) >= Mathf.Abs(backLegContactInfo.normal.y))
                      ? frontLegContactInfo
@@ -221,17 +211,16 @@ public abstract class CentralController : MonoBehaviour
             // update ground angle
             if (groundSlope.x == 0)
                 groundAngle = 90;
-            else
-            {
+            else {
                 float tempGroundAngle = Mathf.Atan(groundSlope.y / groundSlope.x) * 180f / Mathf.PI;
                 groundAngle = MathX.ClampAngleTo180(tempGroundAngle);
             }
         }
 
         // confirm if creature is grounded
-        isGrounded = platformBelowFeet;
+        IsGrounded = platformBelowFeet;
         IsOnTraversableSlope = Mathf.Abs(groundAngle) <= MIN_ANGLE_OF_TRAVERSABLE_SLOPE && platformBelowFeet;
-        isOnSuperSteepSlope = Mathf.Abs(groundAngle) > MIN_ANGLE_OF_TRAVERSABLE_SLOPE && platformBelowFeet;
+        IsOnSuperSteepSlope = Mathf.Abs(groundAngle) > MIN_ANGLE_OF_TRAVERSABLE_SLOPE && platformBelowFeet;
 
         // lastGroundAngle will be used to prevent a bug where the player sometimes spasms when standing still on uneven terrain
         if (checkForAngle)
@@ -247,26 +236,23 @@ public abstract class CentralController : MonoBehaviour
 
         // left and right wall raycasts start just outside the edges of the main collider
         float raycastSize = body.lossyScale.x * mainCollider.size.x / 2f + 0.1f;
-        Vector2 raycastDir = isGrounded ? groundSlope : Vector2.right;
+        Vector2 raycastDir = IsGrounded ? groundSlope : Vector2.right;
 
-        if (body.localEulerAngles.y == 0)
-        {
+        if (body.localEulerAngles.y == 0) {
             RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.Map);
-            wallBehindYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < MAX_Y_NORMAL_OF_WALLS);
+            wallBehindYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < maxYNormalOfWalls);
             //Debug.DrawRay(wallRaycaster.position, raycastSize * -raycastDir, Color.blue, 2f);
 
             RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.Map);
-            wallInFrontOfYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < MAX_Y_NORMAL_OF_WALLS);
+            wallInFrontOfYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < maxYNormalOfWalls);
             //Debug.DrawRay(wallRaycaster.position, raycastSize * raycastDir, Color.red, 2f);
-        }
-        else
-        {
+        } else {
             RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.Map);
-            wallInFrontOfYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < MAX_Y_NORMAL_OF_WALLS);
+            wallInFrontOfYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < maxYNormalOfWalls);
             //Debug.DrawRay(wallRaycaster.position, raycastSize * -raycastDir, Color.red, 2f);
 
             RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.Map);
-            wallBehindYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < MAX_Y_NORMAL_OF_WALLS);
+            wallBehindYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < maxYNormalOfWalls);
             //Debug.DrawRay(wallRaycaster.position, raycastSize * raycastDir, Color.blue, 2f);
         }
     }
@@ -279,9 +265,9 @@ public abstract class CentralController : MonoBehaviour
         rig.gravityScale = Game.GRAVITY;
         rig.AddForce(new Vector2(0, JUMP_FORCE));
 
-        recentlyJumpedOffGround = true;
+        RecentlyJumpedOffGround = true;
         yield return new WaitForSeconds(0.2f);
-        recentlyJumpedOffGround = false;
+        RecentlyJumpedOffGround = false;
     }
 
     protected IEnumerator doubleJump()
@@ -292,10 +278,10 @@ public abstract class CentralController : MonoBehaviour
         rig.gravityScale = Game.GRAVITY;
         rig.AddForce(new Vector2(420, DOUBLE_JUMP_FORCE));
 
-        recentlyDoubleJumpedOffGround = true;
+        RecentlyDoubleJumpedOffGround = true;
         somersaultCollider.radius = 0.05f;
         yield return new WaitForSeconds(0.2f);
-        recentlyDoubleJumpedOffGround = false;
+        RecentlyDoubleJumpedOffGround = false;
     }
 
     protected IEnumerator jumpPadBoost()
@@ -306,27 +292,27 @@ public abstract class CentralController : MonoBehaviour
         rig.gravityScale = Game.GRAVITY;
         rig.AddForce(new Vector2(0, JUMP_PAD_FORCE));
 
-        recentlyJumpedOffGround = true;
+        RecentlyJumpedOffGround = true;
         yield return new WaitForSeconds(0.2f);
-        recentlyJumpedOffGround = false;
+        RecentlyJumpedOffGround = false;
     }
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.layer == Layer.DefaultPlatform || col.gameObject.layer == Layer.OneSidedPlatform)
-            isTouchingMap = true;
+            IsTouchingMap = true;
     }
 
     private void OnCollisionStay2D(Collision2D col)
     {
         if (col.gameObject.layer == Layer.DefaultPlatform || col.gameObject.layer == Layer.OneSidedPlatform)
-            isTouchingMap = true;
+            IsTouchingMap = true;
     }
 
     private void OnCollisionExit2D(Collision2D col)
     {
         if (col.gameObject.layer == Layer.DefaultPlatform || col.gameObject.layer == Layer.OneSidedPlatform)
-            isTouchingMap = false;
+            IsTouchingMap = false;
     }
 
     // Adjust creature's colliders and ground detectors as required 
@@ -337,7 +323,7 @@ public abstract class CentralController : MonoBehaviour
         mainCollider.size = new Vector2(x, mainCollider.size.y);
 
         // activiate the right colliders for the creature based on the situation
-        mainCollider.enabled =  !phaseTracker.IsSomersaulting;
+        mainCollider.enabled = !phaseTracker.IsSomersaulting;
         oneWayCollider.enabled = !phaseTracker.IsSomersaulting && rig.velocity.y < 0.1f;
         somersaultCollider.enabled = phaseTracker.IsSomersaulting;
     }

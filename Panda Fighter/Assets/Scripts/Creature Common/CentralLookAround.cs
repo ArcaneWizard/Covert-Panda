@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Burst.Intrinsics;
+
 using UnityEngine;
 
 /// <summary>
@@ -11,7 +9,7 @@ using UnityEngine;
 public abstract class CentralLookAround : MonoBehaviour
 {
     /// <summary> the direction the creature is looking at (in world space) </summary>
-    public Vector2 directionToLook { get; protected set; }
+    public Vector2 DirectionToLook { get; protected set; }
 
     public bool IsFacingRight { get; protected set; }
 
@@ -32,7 +30,7 @@ public abstract class CentralLookAround : MonoBehaviour
     [SerializeField] protected Transform head;
     [SerializeField] protected Transform weaponPivot; // used to calculate direction looked at
 
-    protected Camera camera;
+    protected new Camera camera;
     protected Transform body;
     private Transform mainArmIKTarget;
     private Transform otherArmIKTarget;
@@ -54,8 +52,7 @@ public abstract class CentralLookAround : MonoBehaviour
         mainArmIKTarget = configuration.MainArmIKTracker;
         otherArmIKTarget = configuration.OtherArmIKTracker;
 
-        if (mainArmIKTarget != null)
-        {
+        if (mainArmIKTarget != null) {
             // Store this arm's IK target coordinates (when pointing the gun right, up or down)
             Vector2 pointingRight = configuration.MainArmIKCoordinates[0];
             Vector2 pointingUp = configuration.MainArmIKCoordinates[1];
@@ -73,8 +70,7 @@ public abstract class CentralLookAround : MonoBehaviour
             downVector = (pointingDown - shoulderPos).magnitude;
         }
 
-        if (otherArmIKTarget != null)
-        {
+        if (otherArmIKTarget != null) {
             // Get this arm's IK target coordinates (when pointing the gun right, up or down)
             Vector2 pointingRight = configuration.OtherArmIKCoordinates[0];
             Vector2 pointingUp = configuration.OtherArmIKCoordinates[1];
@@ -104,14 +100,14 @@ public abstract class CentralLookAround : MonoBehaviour
         health = transform.GetComponent<Health>();
         body = transform.GetChild(0);
         animator = body.GetComponent<Animator>();
-        camera = transform.parent.parent.parent.GetComponent<References>().Camera;
+        camera = References.Instance.Camera;
     }
 
-    protected virtual void LateUpdate() 
+    protected virtual void LateUpdate()
     {
         if (health.IsDead || phaseTracker.IsDoingSomersault)
             return;
-        
+
         figureOutDirectionToLookIn();
         IsFacingRight = povVector.x >= 0;
 
@@ -127,11 +123,11 @@ public abstract class CentralLookAround : MonoBehaviour
         // to a coordinate plane whose positive x-axis is defined by the the creature's local positive x-axis.
         // The POV angle is he angle between the creature's local positive x-axis and the direction it is looking
 
-        povVector = MathX.RotateVector(directionToLook, -controller.GetAngleOfBodyTilt() * Mathf.Deg2Rad);
+        povVector = MathX.RotateVector(DirectionToLook, -controller.GetAngleOfBodyTilt() * Mathf.Deg2Rad);
         float temp = Mathf.Atan2(povVector.y, Mathf.Abs(povVector.x)) * Mathf.Rad2Deg;
         povAngle = MathX.ClampAngleTo180(temp);
     }
-    
+
     private void updateHead()
     {
         float headSlope, headRotation;
@@ -161,18 +157,14 @@ public abstract class CentralLookAround : MonoBehaviour
         float aimTargetDistanceFromShoulder, aimTargetAngle;
 
         // rotate main arm based on POV angle
-        if (mainArmIKTarget != null)
-        {
-            if (povVector.y >= 0)
-            {
+        if (mainArmIKTarget != null) {
+            if (povVector.y >= 0) {
                 float slope = (up - right) / 90f;
                 aimTargetAngle = povAngle * slope + right;
 
                 float dirSlope = (upVector - rightVector) / 90f;
                 aimTargetDistanceFromShoulder = povAngle * dirSlope + rightVector;
-            }
-            else
-            {
+            } else {
                 float slope = (down - right) / -90f;
                 aimTargetAngle = povAngle * slope + right;
 
@@ -187,18 +179,14 @@ public abstract class CentralLookAround : MonoBehaviour
         }
 
         // rotate secondary arm (if applicable) based on POV angle
-        if (otherArmIKTarget != null)
-        {
-            if (povVector.y >= 0)
-            {
+        if (otherArmIKTarget != null) {
+            if (povVector.y >= 0) {
                 float slope = (up2 - right2) / 90f;
                 aimTargetAngle = povAngle * slope + right2;
 
                 float dirSlope = (upVector2 - rightVector2) / 90f;
                 aimTargetDistanceFromShoulder = povAngle * dirSlope + rightVector2;
-            }
-            else
-            {
+            } else {
                 float slope = (down2 - right2) / -90f;
                 aimTargetAngle = povAngle * slope + right2;
 
@@ -217,8 +205,7 @@ public abstract class CentralLookAround : MonoBehaviour
         Queue<Transform> armBones = new Queue<Transform>();
         armBones.Enqueue(arm);
 
-        while (armBones.Count > 0)
-        {
+        while (armBones.Count > 0) {
             foreach (Transform child in armBones.Peek())
                 armBones.Enqueue(child);
 

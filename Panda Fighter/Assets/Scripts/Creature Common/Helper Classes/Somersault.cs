@@ -1,16 +1,16 @@
 using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 // Handle the execution + animation of a mid-air somersault (when the creature double-jumps)
 
 public class Somersault
 {
-    public SomersaultState state {get; private set;}
+    public SomersaultState State { get; private set; }
 
-    private const float initSomersaultSpeed = 1000f;
-    private const float endSomersaultSpeed = 800f;
-    private const float somersaultDuration = 0.4f;
+    private const float INIT_SOMERSAULT_SPEED = 1000f;
+    private const float END_SOMERSAULT_SPEED = 800f;
+    private const float SOMERSAULT_DURATION = 0.4f;
     protected int somersaultDirection;
 
     private float startTime;
@@ -22,8 +22,8 @@ public class Somersault
     private CentralPhaseTracker phaseTracker;
     private Animator animator;
 
-    public Somersault(Transform transform, CentralPhaseTracker phaseTracker, Animator animator, 
-        CentralController controller, CentralLookAround lookAround) 
+    public Somersault(Transform transform, CentralPhaseTracker phaseTracker, Animator animator,
+        CentralController controller, CentralLookAround lookAround)
     {
         this.transform = transform;
         this.phaseTracker = phaseTracker;
@@ -32,7 +32,7 @@ public class Somersault
         this.lookAround = lookAround;
     }
 
-    public void Reset() => state = SomersaultState.Exited;
+    public void Reset() => State = SomersaultState.Exited;
 
     // Setup creature to do a double jump somersault. Factor in the direction to somersault in, 
     // disable limb movement during the somersault (ex. can't control head movement with cursor), 
@@ -54,26 +54,25 @@ public class Somersault
         phaseTracker.SwapSomersaultAnimation(isForwardSomersault);
 
         // start somersault
-        state = SomersaultState.Started;
+        State = SomersaultState.Started;
         yield return new WaitForSeconds(0.2f);
-        state = SomersaultState.MidWay;
+        State = SomersaultState.MidWay;
     }
 
     public void Tick()
     {
         // if creature isn't double jumping, reset the somersault direction 
-       /* if (!phaseTracker.Is(Phase.DoubleJumping))
-        {
-            state = SomersaultState.Exited;
-            animator.SetBool("somersault forwards", true);
-            return;
-        }*/
+        /* if (!phaseTracker.Is(Phase.DoubleJumping))
+         {
+             state = SomersaultState.Exited;
+             animator.SetBool("somersault forwards", true);
+             return;
+         }*/
 
-        if (state == SomersaultState.Started)
+        if (State == SomersaultState.Started)
             doSomersault();
 
-        else if (state == SomersaultState.MidWay)
-        {
+        else if (State == SomersaultState.MidWay) {
             doSomersault();
 
             float z = MathX.ClampAngleTo360(zAngle);
@@ -81,10 +80,8 @@ public class Somersault
                 || (somersaultDirection == 1 && z > 320);
 
             if (spunBackUpright)
-                state = SomersaultState.NearFinished;
-        }
-
-        else if (state == SomersaultState.NearFinished)
+                State = SomersaultState.NearFinished;
+        } else if (State == SomersaultState.NearFinished)
             endSomersault();
     }
 
@@ -95,15 +92,12 @@ public class Somersault
     {
         float timeElapsed = Time.time - startTime;
 
-        if (timeElapsed <= somersaultDuration)
-        {
-            zAngle = timeElapsed * initSomersaultSpeed * somersaultDirection;
+        if (timeElapsed <= SOMERSAULT_DURATION) {
+            zAngle = timeElapsed * INIT_SOMERSAULT_SPEED * somersaultDirection;
             transform.eulerAngles = new Vector3(0, 0, zAngle);
-        }
-        else
-        {
-            zAngle = somersaultDuration * initSomersaultSpeed * somersaultDirection
-                    + (timeElapsed - somersaultDuration) * endSomersaultSpeed * somersaultDirection;
+        } else {
+            zAngle = SOMERSAULT_DURATION * INIT_SOMERSAULT_SPEED * somersaultDirection
+                    + (timeElapsed - SOMERSAULT_DURATION) * END_SOMERSAULT_SPEED * somersaultDirection;
             transform.eulerAngles = new Vector3(0, 0, zAngle);
         }
     }
@@ -112,14 +106,11 @@ public class Somersault
     {
         float z = MathX.ClampAngleTo180(zAngle);
 
-        if (Mathf.Abs(z) <= 8)
-        {
-            state = SomersaultState.Exited;
+        if (Mathf.Abs(z) <= 8) {
+            State = SomersaultState.Exited;
             animator.SetBool("somersault forwards", true);
             transform.localEulerAngles = new Vector3(0f, 0f, 0f);
-        }
-        else
-        {
+        } else {
             zAngle = (z > 0) ? z - 15f : z + 15f;
             transform.localEulerAngles = new Vector3(0f, 0f, zAngle);
         }

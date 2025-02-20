@@ -1,6 +1,7 @@
-using MEC;
 using System.Collections;
-using System.Collections.Generic;
+
+using MEC;
+
 using UnityEngine;
 
 // THIS CLASS IS NOT CURRENTLY BEING USED
@@ -14,7 +15,7 @@ public class FragGrenade : MovingBullet
     private GameObject animatedExplosion;
     private Explosion explosion;
 
-    public void startExplosionTimer() => StartCoroutine(eStartExplosionTimer());
+    public void StartExplosionTimer() => StartCoroutine(eStartExplosionTimer());
 
     protected override void Awake()
     {
@@ -28,7 +29,6 @@ public class FragGrenade : MovingBullet
 
     protected override void OnCreatureCollision(CollisionInfo info, Transform creature) { }
     protected override void OnMapCollision(CollisionInfo info) { }
-
 
     private IEnumerator eStartExplosionTimer()
     {
@@ -49,8 +49,7 @@ public class FragGrenade : MovingBullet
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
-        else if (animatedExplosion.activeSelf)
-        {
+        else if (animatedExplosion.activeSelf) {
             rig.constraints = RigidbodyConstraints2D.None;
 
             sR.enabled = true;

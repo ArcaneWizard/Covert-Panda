@@ -1,9 +1,8 @@
-﻿using MEC;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using MEC;
+
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UIElements;
 
 // Slow bullets have the option of using predictive raycast logic or physical collider collisions
 
@@ -25,14 +24,14 @@ public abstract class Bullet : MonoBehaviour
         Timing.RunSafeCoroutine(deactivateBullet(), gameObject);
 
     ///<summary> Invoked whenever the bullet collides with the map. By default, deactivates the bullet. </summary>
-    protected virtual void OnMapCollision() => 
+    protected virtual void OnMapCollision() =>
         Timing.RunSafeCoroutine(deactivateBullet(), gameObject);
 
     /// <summary>  Multiplier applied to the bullet's damage. By default, set to 1 </summary>
     protected virtual float DamageMultiplier() => 1;
 
     /// <summary> Runtime bullet damage after applying damage multiplier </summary>
-    protected int RuntimeBulletDamage => (int)(weaponConfiguration.Damage *
+    protected int runtimeBulletDamage => (int)(weaponConfiguration.Damage *
         Mathf.Clamp(Mathf.Abs(DamageMultiplier()), 0, 5f));
 
     private IEnumerator<float> deactivateBullet()
