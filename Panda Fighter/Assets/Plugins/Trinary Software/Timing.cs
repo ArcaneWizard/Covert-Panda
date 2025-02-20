@@ -7,13 +7,13 @@ using UnityEngine.Profiling;
 
 // /////////////////////////////////////////////////////////////////////////////////////////
 //                              More Effective Coroutines
-//                                        v3.10.2
+//                                        v3.13.0
 // 
 // This is an improved implementation of coroutines that boasts zero per-frame memory allocations,
 // runs about twice as fast as Unity's built in coroutines and has a range of extra features.
 // 
 // This is the free version. MEC also has a pro version, which can be found here:
-// https://www.assetstore.unity3d.com/en/#!/content/68480
+// https://assetstore.unity.com/packages/package/68480
 // The pro version contains exactly the same core that the free version uses, but also
 // contains many additional features. Every function that exists in MEC Free also exists in MEC Pro,
 // so you can upgrade at any time without breaking existing code.
@@ -163,6 +163,7 @@ namespace MEC
         private const int InitialBufferSizeLarge = 256;
         private const int InitialBufferSizeMedium = 64;
         private const int InitialBufferSizeSmall = 8;
+        private const float ASmallNumber = 0.00048828125f;
 
         private static Timing[] ActiveInstances = new Timing[16];
         private static Timing _instance;
@@ -670,100 +671,6 @@ namespace MEC
 
             _lastSlowUpdateProcessSlot -= _nextSlowUpdateProcessSlot - inner.i;
             SlowUpdateCoroutines = _nextSlowUpdateProcessSlot = inner.i;
-        }
-
-
-        /// <summary>
-        /// Run a new coroutine in the Update segment. Coroutine will be killed if the gameObject is disabled or destroyed.
-        /// </summary>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, null, new CoroutineHandle(Instance._instanceID), true);
-        }
-
-        /// <summary>
-        /// Run a new coroutine in the Update segment. Couroutine will be killed if the gameObject is disabled or destroyed.
-        /// </summary>
-        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, string tag)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, tag, new CoroutineHandle(Instance._instanceID), true);
-        }
-
-        /// <summary>
-        /// Run a new safe coroutine. Safe coroutines get killed if the gameObject is disabled or destroyed.
-        /// </summary>
-        /// <param name="segment">The segment that the coroutine should run in.</param>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, Segment segment)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, null, new CoroutineHandle(Instance._instanceID), true);
-        }
-
-        /// <summary>
-        /// Run a new coroutine. Couroutine will be killed if the gameObject is disabled or destroyed.
-        /// </summary>
-        /// <param name="coroutine">The new coroutine's handle.</param>
-        /// <param name="segment">The segment that the coroutine should run in.</param>
-        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, Segment segment, string tag)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, tag, new CoroutineHandle(Instance._instanceID), true);
-        }
-
-        /// <summary>
-        /// Run a new coroutine on this Timing instance in the Update segment. Couroutine will be killed if the gameObject is disabled or destroyed..
-        /// </summary>
-        /// <param name="coroutine">The new coroutine's handle.</param>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, null, new CoroutineHandle(_instanceID), true);
-        }
-
-        /// <summary>
-        /// Run a new safe coroutine on this Timing instance in the Update segment. Safe coroutines get killed if the gameObject is disabled or destroyed.
-        /// </summary>
-        /// <param name="coroutine">The new coroutine's handle.</param>
-        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, string tag)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, tag, new CoroutineHandle(_instanceID), true);
-        }
-
-        /// <summary>
-        /// Run a new coroutine on this Timing instance. Couroutine will be killed if the gameObject is disabled or destroyed.
-        /// </summary>
-        /// <param name="coroutine">The new coroutine's handle.</param>
-        /// <param name="segment">The segment that the coroutine should run in.</param>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, Segment segment)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, null, new CoroutineHandle(_instanceID), true);
-        }
-
-        /// <summary>
-        /// Run a new coroutine on this Timing instance. Couroutine will be killed if the gameObject is disabled or destroyed.
-        /// </summary>
-        /// <param name="coroutine">The new coroutine's handle.</param>
-        /// <param name="segment">The segment that the coroutine should run in.</param>
-        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
-        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
-        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, Segment segment, string tag)
-        {
-            return coroutine == null ? new CoroutineHandle()
-                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, tag, new CoroutineHandle(_instanceID), true);
         }
 
         /// <summary>
@@ -1529,7 +1436,7 @@ namespace MEC
                     deltaTime = Time.fixedDeltaTime;
                     localTime = Time.fixedTime;
 
-                    if (_lastFixedUpdateTime + 0.0001f < Time.fixedTime)
+                    if (_lastFixedUpdateTime + ASmallNumber < Time.fixedTime)
                     {
                         _lastFixedUpdateTime = Time.fixedTime;
                         return true;
@@ -2032,38 +1939,6 @@ namespace MEC
         {
             return _tmpRef as IEnumerator<float>;
         }
-
-#if !UNITY_2018_3_OR_NEWER
-        /// <summary>
-        /// Use the command "yield return Timing.WaitUntilDone(wwwObject);" to pause the current 
-        /// coroutine until the wwwObject is done.
-        /// </summary>
-        /// <param name="wwwObject">The www object to pause for.</param>
-        public static float WaitUntilDone(WWW wwwObject)
-        {
-            if (wwwObject == null || wwwObject.isDone) return 0f;
-
-            _tmpRef = wwwObject;
-            ReplacementFunction = WaitUntilDoneWwwHelper;
-            return float.NaN;
-        }
-
-
-        private static IEnumerator<float> WaitUntilDoneWwwHelper(IEnumerator<float> coptr, CoroutineHandle handle)
-        {
-            return _StartWhenDone(_tmpRef as WWW, coptr);
-        }
-
-        private static IEnumerator<float> _StartWhenDone(WWW www, IEnumerator<float> pausedProc)
-        {
-            while (!www.isDone)
-                yield return WaitForOneFrame;
-
-            _tmpRef = pausedProc;
-            ReplacementFunction = ReturnTmpRefForRepFunc;
-            yield return float.NaN;
-        }
-#endif
 
         /// <summary>
         /// Use the command "yield return Timing.WaitUntilDone(operation);" to pause the current 
