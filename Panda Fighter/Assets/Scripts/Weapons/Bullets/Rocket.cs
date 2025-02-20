@@ -40,7 +40,7 @@ public class Rocket : MovingBullet
         changeRocketVisibility(false);
         yield return Timing.WaitForSeconds(1.4f);
 
-        Timing.RunSafeCoroutine(explosion.EnableExplosion(), gameObject);
+        Timing.RunSafeCoroutine(explosion.EnableExplosion(creator, dmg), gameObject);
         rig.constraints = RigidbodyConstraints2D.None;
         physicalExplosion.SetActive(false);
         changeRocketVisibility(true);

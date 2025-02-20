@@ -25,7 +25,7 @@ public class AI_WeaponSystem : CentralWeaponSystem
 
     void Update()
     {
-        if (health.IsDead)
+        if (Health.IsDead)
             return;
 
         // switch to another inventory weapon if the ammo is 0

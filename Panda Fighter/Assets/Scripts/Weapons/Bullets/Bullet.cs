@@ -18,15 +18,14 @@ public abstract class Bullet : MonoBehaviour
     protected virtual void Awake()
     {
         weaponConfiguration = gameObject.transform.parent.GetComponent<WeaponConfiguration>();
-        creature = transform.parent.parent.parent.parent;
     }
 
     /// <summary> Invoked whenever the bullet hits a creature. By default, deactivates the bullet </summary>
-    protected virtual void OnCreatureCollision(CollisionInfo info, Transform creature) =>
+    protected virtual void OnCreatureCollision(Transform t) =>
         Timing.RunSafeCoroutine(deactivateBullet(), gameObject);
 
-    /// <summary> Invoked whenever the bullet collides with the map. By default, deactivates the bullet. </summary>
-    protected virtual void OnMapCollision(CollisionInfo info) => 
+    ///<summary> Invoked whenever the bullet collides with the map. By default, deactivates the bullet. </summary>
+    protected virtual void OnMapCollision() => 
         Timing.RunSafeCoroutine(deactivateBullet(), gameObject);
 
     /// <summary>  Multiplier applied to the bullet's damage. By default, set to 1 </summary>

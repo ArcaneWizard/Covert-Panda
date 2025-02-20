@@ -1,0 +1,189 @@
+﻿# Top-most EditorConfig file
+root = true
+
+[*.{cs,vb}]
+# Naming rules
+
+# override the severity of naming rules below
+dotnet_diagnostic.IDE1006.severity = warning
+
+dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
+dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = warning
+
+dotnet_naming_rule.constants.symbols = constants
+dotnet_naming_rule.constants.style = all_caps_with_underscores
+dotnet_naming_rule.constants.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = locals
+dotnet_naming_rule.public_protected_vars.style = pascal_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = default_public_and_protected_entities
+dotnet_naming_rule.public_protected_vars.style = pascal_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = public_and_protected_methods
+dotnet_naming_rule.public_protected_vars.style = pascal_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = types
+dotnet_naming_rule.public_protected_vars.style = pascal_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = local_function
+dotnet_naming_rule.public_protected_vars.style = camel_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = parameters
+dotnet_naming_rule.public_protected_vars.style = camel_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = default_private_entities
+dotnet_naming_rule.public_protected_vars.style = camel_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+dotnet_naming_rule.public_protected_vars.symbols = locals   
+dotnet_naming_rule.public_protected_vars.style = camel_case
+dotnet_naming_rule.public_protected_vars.severity = warning
+
+# Symbol specifications
+
+dotnet_naming_symbols.locals.applicable_kinds = local
+dotnet_naming_symbols.parameters.applicable_kinds = parameter
+dotnet_naming_symbols.local_functions.applicable_kinds = local_function
+
+dotnet_naming_symbols.interface.applicable_kinds = interface
+dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+
+dotnet_naming_symbols.types.applicable_kinds = class, struct, enum, namespace, type_parameter
+dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+
+dotnet_naming_symbols.default_private_entities.applicable_kinds = field, property, event, delegate
+dotnet_naming_symbols.default_private_entities.applicable_accessibilities = private, protected_internal, internal, private_protected
+
+dotnet_naming_symbols.default_public_and_protected_entities.applicable_kinds = field, property, event, delegate
+dotnet_naming_symbols.default_public_and_protected_entities.applicable_accessibilities = public, protected
+
+dotnet_naming_symbols.default_private_entities.applicable_kinds = field, property, event, delegate
+dotnet_naming_symbols.default_private_entities.applicable_accessibilities = private, protected, protected_internal, internal, private_protected
+
+dotnet_naming_symbols.public_and_protected_methods.applicable_kinds = method
+dotnet_naming_symbols.public_and_protected_methods.applicable_accessibilities = public, protected
+
+dotnet_naming_symbols.private_methods.applicable_kinds = private_method
+dotnet_naming_symbols.private_methods.applicable_accessibilities = internal, private, protected, protected_internal, private_protected
+
+dotnet_naming_symbols.constants.applicable_kinds = field, property
+dotnet_naming_symbols.constants.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.constants.required_modifiers = const
+
+# Naming styles
+
+dotnet_naming_style.all_caps_with_underscores.capitalization = all_upper
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+dotnet_naming_style.camel_case.capitalization = camel_case
+
+dotnet_naming_style.begins_with_i.required_prefix = I
+dotnet_naming_style.begins_with_i.capitalization = pascal_case
+
+
+# Other warnings
+
+dotnet_diagnostic.IDE0055.severity = warning  # breaking .NET formatting (whitespace, tabs)
+dotnet_diagnostic.IDE0004.severity = warning  # unneccessary casts
+dotnet_diagnostic.IDE0005.severity = warning  # unneccessary directives
+dotnet_diagnostic.IDE0010.severity = warning  # switch statements missing default case
+dotnet_diagnostic.IDE0011.severity = warning  # single line without curly brackets
+dotnet_diagnostic.IDE0035.severity = warning  # unreachable code
+dotnet_diagnostic.IDE0035.severity = warning  # unreachable code
+dotnet_diagnostic.IDE0040.severity = warning  # require accessibility modifiers
+dotnet_diagnostic.IDE0051.severity = warning  # remove unused private member
+dotnet_diagnostic.IDE0052.severity = warning  # remove unread private member
+dotnet_diagnostic.IDE0058.severity = warning  # remove unused expression value
+dotnet_diagnostic.IDE0059.severity = warning  # remove unneccessary value assignment
+dotnet_diagnostic.IDE0060.severity = warning  # remove unused value assignment
+dotnet_diagnostic.IDE0130.severity = warning # namespace does not match folder structure
+
+dotnet_analyzer_diagnostic.category-Security.severity = warning
+dotnet_analyzer_diagnostic.category-Performance.severity = warning
+dotnet_analyzer_diagnostic.category-Maintainability.severity = warning
+
+# Suggestions
+
+dotnet_diagnostic.CA1846.severity = suggestion  # prefer AsSpan over .Substring
+dotnet_diagnostic.CA1832.severity = suggestion # Use AsSpan or AsMemory for ReadOnlySpan or ReadOnlyMemory portion of an array
+
+# Ignore
+dotnet_diagnostic.CS0659.severity = silent # override hashcode too if overriding equals method
+dotnet_diagnostic.CS8618.severity = silent # non-nullable value not defined in constructor
+dotnet_diagnostic.CA1805.severity = silent # variable set to default value on initialization
+dotnet_diagnostic.IDE0010.severity = silent # add missing switch cases (it's okay to use default to account for rest of csaes)
+
+#  Csharp or dotnet settings
+
+tab_width = 4
+indent_size = 4
+end_of_line = crlf
+insert_final_newline = true:warning
+
+dotnet_style_namespace_match_folder = true:warning
+csharp_prefer_braces = true:warning
+trim_trailing_whitespace = true::warning
+csharp_style_namespace_declarations = file_scoped:warning
+
+csharp_using_directive_placement = outside_namespace:silent
+csharp_prefer_simple_using_statement = false:suggestion
+csharp_style_prefer_method_group_conversion = true:silent
+csharp_style_prefer_top_level_statements = true:silent
+csharp_style_prefer_primary_constructors = true:suggestion
+csharp_style_expression_bodied_methods = false:silent
+csharp_style_expression_bodied_constructors = false:silent
+csharp_style_expression_bodied_operators = false:silent
+csharp_style_expression_bodied_properties = true:silent
+csharp_style_expression_bodied_indexers = true:silent
+csharp_style_expression_bodied_accessors = true:silent
+csharp_style_expression_bodied_lambdas = true:silent
+csharp_style_expression_bodied_local_functions = false:silent
+csharp_style_throw_expression = true:suggestion
+csharp_style_prefer_null_check_over_type_check = true:suggestion
+csharp_prefer_simple_default_expression = true:suggestion
+csharp_style_prefer_local_over_anonymous_function = true:suggestion
+csharp_style_prefer_index_operator = true:suggestion
+csharp_style_prefer_range_operator = true:suggestion
+csharp_style_implicit_object_creation_when_type_is_apparent = true:suggestion
+csharp_style_prefer_tuple_swap = true:suggestion
+csharp_style_prefer_utf8_string_literals = true:suggestion
+csharp_indent_labels = one_less_than_current
+csharp_style_inlined_variable_declaration = true:suggestion
+csharp_space_around_binary_operators = before_and_after
+csharp_style_var_for_built_in_types = false:silent
+
+dotnet_style_require_accessibility_modifiers = always
+dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_null_propagation = true:suggestion
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
+dotnet_style_prefer_auto_properties = true:silent
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_prefer_collection_expression = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+dotnet_style_prefer_conditional_expression_over_assignment = true:silent
+dotnet_style_prefer_conditional_expression_over_return = true:silent
+dotnet_style_explicit_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_compound_assignment = true:suggestion
+dotnet_style_prefer_simplified_interpolation = true:suggestion
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+dotnet_style_predefined_type_for_locals_parameters_members = true:silent
+dotnet_style_predefined_type_for_member_access = true:silent
+
+dotnet_sort_system_directives_first = true:warning
+dotnet_separate_import_directive_groups = true:warning
+    
+# Give large validators more lenience with linting (ex. maximize human-readability of consecutive tiny if statements)
+[*Validator*.cs]
+dotnet_diagnostic.IDE0011.severity = none  # allow any curly bracket pattern
+dotnet_diagnostic.IDE0058.severity = none  # ignore unused expressions (since we usually ignore rule outputs)
+dotnet_diagnostic.IDE0055.severity = none  # formatting

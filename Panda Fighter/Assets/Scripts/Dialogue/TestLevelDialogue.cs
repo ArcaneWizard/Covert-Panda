@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,8 +22,10 @@ public class TestLevelDialogue : MonoBehaviour
 
         dM.Specify(Character.Vortevo);
         dM.AddLine(Voice.Shouting, "I JUST NEED A FEW SECONDS.");
-        dM.AddLine( "ALMOST THERE");
+        dM.AddLine("ALMOST THERE");
         dM.AddLine("ON MY MARK... ... FIRE");
+
+
     }
 
     // execute dialogue with correct timing and order
@@ -48,6 +48,8 @@ public class TestLevelDialogue : MonoBehaviour
             }
         }
         else
+        {
             timer -= Time.deltaTime;
+        }
     }
 }

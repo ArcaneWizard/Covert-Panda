@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+
 using Mono.Cecil;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,21 +13,19 @@ public class StateMachine : MonoBehaviour
     private IState lastState;
 
     //all transitions
-    private Dictionary<System.Type, List<Transition>> transitions = new Dictionary<System.Type, List<Transition>>();
+    private Dictionary<Type, List<Transition>> transitions = new Dictionary<Type, List<Transition>>();
 
     //transitions from our current state to a specified state | called when conditions' met
     private List<Transition> currentStateTransitions = new List<Transition>();
     //transitions to a specified state | called whenever applicable
     private List<Transition> alwaysCalledTransitions = new List<Transition>();
     //empty list of transitions 
-    private static List<Transition> EmptyTransitions = new List<Transition>();
 
     public void Tick()
     {
         var transition = GetTransition();
         if (transition != null)
         {
-            Debug.Log("Transitioning from " + currentState + " to " + transition.To);
             SetState(transition.To);
         }
 
@@ -70,7 +70,7 @@ public class StateMachine : MonoBehaviour
     private class Transition
     {
         public Func<bool> Condition { get; }
-        public IState To { get; }
+        public IState To { get;     }
 
         public Transition(IState to, Func<bool> condition)
         {

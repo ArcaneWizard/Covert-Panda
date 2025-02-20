@@ -44,7 +44,8 @@ public static class MathX
         return diff.x * diff.x + diff.y * diff.y;
     }
 
-    ///<summary> Rotates the vector by specified angle in radians. Can optionally set the pivot point (relative to the tail of the vector) </summary> 
+    ///<summary> Rotates the vector by specified angle in radians. Can optionally set the pivot point 
+    /// (relative to the tail of the vector) </summary> 
     public static Vector2 RotateVector(this Vector2 vector, float radians, Vector2 pivot = default(Vector2)) 
     {
         float sin = Mathf.Sin(radians);

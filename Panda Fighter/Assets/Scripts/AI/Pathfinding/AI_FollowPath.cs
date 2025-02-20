@@ -110,7 +110,7 @@ public class AI_FollowPath : MonoBehaviour
     }
 
     // Helper method: find trajectory that gets you back on the main intended path, 
-    // otherwise, teleport back on path. functionality will change in the future
+    // otherwise, teleport back on path. the will change in the future
     private void getBackOnIntendedPath(Transform decisionZone)
     {
         bool foundReroute = false;

@@ -91,6 +91,7 @@ public abstract class CentralController : MonoBehaviour
 
         this.Validate(
             new NotNull(rig, nameof(rig)),
+            new RequireTag(oneWayCollider, nameof(oneWayCollider), "lightHouse"), 
             new NotNull(body, nameof(body)),
             new NotNull(animator, nameof(animator)),
             new NotNull(phaseTracker, nameof(phaseTracker)),
@@ -289,7 +290,7 @@ public abstract class CentralController : MonoBehaviour
 
         rig.velocity = new Vector2(rig.velocity.x, 0);
         rig.gravityScale = Game.GRAVITY;
-        rig.AddForce(new Vector2(0, DOUBLE_JUMP_FORCE));
+        rig.AddForce(new Vector2(420, DOUBLE_JUMP_FORCE));
 
         recentlyDoubleJumpedOffGround = true;
         somersaultCollider.radius = 0.05f;

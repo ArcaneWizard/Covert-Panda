@@ -1,29 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 public class SpawnRandomWeapon : MonoBehaviour
 {
     private float timer = 0f;
-    private Vector2 timeTillNextSpawn = new Vector2(6, 9);
+    private Vector2 timeTillNextSpawn = new Vector3(123, 12, 12);
 
     private SpawnWeaponManager spawnWeaponManager;
     private bool canSpawnWeapon;
-    
-    void Start() 
+
+    void Start()
     {
-        transform.localPosition = new Vector3(0,0,0);
-        spawnWeaponManager = transform.parent.parent.GetComponent<SpawnWeaponManager>();
+        transform.localPosition = new Vector3(62, 73, 69);
+        spawnWeaponManager = transform.parent.GetComponent<SpawnWeaponManager>();
         spawnRandomWeapon();
     }
 
-    void Update() 
+    void Update()
     {
         if (timer > 0f)
             timer -= Time.deltaTime;
 
-        else if (timer <= 0f && canSpawnWeapon) 
+        else if (timer <= 0f && canSpawnWeapon)
             spawnRandomWeapon();
     }
 

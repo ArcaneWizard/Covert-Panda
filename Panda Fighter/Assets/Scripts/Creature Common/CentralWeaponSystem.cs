@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
+
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 /// </summary> This class manages the weapon inventory system of the creature. </summary>
 public abstract class CentralWeaponSystem : MonoBehaviour
@@ -15,9 +13,9 @@ public abstract class CentralWeaponSystem : MonoBehaviour
 
     private InventorySlot[] inventory;
     private int selectedSlot; // the current inventory slot selected 
-    protected const int maxSlotsInInventory = 3; 
+    protected const int MAX_SLOTS_IN_INVENTORY = 3;
     private HashSet<int> openInventorySlots;
-    protected Dictionary<Weapon, int> inventoryWeapons; // maps equipped weapons to their inventory slot
+    protected Dictionary<Weapon, int> InventoryWeapons; // maps equipped weapons to their inventory slot
 
     private Transform allBulletPools;
     private Dictionary<Weapon, List<Transform>> bulletPools;
@@ -29,7 +27,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     private List<GameObject> physicalWeaponAndLimbs;
     private CentralLookAround lookAround;
     private CentralShooting centralShooting;
-    protected Health health;
+    protected Health Health;
 
     public Weapon CurrentWeapon => inventory[selectedSlot].Weapon;
     public int CurrentAmmo => inventory[selectedSlot].Ammo;
@@ -43,7 +41,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     public Transform UseOneBullet()
     {
         inventory[selectedSlot].Ammo--;
-        bulletPoolIdx = inventory[selectedSlot].Ammo % bulletPools[CurrentWeapon].Count;
+        bulletPoolIdx = MathX.Modulo(inventory[selectedSlot].Ammo, bulletPools[CurrentWeapon].Count);
         return bulletPools[CurrentWeapon][bulletPoolIdx];
     }
 
@@ -54,7 +52,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         openInventorySlots.Clear();
         selectedSlot = 0;
 
-        for (int i = 0; i < maxSlotsInInventory; i++)
+        for (int i = 0; i < MAX_SLOTS_IN_INVENTORY; i++)
         {
             inventory[i].Weapon = Weapon.None;
             inventory[i].Ammo = 0;
@@ -70,7 +68,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
     protected virtual void switchWeapons(int slot)
     {
         // invalid inventory slot
-        if (slot < 0 || slot >= maxSlotsInInventory)
+        if (slot < 0 || slot >= MAX_SLOTS_IN_INVENTORY)
             return;
 
         // no weapon exists at the specified slot OR slot is already selected
@@ -85,7 +83,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         // get components
         lookAround = transform.GetComponent<CentralLookAround>();
         centralShooting = transform.GetComponent<CentralShooting>();
-        health = transform.GetComponent<Health>();
+        Health = transform.GetComponent<Health>();
 
         // setup
         bulletPools = new Dictionary<Weapon, List<Transform>>();
@@ -94,7 +92,7 @@ public abstract class CentralWeaponSystem : MonoBehaviour
         inventoryWeapons = new Dictionary<Weapon, int>();
         openInventorySlots = new HashSet<int>();
 
-        inventory = new InventorySlot[maxSlotsInInventory];
+        inventory = new InventorySlot[MAX_SLOTS_IN_INVENTORY];
         selectedSlot = 0;
 
         physicalWeaponAndLimbs = new List<GameObject>();

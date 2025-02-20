@@ -1,5 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 // This class houses the different arms the creature has to hold weapons. It configures the inverse
@@ -44,17 +44,11 @@ public class IKArmsHandler : MonoBehaviour
 
         if (forMainArm)
         {
-            if (TargetForMainArm.TryGetValue(arm, out Transform target))
-                return target;
-            else
-                return null;
+            return TargetForMainArm.TryGetValue(arm, out Transform target) ? target : null;
         }
         else
         {
-            if (TargetForOtherArm.TryGetValue(arm, out Transform target))
-                return target;
-            else
-                return null;
+            return TargetForOtherArm.TryGetValue(arm, out Transform target) ? target : null;
         }
     }
 
@@ -85,7 +79,6 @@ public class IKArmsHandler : MonoBehaviour
         return IKAimingCoordinates.DefaultCoordinates;
     }
 
-
     private Dictionary<GameObject, Vector3> InitialPositionOfArm;
     public Vector2 armTranslationSpeed = new Vector2(0.15f, 0.12f);
 
@@ -115,7 +108,7 @@ public class IKArmsHandler : MonoBehaviour
     void Update()
     {
         // To prevent arms flipping upside down, limbs should always have 0 local rotation around x and y axes
-        for (int i = 0; i < childCount; i++) 
+        for (int i = 0; i < childCount; i++)
         {
             Vector3 localAngle = transform.GetChild(i).localEulerAngles;
             transform.GetChild(i).localEulerAngles = new Vector3(0, 0, localAngle.z);

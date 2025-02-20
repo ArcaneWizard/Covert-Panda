@@ -674,7 +674,7 @@ namespace MEC
 
 
         /// <summary>
-        /// Run a new coroutine in the Update segment. Couroutine will be killed if the gameObject is disabled or destroyed.
+        /// Run a new coroutine in the Update segment. Coroutine will be killed if the gameObject is disabled or destroyed.
         /// </summary>
         /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
         public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject)

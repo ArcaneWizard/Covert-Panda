@@ -14,7 +14,7 @@ public class DialogueManager
     }
 
     /// <summary> Specify character speaking </summary>
-    public void Specify(Character name) => characterSpeaking = name;
+    public void Specify(Character character) => characterSpeaking = character;
 
     /// <summary> Adds line of dialogue. If linger duration isn't specified, it's auto set to be 
     /// proportional to how long the dialogue is </summary>

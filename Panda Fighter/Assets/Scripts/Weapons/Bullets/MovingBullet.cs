@@ -44,7 +44,7 @@ public class MovingBullet : Bullet
         if (!isDetectingCollisions)
             return;
 
-        if (rig.velocity.magnitude != 0)
+        if (rig.velocity.magnitude != 0) 
             velocityDir = rig.velocity.normalized;
 
         shootRaycastAndScanForObstacles();

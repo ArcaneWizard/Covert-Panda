@@ -50,15 +50,14 @@ public class WeaponSystem : CentralWeaponSystem
             notEquipped.Add(tag, weapon.transform.GetComponent<SpriteRenderer>().sprite);
         }
         */
-    
-
+   
     void Update()
     {
-        if (health.IsDead)
+        if (Health.IsDead)
             return;
 
         // use number keys to switch between weapons in your inventory
-        for (int i = 1; i <= maxSlotsInInventory; i++)
+        for (int i = 1; i <= MAX_SLOTS_IN_INVENTORY; i++)
         {
             if (Input.GetKeyDown(i.ToString()))
                 switchWeapons(i-1);

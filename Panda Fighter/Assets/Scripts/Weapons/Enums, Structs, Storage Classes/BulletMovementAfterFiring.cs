@@ -1,4 +1,4 @@
-public enum BulletMovementAfterFiring
+public enum BulletMovementAfterFiring : byte
 {
     StraightLine,
     Arc,

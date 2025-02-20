@@ -9,7 +9,7 @@ public class SpawnWeaponManager : MonoBehaviour
 
     // Initializes the weapons that can be spawned in this level
     // FUTURE TO-DO: make it read off a text file (saves which list of weapons the user has chosen for a level)
-    private void Awake() 
+    private void Awake()
     {
         Dictionary<Weapon, int> WeaponsToInclude = new Dictionary<Weapon, int>();
 

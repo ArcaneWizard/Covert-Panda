@@ -1,6 +1,6 @@
-using UnityEngine;
-using System.Collections;
 using System.Text;
+
+using UnityEngine;
 
 public class WeaponTag : MonoBehaviour
 {

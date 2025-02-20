@@ -1,8 +1,4 @@
-using System.Collections;
 using UnityEngine;
-using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
-using System;
 
 public class wArcticSprayer : WeaponBehaviour
 {

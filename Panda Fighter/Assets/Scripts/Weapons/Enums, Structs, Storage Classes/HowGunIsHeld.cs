@@ -1,12 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum HowGunIsHeld
+public enum HowGunIsHeld : byte
 {
    PistolGrip,
    ShortBarrelGrip,
    MediumBarrelGrip,
    LongBarrelGrip,
-   OnShoulder
+   OnShoulder,
 }
+
+// cache
+
+enum[]

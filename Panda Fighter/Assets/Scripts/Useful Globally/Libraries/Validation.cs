@@ -113,7 +113,6 @@ public static class Validation
                         finalErrorMsg.Append(nullRefError.errorMsg + ". \n");
                     }
                 }
-
             }
 
             if (hasError)

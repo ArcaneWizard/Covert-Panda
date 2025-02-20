@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using MEC;
 
 // This abstract class is utilized to implement a weapon's behaviour:
 // aka how it fires/attacks, and any animation/behaviour the moment its equipped.
@@ -44,14 +40,14 @@ public abstract class WeaponBehaviour : MonoBehaviour
     }
 
     // Execute a bonus attack with this weapon. Requires the aim direction
-    public virtual void BonusAttack(Vector2 aim) 
+    public virtual void BonusAttack(Vector2 aim)
     {
         bonusAttackProgress = AttackProgress.Started;
         bonusAttack(aim);
     }
 
     // Terminates current attack(s).
-    public void TerminateAttackEarly() 
+    public void TerminateAttackEarly()
     {
         attackProgress = AttackProgress.Finished;
         bonusAttackProgress = AttackProgress.Finished;
@@ -59,7 +55,7 @@ public abstract class WeaponBehaviour : MonoBehaviour
     }
 
     // Invoked when the creature switches to a new weapon. 
-    public virtual void ConfigureUponPullingOutWeapon() 
+    public virtual void ConfigureUponPullingOutWeapon()
     {
         attackProgress = AttackProgress.Finished;
         bonusAttackProgress = AttackProgress.Finished;
@@ -79,4 +75,4 @@ public abstract class WeaponBehaviour : MonoBehaviour
         phaseTracker = transform.parent.parent.parent.transform.GetChild(0).transform.GetComponent<CentralPhaseTracker>();
         side = transform.parent.parent.parent.GetComponent<Role>().side;
     }
- }
+}

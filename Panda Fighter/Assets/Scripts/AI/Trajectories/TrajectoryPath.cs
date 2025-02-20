@@ -31,6 +31,7 @@ public class TrajectoryPath : MonoBehaviour
 
     private const float epsilon = 0.001f;
 
+
     private Color[] trajectoryColors;
     private short colorIndex;
 

@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using UnityEditor;
+
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class Tag : MonoBehaviour
 {
