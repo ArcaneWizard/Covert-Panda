@@ -26,12 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753555557595}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.049642283, y: -0.008367001, z: -0.014065413, w: -0.99863297}
   m_LocalPosition: {x: 0.28000066, y: 1.6499974, z: -0.91}
   m_LocalScale: {x: 2.2683702, y: 2.0453002, z: 0.92456996}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 5.694, y: -0.944, z: -18.193}
 --- !u!212 &1759299753555557598
 SpriteRenderer:
@@ -50,6 +51,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -106,11 +110,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753555557595}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,6 +185,7 @@ PolygonCollider2D:
       - {x: 0.48, y: 0.06}
       - {x: 0.42999998, y: 0.04}
       - {x: 0.41, y: 0.01}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299753823703434
 GameObject:
   m_ObjectHideFlags: 0
@@ -186,12 +212,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753823703434}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.025630992, y: -0.067943834, z: -0.116249375, w: -0.99056184}
   m_LocalPosition: {x: 0.39000064, y: 1.3699974, z: 2.04}
   m_LocalScale: {x: 2.6213024, y: 2.401691, z: 1.0106101}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: -3.817, y: 7.408, z: 13.14}
 --- !u!212 &1759299753823703437
 SpriteRenderer:
@@ -210,6 +237,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -266,11 +296,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753823703434}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -322,6 +373,7 @@ PolygonCollider2D:
       - {x: -0.01, y: -0.64}
       - {x: 0.02, y: -0.32999998}
       - {x: -0.01, y: 0.08}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299753858021319
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,12 +400,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753858021319}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.037809454, w: 0.999285}
   m_LocalPosition: {x: 0.4, y: 1.51, z: -0.44977558}
   m_LocalScale: {x: 3.259564, y: 2.8870232, z: 0.91839}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -4.334}
 --- !u!212 &1759299753858021322
 SpriteRenderer:
@@ -372,6 +425,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -428,11 +484,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753858021319}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -460,6 +537,7 @@ PolygonCollider2D:
       - {x: -0.34, y: -0.17}
       - {x: -0.19, y: -0.16}
       - {x: -0.06, y: -0.22999999}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299753861955263
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,12 +564,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753861955263}
+  serializedVersion: 2
   m_LocalRotation: {x: 2.2584479e-10, y: 1.1869787e-10, z: -0.012577389, w: -0.9999209}
   m_LocalPosition: {x: 0.07, y: 1.95, z: -0.25977558}
   m_LocalScale: {x: 1.996311, y: 1.65, z: 0.91839}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 1.441}
 --- !u!212 &1759299753861955138
 SpriteRenderer:
@@ -510,6 +589,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -566,11 +648,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299753861955263}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -611,6 +714,7 @@ PolygonCollider2D:
       - {x: -0.11, y: -0.52}
       - {x: -0.03, y: -0.32}
       - {x: 0, y: -0.31}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299754054165357
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,12 +741,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754054165357}
+  serializedVersion: 2
   m_LocalRotation: {x: 5.4491144e-11, y: 3.319819e-11, z: -0.0050328816, w: -0.99998736}
   m_LocalPosition: {x: 0.32, y: 1.61, z: 0.07}
   m_LocalScale: {x: 2.4257598, y: 2.2291098, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.577}
 --- !u!212 &1759299754054165360
 SpriteRenderer:
@@ -661,6 +766,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -717,11 +825,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754054165357}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -756,6 +885,7 @@ PolygonCollider2D:
       - {x: -0.089999996, y: -0.28}
       - {x: 0.16, y: -0.17999999}
       - {x: 0.25, y: -0.29999998}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299754155338909
 GameObject:
   m_ObjectHideFlags: 0
@@ -782,12 +912,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754155338909}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.009190367, w: 0.9999578}
   m_LocalPosition: {x: 0.25, y: 1.62, z: -0.44977558}
   m_LocalScale: {x: 2.6456902, y: 2.54815, z: 0.91839}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -1.053}
 --- !u!212 &1759299754155338912
 SpriteRenderer:
@@ -806,6 +937,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -862,11 +996,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754155338909}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -903,6 +1058,7 @@ PolygonCollider2D:
       - {x: -0.089999996, y: -0.06}
       - {x: 0.25, y: -0.14}
       - {x: 0.7, y: -0.089999996}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299754178921426
 GameObject:
   m_ObjectHideFlags: 0
@@ -929,12 +1085,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754178921426}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.0037034722, y: 0.0009165227, z: -0.0049419333, w: -0.99998057}
   m_LocalPosition: {x: -0.15999933, y: 1.4399973, z: -0.24}
   m_LocalScale: {x: 2.3993819, y: 2.6019552, z: 0.91843003}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: -0.424, y: -0.107, z: 0.567}
 --- !u!212 &1759299754178921429
 SpriteRenderer:
@@ -953,6 +1110,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1009,11 +1169,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754178921426}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -1048,6 +1229,7 @@ PolygonCollider2D:
       - {x: 0.04, y: -0.26999998}
       - {x: 0.049999997, y: -0.16}
       - {x: 0.34, y: -0.16}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299754780394817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,9 +1254,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754780394817}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -37.460857, y: -49.893604, z: -0.25977558}
   m_LocalScale: {x: 0.111111134, y: 0.11111112, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1759299753858021320}
   - {fileID: 1759299754155338910}
@@ -1088,7 +1272,6 @@ Transform:
   - {fileID: 1759299753861955136}
   - {fileID: 1759299754901719881}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5910241417396243041
 MonoBehaviour:
@@ -1128,12 +1311,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754901719880}
+  serializedVersion: 2
   m_LocalRotation: {x: 2.5668048e-12, y: -2.386287e-11, z: -0.0018610272, w: -0.9999983}
   m_LocalPosition: {x: -0.47999933, y: 1.6399974, z: 0.26}
   m_LocalScale: {x: 3.7674391, y: 2.6842296, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -359.787}
 --- !u!212 &1759299754901719883
 SpriteRenderer:
@@ -1152,6 +1336,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1208,11 +1395,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299754901719880}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -1241,6 +1449,7 @@ PolygonCollider2D:
       - {x: 0.6534367, y: -0.13352707}
       - {x: 0.6534367, y: -0.093527064}
       - {x: 0.64343673, y: -0.083527066}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299755069650956
 GameObject:
   m_ObjectHideFlags: 0
@@ -1267,12 +1476,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299755069650956}
+  serializedVersion: 2
   m_LocalRotation: {x: 4.2408178e-12, y: -2.3622868e-11, z: 0.0017102128, w: -0.99999857}
   m_LocalPosition: {x: -0.5899993, y: 1.7499974, z: 0.26}
   m_LocalScale: {x: 3.6, y: 2.8, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -360.196}
 --- !u!212 &1759299755069650959
 SpriteRenderer:
@@ -1291,6 +1501,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1347,11 +1560,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299755069650956}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -1377,6 +1611,7 @@ PolygonCollider2D:
       - {x: 0.4486823, y: -0.26688623}
       - {x: 0.72868234, y: -0.14688624}
       - {x: 0.7686823, y: -0.096886255}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299755414904189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1403,12 +1638,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299755414904189}
+  serializedVersion: 2
   m_LocalRotation: {x: 5.7103395e-11, y: 2.8471168e-11, z: -0.0020720589, w: -0.99999785}
   m_LocalPosition: {x: 0.31000066, y: 1.6799973, z: 0.06999999}
   m_LocalScale: {x: 2.4257598, y: 2.2291098, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0.237}
 --- !u!212 &1759299755414904064
 SpriteRenderer:
@@ -1427,6 +1663,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1483,11 +1722,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299755414904189}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -1522,6 +1782,7 @@ PolygonCollider2D:
       - {x: -0.089999996, y: -0.28}
       - {x: 0.16, y: -0.17999999}
       - {x: 0.25, y: -0.29999998}
+  m_UseDelaunayMesh: 0
 --- !u!1 &1759299755652666140
 GameObject:
   m_ObjectHideFlags: 0
@@ -1548,12 +1809,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299755652666140}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.022347324, w: 0.9997503}
   m_LocalPosition: {x: 0.89000064, y: 1.5299973, z: -0.25977558}
   m_LocalScale: {x: 2.2830985, y: 2.1971912, z: 0.91839004}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1759299754780394818}
-  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -2.561}
 --- !u!212 &1759299755652666143
 SpriteRenderer:
@@ -1572,6 +1834,9 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1628,11 +1893,32 @@ PolygonCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759299755652666140}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -1673,3 +1959,4 @@ PolygonCollider2D:
       - {x: -0.32, y: -0.42999998}
       - {x: -0.22999999, y: -0.17}
       - {x: -0.06, y: -0.35999998}
+  m_UseDelaunayMesh: 0

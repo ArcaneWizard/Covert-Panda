@@ -14,7 +14,7 @@ public class FocusBeam : StaticBullet
 
     private float timerStayAlive;
 
-    public void ShootBeam(Transform bulletSpawnPoint, Transform weapon, bool inDoubleJump)
+    public void ShootBeam(Transform bulletSpawnPoint, Transform weapon, bool inDoubleJump, Vector2 aim)
     {
         timerStayAlive = Time.deltaTime;
 
@@ -39,6 +39,8 @@ public class FocusBeam : StaticBullet
 
         collider.size = initialColliderSize + new Vector2(beamLength, 0);
         collider.offset = new Vector2(beamLength / 2, 0);
+
+        OnFire(aim);
     }
 
     protected override void Awake()

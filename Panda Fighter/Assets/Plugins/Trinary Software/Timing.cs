@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+
 using System.Collections.Generic;
+
 using UnityEngine.Assertions;
 #if UNITY_5_5_OR_NEWER
 using UnityEngine.Profiling;
@@ -346,7 +348,7 @@ namespace MEC
 
             currentCoroutine = default(CoroutineHandle);
 
-            if(++_framesSinceUpdate > FramesUntilMaintenance)
+            if (++_framesSinceUpdate > FramesUntilMaintenance)
             {
                 _framesSinceUpdate = 0;
 
@@ -671,6 +673,98 @@ namespace MEC
 
             _lastSlowUpdateProcessSlot -= _nextSlowUpdateProcessSlot - inner.i;
             SlowUpdateCoroutines = _nextSlowUpdateProcessSlot = inner.i;
+        }
+
+        /// Run a new coroutine in the Update segment. Coroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, null, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine in the Update segment. Coroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, tag, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new safe coroutine. Safe coroutines get killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, Segment segment)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, null, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine. Coroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public static CoroutineHandle RunSafeCoroutine(IEnumerator<float> coroutine, GameObject gameObject, Segment segment, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                : Instance.RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, tag, new CoroutineHandle(Instance._instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine on this Timing instance in the Update segment. Coroutine will be killed if the gameObject is disabled or destroyed..
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, null, new CoroutineHandle(_instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new safe coroutine on this Timing instance in the Update segment. Safe coroutines get killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), Segment.Update, tag, new CoroutineHandle(_instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine on this Timing instance. Coroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, Segment segment)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, null, new CoroutineHandle(_instanceID), true);
+        }
+
+        /// <summary>
+        /// Run a new coroutine on this Timing instance. Coroutine will be killed if the gameObject is disabled or destroyed.
+        /// </summary>
+        /// <param name="coroutine">The new coroutine's handle.</param>
+        /// <param name="segment">The segment that the coroutine should run in.</param>
+        /// <param name="tag">An optional tag to attach to the coroutine which can later be used for Kill operations.</param>
+        /// <returns>The coroutine's handle, which can be used for Wait and Kill operations.</returns>
+        public CoroutineHandle RunSafeCoroutineOnInstance(IEnumerator<float> coroutine, GameObject gameObject, Segment segment, string tag)
+        {
+            return coroutine == null ? new CoroutineHandle()
+                 : RunCoroutineInternal(coroutine.CancelWith(gameObject), segment, tag, new CoroutineHandle(_instanceID), true);
         }
 
         /// <summary>
@@ -1400,7 +1494,7 @@ namespace MEC
 
         private bool UpdateTimeValues(Segment segment)
         {
-            switch(segment)
+            switch (segment)
             {
                 case Segment.Update:
                     if (_currentUpdateFrame != Time.frameCount)
@@ -1468,7 +1562,7 @@ namespace MEC
                 case Segment.Update:
                     if (_currentUpdateFrame == Time.frameCount)
                         return _lastUpdateTime;
-                    else 
+                    else
                         return _lastUpdateTime + Time.deltaTime;
                 case Segment.LateUpdate:
                     if (_currentUpdateFrame == Time.frameCount)
@@ -1614,7 +1708,7 @@ namespace MEC
                 return false;
 
             bool isPaused;
-            
+
             switch (coindex.seg)
             {
                 case Segment.Update:
@@ -2147,7 +2241,7 @@ namespace MEC
         {
             yield return WaitForSecondsOnInstance(delay);
 
-            if(ReferenceEquals(cancelWith, null) || cancelWith != null)
+            if (ReferenceEquals(cancelWith, null) || cancelWith != null)
                 action();
         }
 
@@ -2281,7 +2375,7 @@ namespace MEC
         public static CoroutineHandle CallPeriodically<T>
             (T reference, float timeframe, float period, System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, onDone), Segment.Update);
         }
 
@@ -2297,7 +2391,7 @@ namespace MEC
         public CoroutineHandle CallPeriodicallyOnInstance<T>
             (T reference, float timeframe, float period, System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, onDone), Segment.Update);
         }
 
@@ -2311,10 +2405,10 @@ namespace MEC
         /// <param name="timing">The timing segment to run in.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
-        public static CoroutineHandle CallPeriodically<T>(T reference, float timeframe, float period, System.Action<T> action, 
+        public static CoroutineHandle CallPeriodically<T>(T reference, float timeframe, float period, System.Action<T> action,
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutine(Instance._CallContinuously(reference, timeframe, period, action, onDone), timing);
         }
 
@@ -2331,7 +2425,7 @@ namespace MEC
         public CoroutineHandle CallPeriodicallyOnInstance<T>(T reference, float timeframe, float period, System.Action<T> action,
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutineOnInstance(_CallContinuously(reference, timeframe, period, action, onDone), timing);
         }
 
@@ -2345,7 +2439,7 @@ namespace MEC
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public static CoroutineHandle CallContinuously<T>(T reference, float timeframe, System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, onDone), Segment.Update);
         }
 
@@ -2359,7 +2453,7 @@ namespace MEC
         /// <returns>The handle to the coroutine that is started by this function.</returns>
         public CoroutineHandle CallContinuouslyOnInstance<T>(T reference, float timeframe, System.Action<T> action, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, onDone), Segment.Update);
         }
 
@@ -2372,10 +2466,10 @@ namespace MEC
         /// <param name="timing">The timing segment to run in.</param>
         /// <param name="onDone">An optional action to call when this function finishes.</param>
         /// <returns>The handle to the coroutine that is started by this function.</returns>
-        public static CoroutineHandle CallContinuously<T>(T reference, float timeframe, System.Action<T> action, 
+        public static CoroutineHandle CallContinuously<T>(T reference, float timeframe, System.Action<T> action,
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutine(Instance._CallContinuously(reference, timeframe, 0f, action, onDone), timing);
         }
 
@@ -2391,7 +2485,7 @@ namespace MEC
         public CoroutineHandle CallContinuouslyOnInstance<T>(T reference, float timeframe, System.Action<T> action,
             Segment timing, System.Action<T> onDone = null)
         {
-            return action == null ? new CoroutineHandle() : 
+            return action == null ? new CoroutineHandle() :
                 RunCoroutineOnInstance(_CallContinuously(reference, timeframe, 0f, action, onDone), timing);
         }
 
@@ -2589,12 +2683,12 @@ namespace MEC
             return false;
         }
 
-        public static bool operator==(CoroutineHandle a, CoroutineHandle b)
+        public static bool operator ==(CoroutineHandle a, CoroutineHandle b)
         {
             return a._id == b._id;
         }
 
-        public static bool operator!=(CoroutineHandle a, CoroutineHandle b)
+        public static bool operator !=(CoroutineHandle a, CoroutineHandle b)
         {
             return a._id != b._id;
         }
@@ -2684,7 +2778,7 @@ public static class MECExtensionMethods2
     /// <returns>The modified coroutine handle.</returns>
     public static IEnumerator<float> CancelWith(this IEnumerator<float> coroutine, GameObject gameObject1, GameObject gameObject2)
     {
-        while (MEC.Timing.MainThread != System.Threading.Thread.CurrentThread || (gameObject1 && gameObject1.activeInHierarchy && 
+        while (MEC.Timing.MainThread != System.Threading.Thread.CurrentThread || (gameObject1 && gameObject1.activeInHierarchy &&
                 gameObject2 && gameObject2.activeInHierarchy && coroutine.MoveNext()))
             yield return coroutine.Current;
     }
@@ -2700,7 +2794,7 @@ public static class MECExtensionMethods2
     public static IEnumerator<float> CancelWith(this IEnumerator<float> coroutine,
         GameObject gameObject1, GameObject gameObject2, GameObject gameObject3)
     {
-        while (MEC.Timing.MainThread != System.Threading.Thread.CurrentThread || (gameObject1 && gameObject1.activeInHierarchy && 
+        while (MEC.Timing.MainThread != System.Threading.Thread.CurrentThread || (gameObject1 && gameObject1.activeInHierarchy &&
                 gameObject2 && gameObject2.activeInHierarchy && gameObject3 && gameObject3.activeInHierarchy && coroutine.MoveNext()))
             yield return coroutine.Current;
     }

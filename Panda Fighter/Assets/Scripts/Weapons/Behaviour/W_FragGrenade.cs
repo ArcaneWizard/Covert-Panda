@@ -26,6 +26,7 @@ public class W_FragGrenade : WeaponBehaviour
         // timeAfterRelease.Seconds = 0.6f - timeB4Release.Seconds;
 
         yield return Timing.WaitForSeconds(2f);
+        AttackProgress = AttackProgress.Finished;
     }
 
     /*

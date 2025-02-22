@@ -7,8 +7,8 @@ public class W_FocusBeamer : WeaponBehaviour
         PhysicalBullet bullet = CommonWeaponBehaviours.SpawnBullet(aim, weaponSystem, weaponConfiguration, side);
 
         bullet.Transform.GetComponent<FocusBeam>().ShootBeam(weaponConfiguration.BulletSpawnPoint,
-            weaponConfiguration.PhysicalWeapon.transform, phaseTracker.IsDoingSomersault);
+            weaponConfiguration.PhysicalWeapon.transform, phaseTracker.IsDoingSomersault, aim);
 
-        bullet.Transform.GetComponent<Bullet>().OnFire(aim);
+        AttackProgress = AttackProgress.Finished;
     }
 }

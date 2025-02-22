@@ -87,21 +87,21 @@ dotnet_diagnostic.IDE0058.severity = suggestion  # remove unused expression valu
 dotnet_diagnostic.IDE0059.severity = warning  # remove unneccessary value assignment
 dotnet_diagnostic.IDE0060.severity = warning  # remove unused value assignment
 dotnet_diagnostic.IDE0130.severity = warning # namespace does not match folder structure
+dotnet_diagnostic.CS0659.severity = suggestion # override hashcode too if overriding equals method
 
 dotnet_analyzer_diagnostic.category-Security.severity = warning
 dotnet_analyzer_diagnostic.category-Performance.severity = warning
 dotnet_analyzer_diagnostic.category-Maintainability.severity = warning
 
-# Suggestions
-
 dotnet_diagnostic.CA1846.severity = warning  # prefer AsSpan over .Substring
 dotnet_diagnostic.CA1832.severity = warning # Use AsSpan or AsMemory for ReadOnlySpan or ReadOnlyMemory portion of an array
 
 # Ignore
-dotnet_diagnostic.CS0659.severity = suggestion # override hashcode too if overriding equals method
-dotnet_diagnostic.CS8618.severity = silent # non-nullable value not defined in constructor
+dotnet_diagnostic.CS0108.severity = suggestion
+dotnet_diagnostic.CS8618.severity = suggestion # non-nullable value not defined in constructor
 dotnet_diagnostic.CA1805.severity = silent # variable set to default value on initialization
 dotnet_diagnostic.IDE0010.severity = silent # add missing switch cases (it's okay to use default to account for rest of csaes)
+dotnet_diagnostic.IDE0003.severity = none  # this key word
 
 #  Csharp or dotnet settings
 
@@ -186,10 +186,11 @@ dotnet_code_quality_unused_parameters = all:suggestion
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary:silent
 dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:silent
 dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:silent
-dotnet_style_qualification_for_method = false:silent
-dotnet_style_qualification_for_property = false:silent
-dotnet_style_qualification_for_field = false:silent
-dotnet_style_qualification_for_event = false:silent
+dotnet_style_qualification_for_method = none:silent
+dotnet_style_qualification_for_property = none:silent
+dotnet_style_qualification_for_field = none:silent
+dotnet_style_qualification_for_event = none:silent
+
 #dotnet_diagnostic.IDE0055.severity = none  # formatting
 [*.cs]
 csharp_indent_labels = one_less_than_current
@@ -239,3 +240,5 @@ csharp_style_prefer_not_pattern = true:suggestion
 csharp_style_var_elsewhere = false:silent
 csharp_style_var_when_type_is_apparent = false:silent
 csharp_style_var_for_built_in_types = false:silent
+csharp_prefer_braces = false:warning
+dotnet_diagnostic.UNT0026.severity = suggestion

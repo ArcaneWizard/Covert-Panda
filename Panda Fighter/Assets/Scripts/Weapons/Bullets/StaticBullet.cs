@@ -27,7 +27,7 @@ public class StaticBullet : Bullet
             isDetectingCollisions = false;
 
             Health creatureHealth = col.transform.parent.GetComponent<Health>();
-            creatureHealth.InflictDamage(runtimeBulletDamage, creature);
+            creatureHealth.InflictDamage(runtimeBulletDamage, weaponConfiguration.Creature);
 
             var contacts = new ContactPoint2D[1];
             col.GetContacts(contacts);

@@ -57,14 +57,13 @@ public class LavaOrb : MovingBullet
     private IEnumerator<float> initiateExplosion()
     {
         sR.enabled = false;
-        rig.velocity = Vector2.zero;
+        rig.linearVelocity = Vector2.zero;
         impactExplosion.Play();
-        Timing.RunSafeCoroutine(explosion.EnableExplosion(creature, damage), gameObject);
+        Timing.RunSafeCoroutine(explosion.EnableExplosion(weaponConfiguration.Creature, weaponConfiguration.Damage), gameObject);
 
         yield return Timing.WaitForSeconds(impactExplosion.main.startLifetimeMultiplier + 0.1f);
 
         sR.enabled = true;
         gameObject.SetActive(false);
     }
-
 }

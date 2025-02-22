@@ -1,5 +1,5 @@
 using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
+
 
 using UnityEngine;
 
@@ -67,7 +67,7 @@ public class LimbSwapper : MonoBehaviour
             return;
 
         // don't do anything if in prefab-mode
-        PrefabStage prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        UnityEditor.SceneManagement.PrefabStage prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
 
         if (prefabStage != null) {
             bool isValidPrefabStage = prefabStage != null && prefabStage.stageHandle.IsValid();

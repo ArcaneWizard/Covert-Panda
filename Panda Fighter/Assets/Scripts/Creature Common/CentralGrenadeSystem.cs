@@ -56,9 +56,6 @@ public abstract class CentralGrenadeSystem : MonoBehaviour
             implementation.Initialize(config, this, null);
             grenadeImplementations[grenadeType] = implementation;
         }
-
-        GrenadeStats grenadeStats = new GrenadeStats(this);
-        //grenadeStats.Initialize();
     }
 
     private void Start() => Reset();

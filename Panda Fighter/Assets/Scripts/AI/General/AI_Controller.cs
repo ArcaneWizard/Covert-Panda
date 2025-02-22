@@ -125,8 +125,8 @@ public class AI_Controller : CentralController
     private void setAlienVelocity()
     {
         // nullify the slight bounce on a slope glitch when changing slopes
-        if ((!phaseTracker.IsMidAir || phaseTracker.Is(Phase.Falling)) && rig.velocity.y > 0)
-            rig.velocity = new Vector2(0, 0);
+        if ((!phaseTracker.IsMidAir || phaseTracker.Is(Phase.Falling)) && rig.linearVelocity.y > 0)
+            rig.linearVelocity = new Vector2(0, 0);
 
         // when alien is on the ground, alien velocity is parallel to the slanted ground 
         if (!phaseTracker.IsMidAir && IsGrounded && IsTouchingMap) {
@@ -135,19 +135,19 @@ public class AI_Controller : CentralController
             else if (CurrAction == null && wallInFrontOfYou)
                 DirX = -1;
 
-            rig.velocity = DirX * speed * groundSlope;
+            rig.linearVelocity = DirX * speed * groundSlope;
             rig.gravityScale = (DirX == 0) ? 0f : Game.GRAVITY;
         }
 
         // when alien is not on the ground (falling or midair after a jump)
         else {
             // Stop moving horizontally if the AI is about to crash into a wall after a jump.
-            if (rig.velocity.y > 0 && ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou)))
-                rig.velocity = new Vector2(0, rig.velocity.y);
+            if (rig.linearVelocity.y > 0 && ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou)))
+                rig.linearVelocity = new Vector2(0, rig.linearVelocity.y);
 
             // Change directions if the AI is falling left or right and about to crash into a wall.
             else if ((DirX == 1 && wallInFrontOfYou) || (DirX == -1 && wallBehindYou)) {
-                rig.velocity = new Vector2(0, rig.velocity.y);
+                rig.linearVelocity = new Vector2(0, rig.linearVelocity.y);
                 DirX = (int)-Mathf.Sign(DirX) * UnityEngine.Random.Range(0, 2);
                 speed = 22;
                 CurrAction = null;
@@ -155,7 +155,7 @@ public class AI_Controller : CentralController
 
             // Set velocity to the left/right with specified speed and direction. Vertical motion is affected by gravity
             else
-                rig.velocity = new Vector2(speed * DirX, rig.velocity.y);
+                rig.linearVelocity = new Vector2(speed * DirX, rig.linearVelocity.y);
 
             rig.gravityScale = Game.GRAVITY;
         }

@@ -27,7 +27,7 @@ public class Ragdolling : MonoBehaviour
         for (int i = 0; i < ragdollRigidbodies.Length; i++) {
             ragdollRigidbodies[i].gameObject.layer = Layer.LimbsAndArmor;
             ragdollRigidbodies[i].isKinematic = true;
-            ragdollRigidbodies[i].velocity = Vector2.zero;
+            ragdollRigidbodies[i].linearVelocity = Vector2.zero;
             ragdollRigidbodies[i].sharedMaterial = noFriction;
         }
 
@@ -52,7 +52,7 @@ public class Ragdolling : MonoBehaviour
 
     private IEnumerator enableRagdolling()
     {
-        Vector2 velocityBeforeDeath = playerRig.velocity;
+        Vector2 velocityBeforeDeath = playerRig.linearVelocity;
         animator.SetInteger("ragdolling", 1);
         yield return null;
 
@@ -66,8 +66,8 @@ public class Ragdolling : MonoBehaviour
         for (int i = 0; i < ragdollRigidbodies.Length; i++) {
             ragdollRigidbodies[i].gameObject.layer = Layer.LimbInRagdoll;
             ragdollRigidbodies[i].isKinematic = false;
-            ragdollRigidbodies[i].velocity = velocityBeforeDeath;
-            ragdollRigidbodies[i].gravityScale = CentralController.GRAVITY;
+            ragdollRigidbodies[i].linearVelocity = velocityBeforeDeath;
+            ragdollRigidbodies[i].gravityScale = Game.GRAVITY;
             ragdollRigidbodies[i].sharedMaterial = limbFriction;
         }
 

@@ -17,8 +17,8 @@ public class ArcticStream : MovingBullet
         explosion.Radius = 13;
     }
 
-    protected override void onMapCollision(CollisionInfo info) => startExplosion();
-    protected override void onCreatureCollision(CollisionInfo info, Transform creature) => startExplosion();
+    protected override void OnMapCollision(CollisionInfo info) => startExplosion();
+    protected override void OnCreatureCollision(CollisionInfo info, Transform creature) => startExplosion();
 
     void Update()
     {
@@ -40,7 +40,7 @@ public class ArcticStream : MovingBullet
             animatedExplosion.SetActive(true);
             explosionTimer = 1.4f;
 
-            Timing.RunSafeCoroutine(explosion.EnableExplosion(creature, weaponConfiguration.ExplosionDmg), gameObject);
+            Timing.RunSafeCoroutine(explosion.EnableExplosion(weaponConfiguration.Creature, weaponConfiguration.ExplosionDmg), gameObject);
         }
     }
 }

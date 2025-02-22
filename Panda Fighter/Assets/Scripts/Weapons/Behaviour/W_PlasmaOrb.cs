@@ -9,5 +9,7 @@ public class W_PlasmaOrb : WeaponBehaviour
     {
         CommonWeaponBehaviours.SpawnAndShootBulletInArc(aim, forceMultiplier, forceOffset,
              weaponSystem, weaponConfiguration, side);
+
+        AttackProgress = AttackProgress.Finished;
     }
 }

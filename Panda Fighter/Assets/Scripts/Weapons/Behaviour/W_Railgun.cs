@@ -14,6 +14,7 @@ public class W_Railgun : WeaponBehaviour
     protected override void attack(Vector2 aim)
     {
         CommonWeaponBehaviours.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
+        AttackProgress = AttackProgress.Finished;
     }
 
     void Start()
