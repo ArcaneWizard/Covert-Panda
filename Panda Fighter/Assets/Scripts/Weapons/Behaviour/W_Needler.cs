@@ -8,6 +8,8 @@ public class W_Needler : WeaponBehaviour
         Transform bullet = CommonWeaponBehaviours.SpawnAndShootBulletForward(aim, weaponSystem,
             weaponConfiguration, side, extraSettings);
 
+        AttackProgress = AttackProgress.Finished;
+
         void extraSettings(Transform bullet)
         {
             bullet.position += new Vector3(0, yOffset, 0f);

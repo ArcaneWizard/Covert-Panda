@@ -31,9 +31,9 @@ public class Needler : MovingBullet
     private IEnumerator<float> initiateExplosion()
     {
         sR.enabled = false;
-        rig.velocity = Vector2.zero;
+        rig.linearVelocity = Vector2.zero;
         impactExplosion.Play();
-        Timing.RunSafeCoroutine(explosion.EnableExplosion(), gameObject);
+        Timing.RunSafeCoroutine(explosion.EnableExplosion(weaponConfiguration.Creature, weaponConfiguration.Damage), gameObject);
 
         yield return Timing.WaitForSeconds(impactExplosion.main.startLifetime.constant + 0.1f);
 

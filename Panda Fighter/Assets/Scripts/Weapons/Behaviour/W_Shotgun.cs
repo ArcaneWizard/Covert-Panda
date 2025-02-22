@@ -11,10 +11,12 @@ public class W_Shotgun : WeaponBehaviour
 
         CommonWeaponBehaviours.SpawnAndShootBulletForward(aim, weaponSystem, weaponConfiguration, side);
 
-        CommonWeaponBehaviours.SpawnAndShootBulletDiagonally(aim, bulletSpread, bulletSpawnOffsetRange,
-             weaponSystem, weaponConfiguration, side);
+        CommonWeaponBehaviours.SpawnAndShootBulletDiagonally(aim, bulletSpread, bulletSpawnOffsetRange, 
+            weaponSystem, weaponConfiguration, side);
 
         CommonWeaponBehaviours.SpawnAndShootBulletDiagonally(aim, -bulletSpread, bulletSpawnOffsetRange,
              weaponSystem, weaponConfiguration, side);
+
+        AttackProgress = AttackProgress.Finished;
     }
 }

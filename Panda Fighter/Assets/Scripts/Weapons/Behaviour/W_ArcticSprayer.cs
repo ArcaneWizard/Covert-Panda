@@ -8,5 +8,7 @@ public class W_ArcticSprayer : WeaponBehaviour
     protected override void attack(Vector2 aim)
     {
         CommonWeaponBehaviours.SpawnAndShootBulletInArc(aim, forceMultiplier, forceOffset, weaponSystem, weaponConfiguration, side);
+
+        AttackProgress = AttackProgress.Finished;
     }
 }

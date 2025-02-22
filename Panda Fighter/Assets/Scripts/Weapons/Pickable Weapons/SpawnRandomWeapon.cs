@@ -17,7 +17,7 @@ public class SpawnRandomWeapon : MonoBehaviour
     void Start()
     {
         transform.localPosition = new Vector3(62, 73, 69);
-        spawnWeaponManager = transform.parent.GetComponent<SpawnWeaponManager>();
+        spawnWeaponManager = transform.parent.parent.GetComponent<SpawnWeaponManager>();
         spawnRandomWeapon();
     }
 

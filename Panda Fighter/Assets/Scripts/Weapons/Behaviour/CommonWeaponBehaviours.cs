@@ -16,13 +16,14 @@ public static class CommonWeaponBehaviours
     {
         // spawn bullet and shoot in straight line in specified aim direction
         PhysicalBullet bullet = SpawnBullet(aim, weaponSystem, configuration, side);
-        bullet.Rig.velocity = aim * configuration.Speed;
+        bullet.Rig.linearVelocity = aim * configuration.Speed;
 
         // apply extra settings to bullet, if any are specified
         if (extraSettings != null)
             extraSettings(bullet.Transform);
 
         // confirm bullet was fired
+        Debug.Log(bullet.Transform.name);
         bullet.Transform.GetComponent<Bullet>().OnFire(aim);
 
         return bullet.Transform;
@@ -39,7 +40,7 @@ public static class CommonWeaponBehaviours
         Vector2 newAim = Quaternion.AngleAxis(angleOffset, Vector3.forward) * aim;
         bullet.Transform.position += Vector3.up * UnityEngine.Random.Range(verticalOffsetRange.x, verticalOffsetRange.y);
         bullet.Transform.right = newAim;
-        bullet.Rig.velocity = newAim * configuration.Speed;
+        bullet.Rig.linearVelocity = newAim * configuration.Speed;
 
         // apply extra settings to bullet, if any are specified
         if (extraSettings != null)
@@ -68,7 +69,6 @@ public static class CommonWeaponBehaviours
         bullet.Transform.GetComponent<Bullet>().OnFire(aim);
         return bullet.Transform;
     }
-
     // spawns in a new bullet that is still (doesn't shoot it)
     public static PhysicalBullet SpawnBullet(Vector2 aim, CentralWeaponSystem weaponSystem,
         WeaponConfiguration configuration, Side side)
@@ -80,7 +80,7 @@ public static class CommonWeaponBehaviours
         // spawn bullet at the right place. it should be still with default rotation
         bullet.position = configuration.BulletSpawnPoint.position;
         bullet.localEulerAngles = new Vector3(0, 0, bullet.localEulerAngles.z);
-        bulletRig.velocity = new Vector2(0, 0);
+        bulletRig.linearVelocity = new Vector2(0, 0);
         bulletRig.angularVelocity = 0;
         bullet.right = aim;
 

@@ -1,9 +1,8 @@
-using MEC;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
+
+using MEC;
+
 using UnityEngine;
-using UnityEngine.Animations;
 
 public class PlasmaOrb : MovingBullet
 
@@ -17,6 +16,7 @@ public class PlasmaOrb : MovingBullet
 
     private Vector3 contactLocation, surfaceContactLocation;
     private Transform trackingSurface;
+    private Transform createStuckByOrb;
 
     public override void OnFire(Vector2 aim)
     {
@@ -35,17 +35,17 @@ public class PlasmaOrb : MovingBullet
         explosion.Radius = 12f;
     }
 
-    protected override void OnMapCollision(CollisionInfo info) 
+    protected override void OnMapCollision(CollisionInfo info)
     {
-         StartCoroutine(startTimedPlasmaExplosion(info.Collider.transform));
-         creature = null;
+        StartCoroutine(startTimedPlasmaExplosion(info.Collider.transform));
+        createStuckByOrb = null;
     }
 
     protected override void OnCreatureCollision(CollisionInfo info, Transform creature)
     {
         transform.position = info.ContactPoint;
         StartCoroutine(startTimedPlasmaExplosion(creature));
-        this.creature = creature;
+        this.createStuckByOrb = creature;
     }
 
     void Update()
@@ -53,8 +53,7 @@ public class PlasmaOrb : MovingBullet
         if (explosionTimer > 0f)
             explosionTimer -= Time.deltaTime;
 
-        else if (!sR.enabled)
-        {
+        else if (!sR.enabled) {
             rig.constraints = RigidbodyConstraints2D.None;
             sR.enabled = true;
             physicalExplosion.SetActive(false);
@@ -64,15 +63,14 @@ public class PlasmaOrb : MovingBullet
         }
 
         // update the sticky orb's position if it's clinging to a creature (that's alive)
-        if (trackingSurface != null && creature != null && !creature.GetComponent<Health>().IsDead)
+        if (trackingSurface != null && createStuckByOrb != null && !createStuckByOrb.GetComponent<Health>().IsDead)
             transform.position = trackingSurface.position - surfaceContactLocation + contactLocation;
     }
 
 
     private IEnumerator startTimedPlasmaExplosion(Transform surface)
     {
-        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll)
-        {
+        if (explosionTimer <= 0f && rig.constraints != RigidbodyConstraints2D.FreezeAll) {
             rig.constraints = RigidbodyConstraints2D.FreezeAll;
             contactLocation = transform.position;
             trackingSurface = surface;
@@ -85,7 +83,7 @@ public class PlasmaOrb : MovingBullet
             explosionTimer = 1.4f;
             sR.enabled = false;
 
-            Timing.RunSafeCoroutine(explosion.EnableExplosion(), gameObject);
+            Timing.RunSafeCoroutine(explosion.EnableExplosion(createStuckByOrb, weaponConfiguration.Damage), gameObject);
         }
     }
 

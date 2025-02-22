@@ -1,6 +1,7 @@
-using MEC;
-using System.Collections;
 using System.Collections.Generic;
+
+using MEC;
+
 using UnityEngine;
 
 public class Rocket : MovingBullet
@@ -21,11 +22,12 @@ public class Rocket : MovingBullet
         explosion.Radius = 7f;
 
         this.NullCheck(explosion, nameof(explosion));
+        this.NullCheck(weaponConfiguration, nameof(weaponConfiguration));
         this.NullCheck(rocketRenderer, nameof(rocketRenderer));
         this.NullCheck(rocketGlareRenderer, nameof(rocketGlareRenderer));
     }
 
-    protected override void OnMapCollision(CollisionInfo info) => 
+    protected override void OnMapCollision(CollisionInfo info) =>
         Timing.RunSafeCoroutine(setupExplosion(), gameObject);
 
     protected override void OnCreatureCollision(CollisionInfo info, Transform creature) =>
@@ -40,7 +42,7 @@ public class Rocket : MovingBullet
         changeRocketVisibility(false);
         yield return Timing.WaitForSeconds(1.4f);
 
-        Timing.RunSafeCoroutine(explosion.EnableExplosion(creator, dmg), gameObject);
+        Timing.RunSafeCoroutine(explosion.EnableExplosion(weaponConfiguration.Creature, weaponConfiguration.Damage), gameObject);
         rig.constraints = RigidbodyConstraints2D.None;
         physicalExplosion.SetActive(false);
         changeRocketVisibility(true);

@@ -20,6 +20,7 @@ public class WeaponConfiguration : MonoBehaviour
     public CombatType CombatType { get; private set; }
     public FiringMode FiringMode { get; private set; }
 
+    public Transform Creature { get; private set; }
     public Transform BulletSpawnPoint { get; private set; }
     public GameObject Arms { get; private set; }
     public GameObject PhysicalWeapon { get; private set; }
@@ -52,6 +53,7 @@ public class WeaponConfiguration : MonoBehaviour
     private void setup()
     {
         Transform creature = transform.parent.parent.parent.transform.GetChild(0);
+        Creature = creature;
         Animator = creature.GetComponent<Animator>();
 
         IKArmsHandler armsHandler = creature.GetChild(0).GetChild(0).GetComponent<IKArmsHandler>();

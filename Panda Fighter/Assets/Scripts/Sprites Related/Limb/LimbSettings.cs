@@ -24,27 +24,28 @@ public class LimbSettings : MonoBehaviour
         if (!sprite || !collider)
             Debug.LogError("This creature is missing some specified limb Sprites or collider coordinates");
 
-        else if (sprite.rightLeg == null || collider.FrontUpperArm == null || collider.FrontUpperArm.Length == 0)
+        else if (sprite.RightLeg == null || collider.FrontUpperArm == null || collider.FrontUpperArm.Length == 0) {
             Debug.LogError("This creature is missing some specified limb Sprites or collider coordinates");
+        }
 #endif
 
         sprites.Clear();
         colliders.Clear();
 
-        sprites.Add(LimbTypes.Chest, sprite.chest);
-        sprites.Add(LimbTypes.Head, sprite.head);
-        sprites.Add(LimbTypes.FrontThigh, sprite.leftThigh);
-        sprites.Add(LimbTypes.BackThigh, sprite.rightThigh);
-        sprites.Add(LimbTypes.FrontFoot, sprite.leftFoot);
-        sprites.Add(LimbTypes.BackFoot, sprite.rightFoot);
-        sprites.Add(LimbTypes.FrontLeg, sprite.leftLeg);
-        sprites.Add(LimbTypes.BackLeg, sprite.rightLeg);
-        sprites.Add(LimbTypes.FrontLowerArm, sprite.mainArm);
-        sprites.Add(LimbTypes.BackLowerArm, sprite.backArm);
-        sprites.Add(LimbTypes.FrontUpperArm, sprite.mainArmPad);
-        sprites.Add(LimbTypes.BackUpperArm, sprite.backArmPad);
-        sprites.Add(LimbTypes.FrontHand, sprite.mainHand);
-        sprites.Add(LimbTypes.BackHand, sprite.backHand);
+        sprites.Add(LimbTypes.Chest, sprite.Chest);
+        sprites.Add(LimbTypes.Head, sprite.Head);
+        sprites.Add(LimbTypes.FrontThigh, sprite.LeftThigh);
+        sprites.Add(LimbTypes.BackThigh, sprite.RightThigh);
+        sprites.Add(LimbTypes.FrontFoot, sprite.LeftFoot);
+        sprites.Add(LimbTypes.BackFoot, sprite.RightFoot);
+        sprites.Add(LimbTypes.FrontLeg, sprite.LeftLeg);
+        sprites.Add(LimbTypes.BackLeg, sprite.RightLeg);
+        sprites.Add(LimbTypes.FrontLowerArm, sprite.MainArm);
+        sprites.Add(LimbTypes.BackLowerArm, sprite.BackArm);
+        sprites.Add(LimbTypes.FrontUpperArm, sprite.MainArmPad);
+        sprites.Add(LimbTypes.BackUpperArm, sprite.BackArmPad);
+        sprites.Add(LimbTypes.FrontHand, sprite.MainHand);
+        sprites.Add(LimbTypes.BackHand, sprite.BackHand);
 
         colliders.Add(LimbTypes.Chest, collider.Chest);
         colliders.Add(LimbTypes.Head, collider.Head);

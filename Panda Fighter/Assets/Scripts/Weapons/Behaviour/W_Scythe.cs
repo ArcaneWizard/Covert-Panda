@@ -15,6 +15,7 @@ public class W_Scythe : WeaponBehaviour
     protected override void attack(Vector2 aim)
     {
         Timing.RunSafeCoroutine(meeleeAttack(), gameObject);
+        AttackProgress = AttackProgress.Finished;
     }
 
     private IEnumerator<float> meeleeAttack()

@@ -41,7 +41,7 @@ public class FragGrenade : MovingBullet
         animatedExplosion.SetActive(true);
         explosionTimer = 1.4f;
 
-        Timing.RunSafeCoroutine(explosion.EnableExplosion(), gameObject);
+        Timing.RunSafeCoroutine(explosion.EnableExplosion(weaponConfiguration.Creature, weaponConfiguration.Damage), gameObject);
     }
 
     void Update()

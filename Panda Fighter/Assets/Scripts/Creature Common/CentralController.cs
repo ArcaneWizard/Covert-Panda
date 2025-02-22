@@ -261,7 +261,7 @@ public abstract class CentralController : MonoBehaviour
     {
         phaseTracker.Jump();
 
-        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.linearVelocity = new Vector2(rig.linearVelocity.x, 0);
         rig.gravityScale = Game.GRAVITY;
         rig.AddForce(new Vector2(0, JUMP_FORCE));
 
@@ -274,7 +274,7 @@ public abstract class CentralController : MonoBehaviour
     {
         StartCoroutine(phaseTracker.DoubleJump());
 
-        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.linearVelocity = new Vector2(rig.linearVelocity.x, 0);
         rig.gravityScale = Game.GRAVITY;
         rig.AddForce(new Vector2(420, DOUBLE_JUMP_FORCE));
 
@@ -288,7 +288,7 @@ public abstract class CentralController : MonoBehaviour
     {
         phaseTracker.Jump();
 
-        rig.velocity = new Vector2(rig.velocity.x, 0);
+        rig.linearVelocity = new Vector2(rig.linearVelocity.x, 0);
         rig.gravityScale = Game.GRAVITY;
         rig.AddForce(new Vector2(0, JUMP_PAD_FORCE));
 
@@ -324,7 +324,7 @@ public abstract class CentralController : MonoBehaviour
 
         // activiate the right colliders for the creature based on the situation
         mainCollider.enabled = !phaseTracker.IsSomersaulting;
-        oneWayCollider.enabled = !phaseTracker.IsSomersaulting && rig.velocity.y < 0.1f;
+        oneWayCollider.enabled = !phaseTracker.IsSomersaulting && rig.linearVelocity.y < 0.1f;
         somersaultCollider.enabled = phaseTracker.IsSomersaulting;
     }
 

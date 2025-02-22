@@ -17,8 +17,9 @@ public class LimbSprite : MonoBehaviour
 
     void Update()
     {
-        sR.color = (CentralAbilityHandler.IsInvisible)
+        sR.color = (CentralAbilityHandler?.IsInvisible == true)
             ? new Color(color.r, color.g, color.b, 0.4f)
             : new Color(color.r, color.g, color.b, 1f);
     }
+
 }

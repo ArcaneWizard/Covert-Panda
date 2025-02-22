@@ -42,8 +42,8 @@ public class MovingBullet : Bullet
         if (!isDetectingCollisions)
             return;
 
-        if (rig.velocity.magnitude != 0)
-            velocityDir = rig.velocity.normalized;
+        if (rig.linearVelocity.magnitude != 0)
+            velocityDir = rig.linearVelocity.normalized;
 
         shootRaycastAndScanForObstacles();
         executePredictedCollisionWhenApplicable();
@@ -90,7 +90,7 @@ public class MovingBullet : Bullet
             bool collidedWithCreature = predictedRaycastHit.transform.parent.GetComponent<Health>();
             if (predictedRaycastHit.collider != null && collidedWithCreature) {
                 transform.position = predictedImpactLocation.Value;
-                predictedRaycastHit.collider.transform.parent.GetComponent<Health>().InflictDamage(runtimeBulletDamage, creature);
+                predictedRaycastHit.collider.transform.parent.GetComponent<Health>().InflictDamage(runtimeBulletDamage, weaponConfiguration.Creature);
 
                 var collisionInfo = new CollisionInfo(predictedRaycastHit.collider, predictedRaycastHit.point);
                 OnCreatureCollision(collisionInfo, predictedRaycastHit.collider.transform.parent);

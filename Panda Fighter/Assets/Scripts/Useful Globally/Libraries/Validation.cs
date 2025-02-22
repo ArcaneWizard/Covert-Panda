@@ -1,5 +1,6 @@
+using System.Linq;
+using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 
 using UnityEditor;
 
@@ -9,8 +10,6 @@ using UnityEngine;
 /// Prepare to start validating code LIKE A BOSS *puts on sunglasses*
 public static class Validation
 {
-    private const string SUCCESSFUL_SELECTION = "Selection succeeded";
-
     public interface IValidator
     {
         public Object Reference { get; }
@@ -72,8 +71,6 @@ public static class Validation
             throw new System.NullReferenceException(nullErrorMsg);
         else if (tagError)
             throw new UnassignedReferenceException(tagErrorMsg);
-        else if (!EditorApplication.isPlaying)
-            Debug.Log(SUCCESSFUL_SELECTION);
 #endif
     }
 
@@ -108,9 +105,6 @@ public static class Validation
 
         if (hasError)
             throw new System.Exception(finalErrorMsg.ToString());
-
-        else if (!hasError && !EditorApplication.isPlaying)
-            Debug.Log(SUCCESSFUL_SELECTION);
 #endif
     }
 
@@ -130,48 +124,67 @@ public static class Validation
     // returns bool error, string errorMsg
     private static (bool, string) requireTag(MonoBehaviour mb, string varName, string desiredTag)
     {
-        SerializedObject serializedObj = new SerializedObject(mb);
-        SerializedProperty property = serializedObj.FindProperty(varName);
+        var value = GetFieldValue(mb, varName);
 
-        // Ensure the property is of the correct type (ObjectReference).
-        if (property.propertyType == SerializedPropertyType.ObjectReference) {
-            // Get the assigned object
-            GameObject obj = null;
-            if (property.objectReferenceValue is GameObject)
-                obj = property.objectReferenceValue as GameObject;
-            else if (property.objectReferenceValue is Transform)
-                obj = (property.objectReferenceValue as Transform).gameObject;
-            else if (property.objectReferenceValue is Component)
-                obj = (property.objectReferenceValue as Component).gameObject;
+        GameObject obj = null;
+        if (value is GameObject)
+            obj = value as GameObject;
+        else if (value is Transform)
+            obj = (value as Transform).gameObject;
+        else if (value is Component)
+            obj = (value as Component).gameObject;
 
-            if (obj == null)
-                return (false, "");
+        if (obj == null)
+            return (true, $"The reference <color=cyan><b>[{varName}]</b></color> is null and missing the tag <color=cyan><b>[{desiredTag}]");
 
-            // Check if the object has a Tag script
-            Tag tagScript = obj.GetComponent<Tag>();
+        // Check if the object has a Tag script
+        Tag tagScript = obj.GetComponent<Tag>();
 
-            bool foundTag = false;
-            if (tagScript != null) {
-                string desiredTagWithoutWhiteSpace = Regex.Replace(desiredTag, @"\s*", "").ToLower();
-                foreach (string tag in tagScript.Tags) {
-                    string currentTagWithoutWhiteSpace = Regex.Replace(tag, @"\s*", "").ToLower();
-                    if (currentTagWithoutWhiteSpace.Equals(desiredTagWithoutWhiteSpace)) {
-                        foundTag = true;
-                        break;
-                    }
+        bool foundTag = false;
+        if (tagScript != null) {
+            string lowerDesiredTag = desiredTag.ToLower();
+            foreach (string tag in tagScript.Tags) {
+                string lowerTag = tag.ToLower();
+                if (lowerTag.Equals(lowerDesiredTag)) {
+                    foundTag = true;
+                    break;
                 }
             }
-
-            if (!foundTag) {
-                // Handle the error (e.g., display an error message).
-                string scriptName = property.serializedObject.targetObject.GetType().Name;
-
-                return (true, $" The reference <color=cyan><b>[{varName}]</b></color> is missing the tag <color=cyan><b>[{desiredTag}]</b></color>" +
-                    $" on Script <color=white><b>{scriptName}</b></color>. It's currently set to <color=white><b>[{obj.name}]</b></color>. " +
-                    $"Double-check if the correct object was referenced, and if so, attach a tag to the referenced object.");
-            }
         }
+
+        if (!foundTag) {
+            // Handle the error (e.g., display an error message).
+            string scriptName = mb.GetType().Name;
+
+            return (true, $" The reference <color=cyan><b>[{varName}]</b></color> is missing the tag <color=cyan><b>[{desiredTag}]" +
+                $"</b></color> on Script <color=white><b>{scriptName}</b></color>. It's currently set to <color=white><b>[" +
+                $"{tagScript?.Tags?.FirstOrDefault() ?? "null"}]</b></color>. " +
+                $"Double-check if the correct object was referenced, and if so, attach a tag to the referenced object.");
+        }
+
         return (false, "");
+    }
+
+    private static object GetFieldValue(MonoBehaviour target, string fieldName)
+    {
+        // Try to access serialized fields first
+        SerializedObject serializedObject = new SerializedObject(target);
+        SerializedProperty property = serializedObject.FindProperty(fieldName);
+
+        if (property != null) {
+            if (property.propertyType != SerializedPropertyType.ObjectReference) { return null; }
+            return property.objectReferenceValue;
+        }
+
+        FieldInfo fieldInfo = target.GetType().GetField(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var value = fieldInfo?.GetValue(target);
+        if (value != null) { return value; }
+
+        PropertyInfo propertyInfo = target.GetType().GetProperty(fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        value = propertyInfo?.GetValue(target);
+        if (value != null) { return value; }
+
+        return null;
     }
 
     // returns bool error, string errorMsg

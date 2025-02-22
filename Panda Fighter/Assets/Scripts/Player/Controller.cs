@@ -55,7 +55,7 @@ public class Controller : CentralController
 
         if (downThrustInput && !isThrustingDownwards && phaseTracker.IsMidAir) {
             downThrustInput = false;
-            rig.velocity = new Vector2(rig.velocity.x, 0);
+            rig.linearVelocity = new Vector2(rig.linearVelocity.x, 0);
             rig.AddForce(new Vector2(0, DOWNWARDS_THRUST_FORCE));
             isThrustingDownwards = true;
             fastestYVelocityRecorded = 0;
@@ -84,10 +84,10 @@ public class Controller : CentralController
         //  rig.velocity = new Vector2(0, 0);
 
         if (wallInFrontOfYou && ((DirX == 1 && lookAround.IsFacingRight) || (DirX == -1 && !lookAround.IsFacingRight))) {
-            setVelocity(new Vector2(0, rig.velocity.y));
+            setVelocity(new Vector2(0, rig.linearVelocity.y));
             rig.gravityScale = Game.GRAVITY;
         } else if (wallBehindYou && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight))) {
-            setVelocity(new Vector2(0, rig.velocity.y));
+            setVelocity(new Vector2(0, rig.linearVelocity.y));
             rig.gravityScale = Game.GRAVITY;
         }
 
@@ -106,7 +106,7 @@ public class Controller : CentralController
                     // rig.gravityScale = GRAVITY * slideDownSlopeDirection.normalized.y;
                     rig.gravityScale = Game.GRAVITY;
                 } else {
-                    setVelocity(new Vector2(speed * DirX, rig.velocity.y));
+                    setVelocity(new Vector2(speed * DirX, rig.linearVelocity.y));
                     rig.gravityScale = Game.GRAVITY;
                 }
             } else {
@@ -125,17 +125,17 @@ public class Controller : CentralController
             //allow player to thrust themselves downwards the next time they jump
             isThrustingDownwards = false;
         } else {
-            setVelocity(new Vector2(speed * DirX, rig.velocity.y));
+            setVelocity(new Vector2(speed * DirX, rig.linearVelocity.y));
             rig.gravityScale = Game.GRAVITY;
         }
 
-        if (rig.velocity.y < fastestYVelocityRecorded)
-            fastestYVelocityRecorded = rig.velocity.y;
+        if (rig.linearVelocity.y < fastestYVelocityRecorded)
+            fastestYVelocityRecorded = rig.linearVelocity.y;
     }
 
     private void setVelocity(Vector2 velocity)
     {
-        rig.AddForce((velocity * rig.mass - rig.velocity * rig.mass) * MOVEMENT_ALTERATION_SPEED);
+        rig.AddForce((velocity * rig.mass - rig.linearVelocity * rig.mass) * MOVEMENT_ALTERATION_SPEED);
     }
 
     private void OnTriggerEnter2D(Collider2D col)

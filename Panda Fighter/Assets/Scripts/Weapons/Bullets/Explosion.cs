@@ -1,7 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+
 using MEC;
+
+using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
 public class Explosion : MonoBehaviour
@@ -42,8 +43,7 @@ public class Explosion : MonoBehaviour
     void OnTriggerEnter2D(Collider2D col)
     {
         int layer = col.gameObject.layer;
-        if (layer == Layer.FriendlyHitBox || layer == Layer.EnemyHitBox)
-        {
+        if (layer == Layer.FriendlyHitBox || layer == Layer.EnemyHitBox) {
             var entity = col.transform;
             if (entitiesHurt.Contains(entity))
                 return;
