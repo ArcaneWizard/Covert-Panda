@@ -242,7 +242,7 @@ public abstract class CentralController : MonoBehaviour
         if (body.localEulerAngles.y == 0) {
             RaycastHit2D leftWallHit = Physics2D.Raycast(wallRaycaster.position, -raycastDir, raycastSize, LayerMasks.Map);
             wallBehindYou = (leftWallHit.collider != null && Mathf.Abs(leftWallHit.normal.y) < maxYNormalOfWalls);
-            //Debug.DrawRay(wallRaycaster.position, raycastSize * -raycastDir, Color.blue, 2f);
+            //Debug.DrawRay(wallRaycaster.position, raycastSize * -o, Color.blue, 2f);
 
             RaycastHit2D rightWallHit = Physics2D.Raycast(wallRaycaster.position, raycastDir, raycastSize, LayerMasks.Map);
             wallInFrontOfYou = (rightWallHit.collider != null && Mathf.Abs(rightWallHit.normal.y) < maxYNormalOfWalls);
