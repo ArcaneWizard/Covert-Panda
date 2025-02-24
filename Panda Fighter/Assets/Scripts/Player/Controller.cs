@@ -111,7 +111,6 @@ public class Controller : CentralController
             } else {
                 float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
                 setVelocity(DirX * speed * speedMultiplier * groundSlope);
-                Debug.Log("yeah" + DirX);
                 rig.gravityScale = (DirX == 0) ? 0f : Game.GRAVITY;
             }
 
