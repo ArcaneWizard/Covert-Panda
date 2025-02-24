@@ -25,7 +25,6 @@ public static class CommonWeaponBehaviours
         // confirm bullet was fired
         Debug.Log(bullet.Transform.name);
         bullet.Transform.GetComponent<Bullet>().OnFire(aim);
-
         return bullet.Transform;
     }
 

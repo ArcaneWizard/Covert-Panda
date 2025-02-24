@@ -158,8 +158,9 @@ public abstract class CentralController : MonoBehaviour
         float targetTiltAngle = groundAngle * BODY_TILT_ANGLE_RATIO;
 
         if (IsGrounded && (DirX != 0 || (DirX == 0 && groundAngle == lastGroundAngle))) {
-            if (Mathf.Abs(groundAngle - tiltAngle) > 0.5f)
+            if (Mathf.Abs(groundAngle - tiltAngle) > 0.5f) {
                 tiltAngle += (targetTiltAngle - tiltAngle) * BODY_TILT_UPDATE_SPEED * Time.fixedDeltaTime;
+            }
         } else if (!IsGrounded && Mathf.Abs(tiltAngle) > 0.5f && !phaseTracker.Is(Phase.DoubleJumping))
             tiltAngle -= tiltAngle * 10 * Time.fixedDeltaTime;
     }
