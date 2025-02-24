@@ -39,8 +39,6 @@ public class CameraMovement : MonoBehaviour
     private Vector2 swayOffset;
     private float random;
 
-    public float d;
-
     public void ExecuteCameraShake(float maxMagnitude)
     {
         executeCameraShake = true;

@@ -89,10 +89,9 @@ public class Controller : CentralController
         } else if (wallBehindYou && ((DirX == 1 && !lookAround.IsFacingRight) || (DirX == -1 && lookAround.IsFacingRight))) {
             setVelocity(new Vector2(0, rig.linearVelocity.y));
             rig.gravityScale = Game.GRAVITY;
-        }
+        } else if (!phaseTracker.IsMidAir && IsGrounded) {
+            // when player is on the ground, player velocity is parallel to the slanted ground 
 
-          //when player is on the ground, player velocity is parallel to the slanted ground 
-          else if (!phaseTracker.IsMidAir && IsGrounded) {
             if (IsOnSuperSteepSlope) {
                 int dirX;
                 if (wallInFrontOfYou && lookAround.IsFacingRight || wallBehindYou && !lookAround.IsFacingRight)
@@ -112,6 +111,7 @@ public class Controller : CentralController
             } else {
                 float speedMultiplier = phaseTracker.IsWalkingBackwards ? 0.87f : 1f;
                 setVelocity(DirX * speed * speedMultiplier * groundSlope);
+                Debug.Log("yeah" + DirX);
                 rig.gravityScale = (DirX == 0) ? 0f : Game.GRAVITY;
             }
 
@@ -135,7 +135,7 @@ public class Controller : CentralController
 
     private void setVelocity(Vector2 velocity)
     {
-        rig.AddForce((velocity * rig.mass - rig.linearVelocity * rig.mass) * MOVEMENT_ALTERATION_SPEED);
+        rig.linearVelocity = velocity;
     }
 
     private void OnTriggerEnter2D(Collider2D col)
