@@ -31,7 +31,7 @@ public class LimbSwapper : MonoBehaviour
         Destroy(this);
     }
     // Updates a given limb to be what it's set to. Ie. update the sprite to be a left arm, or a right foot, or a head, etc.
-    // Also reattache the bone rigged to that limb (ex. head bone) to this new sprite 
+    // Also reattaches the bone rigged to that limb (ex. head bone) to this new sprite 
     private void updateSpriteAndBoneTransforms(bool forceRefresh)
     {
         if (!sR)
@@ -41,8 +41,9 @@ public class LimbSwapper : MonoBehaviour
             spriteSkin = transform.GetComponent<UnityEngine.U2D.Animation.SpriteSkin>();
 
         sR.sprite = limbSettings.ReturnLimb(limbType, forceRefresh);
-        if (spriteSkin.boneTransforms.Length > 0)
-            spriteSkin.boneTransforms[0] = spriteSkin.rootBone;
+        if (spriteSkin.boneTransforms.Length == 0 || spriteSkin.boneTransforms[0] == null) {
+            spriteSkin.SetBoneTransforms(new Transform[] { spriteSkin.rootBone });
+        }
 
         PolygonCollider2D col = spriteSkin.rootBone.GetComponent<PolygonCollider2D>();
         if (col)
