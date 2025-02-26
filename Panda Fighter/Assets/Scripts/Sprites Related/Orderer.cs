@@ -92,6 +92,8 @@ public static class Orderer
     {
         relativeLimbOrder = new Dictionary<LimbTypes, int>();
 
+        relativeLimbOrder[LimbTypes.Head] = 90;
+
         relativeLimbOrder[LimbTypes.FrontUpperArm] = 83;
         relativeLimbOrder[LimbTypes.FrontLowerArm] = 81;
         relativeLimbOrder[LimbTypes.FrontHand] = 99;
@@ -100,7 +102,6 @@ public static class Orderer
         relativeLimbOrder[LimbTypes.FrontLeg] = 71;
         relativeLimbOrder[LimbTypes.FrontFoot] = 70;
 
-        relativeLimbOrder[LimbTypes.Head] = 58;
         relativeLimbOrder[LimbTypes.Chest] = 56;
 
         relativeLimbOrder[LimbTypes.BackUpperArm] = 32;
